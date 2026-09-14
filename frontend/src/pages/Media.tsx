@@ -121,13 +121,13 @@ export function Media() {
             <Kpi label="Mean time to contain" value={fmtSeconds(k.mttc)} tone="accent" />
           </div>
           <Card title="Security alert timeline" sub="alerts per hour by severity" right={<Legend items={[['high', '#e05a5a'], ['medium', '#c99420'], ['low / info', '#3987e5']]} />}>
-            <AlertTimeline data={b.overview.alert_timeline} height={280} />
+            <AlertTimeline data={b.overview.alert_timeline} height={220} />
           </Card>
           <Card title="Recent alerts" bodyClass="tight">
             <table className="data">
               <thead><tr><th>time</th><th>severity</th><th>signature</th><th>source</th></tr></thead>
               <tbody>
-                {b.overview.recent_alerts.slice(0, 6).map((a) => (
+                {b.overview.recent_alerts.slice(0, 4).map((a) => (
                   <tr key={a.id}><td className="mono">{a.ts.slice(11, 23)}</td><td><Sev s={a.severity} /></td><td className="wrap">{a.signature.replace('SENTINELSWITCH ', '')}</td><td className="mono">{a.src_ip ?? a.mac ?? a.interface}</td></tr>
                 ))}
               </tbody>
