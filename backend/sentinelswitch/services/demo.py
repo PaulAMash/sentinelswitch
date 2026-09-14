@@ -68,8 +68,8 @@ def _persist(store: Store, result: RunResult, on_event: Callable[[dict[str, Any]
             or e.get("note")
             or (f"%{e['mnemonic']}" if src == "syslog" else f"RADIUS {e['result']}"),
             "signature_id": e.get("signature_id"),
-            "category": e.get("category")
-            or e.get("sentinel_class")
+            "category": e.get("sentinel_class")
+            or e.get("category")
             or ("aaa" if src == "radius" else "switch-security"),
             "src_ip": e.get("src_ip"),
             "src_port": e.get("src_port"),
