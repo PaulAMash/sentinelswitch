@@ -1,0 +1,42 @@
+id: rogue-dhcp
+name: Rogue DHCP
+short: Guest laptop with connection sharing enabled answers DHCP on VLAN 40
+class: rogue_device
+rule: rogue-dhcp
+mitre: [T1557, T1498]
+description: >
+  A vendor laptop on the guest VLAN enables internet connection sharing, which starts a DHCP server on its
+  wired interface. When the conference display is power-cycled and broadcasts DHCPDISCOVER, the laptop
+  answers. DHCP snooping drops every OFFER and NAK arriving on the untrusted port and logs each drop;
+  Suricata sees the offers on the SPAN feed and raises a local rule. SentinelSwitch attributes the
+  server MAC to the port and shuts it down.
+actor:
+  device: VENDOR-LT-01
+  ip: 10.40.0.104
+  mac: "3C:D9:2B:71:31:04"
+  interface: Gi1/0/31
+  vlan: 40
+instances:
+  day:
+    incident_id: INC-2026-0041
+    start: "2026-03-17T11:23:44.106Z"
+    parameters: &rd_params
+      drops: [[0.000, DHCPOFFER], [0.506, DHCPNAK], [1.024, DHCPOFFER], [1.549, DHCPNAK], [2.064, DHCPOFFER]]
+      sensor_latency: 0.025
+      detect_latency: 0.085
+      client_device: CONF-A-TV01        # the display was power-cycled and broadcast DHCPDISCOVER
+    expected: {disposition: automatic_containment, action: port_shutdown, severity: high, confidence: 0.95}
+    resolution:
+      device_removed: "2026-03-17T11:47:00Z"
+      restored_at: "2026-03-17T11:47:20.288Z"
+      restored_by: tlee
+      note: "Vendor disabled connection sharing and left site. Port restored to service."
+  validation:
+    start: "2026-03-17T11:23:44.106Z"
+    parameters: *rd_params
+    expected: {disposition: automatic_containment, action: port_shutdown, severity: high, confidence: 0.95}
+timing: {open: 0.069, dhcp: 0.139, mac: 0.219, identity: 0.081, policy: 0.149, apply: 0.396, verify: 0.122, evidence: 0.333}
+setup:
+  - {op: link_up, interface: Gi1/0/31, mac: "3C:D9:2B:71:31:04", auth_state: guest, vlan: 40, ip: 10.40.0.104}
+teardown:
+  - {op: link_down, interface: Gi1/0/31, at: "2026-03-17T11:47:00Z"}

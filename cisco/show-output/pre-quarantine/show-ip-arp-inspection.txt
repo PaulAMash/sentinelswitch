@@ -1,0 +1,28 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show ip arp inspection
+Source Mac Validation      : Enabled
+Destination Mac Validation : Enabled
+IP Address Validation      : Enabled
+
+ Vlan     Configuration    Operation   ACL Match          Static ACL
+ ----     -------------    ---------   ---------          ----------
+ 20       Enabled          Active
+ 30       Enabled          Active
+ 40       Enabled          Active
+ 50       Enabled          Active
+
+ Vlan     ACL Logging      DHCP Logging      Probe Logging
+ ----     -----------      ------------      -------------
+ 20       Deny             Deny              Off
+ 30       Deny             Deny              Off
+ 40       Deny             Deny              Off
+ 50       Deny             Deny              Off
+
+ Vlan      Forwarded        Dropped     DHCP Drops      ACL Drops
+ ----      ---------        -------     ----------      ---------
+ 20            118402            0              0              0
+ 30             61337            0              0              0
+ 40              4918            5              5              0
+ 50                 0            0              0              0
+SW01#

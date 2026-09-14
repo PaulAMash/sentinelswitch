@@ -1,0 +1,42 @@
+%% Generated from diagrams/source/network-topology.json by diagrams/source/render.py
+flowchart LR
+    subgraph mgmt["VLAN 10 · MGMT · 10.10.10.0/24"]
+        jump["LAB-JUMP01<br/>Gi1/0/2 · 10.10.10.20"]
+        pdu["LAB-PDU01<br/>Gi1/0/3 · 10.10.10.25"]
+    end
+    subgraph users["VLAN 20 · USERS · 10.20.0.0/24 · 802.1X"]
+        ws1["ENG-WS-005<br/>Gi1/0/5 · mrivera"]
+        ws2["FIN-WS-014<br/>Gi1/0/14 · anovak"]
+        ws3["HR-WS-016<br/>Gi1/0/16 · skim"]
+        lt047["ENG-LT-047<br/>Gi1/0/23 · jchen · 10.20.0.47"]
+        it037["IT-LT-037<br/>Gi1/0/37 · authorized scanner"]
+        printer["ENG-PR01<br/>Gi1/0/28 · MAB · .200"]
+    end
+    subgraph servers["VLAN 30 · SERVERS · 10.30.0.0/24"]
+        dc["SRV-DC01<br/>Gi1/0/8 · DNS/DHCP/AD"]
+        file["SRV-FILE01<br/>Gi1/0/9 · SMB"]
+        rad["SRV-RADIUS01<br/>Gi1/0/10 · FreeRADIUS"]
+        git["SRV-GIT01<br/>Gi1/0/12"]
+        upd["SRV-UPD01<br/>Gi1/0/13"]
+        web["SRV-WEB01<br/>Gi1/0/11 · intranet"]
+    end
+    subgraph guest["VLAN 40 · GUEST · 10.40.0.0/24"]
+        visitor["GUEST-VISITOR-01<br/>Gi1/0/29 · guest VLAN"]
+        tv["CONF-A-TV01<br/>Gi1/0/30 · MAB fallback"]
+    end
+    subgraph quarantine["VLAN 50 · QUARANTINE · 10.50.0.0/24"]
+        q047["ENG-LT-047 after containment<br/>Gi1/0/23 · switchport access vlan 50"]
+    end
+    subgraph monitor["VLAN 99 · MONITORING · 10.99.0.0/24"]
+        tp["SEC-TP01 · Lenovo ThinkPad · Debian 12<br/>eth0 trunk Gi1/0/48 (VLAN 10, 99) · eth1 SPAN Gi1/0/47<br/>Zeek · Suricata · SentinelSwitch controller"]
+    end
+    fw["LAB-FW01 · firewall / router<br/>gateway .1 in every VLAN · DHCP relay → SRV-DC01<br/>10.10.10.1"]
+    sw["SW01 · Cisco Catalyst 2960-X<br/>WS-C2960X-48FPD-L · IOS 15.2(7)E8 · 10.10.10.2<br/>DHCP snooping + DAI + IPSG on 20/30/40/50<br/>SPAN session 1: VLANs 20/30/40 → Gi1/0/47"]
+    fw -->|Gi1/0/1 · trunk 10,20,30,40,50,99 · protected| sw
+    pdu -->|Gi1/0/2–3| sw
+    ws2 -->|access VLAN 20| sw
+    lt047 -->|Gi1/0/23| sw
+    tp -->|Gi1/0/48 trunk · Gi1/0/47 SPAN| sw
+    sw -->|access VLAN 30| dc
+    sw -->|guest fallback| visitor
+    sw -->|automated quarantine| q047

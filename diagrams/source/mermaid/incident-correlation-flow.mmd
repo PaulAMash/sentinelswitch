@@ -1,0 +1,33 @@
+%% Generated from diagrams/source/incident-correlation-flow.json by diagrams/source/render.py
+flowchart LR
+    subgraph tele["Telemetry and detections"]
+        t1["21:14:31.284<br/>ICMP echo sweep begins<br/>10.20.0.0/24 + 10.30.0.0/24 @ 90 pps"]
+        t2["21:14:33.507<br/>Suricata sid 1000010 (medium)<br/>ICMP sweep · 200th request"]
+        t3["21:14:38.198<br/>Suricata sid 1000021 (high)<br/>SMB fan-out · 8th host on 445"]
+        t4["21:14:39.649<br/>Zeek Scan::Address_Scan<br/>15 hosts on 445/tcp"]
+        t5["21:14:39.867<br/>rule matched<br/>conf 0.97 · high"]
+    end
+    subgraph corr["Attribution · IP → MAC → port → identity"]
+        c1["21:14:40.092 · DHCP snooping binding<br/>10.20.0.47 → A4:83:E7:12:34:56<br/>VLAN 20 · Gi1/0/23 · 23,841 s remaining"]
+        c2["21:14:40.346 · MAC address table<br/>A4:83:E7:12:34:56 → SW01 Gi1/0/23<br/>VLAN 20 · DYNAMIC"]
+        c3["21:14:40.346 · interface<br/>Gi1/0/23 'ENG-LT-047' access<br/>class workstation · not protected"]
+        c4["21:14:40.439 · identity<br/>ENG-LT-047 · Lenovo · Ubuntu 24.04<br/>jchen (Engineering) · criticality standard"]
+    end
+    subgraph resp["Policy · containment · verification · evidence"]
+        r1["21:14:40.585 · policy<br/>automatic containment approved<br/>severity high · confidence 0.97<br/>guards: none triggered"]
+        r2["21:14:41.000 · containment<br/>SW01 Gi1/0/23<br/>switchport access vlan 20 → 50<br/>workflow WF-2026-0042-01"]
+        r3["21:14:41.125 · verified<br/>show interfaces Gi1/0/23 switchport<br/>Access Mode VLAN: 50 (QUARANTINE)<br/>MAC now learned in VLAN 50"]
+        r4["21:14:41.464 · evidence<br/>data/incidents/INC-2026-0042/<br/>11 artifacts · 895 related connections<br/>TTD 8.583 s · TTA 0.572 s · TTC 1.258 s"]
+    end
+    t1 --> t2
+    t2 --> t3
+    t3 --> t4
+    t4 --> t5
+    t5 -->|correlate 10.20.0.47| c1
+    c1 --> c2
+    c2 --> c3
+    c3 --> c4
+    c4 -->|attribution complete · 0.572 s after detection| r1
+    r1 --> r2
+    r2 --> r3
+    r3 --> r4

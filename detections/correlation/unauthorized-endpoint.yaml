@@ -1,0 +1,17 @@
+id: unauthorized-endpoint
+name: Unauthorized Endpoint
+class: rogue_device
+description: AAA rejected an endpoint on a port designated for corporate assets; guest-fallback ports and port-security cases are scored down.
+mitre: [T1200, T1078]
+actor_key: mac
+trigger: {source: radius, result: Access-Reject, method: [MAB]}
+aggregate_window: 0
+base_confidence: 0.70
+severity:
+  - {when: psecure_violation, severity: low}
+  - {when: corporate_port, severity: high}
+  - {default: low}
+features:
+  - {id: corporate_port,     label: "Port is designated for corporate workstations",          type: event_field, field: port_class, op: eq, value: workstation, weight: 0.20}
+  - {id: unknown_mac,        label: "MAC is not in the asset inventory",                       type: asset_unknown, weight: 0.06}
+  - {id: psecure_violation,  label: "Port-security violation on the same port (handled by the MAC change rule)", type: event_match, match: {source: syslog, mnemonic: PORT_SECURITY-2-PSECURE_VIOLATION}, window: 10, weight: -0.25}

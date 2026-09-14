@@ -1,0 +1,11 @@
+id: ntp-policy-violation
+name: NTP Policy Violation
+class: policy
+description: Endpoint synchronising time with a server outside the approved NTP list.
+mitre: []
+actor_key: actor_ip
+trigger: {source: suricata, signature_id: [1000050]}
+aggregate_window: 0
+base_confidence: 0.40
+severity: low
+features: []

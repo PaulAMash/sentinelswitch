@@ -1,0 +1,62 @@
+! SentinelSwitch digital twin - simulated transcript (after INC-2026-0042 automated containment)
+! captured at 2026-03-17 21:14:31.284 UTC
+SW01#show ip dhcp snooping
+Switch DHCP snooping is enabled
+Switch DHCP gleaning is disabled
+DHCP snooping is configured on following VLANs:
+20,30,40,50
+DHCP snooping is operational on following VLANs:
+20,30,40,50
+DHCP snooping is configured on the following L3 Interfaces:
+
+Insertion of option 82 is disabled
+   circuit-id default format: vlan-mod-port
+   remote-id: d4e8.802a.1f80 (MAC)
+Option 82 on untrusted port is not allowed
+Verification of hwaddr field is enabled
+Verification of giaddr field is enabled
+DHCP snooping trust/rate is configured on the following Interfaces:
+
+Interface                  Trusted    Allow option    Rate limit (pps)
+-----------------------    -------    ------------    ----------------
+GigabitEthernet1/0/1       yes        yes             unlimited
+  Custom circuit-ids:
+GigabitEthernet1/0/2       no         no              15
+GigabitEthernet1/0/3       no         no              15
+GigabitEthernet1/0/5       no         no              15
+GigabitEthernet1/0/6       no         no              15
+GigabitEthernet1/0/7       no         no              15
+GigabitEthernet1/0/8       no         no              15
+GigabitEthernet1/0/9       no         no              15
+GigabitEthernet1/0/10      no         no              15
+GigabitEthernet1/0/11      no         no              15
+GigabitEthernet1/0/12      no         no              15
+GigabitEthernet1/0/13      no         no              15
+GigabitEthernet1/0/14      no         no              15
+GigabitEthernet1/0/15      no         no              15
+GigabitEthernet1/0/16      no         no              15
+GigabitEthernet1/0/17      no         no              15
+GigabitEthernet1/0/18      no         no              15
+GigabitEthernet1/0/19      no         no              15
+GigabitEthernet1/0/20      no         no              15
+GigabitEthernet1/0/21      no         no              15
+GigabitEthernet1/0/22      no         no              15
+GigabitEthernet1/0/23      no         no              15
+GigabitEthernet1/0/24      no         no              15
+GigabitEthernet1/0/25      no         no              15
+GigabitEthernet1/0/26      no         no              15
+GigabitEthernet1/0/27      no         no              15
+GigabitEthernet1/0/28      no         no              15
+GigabitEthernet1/0/29      no         no              15
+GigabitEthernet1/0/30      no         no              15
+GigabitEthernet1/0/31      no         no              15
+GigabitEthernet1/0/32      no         no              15
+GigabitEthernet1/0/33      no         no              15
+GigabitEthernet1/0/34      no         no              15
+GigabitEthernet1/0/35      no         no              15
+GigabitEthernet1/0/36      no         no              15
+GigabitEthernet1/0/37      no         no              15
+GigabitEthernet1/0/47      no         no              15
+GigabitEthernet1/0/48      yes        yes             unlimited
+  Custom circuit-ids:
+SW01#

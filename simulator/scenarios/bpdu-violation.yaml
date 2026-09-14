@@ -1,0 +1,40 @@
+id: bpdu-violation
+name: STP/BPDU Violation
+short: Unmanaged switch inserted on an access port triggers BPDU Guard
+class: rogue_device
+rule: bpdu-violation
+mitre: [T1200]
+description: >
+  An unmanaged switch with spanning tree enabled is inserted between the conference display and its access
+  port. The first BPDU triggers BPDU Guard, which err-disables the port. SentinelSwitch confirms the
+  err-disable from syslog, attributes the port to the last known endpoint, applies an administrative hold
+  so errdisable auto-recovery cannot re-enable the port, and records the evidence.
+actor:
+  device: CONF-A-TV01
+  ip: 10.40.0.102
+  mac: "8C:71:F8:2D:30:02"
+  interface: Gi1/0/30
+  vlan: 40
+  rogue_mac: "50:C7:BF:1A:30:0E"
+instances:
+  day:
+    incident_id: INC-2026-0039
+    start: "2026-03-17T09:12:44.271Z"
+    parameters: &bpdu_params
+      errdisable_offset: 0.005
+      link_down_offset: 1.010
+      detect_latency: 0.126
+    expected: {disposition: automatic_containment, action: port_shutdown, severity: high, confidence: 0.96, mechanism: "BPDU Guard err-disable + administrative hold"}
+    resolution:
+      device_removed: "2026-03-17T09:34:40Z"
+      restored_at: "2026-03-17T09:35:10.772Z"
+      restored_by: tlee
+      note: "Unmanaged switch removed from conference room; display reconnected directly. Port recovered with shutdown / no shutdown."
+  validation:
+    start: "2026-03-17T09:12:44.271Z"
+    parameters: *bpdu_params
+    expected: {disposition: automatic_containment, action: port_shutdown, severity: high, confidence: 0.96}
+timing: {open: 0.066, dhcp: 0.137, mac: 0.208, identity: 0.079, policy: 0.144, apply: 0.388, verify: 0.119, evidence: 0.327}
+setup: []
+teardown:
+  - {op: reattach, device: CONF-A-TV01, at: "2026-03-17T09:35:41.204Z"}

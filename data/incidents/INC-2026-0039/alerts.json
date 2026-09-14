@@ -1,0 +1,54 @@
+[
+  {
+    "ts": "2026-03-17T09:12:44.271Z",
+    "source": "syslog",
+    "kind": "syslog",
+    "severity": "high",
+    "facility": "SPANTREE",
+    "severity_num": 2,
+    "mnemonic": "SPANTREE-2-BLOCK_BPDUGUARD",
+    "message": "Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port.",
+    "interface": "Gi1/0/30",
+    "port_class": "conference",
+    "mac": null,
+    "summary": "%SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port.",
+    "scenario": "bpdu-violation",
+    "instance": "day",
+    "device": null,
+    "raw": {
+      "ts": "2026-03-17T09:12:44.271Z",
+      "facility": "SPANTREE",
+      "severity": 2,
+      "mnemonic": "BLOCK_BPDUGUARD",
+      "message": "Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port.",
+      "interface": "Gi1/0/30",
+      "mac": null
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:44.276Z",
+    "source": "syslog",
+    "kind": "syslog",
+    "severity": "medium",
+    "facility": "PM",
+    "severity_num": 4,
+    "mnemonic": "PM-4-ERR_DISABLE",
+    "message": "bpduguard error detected on Gi1/0/30, putting Gi1/0/30 in err-disable state",
+    "interface": "Gi1/0/30",
+    "port_class": "conference",
+    "mac": null,
+    "summary": "%PM-4-ERR_DISABLE: bpduguard error detected on Gi1/0/30, putting Gi1/0/30 in err-disable state",
+    "scenario": "bpdu-violation",
+    "instance": "day",
+    "device": null,
+    "raw": {
+      "ts": "2026-03-17T09:12:44.276Z",
+      "facility": "PM",
+      "severity": 4,
+      "mnemonic": "ERR_DISABLE",
+      "message": "bpduguard error detected on Gi1/0/30, putting Gi1/0/30 in err-disable state",
+      "interface": "Gi1/0/30",
+      "mac": null
+    }
+  }
+]

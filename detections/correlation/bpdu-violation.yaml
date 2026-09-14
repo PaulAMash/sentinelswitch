@@ -1,0 +1,12 @@
+id: bpdu-violation
+name: STP/BPDU Violation
+class: rogue_device
+description: BPDU received on a BPDU Guard access port; confirmed by the err-disable transition.
+mitre: [T1200]
+actor_key: interface
+trigger: {source: syslog, mnemonic: [SPANTREE-2-BLOCK_BPDUGUARD]}
+aggregate_window: 0.05
+base_confidence: 0.90
+severity: high
+features:
+  - {id: errdisable_confirmed, label: "Port manager confirmed err-disable", type: event_match, match: {source: syslog, mnemonic: PM-4-ERR_DISABLE}, window: 5, weight: 0.06}

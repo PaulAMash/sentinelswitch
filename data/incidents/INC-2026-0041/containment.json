@@ -1,0 +1,80 @@
+{
+  "decision": {
+    "disposition": "automatic_containment",
+    "action": "port_shutdown",
+    "reason": "Automatic containment approved (severity=high confidence=0.95); action=port_shutdown",
+    "factors": [
+      {
+        "factor": "severity",
+        "value": "high"
+      },
+      {
+        "factor": "confidence",
+        "value": 0.95
+      },
+      {
+        "factor": "corroborating_sources",
+        "value": 2
+      },
+      {
+        "factor": "actor_class",
+        "value": "rogue_device"
+      },
+      {
+        "factor": "interface",
+        "value": "Gi1/0/31"
+      },
+      {
+        "factor": "port_class",
+        "value": "conference"
+      },
+      {
+        "factor": "asset_criticality",
+        "value": "low"
+      },
+      {
+        "factor": "protected",
+        "value": false
+      }
+    ],
+    "guards_triggered": [],
+    "quarantine_vlan": null,
+    "tier_before_guards": "automatic_containment"
+  },
+  "action": {
+    "workflow_id": "WF-2026-0041-04",
+    "incident_id": "INC-2026-0041",
+    "action": "port_shutdown",
+    "mechanism": "SentinelSwitch administrative shutdown",
+    "interface": "Gi1/0/31",
+    "switch": "SW01",
+    "from_vlan": 40,
+    "to_vlan": null,
+    "reason": "Rogue DHCP: %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104",
+    "initiating_detection": "DET-20260317T11234719-ROGU",
+    "actor": "sentinel",
+    "requested_at": "2026-03-17T11:23:47.848Z",
+    "applied_at": "2026-03-17T11:23:48.244Z",
+    "verified_at": "2026-03-17T11:23:48.366Z",
+    "status": "verified",
+    "commands": [
+      "configure terminal",
+      "interface GigabitEthernet1/0/31",
+      " shutdown",
+      "end",
+      "write memory"
+    ],
+    "transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/31\nSW01(config-if)#shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
+    "verification": {
+      "ok": true,
+      "expected": "admin down, no MAC addresses learned",
+      "transcript": "Port      Name               Status       Vlan       Duplex  Speed Type\nGi1/0/31  VENDOR DROP (guest disabled     20           auto   auto 10/100/1000BaseTX",
+      "checked_at": "2026-03-17T11:23:48.366Z"
+    },
+    "restored_at": null,
+    "restored_by": null,
+    "restore_note": null,
+    "restore_transcript": null,
+    "notes": []
+  }
+}

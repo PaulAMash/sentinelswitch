@@ -1,0 +1,55 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show interfaces status
+Port      Name               Status       Vlan       Duplex  Speed Type
+Gi1/0/1   TRUNK LAB-FW01 Gi0 connected    trunk      a-full a-1000 10/100/1000BaseTX
+Gi1/0/2   MGMT LAB-JUMP01    connected    10         a-full a-1000 10/100/1000BaseTX
+Gi1/0/3   MGMT LAB-PDU01     connected    10         a-full a-1000 10/100/1000BaseTX
+Gi1/0/4   UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/5   ENG-WS-005         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/6   ENG-WS-006         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/7   ENG-LT-007         notconnect   20           auto   auto 10/100/1000BaseTX
+Gi1/0/8   SRV-DC01 (AD DS /  connected    30         a-full a-1000 10/100/1000BaseTX
+Gi1/0/9   SRV-FILE01 (SMB)   connected    30         a-full a-1000 10/100/1000BaseTX
+Gi1/0/10  SRV-RADIUS01 (Free connected    30         a-full a-1000 10/100/1000BaseTX
+Gi1/0/11  SRV-WEB01 (intrane connected    30         a-full a-1000 10/100/1000BaseTX
+Gi1/0/12  SRV-GIT01 (git / C connected    30         a-full a-1000 10/100/1000BaseTX
+Gi1/0/13  SRV-UPD01 (update  connected    30         a-full a-1000 10/100/1000BaseTX
+Gi1/0/14  FIN-WS-014         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/15  FIN-WS-015         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/16  HR-WS-016          connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/17  OPS SPARE DROP (co notconnect   20           auto   auto 10/100/1000BaseTX
+Gi1/0/18  ENG-WS-018         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/19  ENG-WS-019         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/20  ENG-LT-020         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/21  MKT-WS-021         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/22  MKT-WS-022 loaner  connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/23  ENG-LT-047         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/24  ENG-WS-024         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/25  OPS-WS-025         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/26  OPS-WS-026         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/27  ENG-LT-027         notconnect   20           auto   auto 10/100/1000BaseTX
+Gi1/0/28  ENG-PR01 (printer, connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/29  CONF-A DROP 1 (gue notconnect   20           auto   auto 10/100/1000BaseTX
+Gi1/0/30  CONF-A DISPLAY (gu connected    40         a-full a-1000 10/100/1000BaseTX
+Gi1/0/31  VENDOR DROP (guest notconnect   20           auto   auto 10/100/1000BaseTX
+Gi1/0/32  FIN-WS-032         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/33  HR-WS-033          connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/34  ENG-WS-034         connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/35  ENG-LT-035         notconnect   20           auto   auto 10/100/1000BaseTX
+Gi1/0/36  IT-WS-036          connected    20         a-full a-1000 10/100/1000BaseTX
+Gi1/0/37  IT-LT-037 (authori notconnect   20           auto   auto 10/100/1000BaseTX
+Gi1/0/38  UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/39  UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/40  UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/41  UNUSED             notconnect   999          auto   auto 10/100/1000BaseTX
+Gi1/0/42  UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/43  UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/44  UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/45  UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/46  UNUSED             disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/47  SPAN DEST SEC-TP01 monitoring   99         a-full a-1000 10/100/1000BaseTX
+Gi1/0/48  TRUNK SEC-TP01 eth connected    trunk      a-full a-1000 10/100/1000BaseTX
+Te1/0/1   UNUSED             disabled     999          auto   auto Not Present
+Te1/0/2   UNUSED             disabled     999          auto   auto Not Present
+SW01#

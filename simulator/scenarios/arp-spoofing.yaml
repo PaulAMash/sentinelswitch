@@ -1,0 +1,42 @@
+id: arp-spoofing
+name: ARP Spoofing Attempt
+short: Host emits ARP replies that contradict the DHCP snooping binding table
+class: compromised_host
+rule: arp-spoofing
+mitre: [T1557.002]
+description: >
+  A guest laptop sends ARP replies whose sender IP does not match its DHCP snooping binding. Dynamic ARP
+  Inspection drops every frame and logs the violation; SentinelSwitch aggregates the DAI denials for a
+  five-second window, scores the burst, and attributes it to the switch port.
+actor:
+  device: GUEST-VISITOR-01
+  ip: 10.40.0.101
+  mac: "F0:18:98:C4:29:01"
+  interface: Gi1/0/29
+  vlan: 40
+instances:
+  day:
+    start: "2026-03-17T10:27:18.204Z"
+    parameters:
+      invalid_arp_count: 3
+      interval: 0.514
+      spoofed_ip: 192.168.1.23          # stale gratuitous ARP for the laptop's previous network
+      detect_latency: 0.087
+    expected: {disposition: manual_review, action: none, severity: medium, confidence: 0.78}
+    resolution:
+      reviewed_at: "2026-03-17T10:41:12Z"
+      reviewed_by: tlee
+      note: "Guest laptop VPN client emitted stale gratuitous ARP for its previous network. DAI dropped all three frames; no further activity. Closed as benign."
+  validation:
+    start: "2026-03-17T10:27:18.204Z"
+    parameters:
+      invalid_arp_count: 40
+      interval: 0.2
+      spoofed_ip: 10.40.0.1             # claims the GUEST gateway address
+      detect_latency: 0.087
+    expected: {disposition: automatic_containment, action: quarantine_vlan, severity: high, confidence: 0.99}
+timing: {open: 0.079, dhcp: 0.147, mac: 0.233, identity: 0.088, policy: 0.151, apply: 0.428, verify: 0.131, evidence: 0.347}
+setup:
+  - {op: link_up, interface: Gi1/0/29, mac: "F0:18:98:C4:29:01", auth_state: guest, vlan: 40, ip: 10.40.0.101}
+teardown:
+  - {op: link_down, interface: Gi1/0/29}

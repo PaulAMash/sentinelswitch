@@ -1,0 +1,167 @@
+{
+  "id": "INC-2026-0042",
+  "title": "Lateral Reconnaissance \u2014 ENG-LT-047",
+  "severity": "high",
+  "confidence": 0.97,
+  "status": "contained",
+  "opened_at": "2026-03-17T21:14:39.867Z",
+  "closed_at": null,
+  "rule": "lateral-reconnaissance",
+  "rule_name": "Lateral Reconnaissance",
+  "class": "compromised_host",
+  "mitre": [
+    "T1018",
+    "T1046",
+    "T1021.002"
+  ],
+  "scenario": "lateral-reconnaissance",
+  "instance": "day",
+  "detection_id": "DET-20260317T21143986-LATE",
+  "device": "ENG-LT-047",
+  "user": "jchen",
+  "department": "Engineering",
+  "ip": "10.20.0.47",
+  "mac": "A4:83:E7:12:34:56",
+  "vendor": "Lenovo",
+  "switch": "SW01",
+  "interface": "Gi1/0/23",
+  "original_vlan": 20,
+  "current_vlan": 50,
+  "port_class": "workstation",
+  "chain": [
+    "10.20.0.47",
+    "A4:83:E7:12:34:56",
+    "SW01",
+    "Gi1/0/23",
+    "VLAN 20",
+    "VLAN 50"
+  ],
+  "summary": "An authenticated engineering laptop (ENG-LT-047) begins host discovery across the USERS and SERVERS VLANs, performs a burst of reverse DNS lookups for responding hosts, then fans out TCP probes to SMB, RPC, RDP, SSH and WinRM ports on every host that answered. Suricata raises a high-confidence fan-out signature, Zeek corroborates with an address-scan notice, and SentinelSwitch correlates the source IP to the switch port and quarantines it.",
+  "disposition": "automatic_containment",
+  "action": "quarantine_vlan",
+  "attribution_confidence": 1.0,
+  "flags": [],
+  "impersonated_device": null,
+  "workflow_id": "WF-2026-0042-01",
+  "mechanism": "SentinelSwitch VLAN reassignment (quarantine VLAN)",
+  "contained_at": "2026-03-17T21:14:41.125Z",
+  "evidence_finalized_at": "2026-03-17T21:14:41.464Z",
+  "detection": {
+    "id": "DET-20260317T21143986-LATE",
+    "rule": "lateral-reconnaissance",
+    "rule_name": "Lateral Reconnaissance",
+    "class": "compromised_host",
+    "mitre": [
+      "T1018",
+      "T1046",
+      "T1021.002"
+    ],
+    "actor_key": "actor_ip",
+    "actor_value": "10.20.0.47",
+    "actor": {
+      "key": "actor_ip",
+      "value": "10.20.0.47",
+      "device": "ENG-LT-047",
+      "ip": "10.20.0.47",
+      "mac": "A4:83:E7:12:34:56",
+      "interface": "Gi1/0/23",
+      "vlan": 20,
+      "user": "jchen"
+    },
+    "ts": "2026-03-17T21:14:39.867Z",
+    "trigger_ts": "2026-03-17T21:14:38.198Z",
+    "severity": "high",
+    "confidence": 0.97,
+    "base_confidence": 0.75,
+    "features": [
+      {
+        "id": "zeek_address_scan",
+        "label": "Zeek Scan::Address_Scan for the same source",
+        "weight": 0.1,
+        "matched": true,
+        "evidence": "1 matching event(s): Scan::Address_Scan: 10.20.0.47 scanned at least 15 unique hosts on port 445/tcp in 0m2s"
+      },
+      {
+        "id": "prior_icmp_sweep",
+        "label": "ICMP echo sweep from the same source (sid 1000010)",
+        "weight": 0.07,
+        "matched": true,
+        "evidence": "1 matching event(s): SENTINELSWITCH RECON ICMP echo sweep from internal host"
+      },
+      {
+        "id": "ptr_burst",
+        "label": "Reverse DNS burst from the same source (sid 1000014)",
+        "weight": 0.05,
+        "matched": true,
+        "evidence": "1 matching event(s): SENTINELSWITCH RECON reverse DNS lookup burst"
+      },
+      {
+        "id": "authorized_scanner",
+        "label": "Source is an authorized scanner",
+        "weight": -0.35,
+        "matched": false,
+        "evidence": null
+      }
+    ],
+    "summary": "Lateral Reconnaissance: SENTINELSWITCH LATERAL SMB probe fan-out to multiple internal hosts",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T21:14:33.507Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH RECON ICMP echo sweep from internal host"
+      },
+      {
+        "ts": "2026-03-17T21:14:36.108Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH RECON reverse DNS lookup burst"
+      },
+      {
+        "ts": "2026-03-17T21:14:37.042Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH LATERAL WinRM probe from workstation VLAN"
+      },
+      {
+        "ts": "2026-03-17T21:14:38.198Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH LATERAL SMB probe fan-out to multiple internal hosts"
+      },
+      {
+        "ts": "2026-03-17T21:14:38.292Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH LATERAL RDP probe fan-out to multiple internal hosts"
+      },
+      {
+        "ts": "2026-03-17T21:14:39.649Z",
+        "source": "zeek",
+        "summary": "Scan::Address_Scan: 10.20.0.47 scanned at least 15 unique hosts on port 445/tcp in 0m2s"
+      }
+    ]
+  },
+  "metrics": {
+    "t0": "2026-03-17T21:14:31.284Z",
+    "first_alert": "2026-03-17T21:14:33.507Z",
+    "detection": "2026-03-17T21:14:39.867Z",
+    "ttd": 8.583,
+    "attribution_complete": "2026-03-17T21:14:40.439Z",
+    "tta": 0.572,
+    "decision": "2026-03-17T21:14:40.585Z",
+    "applied": "2026-03-17T21:14:41.000Z",
+    "verified": "2026-03-17T21:14:41.125Z",
+    "ttc": 1.258,
+    "end_to_end": 9.841,
+    "evidence": "2026-03-17T21:14:41.464Z"
+  },
+  "artifacts": [
+    "incident.json",
+    "timeline.json",
+    "alerts.json",
+    "network-context.json",
+    "dhcp-binding.json",
+    "mac-table.json",
+    "switch-port.json",
+    "containment.json",
+    "related-connections.json",
+    "related-dns.json",
+    "README.md"
+  ]
+}

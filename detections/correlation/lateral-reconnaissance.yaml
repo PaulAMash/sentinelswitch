@@ -1,0 +1,15 @@
+id: lateral-reconnaissance
+name: Lateral Reconnaissance
+class: compromised_host
+description: SMB/RDP probe fan-out from an internal host, corroborated by Zeek scan notices and prior discovery activity.
+mitre: [T1018, T1046, T1021.002]
+actor_key: actor_ip
+trigger: {source: suricata, signature_id: [1000021, 1000022]}
+aggregate_window: 1.5
+base_confidence: 0.75
+severity: high
+features:
+  - {id: zeek_address_scan,  label: "Zeek Scan::Address_Scan for the same source",     type: event_match, match: {source: zeek, note: Scan::Address_Scan}, window: 60,  weight: 0.10}
+  - {id: prior_icmp_sweep,   label: "ICMP echo sweep from the same source (sid 1000010)", type: event_match, match: {source: suricata, signature_id: 1000010}, window: 300, weight: 0.07}
+  - {id: ptr_burst,          label: "Reverse DNS burst from the same source (sid 1000014)", type: event_match, match: {source: suricata, signature_id: 1000014}, window: 300, weight: 0.05}
+  - {id: authorized_scanner, label: "Source is an authorized scanner",                   type: asset_tag, tag: authorized_scanner, weight: -0.35}

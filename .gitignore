@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+
+# Local runtime state (rebuilt by `make seed`)
+data/generated/sentinelswitch.db
+data/generated/sentinelswitch.db-wal
+data/generated/sentinelswitch.db-shm
+
+# Environment and editors
+.env
+.DS_Store
+.idea/
+.vscode/
+*.swp

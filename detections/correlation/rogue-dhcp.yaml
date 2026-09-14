@@ -1,0 +1,14 @@
+id: rogue-dhcp
+name: Rogue DHCP
+class: rogue_device
+description: DHCP server messages arriving on an untrusted port and dropped by DHCP snooping; corroborated by Suricata on the SPAN feed.
+mitre: [T1557]
+actor_key: mac
+trigger: {source: syslog, mnemonic: [DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT]}
+aggregate_window: 3.0
+base_confidence: 0.80
+severity: high
+features:
+  - {id: repeated_drops,  label: "At least 3 dropped server messages",              type: event_count, match: {source: syslog, mnemonic: DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT}, window: 10, min: 3, weight: 0.08}
+  - {id: suricata_offer,  label: "Suricata saw the offer on the SPAN feed (sid 1000040)", type: event_match, match: {source: suricata, signature_id: 1000040}, window: 10, weight: 0.07}
+  - {id: unknown_mac,     label: "Server MAC is not in the asset inventory",         type: asset_unknown, weight: 0.05}

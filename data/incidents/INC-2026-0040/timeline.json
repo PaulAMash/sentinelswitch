@@ -1,0 +1,127 @@
+[
+  {
+    "ts": "2026-03-17T09:41:05.112Z",
+    "phase": "telemetry",
+    "actor": "telemetry",
+    "message": "link up on Gi1/0/17: unregistered device dca6.3219.77c1 (Raspberry Pi Foundation OUI)",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:41:05.418Z",
+    "phase": "aaa",
+    "actor": "telemetry",
+    "message": "MAB Access-Reject for dca6.3219.77c1 on Gi1/0/17: MAC not in endpoint database",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:41:05.418Z",
+    "phase": "aaa",
+    "actor": "freeradius",
+    "message": "RADIUS Access-Reject (MAB) for DC:A6:32:19:77:C1 on Gi1/0/17: MAC not found in endpoint database",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:41:05.444Z",
+    "phase": "switch",
+    "actor": "SW01",
+    "message": "SW01 %MAB-5-FAIL: Authentication failed for client (dca6.3219.77c1) on Interface Gi1/0/17 AuditSessionID 0A0A0A02000000110019D48E",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:41:05.573Z",
+    "phase": "detection",
+    "actor": "sentinel",
+    "message": "Rule unauthorized-endpoint matched: severity high, confidence 0.96 (base 0.70; corporate_port+0.20, unknown_mac+0.06)",
+    "details": {
+      "detection_id": "DET-20260317T09410557-UNAU",
+      "sources": [
+        "radius"
+      ]
+    }
+  },
+  {
+    "ts": "2026-03-17T09:41:05.644Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "Resolving actor DC:A6:32:19:77:C1 through DHCP snooping, MAC table and inventory",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:41:05.775Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "dhcp_binding [missing] No binding for this MAC (expected when the port never authorised or the device is static)",
+    "details": {
+      "source": "show ip dhcp snooping binding"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:41:05.971Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "mac_table [fallback] No MAC table entry for DC:A6:32:19:77:C1 (port not authorised); interface Gi1/0/17 taken from RADIUS NAS-Port-Id",
+    "details": {
+      "source": "show mac address-table address"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:41:05.971Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "interface [resolved] Gi1/0/17 'OPS SPARE DROP (corporate asset only)' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+    "details": {
+      "source": "show interfaces switchport"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:41:06.048Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "identity [missing] DC:A6:32:19:77:C1 is not in the asset inventory (OUI vendor: Raspberry Pi Foundation)",
+    "details": {
+      "source": "asset inventory / AAA session"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:41:06.200Z",
+    "phase": "policy",
+    "actor": "sentinel",
+    "message": "Disposition automatic_containment: Automatic containment approved (severity=high confidence=0.96); action=port_shutdown",
+    "details": {
+      "action": "port_shutdown",
+      "guards": []
+    }
+  },
+  {
+    "ts": "2026-03-17T09:41:06.204Z",
+    "phase": "incident",
+    "actor": "sentinel",
+    "message": "Incident INC-2026-0040 opened",
+    "details": {
+      "incident_id": "INC-2026-0040"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:41:06.601Z",
+    "phase": "containment",
+    "actor": "sentinel",
+    "message": "SW01 Gi1/0/17: administrative shutdown (workflow WF-2026-0040-02) \u2014 SentinelSwitch administrative shutdown",
+    "details": {
+      "workflow": "WF-2026-0040-02",
+      "commands": [
+        "configure terminal",
+        "interface GigabitEthernet1/0/17",
+        " shutdown",
+        "end",
+        "write memory"
+      ]
+    }
+  },
+  {
+    "ts": "2026-03-17T09:41:06.718Z",
+    "phase": "verification",
+    "actor": "sentinel",
+    "message": "Verification succeeded: admin down, no MAC addresses learned",
+    "details": null
+  }
+]

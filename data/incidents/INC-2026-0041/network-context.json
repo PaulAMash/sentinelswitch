@@ -1,0 +1,175 @@
+{
+  "actor": {
+    "device": "VENDOR-LT-01",
+    "ip": "10.40.0.104",
+    "mac": "3C:D9:2B:71:31:04",
+    "interface": "Gi1/0/31",
+    "vlan": 40
+  },
+  "attribution": {
+    "ip": "10.40.0.104",
+    "mac": "3C:D9:2B:71:31:04",
+    "switch": "SW01",
+    "interface": "Gi1/0/31",
+    "vlan": 40,
+    "access_vlan": 20,
+    "port_class": "conference",
+    "port_mode": "access",
+    "protected": false,
+    "trunk": false,
+    "span_destination": false,
+    "device": "VENDOR-LT-01",
+    "user": null,
+    "department": null,
+    "criticality": "low",
+    "vendor": "HP",
+    "resolved": true,
+    "confidence": 1.0,
+    "flags": [],
+    "steps": [
+      {
+        "name": "dhcp_binding",
+        "status": "resolved",
+        "source": "show ip dhcp snooping binding",
+        "input": "3C:D9:2B:71:31:04",
+        "output": "10.40.0.104",
+        "detail": "3C:D9:2B:71:31:04 -> 10.40.0.104 (VLAN 40, Gi1/0/31)",
+        "ts": "2026-03-17T11:23:47.399Z"
+      },
+      {
+        "name": "mac_table",
+        "status": "resolved",
+        "source": "show mac address-table address",
+        "input": "3C:D9:2B:71:31:04",
+        "output": "Gi1/0/31",
+        "detail": "3C:D9:2B:71:31:04 -> SW01 Gi1/0/31 (VLAN 40, DYNAMIC)",
+        "ts": "2026-03-17T11:23:47.618Z"
+      },
+      {
+        "name": "interface",
+        "status": "resolved",
+        "source": "show interfaces switchport",
+        "input": "Gi1/0/31",
+        "output": "VLAN 40",
+        "detail": "Gi1/0/31 'VENDOR DROP (guest fallback)' mode=access access_vlan=20 oper_vlan=40 class=conference status=connected",
+        "ts": "2026-03-17T11:23:47.618Z"
+      },
+      {
+        "name": "identity",
+        "status": "resolved",
+        "source": "asset inventory / AAA session",
+        "input": "3C:D9:2B:71:31:04",
+        "output": "VENDOR-LT-01",
+        "detail": "VENDOR-LT-01 (guest-laptop, HP, Windows 11 Home) criticality=low",
+        "ts": "2026-03-17T11:23:47.699Z"
+      }
+    ],
+    "binding": {
+      "mac": "3C:D9:2B:71:31:04",
+      "ip": "10.40.0.104",
+      "vlan": 40,
+      "interface": "Gi1/0/31",
+      "lease_expires": "2026-03-17T19:05:01.800Z",
+      "binding_type": "dhcp-snooping",
+      "lease_start": "2026-03-17T11:05:01.800Z"
+    },
+    "mac_entries": [
+      {
+        "mac": "3C:D9:2B:71:31:04",
+        "vlan": 40,
+        "interface": "Gi1/0/31",
+        "entry_type": "DYNAMIC",
+        "learned_at": "2026-03-17T11:05:00.000Z"
+      }
+    ],
+    "observations": [
+      {
+        "mac": "3C:D9:2B:71:31:04",
+        "interface": "Gi1/0/31",
+        "vlan": 40,
+        "first_seen": "2026-03-17T11:05:00.000Z",
+        "last_seen": "2026-03-17T00:00:00.000Z"
+      },
+      {
+        "mac": "3C:D9:2B:71:31:04",
+        "interface": "Gi1/0/31",
+        "vlan": 40,
+        "first_seen": "2026-03-17T11:05:00.000Z",
+        "last_seen": "2026-03-17T11:05:00.000Z"
+      }
+    ],
+    "started_at": "2026-03-17T11:23:47.191Z",
+    "completed_at": "2026-03-17T11:23:47.699Z",
+    "impersonated_device": null,
+    "port_owner": "VENDOR-LT-01"
+  },
+  "vlans": {
+    "10": {
+      "id": 10,
+      "name": "MGMT",
+      "subnet": "10.10.10.0/24",
+      "gateway": "10.10.10.1",
+      "purpose": "Network management plane (switch SVI, jump host, security stack management)"
+    },
+    "20": {
+      "id": 20,
+      "name": "USERS",
+      "subnet": "10.20.0.0/24",
+      "gateway": "10.20.0.1",
+      "purpose": "Employee workstations and laptops (802.1X)"
+    },
+    "30": {
+      "id": 30,
+      "name": "SERVERS",
+      "subnet": "10.30.0.0/24",
+      "gateway": "10.30.0.1",
+      "purpose": "Lab servers (directory, files, RADIUS, web, git, updates)"
+    },
+    "40": {
+      "id": 40,
+      "name": "GUEST",
+      "subnet": "10.40.0.0/24",
+      "gateway": "10.40.0.1",
+      "purpose": "Guest / unauthenticated devices (internet only)"
+    },
+    "50": {
+      "id": 50,
+      "name": "QUARANTINE",
+      "subnet": "10.50.0.0/24",
+      "gateway": "10.50.0.1",
+      "purpose": "Isolated containment VLAN (remediation portal only)"
+    },
+    "99": {
+      "id": 99,
+      "name": "MONITORING",
+      "subnet": "10.99.0.0/24",
+      "gateway": "10.99.0.1",
+      "purpose": "Security telemetry collectors and controller"
+    },
+    "999": {
+      "id": 999,
+      "name": "BLACKHOLE",
+      "subnet": null,
+      "gateway": null,
+      "purpose": "Parking VLAN for unused ports and trunk native VLAN"
+    }
+  },
+  "interface_intent": {
+    "description": "VENDOR DROP (guest fallback)",
+    "class": "conference",
+    "profile": "user_port",
+    "protected": false
+  },
+  "span_session": {
+    "id": 1,
+    "source_vlans": [
+      20,
+      30,
+      40
+    ],
+    "direction": "both",
+    "destination": "Gi1/0/47"
+  },
+  "sensor": "SEC-TP01 eth1 (SPAN destination Gi1/0/47), Zeek + Suricata",
+  "simulation_notice": "Synthetic telemetry generated by the SentinelSwitch digital twin."
+}

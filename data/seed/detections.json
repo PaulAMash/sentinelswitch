@@ -1,0 +1,1046 @@
+[
+  {
+    "id": "DET-20260317T00471248-NTP-",
+    "rule": "ntp-policy-violation",
+    "rule_name": "NTP Policy Violation",
+    "class": "policy",
+    "mitre": [],
+    "actor_key": "actor_ip",
+    "actor_value": "10.20.0.25",
+    "actor": {
+      "key": "actor_ip",
+      "value": "10.20.0.25",
+      "device": "FIN-WS-015",
+      "ip": "10.20.0.25",
+      "mac": "F8:BC:12:3A:15:25",
+      "interface": "Gi1/0/15",
+      "vlan": 20,
+      "user": "tbrooks"
+    },
+    "ts": "2026-03-17T00:47:12.480Z",
+    "trigger_ts": "2026-03-17T00:47:12.430Z",
+    "severity": "low",
+    "confidence": 0.4,
+    "base_confidence": 0.4,
+    "features": [],
+    "summary": "NTP Policy Violation: SENTINELSWITCH POLICY NTP to non-approved server",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T00:47:12.430Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH POLICY NTP to non-approved server"
+      }
+    ],
+    "scenario": null,
+    "instance": null,
+    "disposition": "monitor",
+    "incident_id": null,
+    "review": null
+  },
+  {
+    "id": "DET-20260317T08034125-CERT",
+    "rule": "certificate-failure",
+    "rule_name": "Certificate Authentication Failure",
+    "class": "identity",
+    "mitre": [
+      "T1078"
+    ],
+    "actor_key": "mac",
+    "actor_value": "B4:B5:2F:1C:22:32",
+    "actor": {
+      "key": "mac",
+      "value": "B4:B5:2F:1C:22:32",
+      "device": "MKT-WS-022",
+      "ip": "10.20.0.32",
+      "mac": "B4:B5:2F:1C:22:32",
+      "interface": "Gi1/0/22",
+      "vlan": 20,
+      "user": "hlindqvist"
+    },
+    "ts": "2026-03-17T08:03:41.257Z",
+    "trigger_ts": "2026-03-17T08:03:41.207Z",
+    "severity": "low",
+    "confidence": 0.35,
+    "base_confidence": 0.35,
+    "features": [
+      {
+        "id": "unknown_mac",
+        "label": "MAC is not in the asset inventory",
+        "weight": 0.3,
+        "matched": false,
+        "evidence": "B4:B5:2F:1C:22:32 is MKT-WS-022"
+      }
+    ],
+    "summary": "Certificate Authentication Failure: Access-Reject EAP-TLS hlindqvist on Gi1/0/22: TLS Alert read:fatal:certificate expired (client certificate notAfter=2026-03-16T23:59:59Z)",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T08:03:41.207Z",
+        "source": "radius",
+        "summary": "Access-Reject EAP-TLS hlindqvist on Gi1/0/22: TLS Alert read:fatal:certificate expired (client certificate notAfter=2026-03-16T23:59:59Z)"
+      }
+    ],
+    "scenario": null,
+    "instance": null,
+    "disposition": "monitor",
+    "incident_id": null,
+    "review": null
+  },
+  {
+    "id": "DET-20260317T08140356-AUTH",
+    "rule": "auth-failure-burst",
+    "rule_name": "Repeated Authentication Failures",
+    "class": "identity",
+    "mitre": [
+      "T1110"
+    ],
+    "actor_key": "mac",
+    "actor_value": "F8:BC:12:3A:15:25",
+    "actor": {
+      "key": "mac",
+      "value": "F8:BC:12:3A:15:25",
+      "device": "FIN-WS-015",
+      "ip": "10.20.0.25",
+      "mac": "F8:BC:12:3A:15:25",
+      "interface": "Gi1/0/15",
+      "vlan": 20,
+      "user": "tbrooks"
+    },
+    "ts": "2026-03-17T08:14:03.562Z",
+    "trigger_ts": "2026-03-17T08:12:03.512Z",
+    "severity": "low",
+    "confidence": 0.7,
+    "base_confidence": 0.3,
+    "features": [
+      {
+        "id": "three_rejects",
+        "label": "At least 3 rejects within 5 minutes",
+        "weight": 0.25,
+        "matched": true,
+        "evidence": "3 event(s) in 300s window (min 3)"
+      },
+      {
+        "id": "no_subsequent_accept",
+        "label": "No successful authentication followed",
+        "weight": 0.15,
+        "matched": true,
+        "evidence": "1 matching event(s): Access-Accept PEAP-MSCHAPv2 tbrooks on Gi1/0/15"
+      }
+    ],
+    "summary": "Repeated Authentication Failures: Access-Reject PEAP-MSCHAPv2 tbrooks on Gi1/0/15: MSCHAPv2 authentication failed: bad password (E=691)",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T00:47:12.430Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH POLICY NTP to non-approved server"
+      },
+      {
+        "ts": "2026-03-17T02:28:18.944Z",
+        "source": "radius",
+        "summary": "Access-Accept PEAP-MSCHAPv2 tbrooks on Gi1/0/15"
+      },
+      {
+        "ts": "2026-03-17T02:28:18.975Z",
+        "source": "syslog",
+        "summary": "%DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003CBDAF"
+      },
+      {
+        "ts": "2026-03-17T02:28:19.002Z",
+        "source": "syslog",
+        "summary": "%AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003CBDAF"
+      },
+      {
+        "ts": "2026-03-17T06:28:18.944Z",
+        "source": "radius",
+        "summary": "Access-Accept PEAP-MSCHAPv2 tbrooks on Gi1/0/15"
+      },
+      {
+        "ts": "2026-03-17T06:28:18.975Z",
+        "source": "syslog",
+        "summary": "%DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003CDC9E"
+      },
+      {
+        "ts": "2026-03-17T06:28:19.002Z",
+        "source": "syslog",
+        "summary": "%AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003CDC9E"
+      },
+      {
+        "ts": "2026-03-17T08:12:03.512Z",
+        "source": "radius",
+        "summary": "Access-Reject PEAP-MSCHAPv2 tbrooks on Gi1/0/15: MSCHAPv2 authentication failed: bad password (E=691)"
+      },
+      {
+        "ts": "2026-03-17T08:12:03.538Z",
+        "source": "syslog",
+        "summary": "%DOT1X-5-FAIL: Authentication failed for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003CFB8D"
+      },
+      {
+        "ts": "2026-03-17T08:12:03.556Z",
+        "source": "syslog",
+        "summary": "%AUTHMGR-5-FAIL: Authorization failed or unapplied for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003CFB8D"
+      },
+      {
+        "ts": "2026-03-17T08:12:41.088Z",
+        "source": "radius",
+        "summary": "Access-Reject PEAP-MSCHAPv2 tbrooks on Gi1/0/15: MSCHAPv2 authentication failed: bad password (E=691)"
+      },
+      {
+        "ts": "2026-03-17T08:12:41.114Z",
+        "source": "syslog",
+        "summary": "%DOT1X-5-FAIL: Authentication failed for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D1A7C"
+      },
+      {
+        "ts": "2026-03-17T08:12:41.132Z",
+        "source": "syslog",
+        "summary": "%AUTHMGR-5-FAIL: Authorization failed or unapplied for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D1A7C"
+      },
+      {
+        "ts": "2026-03-17T08:13:20.451Z",
+        "source": "radius",
+        "summary": "Access-Reject PEAP-MSCHAPv2 tbrooks on Gi1/0/15: MSCHAPv2 authentication failed: bad password (E=691)"
+      },
+      {
+        "ts": "2026-03-17T08:13:20.477Z",
+        "source": "syslog",
+        "summary": "%DOT1X-5-FAIL: Authentication failed for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D396B"
+      },
+      {
+        "ts": "2026-03-17T08:13:20.495Z",
+        "source": "syslog",
+        "summary": "%AUTHMGR-5-FAIL: Authorization failed or unapplied for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D396B"
+      },
+      {
+        "ts": "2026-03-17T08:14:02.377Z",
+        "source": "radius",
+        "summary": "Access-Accept PEAP-MSCHAPv2 tbrooks on Gi1/0/15"
+      },
+      {
+        "ts": "2026-03-17T08:14:02.408Z",
+        "source": "syslog",
+        "summary": "%DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D585A"
+      },
+      {
+        "ts": "2026-03-17T08:14:02.435Z",
+        "source": "syslog",
+        "summary": "%AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D585A"
+      }
+    ],
+    "scenario": null,
+    "instance": null,
+    "disposition": "monitor",
+    "incident_id": null,
+    "review": null
+  },
+  {
+    "id": "DET-20260317T09124444-BPDU",
+    "rule": "bpdu-violation",
+    "rule_name": "STP/BPDU Violation",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200"
+    ],
+    "actor_key": "interface",
+    "actor_value": "Gi1/0/30",
+    "actor": {
+      "key": "interface",
+      "value": "Gi1/0/30",
+      "device": "CONF-A-TV01",
+      "ip": "10.40.0.102",
+      "mac": "8C:71:F8:2D:30:02",
+      "interface": "Gi1/0/30",
+      "vlan": 40,
+      "user": null
+    },
+    "ts": "2026-03-17T09:12:44.447Z",
+    "trigger_ts": "2026-03-17T09:12:44.271Z",
+    "severity": "high",
+    "confidence": 0.96,
+    "base_confidence": 0.9,
+    "features": [
+      {
+        "id": "errdisable_confirmed",
+        "label": "Port manager confirmed err-disable",
+        "weight": 0.06,
+        "matched": true,
+        "evidence": "1 matching event(s): %PM-4-ERR_DISABLE: bpduguard error detected on Gi1/0/30, putting Gi1/0/30 in err-disable state"
+      }
+    ],
+    "summary": "STP/BPDU Violation: %SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port.",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T09:12:44.271Z",
+        "source": "syslog",
+        "summary": "%SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port."
+      },
+      {
+        "ts": "2026-03-17T09:12:44.276Z",
+        "source": "syslog",
+        "summary": "%PM-4-ERR_DISABLE: bpduguard error detected on Gi1/0/30, putting Gi1/0/30 in err-disable state"
+      }
+    ],
+    "scenario": "bpdu-violation",
+    "instance": "day",
+    "disposition": "automatic_containment",
+    "incident_id": "INC-2026-0039",
+    "review": null
+  },
+  {
+    "id": "DET-20260317T09354125-UNAU",
+    "rule": "unauthorized-endpoint",
+    "rule_name": "Unauthorized Endpoint",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200",
+      "T1078"
+    ],
+    "actor_key": "mac",
+    "actor_value": "8C:71:F8:2D:30:02",
+    "actor": {
+      "key": "mac",
+      "value": "8C:71:F8:2D:30:02",
+      "device": "CONF-A-TV01",
+      "ip": "10.40.0.102",
+      "mac": "8C:71:F8:2D:30:02",
+      "interface": "Gi1/0/30",
+      "vlan": 40,
+      "user": null
+    },
+    "ts": "2026-03-17T09:35:41.254Z",
+    "trigger_ts": "2026-03-17T09:35:41.204Z",
+    "severity": "low",
+    "confidence": 0.7,
+    "base_confidence": 0.7,
+    "features": [
+      {
+        "id": "corporate_port",
+        "label": "Port is designated for corporate workstations",
+        "weight": 0.2,
+        "matched": false,
+        "evidence": "port_class=conference"
+      },
+      {
+        "id": "unknown_mac",
+        "label": "MAC is not in the asset inventory",
+        "weight": 0.06,
+        "matched": false,
+        "evidence": "8C:71:F8:2D:30:02 is CONF-A-TV01"
+      },
+      {
+        "id": "psecure_violation",
+        "label": "Port-security violation on the same port (handled by the MAC change rule)",
+        "weight": -0.25,
+        "matched": false,
+        "evidence": null
+      }
+    ],
+    "summary": "Unauthorized Endpoint: Access-Reject MAB 8c71f82d3002 on Gi1/0/30: MAC not found in endpoint database",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T09:35:41.204Z",
+        "source": "radius",
+        "summary": "Access-Reject MAB 8c71f82d3002 on Gi1/0/30: MAC not found in endpoint database"
+      }
+    ],
+    "scenario": null,
+    "instance": null,
+    "disposition": "monitor",
+    "incident_id": null,
+    "review": null
+  },
+  {
+    "id": "DET-20260317T09410557-UNAU",
+    "rule": "unauthorized-endpoint",
+    "rule_name": "Unauthorized Endpoint",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200",
+      "T1078"
+    ],
+    "actor_key": "mac",
+    "actor_value": "DC:A6:32:19:77:C1",
+    "actor": {
+      "key": "mac",
+      "value": "DC:A6:32:19:77:C1",
+      "mac": "DC:A6:32:19:77:C1",
+      "interface": "Gi1/0/17"
+    },
+    "ts": "2026-03-17T09:41:05.573Z",
+    "trigger_ts": "2026-03-17T09:41:05.418Z",
+    "severity": "high",
+    "confidence": 0.96,
+    "base_confidence": 0.7,
+    "features": [
+      {
+        "id": "corporate_port",
+        "label": "Port is designated for corporate workstations",
+        "weight": 0.2,
+        "matched": true,
+        "evidence": "port_class=workstation"
+      },
+      {
+        "id": "unknown_mac",
+        "label": "MAC is not in the asset inventory",
+        "weight": 0.06,
+        "matched": true,
+        "evidence": "DC:A6:32:19:77:C1 not in inventory"
+      },
+      {
+        "id": "psecure_violation",
+        "label": "Port-security violation on the same port (handled by the MAC change rule)",
+        "weight": -0.25,
+        "matched": false,
+        "evidence": null
+      }
+    ],
+    "summary": "Unauthorized Endpoint: Access-Reject MAB dca6321977c1 on Gi1/0/17: MAC not found in endpoint database",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T09:41:05.418Z",
+        "source": "radius",
+        "summary": "Access-Reject MAB dca6321977c1 on Gi1/0/17: MAC not found in endpoint database"
+      }
+    ],
+    "scenario": "unauthorized-endpoint",
+    "instance": "day",
+    "disposition": "automatic_containment",
+    "incident_id": "INC-2026-0040",
+    "review": null
+  },
+  {
+    "id": "DET-20260317T09580048-UNAU",
+    "rule": "unauthorized-endpoint",
+    "rule_name": "Unauthorized Endpoint",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200",
+      "T1078"
+    ],
+    "actor_key": "mac",
+    "actor_value": "F0:18:98:C4:29:01",
+    "actor": {
+      "key": "mac",
+      "value": "F0:18:98:C4:29:01",
+      "device": "GUEST-VISITOR-01",
+      "ip": "10.40.0.101",
+      "mac": "F0:18:98:C4:29:01",
+      "interface": "Gi1/0/29",
+      "vlan": 40,
+      "user": null
+    },
+    "ts": "2026-03-17T09:58:00.481Z",
+    "trigger_ts": "2026-03-17T09:58:00.431Z",
+    "severity": "low",
+    "confidence": 0.7,
+    "base_confidence": 0.7,
+    "features": [
+      {
+        "id": "corporate_port",
+        "label": "Port is designated for corporate workstations",
+        "weight": 0.2,
+        "matched": false,
+        "evidence": "port_class=conference"
+      },
+      {
+        "id": "unknown_mac",
+        "label": "MAC is not in the asset inventory",
+        "weight": 0.06,
+        "matched": false,
+        "evidence": "F0:18:98:C4:29:01 is GUEST-VISITOR-01"
+      },
+      {
+        "id": "psecure_violation",
+        "label": "Port-security violation on the same port (handled by the MAC change rule)",
+        "weight": -0.25,
+        "matched": false,
+        "evidence": null
+      }
+    ],
+    "summary": "Unauthorized Endpoint: Access-Reject MAB f01898c42901 on Gi1/0/29: MAC not found in endpoint database",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T09:58:00.431Z",
+        "source": "radius",
+        "summary": "Access-Reject MAB f01898c42901 on Gi1/0/29: MAC not found in endpoint database"
+      }
+    ],
+    "scenario": null,
+    "instance": null,
+    "disposition": "monitor",
+    "incident_id": null,
+    "review": null
+  },
+  {
+    "id": "DET-20260317T10272329-ARP-",
+    "rule": "arp-spoofing",
+    "rule_name": "ARP Spoofing Attempt",
+    "class": "compromised_host",
+    "mitre": [
+      "T1557.002"
+    ],
+    "actor_key": "mac",
+    "actor_value": "F0:18:98:C4:29:01",
+    "actor": {
+      "key": "mac",
+      "value": "F0:18:98:C4:29:01",
+      "device": "GUEST-VISITOR-01",
+      "ip": "10.40.0.101",
+      "mac": "F0:18:98:C4:29:01",
+      "interface": "Gi1/0/29",
+      "vlan": 40,
+      "user": null
+    },
+    "ts": "2026-03-17T10:27:23.291Z",
+    "trigger_ts": "2026-03-17T10:27:18.204Z",
+    "severity": "medium",
+    "confidence": 0.78,
+    "base_confidence": 0.65,
+    "features": [
+      {
+        "id": "repeated_denies",
+        "label": "At least 3 DAI denials in the window",
+        "weight": 0.1,
+        "matched": true,
+        "evidence": "3 event(s) in 10s window (min 3)"
+      },
+      {
+        "id": "many_denies",
+        "label": "At least 20 DAI denials in the window",
+        "weight": 0.1,
+        "matched": false,
+        "evidence": "3 event(s) in 10s window (min 20)"
+      },
+      {
+        "id": "claims_gateway",
+        "label": "Spoofed sender IP is the VLAN gateway",
+        "weight": 0.12,
+        "matched": false,
+        "evidence": "claims_gateway=False"
+      },
+      {
+        "id": "guest_source",
+        "label": "Source is on the GUEST VLAN",
+        "weight": 0.03,
+        "matched": true,
+        "evidence": "VLAN 40"
+      }
+    ],
+    "summary": "ARP Spoofing Attempt: %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi1/0/29, vlan 40.([f018.98c4.2901/192.168.1.23/0000.0000.0000/0.0.0.0/10:27:18 UTC Tue Mar 17 2026])",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T10:27:18.204Z",
+        "source": "syslog",
+        "summary": "%SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi1/0/29, vlan 40.([f018.98c4.2901/192.168.1.23/0000.0000.0000/0.0.0.0/10:27:18 UTC Tue Mar 17 2026])"
+      },
+      {
+        "ts": "2026-03-17T10:27:18.718Z",
+        "source": "syslog",
+        "summary": "%SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Res) on Gi1/0/29, vlan 40.([f018.98c4.2901/192.168.1.23/0000.0000.0000/10.40.0.101/10:27:18 UTC Tue Mar 17 2026])"
+      },
+      {
+        "ts": "2026-03-17T10:27:19.232Z",
+        "source": "syslog",
+        "summary": "%SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Res) on Gi1/0/29, vlan 40.([f018.98c4.2901/192.168.1.23/0000.0000.0000/0.0.0.0/10:27:19 UTC Tue Mar 17 2026])"
+      }
+    ],
+    "scenario": "arp-spoofing",
+    "instance": "day",
+    "disposition": "manual_review",
+    "incident_id": null,
+    "review": {
+      "detection_id": "DET-20260317T10272329-ARP-",
+      "status": "closed",
+      "opened_at": "2026-03-17T10:27:23.989Z",
+      "closed_at": "2026-03-17T10:41:12.000Z",
+      "closed_by": "tlee",
+      "note": "Guest laptop VPN client emitted stale gratuitous ARP for its previous network. DAI dropped all three frames; no further activity. Closed as benign."
+    }
+  },
+  {
+    "id": "DET-20260317T11050053-UNAU",
+    "rule": "unauthorized-endpoint",
+    "rule_name": "Unauthorized Endpoint",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200",
+      "T1078"
+    ],
+    "actor_key": "mac",
+    "actor_value": "3C:D9:2B:71:31:04",
+    "actor": {
+      "key": "mac",
+      "value": "3C:D9:2B:71:31:04",
+      "device": "VENDOR-LT-01",
+      "ip": "10.40.0.104",
+      "mac": "3C:D9:2B:71:31:04",
+      "interface": "Gi1/0/31",
+      "vlan": 40,
+      "user": null
+    },
+    "ts": "2026-03-17T11:05:00.532Z",
+    "trigger_ts": "2026-03-17T11:05:00.482Z",
+    "severity": "low",
+    "confidence": 0.7,
+    "base_confidence": 0.7,
+    "features": [
+      {
+        "id": "corporate_port",
+        "label": "Port is designated for corporate workstations",
+        "weight": 0.2,
+        "matched": false,
+        "evidence": "port_class=conference"
+      },
+      {
+        "id": "unknown_mac",
+        "label": "MAC is not in the asset inventory",
+        "weight": 0.06,
+        "matched": false,
+        "evidence": "3C:D9:2B:71:31:04 is VENDOR-LT-01"
+      },
+      {
+        "id": "psecure_violation",
+        "label": "Port-security violation on the same port (handled by the MAC change rule)",
+        "weight": -0.25,
+        "matched": false,
+        "evidence": null
+      }
+    ],
+    "summary": "Unauthorized Endpoint: Access-Reject MAB 3cd92b713104 on Gi1/0/31: MAC not found in endpoint database",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T11:05:00.482Z",
+        "source": "radius",
+        "summary": "Access-Reject MAB 3cd92b713104 on Gi1/0/31: MAC not found in endpoint database"
+      }
+    ],
+    "scenario": null,
+    "instance": null,
+    "disposition": "monitor",
+    "incident_id": null,
+    "review": null
+  },
+  {
+    "id": "DET-20260317T11234719-ROGU",
+    "rule": "rogue-dhcp",
+    "rule_name": "Rogue DHCP",
+    "class": "rogue_device",
+    "mitre": [
+      "T1557"
+    ],
+    "actor_key": "mac",
+    "actor_value": "3C:D9:2B:71:31:04",
+    "actor": {
+      "key": "mac",
+      "value": "3C:D9:2B:71:31:04",
+      "device": "VENDOR-LT-01",
+      "ip": "10.40.0.104",
+      "mac": "3C:D9:2B:71:31:04",
+      "interface": "Gi1/0/31",
+      "vlan": 40,
+      "user": null
+    },
+    "ts": "2026-03-17T11:23:47.191Z",
+    "trigger_ts": "2026-03-17T11:23:44.106Z",
+    "severity": "high",
+    "confidence": 0.95,
+    "base_confidence": 0.8,
+    "features": [
+      {
+        "id": "repeated_drops",
+        "label": "At least 3 dropped server messages",
+        "weight": 0.08,
+        "matched": true,
+        "evidence": "5 event(s) in 10s window (min 3)"
+      },
+      {
+        "id": "suricata_offer",
+        "label": "Suricata saw the offer on the SPAN feed (sid 1000040)",
+        "weight": 0.07,
+        "matched": true,
+        "evidence": "1 matching event(s): SENTINELSWITCH ROGUE DHCP server message from non-authorized host"
+      },
+      {
+        "id": "unknown_mac",
+        "label": "Server MAC is not in the asset inventory",
+        "weight": 0.05,
+        "matched": false,
+        "evidence": "3C:D9:2B:71:31:04 is VENDOR-LT-01"
+      }
+    ],
+    "summary": "Rogue DHCP: %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T11:23:44.106Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104"
+      },
+      {
+        "ts": "2026-03-17T11:23:44.131Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH ROGUE DHCP server message from non-authorized host"
+      },
+      {
+        "ts": "2026-03-17T11:23:44.612Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPNAK, MAC sa: 3cd9.2b71.3104"
+      },
+      {
+        "ts": "2026-03-17T11:23:45.130Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104"
+      },
+      {
+        "ts": "2026-03-17T11:23:45.655Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPNAK, MAC sa: 3cd9.2b71.3104"
+      },
+      {
+        "ts": "2026-03-17T11:23:46.170Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104"
+      }
+    ],
+    "scenario": "rogue-dhcp",
+    "instance": "day",
+    "disposition": "automatic_containment",
+    "incident_id": "INC-2026-0041",
+    "review": null
+  },
+  {
+    "id": "DET-20260317T12365275-UNAU",
+    "rule": "unauthorized-endpoint",
+    "rule_name": "Unauthorized Endpoint",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200",
+      "T1078"
+    ],
+    "actor_key": "mac",
+    "actor_value": "8C:71:F8:44:AA:16",
+    "actor": {
+      "key": "mac",
+      "value": "8C:71:F8:44:AA:16",
+      "mac": "8C:71:F8:44:AA:16",
+      "interface": "Gi1/0/16"
+    },
+    "ts": "2026-03-17T12:36:52.752Z",
+    "trigger_ts": "2026-03-17T12:36:52.702Z",
+    "severity": "low",
+    "confidence": 0.71,
+    "base_confidence": 0.7,
+    "features": [
+      {
+        "id": "corporate_port",
+        "label": "Port is designated for corporate workstations",
+        "weight": 0.2,
+        "matched": true,
+        "evidence": "port_class=workstation"
+      },
+      {
+        "id": "unknown_mac",
+        "label": "MAC is not in the asset inventory",
+        "weight": 0.06,
+        "matched": true,
+        "evidence": "8C:71:F8:44:AA:16 not in inventory"
+      },
+      {
+        "id": "psecure_violation",
+        "label": "Port-security violation on the same port (handled by the MAC change rule)",
+        "weight": -0.25,
+        "matched": true,
+        "evidence": "1 matching event(s): %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 8c71.f844.aa16 on port GigabitEth"
+      }
+    ],
+    "summary": "Unauthorized Endpoint: Access-Reject MAB 8c71f844aa16 on Gi1/0/16: MAC not found in endpoint database",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T12:36:52.318Z",
+        "source": "syslog",
+        "summary": "%PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 8c71.f844.aa16 on port GigabitEthernet1/0/16."
+      },
+      {
+        "ts": "2026-03-17T12:36:52.702Z",
+        "source": "radius",
+        "summary": "Access-Reject MAB 8c71f844aa16 on Gi1/0/16: MAC not found in endpoint database"
+      }
+    ],
+    "scenario": "mac-address-change",
+    "instance": "day",
+    "disposition": "monitor",
+    "incident_id": null,
+    "review": null
+  },
+  {
+    "id": "DET-20260317T12365740-MAC-",
+    "rule": "mac-address-change",
+    "rule_name": "MAC Address Change",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200",
+      "T1036.005"
+    ],
+    "actor_key": "interface",
+    "actor_value": "Gi1/0/16",
+    "actor": {
+      "key": "interface",
+      "value": "Gi1/0/16",
+      "device": "HR-WS-016",
+      "ip": "10.20.0.26",
+      "mac": "3C:D9:2B:8E:16:26",
+      "interface": "Gi1/0/16",
+      "vlan": 20,
+      "user": "skim"
+    },
+    "ts": "2026-03-17T12:36:57.402Z",
+    "trigger_ts": "2026-03-17T12:36:52.318Z",
+    "severity": "medium",
+    "confidence": 0.87,
+    "base_confidence": 0.65,
+    "features": [
+      {
+        "id": "unknown_mac",
+        "label": "New MAC is not in the asset inventory",
+        "weight": 0.12,
+        "matched": true,
+        "evidence": "8C:71:F8:44:AA:16 not in inventory"
+      },
+      {
+        "id": "mac_belongs_elsewhere",
+        "label": "New MAC belongs to an inventory asset on another port",
+        "weight": 0.2,
+        "matched": false,
+        "evidence": null
+      },
+      {
+        "id": "aaa_reject",
+        "label": "AAA rejected the new MAC",
+        "weight": 0.1,
+        "matched": true,
+        "evidence": "1 matching event(s): Access-Reject MAB 8c71f844aa16 on Gi1/0/16: MAC not found in endpoint database"
+      },
+      {
+        "id": "after_hours",
+        "label": "Occurred outside business hours",
+        "weight": 0.05,
+        "matched": false,
+        "evidence": "12:36 UTC"
+      }
+    ],
+    "summary": "MAC Address Change: %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 8c71.f844.aa16 on port GigabitEthernet1/0/16.",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T12:36:10.318Z",
+        "source": "syslog",
+        "summary": "%LINK-3-UPDOWN: Interface GigabitEthernet1/0/16, changed state to down"
+      },
+      {
+        "ts": "2026-03-17T12:36:10.326Z",
+        "source": "syslog",
+        "summary": "%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/16, changed state to down"
+      },
+      {
+        "ts": "2026-03-17T12:36:50.018Z",
+        "source": "syslog",
+        "summary": "%LINK-3-UPDOWN: Interface GigabitEthernet1/0/16, changed state to up"
+      },
+      {
+        "ts": "2026-03-17T12:36:51.022Z",
+        "source": "syslog",
+        "summary": "%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/16, changed state to up"
+      },
+      {
+        "ts": "2026-03-17T12:36:52.318Z",
+        "source": "syslog",
+        "summary": "%PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 8c71.f844.aa16 on port GigabitEthernet1/0/16."
+      },
+      {
+        "ts": "2026-03-17T12:36:52.702Z",
+        "source": "radius",
+        "summary": "Access-Reject MAB 8c71f844aa16 on Gi1/0/16: MAC not found in endpoint database"
+      },
+      {
+        "ts": "2026-03-17T12:36:52.728Z",
+        "source": "syslog",
+        "summary": "%MAB-5-FAIL: Authentication failed for client (8c71.f844.aa16) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010004544C1"
+      }
+    ],
+    "scenario": "mac-address-change",
+    "instance": "day",
+    "disposition": "manual_review",
+    "incident_id": null,
+    "review": {
+      "detection_id": "DET-20260317T12365740-MAC-",
+      "status": "closed",
+      "opened_at": "2026-03-17T12:36:58.103Z",
+      "closed_at": "2026-03-17T13:12:05.000Z",
+      "closed_by": "tlee",
+      "note": "HR user connected a personal laptop through the docking station on HR-WS-016's drop. Frames were restricted by port security; user counseled, personal device removed. Closed."
+    }
+  },
+  {
+    "id": "DET-20260317T13051421-PORT",
+    "rule": "port-scan",
+    "rule_name": "Port Scan",
+    "class": "compromised_host",
+    "mitre": [
+      "T1046"
+    ],
+    "actor_key": "actor_ip",
+    "actor_value": "10.20.0.48",
+    "actor": {
+      "key": "actor_ip",
+      "value": "10.20.0.48",
+      "device": "IT-LT-037",
+      "ip": "10.20.0.48",
+      "mac": "A4:83:E7:2B:37:48",
+      "interface": "Gi1/0/37",
+      "vlan": 20,
+      "user": "rahmed"
+    },
+    "ts": "2026-03-17T13:05:14.215Z",
+    "trigger_ts": "2026-03-17T13:05:12.955Z",
+    "severity": "medium",
+    "confidence": 0.61,
+    "base_confidence": 0.7,
+    "features": [
+      {
+        "id": "zeek_port_scan",
+        "label": "Zeek Scan::Port_Scan for the same source",
+        "weight": 0.12,
+        "matched": true,
+        "evidence": "1 matching event(s): Scan::Port_Scan: 10.20.0.48 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s"
+      },
+      {
+        "id": "many_ports",
+        "label": "At least 100 distinct destination ports",
+        "weight": 0.08,
+        "matched": true,
+        "evidence": "ports_scanned=100"
+      },
+      {
+        "id": "server_targets",
+        "label": "Targets include the SERVERS VLAN",
+        "weight": 0.06,
+        "matched": true,
+        "evidence": "targets_servers=True"
+      },
+      {
+        "id": "authorized_scanner",
+        "label": "Source is an authorized scanner",
+        "weight": -0.35,
+        "matched": true,
+        "evidence": "IT-LT-037 tagged authorized_scanner"
+      }
+    ],
+    "summary": "Port Scan: SENTINELSWITCH RECON TCP port sweep from internal host",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T13:05:11.009Z",
+        "source": "zeek",
+        "summary": "Scan::Port_Scan: 10.20.0.48 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s"
+      },
+      {
+        "ts": "2026-03-17T13:05:12.955Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH RECON TCP port sweep from internal host"
+      }
+    ],
+    "scenario": "port-scan",
+    "instance": "day",
+    "disposition": "monitor",
+    "incident_id": null,
+    "review": {
+      "detection_id": "DET-20260317T13051421-PORT",
+      "status": "closed",
+      "opened_at": "2026-03-17T13:05:14.928Z",
+      "closed_at": "2026-03-17T13:21:40.000Z",
+      "closed_by": "tlee",
+      "note": "Authorized vulnerability scan by IT-LT-037 under change CHG-2026-118. Logged only."
+    }
+  },
+  {
+    "id": "DET-20260317T14192804-DNS-",
+    "rule": "dns-anomaly",
+    "rule_name": "DNS Anomaly",
+    "class": "compromised_host",
+    "mitre": [
+      "T1071.004",
+      "T1568.002"
+    ],
+    "actor_key": "actor_ip",
+    "actor_value": "10.20.0.24",
+    "actor": {
+      "key": "actor_ip",
+      "value": "10.20.0.24",
+      "device": "FIN-WS-014",
+      "ip": "10.20.0.24",
+      "mac": "F8:BC:12:3A:14:24",
+      "interface": "Gi1/0/14",
+      "vlan": 20,
+      "user": "anovak"
+    },
+    "ts": "2026-03-17T14:19:28.044Z",
+    "trigger_ts": "2026-03-17T14:18:42.985Z",
+    "severity": "medium",
+    "confidence": 0.8,
+    "base_confidence": 0.6,
+    "features": [
+      {
+        "id": "nxdomain_ratio",
+        "label": "NXDOMAIN ratio at least 0.5",
+        "weight": 0.12,
+        "matched": true,
+        "evidence": "nxdomain_ratio=0.61"
+      },
+      {
+        "id": "dga_like",
+        "label": "High-entropy (DGA-like) query labels",
+        "weight": 0.15,
+        "matched": false,
+        "evidence": "dga_like=False"
+      },
+      {
+        "id": "high_rate",
+        "label": "At least 100 queries per minute",
+        "weight": 0.08,
+        "matched": true,
+        "evidence": "queries_per_minute=141"
+      },
+      {
+        "id": "many_domains",
+        "label": "At least 200 unique domains",
+        "weight": 0.05,
+        "matched": false,
+        "evidence": "unique_domains=38"
+      }
+    ],
+    "summary": "DNS Anomaly: SENTINELSWITCH DNS NXDOMAIN response burst",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T14:18:42.985Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH DNS NXDOMAIN response burst"
+      },
+      {
+        "ts": "2026-03-17T14:18:53.207Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH DNS query rate threshold exceeded"
+      },
+      {
+        "ts": "2026-03-17T14:19:02.610Z",
+        "source": "zeek",
+        "summary": "SentinelDNS::NXDomain_Burst: 10.20.0.24 DNS NXDOMAIN burst"
+      }
+    ],
+    "scenario": "dns-anomaly",
+    "instance": "day",
+    "disposition": "manual_review",
+    "incident_id": null,
+    "review": {
+      "detection_id": "DET-20260317T14192804-DNS-",
+      "status": "closed",
+      "opened_at": "2026-03-17T14:19:28.736Z",
+      "closed_at": "2026-03-17T14:52:40.000Z",
+      "closed_by": "tlee",
+      "note": "Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign."
+    }
+  }
+]

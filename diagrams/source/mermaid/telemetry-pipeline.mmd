@@ -1,0 +1,48 @@
+%% Generated from diagrams/source/telemetry-pipeline.json by diagrams/source/render.py
+flowchart LR
+    subgraph canon["Canonical model · configuration as code"]
+        fixtures["Fixtures<br/>inventory · users · VLANs<br/>port intent · external services"]
+        scenarios["Scenario definitions<br/>8 adversary scenarios<br/>day + validation instances · timing"]
+        rules["Detections<br/>Suricata local.rules · Zeek scripts<br/>correlation rules · policy YAML"]
+        cisco_t["Cisco templates<br/>port profiles → running-config<br/>desired state for drift"]
+    end
+    subgraph gen["Deterministic generators · simulator/generators"]
+        day["Day simulation<br/>link events · authentications<br/>scenarios replayed through the<br/>real pipeline against the twin"]
+        traffic["Background traffic model<br/>DNS · TLS · SMB · Kerberos · NTP"]
+        emitters["Scenario emitters<br/>alerts derived from flow rates"]
+        twin_gen["Switch twin renderer<br/>show commands · running-config"]
+    end
+    subgraph data["Synthetic dataset · data/"]
+        zeek["Zeek logs<br/>conn · dns · ssl · http · notice · weird"]
+        eve["Suricata eve.json<br/>alert + flow events"]
+        radius_d["RADIUS auth log<br/>FreeRADIUS style + JSONL"]
+        syslog_d["IOS syslog<br/>SW01-syslog.log"]
+        cisco_d["Cisco transcripts<br/>pre / post quarantine"]
+        seed["seed JSON + evidence<br/>written by the day simulation"]
+    end
+    subgraph app["Application"]
+        normalize["Normalizer<br/>common event schema"]
+        engine["Detection · correlation · policy<br/>scenario runner · validation harness<br/>containment controller · adapter"]
+        sqlite["SQLite<br/>operational state + twin"]
+        api["FastAPI + SSE"]
+        ui["React SOC dashboard"]
+    end
+    fixtures --> day
+    scenarios --> emitters
+    rules -.-> day
+    cisco_t --> twin_gen
+    day --> zeek
+    traffic --> zeek
+    emitters --> eve
+    day --> radius_d
+    day --> syslog_d
+    twin_gen --> cisco_d
+    zeek --> normalize
+    eve --> normalize
+    radius_d --> normalize
+    syslog_d --> normalize
+    normalize --> engine
+    seed -->|make seed| sqlite
+    engine --> sqlite
+    sqlite --> api
+    api --> ui

@@ -1,0 +1,49 @@
+id: dns-anomaly
+name: DNS Anomaly
+short: Host generates an abnormal volume of failing DNS lookups
+class: compromised_host
+rule: dns-anomaly
+mitre: [T1071.004, T1568.002]
+description: >
+  A host suddenly issues hundreds of DNS queries per minute with a high NXDOMAIN ratio. Suricata's local
+  rate and NXDOMAIN signatures fire, Zeek raises an NXDomain_Burst notice, and SentinelSwitch scores the
+  burst by rate, NXDOMAIN ratio, label entropy (DGA-like names) and unique-domain count.
+actor:
+  device: OPS-WS-025
+  ip: 10.20.0.35
+  mac: "F8:BC:12:3A:25:35"
+  interface: Gi1/0/25
+  vlan: 20
+instances:
+  day:
+    start: "2026-03-17T14:18:02.510Z"
+    actor_override: {device: FIN-WS-014, ip: 10.20.0.24, mac: "F8:BC:12:3A:14:24", interface: Gi1/0/14, vlan: 20, user: anovak}
+    parameters:
+      # sid 1000030 fires on the 120th query in 60 s, sid 1000031 on the 60th NXDOMAIN in 60 s,
+      # Zeek SentinelDNS::NXDomain_Burst at the end of the one-minute SumStats epoch.
+      queries_per_minute: 141
+      nxdomain_ratio: 0.61
+      unique_domains: 38
+      dga_like: false
+      burst_minutes: 6
+      domain_pattern: "{n}.agent.telemetry.example.net"
+      sensor_latency: 0.012
+      detect_latency: 0.059
+    expected: {disposition: manual_review, action: none, severity: medium, confidence: 0.80}
+    resolution:
+      reviewed_at: "2026-03-17T14:52:40Z"
+      reviewed_by: tlee
+      note: "Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign."
+  validation:
+    start: "2026-03-17T14:18:02.510Z"
+    parameters:
+      queries_per_minute: 190
+      nxdomain_ratio: 0.93
+      unique_domains: 340
+      dga_like: true
+      burst_minutes: 3
+      domain_pattern: "{rand}.example.org"
+      sensor_latency: 0.012
+      detect_latency: 0.059
+    expected: {disposition: automatic_containment, action: quarantine_vlan, severity: high, confidence: 0.99}
+timing: {open: 0.077, dhcp: 0.144, mac: 0.236, identity: 0.086, policy: 0.149, apply: 0.418, verify: 0.129, evidence: 0.344}

@@ -1,0 +1,10 @@
+! SPAN destination for the sensor NIC (SEC-TP01 eth1); carries no production traffic
+interface {{ interface }}
+ description {{ description }}
+ switchport access vlan 99
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+monitor session 1 source vlan 20 , 30 , 40 both
+monitor session 1 destination interface {{ interface }}

@@ -1,0 +1,208 @@
+[
+  {
+    "ts": "2026-03-17T21:14:31.284Z",
+    "phase": "telemetry",
+    "actor": "telemetry",
+    "message": "unusual ICMP echo fan-out from 10.20.0.47: 507 addresses across 10.20.0.0/24, 10.30.0.0/24",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T21:14:33.507Z",
+    "phase": "alert",
+    "actor": "suricata",
+    "message": "Suricata sid 1000010 (medium): SENTINELSWITCH RECON ICMP echo sweep from internal host",
+    "details": {
+      "src": "10.20.0.47",
+      "dest": "10.20.0.201",
+      "dest_port": 0
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:35.116Z",
+    "phase": "telemetry",
+    "actor": "telemetry",
+    "message": "reverse DNS lookup burst from 10.20.0.47 for 10.30.0.0/24 (50 queries/s)",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T21:14:36.108Z",
+    "phase": "alert",
+    "actor": "suricata",
+    "message": "Suricata sid 1000014 (low): SENTINELSWITCH RECON reverse DNS lookup burst",
+    "details": {
+      "src": "10.20.0.47",
+      "dest": "10.30.0.10",
+      "dest_port": 53
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:36.874Z",
+    "phase": "telemetry",
+    "actor": "telemetry",
+    "message": "TCP connection fan-out from 10.20.0.47 to 26 responding hosts on ports 445, 139, 135, 3389, 22, 5985",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T21:14:37.042Z",
+    "phase": "alert",
+    "actor": "suricata",
+    "message": "Suricata sid 1000024 (low): SENTINELSWITCH LATERAL WinRM probe from workstation VLAN",
+    "details": {
+      "src": "10.20.0.47",
+      "dest": "10.20.0.1",
+      "dest_port": 5985
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:38.198Z",
+    "phase": "alert",
+    "actor": "suricata",
+    "message": "Suricata sid 1000021 (high): SENTINELSWITCH LATERAL SMB probe fan-out to multiple internal hosts",
+    "details": {
+      "src": "10.20.0.47",
+      "dest": "10.20.0.29",
+      "dest_port": 445
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:38.292Z",
+    "phase": "alert",
+    "actor": "suricata",
+    "message": "Suricata sid 1000022 (high): SENTINELSWITCH LATERAL RDP probe fan-out to multiple internal hosts",
+    "details": {
+      "src": "10.20.0.47",
+      "dest": "10.20.0.29",
+      "dest_port": 3389
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:39.600Z",
+    "phase": "telemetry",
+    "actor": "telemetry",
+    "message": "anonymous SMB session setup against SRV-FILE01 rejected (STATUS_ACCESS_DENIED)",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T21:14:39.649Z",
+    "phase": "alert",
+    "actor": "zeek",
+    "message": "Zeek notice Scan::Address_Scan: 10.20.0.47 scanned at least 15 unique hosts on port 445/tcp in 0m2s",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T21:14:39.826Z",
+    "phase": "alert",
+    "actor": "suricata",
+    "message": "Suricata sid 1000023 (low): SENTINELSWITCH LATERAL SMB session setup with anonymous credentials",
+    "details": {
+      "src": "10.20.0.47",
+      "dest": "10.30.0.20",
+      "dest_port": 445
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:39.867Z",
+    "phase": "detection",
+    "actor": "sentinel",
+    "message": "Rule lateral-reconnaissance matched: severity high, confidence 0.97 (base 0.75; zeek_address_scan+0.10, prior_icmp_sweep+0.07, ptr_burst+0.05)",
+    "details": {
+      "detection_id": "DET-20260317T21143986-LATE",
+      "sources": [
+        "suricata",
+        "zeek"
+      ]
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:39.950Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "Resolving actor 10.20.0.47 through DHCP snooping, MAC table and inventory",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T21:14:40.092Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "dhcp_binding [resolved] 10.20.0.47 -> A4:83:E7:12:34:56 (dhcp-snooping, VLAN 20, Gi1/0/23, 23841s remaining)",
+    "details": {
+      "source": "show ip dhcp snooping binding"
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:40.346Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "mac_table [resolved] A4:83:E7:12:34:56 -> SW01 Gi1/0/23 (VLAN 20, DYNAMIC)",
+    "details": {
+      "source": "show mac address-table address"
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:40.346Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "interface [resolved] Gi1/0/23 'ENG-LT-047' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+    "details": {
+      "source": "show interfaces switchport"
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:40.439Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "identity [resolved] ENG-LT-047 (laptop, Lenovo, Ubuntu 24.04 LTS) criticality=standard user=jchen (Jia Chen, Engineering)",
+    "details": {
+      "source": "asset inventory / AAA session"
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:40.585Z",
+    "phase": "policy",
+    "actor": "sentinel",
+    "message": "Disposition automatic_containment: Automatic containment approved (severity=high confidence=0.97); action=quarantine_vlan",
+    "details": {
+      "action": "quarantine_vlan",
+      "guards": []
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:40.589Z",
+    "phase": "incident",
+    "actor": "sentinel",
+    "message": "Incident INC-2026-0042 opened",
+    "details": {
+      "incident_id": "INC-2026-0042"
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:41.000Z",
+    "phase": "containment",
+    "actor": "sentinel",
+    "message": "SW01 Gi1/0/23: switchport access vlan 20 \u2192 50 (workflow WF-2026-0042-01)",
+    "details": {
+      "workflow": "WF-2026-0042-01",
+      "commands": [
+        "configure terminal",
+        "interface GigabitEthernet1/0/23",
+        " switchport access vlan 50",
+        "end",
+        "write memory"
+      ]
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:41.050Z",
+    "phase": "telemetry",
+    "actor": "telemetry",
+    "message": "Telemetry from 10.20.0.47 no longer observed on monitored VLANs (23 further probe flows not seen)",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T21:14:41.125Z",
+    "phase": "verification",
+    "actor": "sentinel",
+    "message": "Verification succeeded: Access Mode VLAN: 50",
+    "details": null
+  }
+]

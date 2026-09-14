@@ -1,0 +1,17 @@
+interface {{ interface }}
+ description {{ description }}
+ switchport access vlan 30
+ switchport mode access
+ switchport port-security
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ ip arp inspection limit rate 15
+ storm-control broadcast level 2.00
+ storm-control multicast level 2.00
+ storm-control action trap
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ ip verify source
+!
+! Static hosts need an IP source binding so IP Source Guard / DAI permit them:
+! ip source binding {{ mac }} vlan 30 {{ ip }} interface {{ interface }}

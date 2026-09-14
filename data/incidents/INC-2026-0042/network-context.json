@@ -1,0 +1,176 @@
+{
+  "actor": {
+    "device": "ENG-LT-047",
+    "ip": "10.20.0.47",
+    "mac": "A4:83:E7:12:34:56",
+    "interface": "Gi1/0/23",
+    "vlan": 20,
+    "user": "jchen"
+  },
+  "attribution": {
+    "ip": "10.20.0.47",
+    "mac": "A4:83:E7:12:34:56",
+    "switch": "SW01",
+    "interface": "Gi1/0/23",
+    "vlan": 20,
+    "access_vlan": 20,
+    "port_class": "workstation",
+    "port_mode": "access",
+    "protected": false,
+    "trunk": false,
+    "span_destination": false,
+    "device": "ENG-LT-047",
+    "user": "jchen",
+    "department": "Engineering",
+    "criticality": "standard",
+    "vendor": "Lenovo",
+    "resolved": true,
+    "confidence": 1.0,
+    "flags": [],
+    "steps": [
+      {
+        "name": "dhcp_binding",
+        "status": "resolved",
+        "source": "show ip dhcp snooping binding",
+        "input": "10.20.0.47",
+        "output": "A4:83:E7:12:34:56",
+        "detail": "10.20.0.47 -> A4:83:E7:12:34:56 (dhcp-snooping, VLAN 20, Gi1/0/23, 23841s remaining)",
+        "ts": "2026-03-17T21:14:40.092Z"
+      },
+      {
+        "name": "mac_table",
+        "status": "resolved",
+        "source": "show mac address-table address",
+        "input": "A4:83:E7:12:34:56",
+        "output": "Gi1/0/23",
+        "detail": "A4:83:E7:12:34:56 -> SW01 Gi1/0/23 (VLAN 20, DYNAMIC)",
+        "ts": "2026-03-17T21:14:40.346Z"
+      },
+      {
+        "name": "interface",
+        "status": "resolved",
+        "source": "show interfaces switchport",
+        "input": "Gi1/0/23",
+        "output": "VLAN 20",
+        "detail": "Gi1/0/23 'ENG-LT-047' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+        "ts": "2026-03-17T21:14:40.346Z"
+      },
+      {
+        "name": "identity",
+        "status": "resolved",
+        "source": "asset inventory / AAA session",
+        "input": "A4:83:E7:12:34:56",
+        "output": "ENG-LT-047",
+        "detail": "ENG-LT-047 (laptop, Lenovo, Ubuntu 24.04 LTS) criticality=standard user=jchen (Jia Chen, Engineering)",
+        "ts": "2026-03-17T21:14:40.439Z"
+      }
+    ],
+    "binding": {
+      "mac": "A4:83:E7:12:34:56",
+      "ip": "10.20.0.47",
+      "vlan": 20,
+      "interface": "Gi1/0/23",
+      "lease_expires": "2026-03-18T03:52:01.800Z",
+      "binding_type": "dhcp-snooping",
+      "lease_start": "2026-03-17T07:52:01.800Z"
+    },
+    "mac_entries": [
+      {
+        "mac": "A4:83:E7:12:34:56",
+        "vlan": 20,
+        "interface": "Gi1/0/23",
+        "entry_type": "DYNAMIC",
+        "learned_at": "2026-03-17T07:52:00.000Z"
+      }
+    ],
+    "observations": [
+      {
+        "mac": "A4:83:E7:12:34:56",
+        "interface": "Gi1/0/23",
+        "vlan": 20,
+        "first_seen": "2026-03-17T07:52:00.000Z",
+        "last_seen": "2026-03-17T00:00:00.000Z"
+      },
+      {
+        "mac": "A4:83:E7:12:34:56",
+        "interface": "Gi1/0/23",
+        "vlan": 20,
+        "first_seen": "2026-03-17T07:52:00.000Z",
+        "last_seen": "2026-03-17T07:52:00.000Z"
+      }
+    ],
+    "started_at": "2026-03-17T21:14:39.867Z",
+    "completed_at": "2026-03-17T21:14:40.439Z",
+    "impersonated_device": null,
+    "port_owner": "ENG-LT-047"
+  },
+  "vlans": {
+    "10": {
+      "id": 10,
+      "name": "MGMT",
+      "subnet": "10.10.10.0/24",
+      "gateway": "10.10.10.1",
+      "purpose": "Network management plane (switch SVI, jump host, security stack management)"
+    },
+    "20": {
+      "id": 20,
+      "name": "USERS",
+      "subnet": "10.20.0.0/24",
+      "gateway": "10.20.0.1",
+      "purpose": "Employee workstations and laptops (802.1X)"
+    },
+    "30": {
+      "id": 30,
+      "name": "SERVERS",
+      "subnet": "10.30.0.0/24",
+      "gateway": "10.30.0.1",
+      "purpose": "Lab servers (directory, files, RADIUS, web, git, updates)"
+    },
+    "40": {
+      "id": 40,
+      "name": "GUEST",
+      "subnet": "10.40.0.0/24",
+      "gateway": "10.40.0.1",
+      "purpose": "Guest / unauthenticated devices (internet only)"
+    },
+    "50": {
+      "id": 50,
+      "name": "QUARANTINE",
+      "subnet": "10.50.0.0/24",
+      "gateway": "10.50.0.1",
+      "purpose": "Isolated containment VLAN (remediation portal only)"
+    },
+    "99": {
+      "id": 99,
+      "name": "MONITORING",
+      "subnet": "10.99.0.0/24",
+      "gateway": "10.99.0.1",
+      "purpose": "Security telemetry collectors and controller"
+    },
+    "999": {
+      "id": 999,
+      "name": "BLACKHOLE",
+      "subnet": null,
+      "gateway": null,
+      "purpose": "Parking VLAN for unused ports and trunk native VLAN"
+    }
+  },
+  "interface_intent": {
+    "description": "ENG-LT-047",
+    "class": "workstation",
+    "profile": "user_port",
+    "protected": false
+  },
+  "span_session": {
+    "id": 1,
+    "source_vlans": [
+      20,
+      30,
+      40
+    ],
+    "direction": "both",
+    "destination": "Gi1/0/47"
+  },
+  "sensor": "SEC-TP01 eth1 (SPAN destination Gi1/0/47), Zeek + Suricata",
+  "simulation_notice": "Synthetic telemetry generated by the SentinelSwitch digital twin."
+}

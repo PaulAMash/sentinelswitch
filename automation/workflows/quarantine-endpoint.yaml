@@ -1,0 +1,26 @@
+id: quarantine-endpoint
+name: Quarantine endpoint (VLAN move)
+trigger: policy.disposition == automatic_containment and policy.action == quarantine_vlan
+steps:
+  - id: open-incident
+    action: incidents.open
+  - id: correlate
+    action: correlation.resolve
+    inputs: {actor: detection.actor}
+  - id: guard
+    action: policy.assert_unprotected
+    inputs: {interface: attribution.interface}
+  - id: apply
+    action: switch.set_access_vlan
+    inputs: {interface: attribution.interface, vlan: policy.quarantine_vlan, reason: detection.summary}
+  - id: verify
+    action: switch.verify
+    inputs: {interface: attribution.interface, expect_vlan: policy.quarantine_vlan}
+  - id: evidence
+    action: evidence.bundle
+    inputs: {incident: incident.id}
+  - id: notify
+    action: notify.dashboard
+rollback:
+  - action: switch.set_access_vlan
+    inputs: {interface: attribution.interface, vlan: attribution.original_vlan, reason: "restore"}

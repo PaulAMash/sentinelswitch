@@ -1,0 +1,40 @@
+%% Generated from diagrams/source/architecture.json by diagrams/source/render.py
+flowchart TB
+    subgraph access["Access layer · digital twin"]
+        endpoints["Simulated endpoints<br/>23 workstations & laptops · 6 servers<br/>guests, printer, rogue devices"]
+        twin["Cisco Catalyst 2960-X digital twin · SW01<br/>VLAN 10 / 20 / 30 / 40 / 50 / 99 · 48 × GE access ports<br/>802.1X · MAB · DHCP snooping · DAI · IPSG · port security · BPDU Guard"]
+    end
+    subgraph telemetry["Telemetry · SEC-TP01 (Linux ThinkPad)"]
+        span["SPAN session 1<br/>source VLANs 20/30/40 → Gi1/0/47<br/>Zeek + Suricata on eth1"]
+        syslog["IOS syslog<br/>logging host 10.99.0.10<br/>AAA · DAI · snooping · port-security"]
+        radius["FreeRADIUS · SRV-RADIUS01<br/>802.1X EAP-TLS / PEAP · MAB<br/>Accept · Reject · guest VLAN"]
+    end
+    subgraph controller["SentinelSwitch controller · Python / FastAPI"]
+        normalize["Normalization<br/>one event schema for<br/>Suricata · Zeek · RADIUS · syslog"]
+        detect["Detection + correlation<br/>declarative rules · evidence features<br/>confidence · severity · IP → MAC → port"]
+        policy["Policy engine<br/>≥ 0.95 & high → automatic<br/>≥ 0.75 → review · guards"]
+        contain["Containment controller<br/>quarantine VLAN / shutdown<br/>verify · rollback · workflow"]
+        adapter["Switch adapter<br/>SwitchAdapter interface<br/>SimulatedCisco2960XAdapter"]
+    end
+    subgraph platform["Platform"]
+        quarantine["VLAN 50 QUARANTINE<br/>10.50.0.0/24<br/>remediation only"]
+        evidence["Evidence store<br/>SQLite state<br/>data/incidents/<id>/"]
+        dashboard["Dashboard + API<br/>FastAPI · SSE<br/>React SOC console"]
+        analyst["SOC analyst<br/>review queue<br/>restore · verify"]
+    end
+    endpoints -->|48 × GE ports| twin
+    twin -->|Gi1/0/23 · 20 → 50| quarantine
+    twin -->|mirrored frames| span
+    twin -->|UDP 514| syslog
+    twin -->|RADIUS 1812| radius
+    span --> normalize
+    syslog --> normalize
+    radius --> normalize
+    normalize -->|events| detect
+    detect -->|detection| policy
+    policy -->|decision| contain
+    contain -->|action| adapter
+    adapter -->|switchport access vlan 50| twin
+    contain -->|incident + bundle| evidence
+    evidence -->|read| dashboard
+    analyst -->|review · restore| dashboard

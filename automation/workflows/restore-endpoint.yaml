@@ -1,0 +1,8 @@
+id: restore-endpoint
+name: Restore endpoint after remediation
+trigger: analyst.action == restore
+steps:
+  - {id: authorize, action: rbac.require, inputs: {role: soc-analyst}}
+  - {id: rollback,  action: containment.rollback, inputs: {incident: incident.id, note: analyst.note}}
+  - {id: verify,    action: switch.verify, inputs: {interface: attribution.interface, expect_vlan: attribution.original_vlan}}
+  - {id: close,     action: incidents.update, inputs: {status: restored}}

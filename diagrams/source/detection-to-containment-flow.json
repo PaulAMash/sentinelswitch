@@ -1,0 +1,334 @@
+{
+  "name": "detection-to-containment-flow",
+  "title": "Detection \u2192 attribution \u2192 policy \u2192 containment",
+  "subtitle": "How a raw alert becomes a verified, evidence-backed switch action \u2014 and where humans stay in the loop",
+  "width": 1600,
+  "height": 900,
+  "mermaid_direction": "LR",
+  "groups": [
+    {
+      "id": "detect",
+      "label": "Detection engineering",
+      "x": 2,
+      "y": 5,
+      "w": 76,
+      "h": 12,
+      "color": "amber"
+    },
+    {
+      "id": "respond",
+      "label": "Response orchestration",
+      "x": 2,
+      "y": 20,
+      "w": 76,
+      "h": 19,
+      "color": "green"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "sources",
+      "group": "detect",
+      "x": 4,
+      "y": 8,
+      "w": 12,
+      "h": 6,
+      "label": "Telemetry",
+      "sub": [
+        "Suricata EVE \u00b7 Zeek notices",
+        "RADIUS \u00b7 IOS syslog"
+      ]
+    },
+    {
+      "id": "normalize",
+      "group": "detect",
+      "x": 18,
+      "y": 8,
+      "w": 11,
+      "h": 6,
+      "label": "Normalize",
+      "sub": [
+        "ts \u00b7 source \u00b7 actor keys",
+        "enrich: port class, gateway"
+      ]
+    },
+    {
+      "id": "trigger",
+      "group": "detect",
+      "x": 31,
+      "y": 8,
+      "w": 11,
+      "h": 6,
+      "label": "Rule trigger",
+      "sub": [
+        "e.g. sid 1000021",
+        "actor = 10.20.0.47"
+      ]
+    },
+    {
+      "id": "window",
+      "group": "detect",
+      "x": 44,
+      "y": 8,
+      "w": 11,
+      "h": 6,
+      "label": "Aggregation window",
+      "sub": [
+        "collect corroboration",
+        "1.5 s \u2026 45 s per rule"
+      ]
+    },
+    {
+      "id": "score",
+      "group": "detect",
+      "kind": "accent",
+      "color": "amber",
+      "x": 57,
+      "y": 8,
+      "w": 19,
+      "h": 6,
+      "label": "Score evidence features",
+      "sub": [
+        "base 0.75 + Zeek scan 0.10 + ICMP sweep 0.07 + PTR burst 0.05",
+        "authorized scanner \u22120.35 \u00b7 clamp 0.05\u20130.99 \u00b7 severity rules"
+      ]
+    },
+    {
+      "id": "attrib",
+      "group": "respond",
+      "kind": "accent",
+      "color": "purple",
+      "x": 4,
+      "y": 23,
+      "w": 15,
+      "h": 7,
+      "label": "Attribution",
+      "sub": [
+        "IP \u2192 DHCP snooping binding \u2192 MAC",
+        "MAC \u2192 MAC table \u2192 interface \u2192 VLAN",
+        "\u2192 inventory identity \u00b7 flags"
+      ]
+    },
+    {
+      "id": "tiers",
+      "group": "respond",
+      "x": 21.5,
+      "y": 23,
+      "w": 15,
+      "h": 7,
+      "label": "Policy tiers",
+      "sub": [
+        "\u2265 0.95 & high \u2192 automatic containment",
+        "\u2265 0.75 \u2192 manual review",
+        "otherwise \u2192 monitor"
+      ]
+    },
+    {
+      "id": "guards",
+      "group": "respond",
+      "x": 39,
+      "y": 23,
+      "w": 15,
+      "h": 7,
+      "label": "Guards (downgrade only)",
+      "sub": [
+        "protected ports Gi1/0/1, Gi1/0/48",
+        "trunks \u00b7 SPAN destination",
+        "critical assets \u00b7 unresolved actor"
+      ]
+    },
+    {
+      "id": "action",
+      "group": "respond",
+      "kind": "accent",
+      "color": "green",
+      "x": 56.5,
+      "y": 23,
+      "w": 19.5,
+      "h": 7,
+      "label": "Action by actor class",
+      "sub": [
+        "compromised host \u2192 quarantine VLAN 50",
+        "rogue device \u2192 administrative shutdown",
+        "identity / policy \u2192 none"
+      ]
+    },
+    {
+      "id": "verify",
+      "group": "respond",
+      "x": 39,
+      "y": 32.5,
+      "w": 15,
+      "h": 5,
+      "label": "Verify on the switch",
+      "sub": [
+        "show interfaces \u2026 switchport \u00b7 MAC table"
+      ]
+    },
+    {
+      "id": "evidence",
+      "group": "respond",
+      "kind": "db",
+      "color": "cyan",
+      "x": 58,
+      "y": 32,
+      "w": 18,
+      "h": 6,
+      "label": "Evidence bundle",
+      "sub": [
+        "timeline \u00b7 alerts \u00b7 binding \u00b7 MAC table",
+        "port before/after \u00b7 decision \u00b7 transcript"
+      ]
+    },
+    {
+      "id": "review",
+      "group": "respond",
+      "x": 4,
+      "y": 32.5,
+      "w": 32.5,
+      "h": 5,
+      "label": "Manual review queue",
+      "sub": [
+        "attribution attached, nothing changed on the switch \u2014 analyst closes, escalates or restores"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "sources",
+      "to": "normalize"
+    },
+    {
+      "from": "normalize",
+      "to": "trigger"
+    },
+    {
+      "from": "trigger",
+      "to": "window"
+    },
+    {
+      "from": "window",
+      "to": "score"
+    },
+    {
+      "from": "score",
+      "to": "attrib",
+      "label": "detection (severity, confidence)",
+      "sides": [
+        "bottom",
+        "top"
+      ],
+      "via": [
+        [
+          66.5,
+          18.5
+        ],
+        [
+          12,
+          18.5
+        ]
+      ]
+    },
+    {
+      "from": "attrib",
+      "to": "tiers"
+    },
+    {
+      "from": "tiers",
+      "to": "guards",
+      "label": "automatic"
+    },
+    {
+      "from": "guards",
+      "to": "action",
+      "label": "unguarded"
+    },
+    {
+      "from": "action",
+      "to": "verify",
+      "sides": [
+        "bottom",
+        "top"
+      ],
+      "via": [
+        [
+          66.25,
+          31.5
+        ],
+        [
+          46.5,
+          31.5
+        ]
+      ]
+    },
+    {
+      "from": "verify",
+      "to": "evidence",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "from_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "from": "tiers",
+      "to": "review",
+      "label": "manual review",
+      "sides": [
+        "bottom",
+        "top"
+      ],
+      "color": "amber",
+      "to_offset": [
+        8,
+        0
+      ]
+    },
+    {
+      "from": "guards",
+      "to": "review",
+      "label": "downgraded",
+      "sides": [
+        "bottom",
+        "top"
+      ],
+      "color": "amber",
+      "to_offset": [
+        14,
+        0
+      ]
+    },
+    {
+      "from": "review",
+      "to": "evidence",
+      "style": "dashed",
+      "label": "escalate / restore",
+      "sides": [
+        "right",
+        "bottom"
+      ],
+      "via": [
+        [
+          37.5,
+          35
+        ],
+        [
+          37.5,
+          38.8
+        ],
+        [
+          67,
+          38.8
+        ]
+      ],
+      "color": "faint",
+      "label_offset": [
+        6,
+        0
+      ]
+    }
+  ]
+}

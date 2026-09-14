@@ -1,0 +1,247 @@
+{
+  "organization": {
+    "name": "Meridian Labs",
+    "domain": "corp.example.com",
+    "site": "LAB-01",
+    "timezone": "UTC"
+  },
+  "dataset": {
+    "day": "2026-03-17",
+    "start": "2026-03-17T00:00:00Z",
+    "end": "2026-03-18T00:00:00Z",
+    "baseline_now": "2026-03-17T21:14:00Z",
+    "seed": 20260317
+  },
+  "switch": {
+    "hostname": "SW01",
+    "model": "WS-C2960X-48FPD-L",
+    "ios_version": "15.2(7)E8",
+    "image": "c2960x-universalk9-mz.152-7.E8.bin",
+    "serial": "FOC2140X0LB",
+    "base_mac": "D4:E8:80:2A:1F:80",
+    "management_ip": "10.10.10.2",
+    "management_vlan": 10,
+    "default_gateway": "10.10.10.1",
+    "uptime_reference": "2025-11-04T13:22:08Z",
+    "location": "Lab rack R1, RU 20",
+    "contact": "netops@corp.example.com",
+    "gig_ports": 48,
+    "tengig_ports": 2,
+    "syslog_host": "10.99.0.10",
+    "ntp_server": "10.30.0.10",
+    "radius_server": "10.30.0.30",
+    "radius_auth_port": 1812,
+    "radius_acct_port": 1813,
+    "snmp_trap_host": "10.99.0.10",
+    "span_session": {
+      "id": 1,
+      "source_vlans": [
+        20,
+        30,
+        40
+      ],
+      "direction": "both",
+      "destination": "Gi1/0/47"
+    }
+  },
+  "vlans": [
+    {
+      "id": 10,
+      "name": "MGMT",
+      "subnet": "10.10.10.0/24",
+      "gateway": "10.10.10.1",
+      "purpose": "Network management plane (switch SVI, jump host, security stack management)",
+      "dhcp_snooping": false,
+      "dai": false
+    },
+    {
+      "id": 20,
+      "name": "USERS",
+      "subnet": "10.20.0.0/24",
+      "gateway": "10.20.0.1",
+      "purpose": "Employee workstations and laptops (802.1X)",
+      "dhcp_snooping": true,
+      "dai": true
+    },
+    {
+      "id": 30,
+      "name": "SERVERS",
+      "subnet": "10.30.0.0/24",
+      "gateway": "10.30.0.1",
+      "purpose": "Lab servers (directory, files, RADIUS, web, git, updates)",
+      "dhcp_snooping": true,
+      "dai": true
+    },
+    {
+      "id": 40,
+      "name": "GUEST",
+      "subnet": "10.40.0.0/24",
+      "gateway": "10.40.0.1",
+      "purpose": "Guest / unauthenticated devices (internet only)",
+      "dhcp_snooping": true,
+      "dai": true
+    },
+    {
+      "id": 50,
+      "name": "QUARANTINE",
+      "subnet": "10.50.0.0/24",
+      "gateway": "10.50.0.1",
+      "purpose": "Isolated containment VLAN (remediation portal only)",
+      "dhcp_snooping": true,
+      "dai": true
+    },
+    {
+      "id": 99,
+      "name": "MONITORING",
+      "subnet": "10.99.0.0/24",
+      "gateway": "10.99.0.1",
+      "purpose": "Security telemetry collectors and controller",
+      "dhcp_snooping": false,
+      "dai": false
+    },
+    {
+      "id": 999,
+      "name": "BLACKHOLE",
+      "subnet": null,
+      "gateway": null,
+      "purpose": "Parking VLAN for unused ports and trunk native VLAN",
+      "dhcp_snooping": false,
+      "dai": false
+    }
+  ],
+  "dhcp": {
+    "server": "10.30.0.10",
+    "lease_seconds": 28800,
+    "scopes": {
+      "20": {
+        "range": [
+          "10.20.0.10",
+          "10.20.0.199"
+        ],
+        "reservations_from": "10.20.0.200"
+      },
+      "40": {
+        "range": [
+          "10.40.0.100",
+          "10.40.0.199"
+        ]
+      },
+      "50": {
+        "range": [
+          "10.50.0.100",
+          "10.50.0.150"
+        ]
+      }
+    }
+  },
+  "approved_ntp": [
+    "10.30.0.10"
+  ],
+  "approved_dns": [
+    "10.30.0.10",
+    "10.40.0.1"
+  ],
+  "external_services": [
+    {
+      "fqdn": "updates.example.net",
+      "ip": "198.51.100.20",
+      "ports": [
+        443
+      ],
+      "kind": "os-updates",
+      "approved": true
+    },
+    {
+      "fqdn": "pkg.example.org",
+      "ip": "198.51.100.80",
+      "ports": [
+        443
+      ],
+      "kind": "package-mirror",
+      "approved": true
+    },
+    {
+      "fqdn": "cdn.example.com",
+      "ip": "203.0.113.10",
+      "ports": [
+        443
+      ],
+      "kind": "cdn",
+      "approved": true
+    },
+    {
+      "fqdn": "www.example.com",
+      "ip": "203.0.113.30",
+      "ports": [
+        443
+      ],
+      "kind": "web",
+      "approved": true
+    },
+    {
+      "fqdn": "mail.example.com",
+      "ip": "198.51.100.25",
+      "ports": [
+        443,
+        993
+      ],
+      "kind": "mail",
+      "approved": true
+    },
+    {
+      "fqdn": "api.example.org",
+      "ip": "203.0.113.44",
+      "ports": [
+        443
+      ],
+      "kind": "saas-api",
+      "approved": true
+    },
+    {
+      "fqdn": "git.example.org",
+      "ip": "198.51.100.60",
+      "ports": [
+        443,
+        22
+      ],
+      "kind": "git-hosting",
+      "approved": true
+    },
+    {
+      "fqdn": "video.example.com",
+      "ip": "203.0.113.90",
+      "ports": [
+        443
+      ],
+      "kind": "streaming",
+      "approved": true
+    },
+    {
+      "fqdn": "docs.example.org",
+      "ip": "203.0.113.55",
+      "ports": [
+        443
+      ],
+      "kind": "web",
+      "approved": true
+    },
+    {
+      "fqdn": "telemetry.example.net",
+      "ip": "203.0.113.77",
+      "ports": [
+        443
+      ],
+      "kind": "agent-telemetry",
+      "approved": true
+    },
+    {
+      "fqdn": "time.example.net",
+      "ip": "192.0.2.123",
+      "ports": [
+        123
+      ],
+      "kind": "ntp",
+      "approved": false
+    }
+  ]
+}

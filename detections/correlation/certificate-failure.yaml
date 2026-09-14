@@ -1,0 +1,12 @@
+id: certificate-failure
+name: Certificate Authentication Failure
+class: identity
+description: EAP-TLS rejected because the machine certificate was expired, revoked or untrusted.
+mitre: [T1078]
+actor_key: mac
+trigger: {source: radius, result: Access-Reject, reason_contains: certificate}
+aggregate_window: 0
+base_confidence: 0.35
+severity: low
+features:
+  - {id: unknown_mac, label: "MAC is not in the asset inventory", type: asset_unknown, weight: 0.30}

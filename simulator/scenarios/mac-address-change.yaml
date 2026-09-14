@@ -1,0 +1,51 @@
+id: mac-address-change
+name: MAC Address Change
+short: A different MAC appears on a sticky port-security workstation drop
+class: rogue_device
+rule: mac-address-change
+mitre: [T1200, T1036.005]
+description: >
+  Workstation drops use sticky port security with a maximum of one address. When a device with a different
+  MAC is connected, the switch raises a PSECURE_VIOLATION (restrict mode) and RADIUS rejects the new
+  address. SentinelSwitch scores the event by whether the new MAC is unknown, whether it impersonates a
+  known asset that belongs on another port, and whether AAA rejected it.
+actor:
+  device: HR-WS-016
+  ip: 10.20.0.26
+  mac: "3C:D9:2B:8E:16:26"
+  interface: Gi1/0/16
+  vlan: 20
+instances:
+  day:
+    start: "2026-03-17T12:36:52.318Z"
+    parameters:
+      new_mac: "8C:71:F8:44:AA:16"
+      impersonated_device: null
+      radius_reject_offset: 0.384
+      radius_reject_method: MAB
+      radius_reject_reason: "MAC not found in endpoint database"
+      unplug_offset: -42.0              # HR-WS-016 was unplugged 42 s before the violation
+      detect_latency: 0.084
+    expected: {disposition: manual_review, action: none, severity: medium, confidence: 0.87}
+    resolution:
+      reviewed_at: "2026-03-17T13:12:05Z"
+      reviewed_by: tlee
+      note: "HR user connected a personal laptop through the docking station on HR-WS-016's drop. Frames were restricted by port security; user counseled, personal device removed. Closed."
+  validation:
+    start: "2026-03-17T12:36:52.318Z"
+    parameters:
+      new_mac: "AC:1F:6B:3B:09:20"
+      impersonated_device: SRV-FILE01
+      radius_reject_offset: 3.596
+      radius_reject_method: EAP-TLS
+      radius_reject_reason: "TLS Alert read:fatal:unknown ca (client certificate not issued by CORP-CA)"
+      unplug_offset: -42.0
+      detect_latency: 0.084
+    expected: {disposition: automatic_containment, action: port_shutdown, severity: high, confidence: 0.95}
+timing: {open: 0.074, dhcp: 0.151, mac: 0.227, identity: 0.091, policy: 0.158, apply: 0.409, verify: 0.128, evidence: 0.341}
+setup:
+  - {op: link_down, interface: Gi1/0/16, offset: -42.0}
+  - {op: link_up, interface: Gi1/0/16, mac: "{new_mac}", auth_state: unauthorized, offset: -2.3}
+teardown:
+  - {op: link_down, interface: Gi1/0/16, at: "2026-03-17T13:12:05Z"}
+  - {op: reattach, device: HR-WS-016, at: "2026-03-17T13:12:40Z"}

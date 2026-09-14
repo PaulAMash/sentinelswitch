@@ -1,0 +1,32 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show version
+Cisco IOS Software, C2960X Software (C2960X-UNIVERSALK9-M), Version 15.2(7)E8, RELEASE SOFTWARE (fc2)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2023 by Cisco Systems, Inc.
+
+ROM: Bootstrap program is C2960X boot loader
+BOOTLDR: C2960X Boot Loader (C2960X-HBOOT-M) Version 15.2(7r)E3, RELEASE SOFTWARE (fc1)
+
+SW01 uptime is 19 weeks, 7 hours, 51 minutes
+System image file is "flash:/c2960x-universalk9-mz.152-7.E8.bin"
+
+cisco WS-C2960X-48FPD-L (APM86XXX) processor (revision N0) with 524288K bytes of memory.
+Processor board ID FOC2140X0LB
+Last reset from power-on
+1 Virtual Ethernet interface
+48 Gigabit Ethernet interfaces
+2 Ten Gigabit Ethernet interfaces
+The password-recovery mechanism is enabled.
+
+512K bytes of flash-simulated non-volatile configuration memory.
+Base ethernet MAC Address       : D4:E8:80:2A:1F:80
+Motherboard assembly number     : 73-15925-03
+System serial number            : FOC2140X0LB
+
+Switch Ports Model                     SW Version            SW Image
+------ ----- -----                     ----------            ----------
+*    1 52    WS-C2960X-48FPD-L         15.2(7)E8             C2960X-UNIVERSALK9-M
+
+Configuration register is 0xF
+SW01#

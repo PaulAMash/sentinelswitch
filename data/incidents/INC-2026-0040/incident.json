@@ -1,0 +1,132 @@
+{
+  "id": "INC-2026-0040",
+  "title": "Unauthorized Endpoint \u2014 unknown device DC:A6:32:19:77:C1",
+  "severity": "high",
+  "confidence": 0.96,
+  "status": "contained",
+  "opened_at": "2026-03-17T09:41:05.573Z",
+  "closed_at": null,
+  "rule": "unauthorized-endpoint",
+  "rule_name": "Unauthorized Endpoint",
+  "class": "rogue_device",
+  "mitre": [
+    "T1200",
+    "T1078"
+  ],
+  "scenario": "unauthorized-endpoint",
+  "instance": "day",
+  "detection_id": "DET-20260317T09410557-UNAU",
+  "device": null,
+  "user": null,
+  "department": null,
+  "ip": null,
+  "mac": "DC:A6:32:19:77:C1",
+  "vendor": "Raspberry Pi Foundation",
+  "switch": "SW01",
+  "interface": "Gi1/0/17",
+  "original_vlan": 20,
+  "current_vlan": 20,
+  "port_class": "workstation",
+  "chain": [
+    "DC:A6:32:19:77:C1",
+    "SW01",
+    "Gi1/0/17",
+    "VLAN 20",
+    "shutdown"
+  ],
+  "summary": "A single-board computer that is not in the asset inventory is connected to a spare corporate drop. MAC Authentication Bypass is rejected by FreeRADIUS, no 802.1X supplicant responds, and SentinelSwitch attributes the MAC to the physical interface using the AAA and syslog telemetry (the MAC address table has no entry because the port never became authorized).",
+  "disposition": "automatic_containment",
+  "action": "port_shutdown",
+  "attribution_confidence": 0.9,
+  "flags": [
+    "no_binding",
+    "mac_not_learned",
+    "unknown_device"
+  ],
+  "impersonated_device": null,
+  "workflow_id": "WF-2026-0040-02",
+  "mechanism": "SentinelSwitch administrative shutdown",
+  "contained_at": "2026-03-17T09:41:06.718Z",
+  "evidence_finalized_at": "2026-03-17T09:41:07.039Z",
+  "detection": {
+    "id": "DET-20260317T09410557-UNAU",
+    "rule": "unauthorized-endpoint",
+    "rule_name": "Unauthorized Endpoint",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200",
+      "T1078"
+    ],
+    "actor_key": "mac",
+    "actor_value": "DC:A6:32:19:77:C1",
+    "actor": {
+      "key": "mac",
+      "value": "DC:A6:32:19:77:C1",
+      "mac": "DC:A6:32:19:77:C1",
+      "interface": "Gi1/0/17"
+    },
+    "ts": "2026-03-17T09:41:05.573Z",
+    "trigger_ts": "2026-03-17T09:41:05.418Z",
+    "severity": "high",
+    "confidence": 0.96,
+    "base_confidence": 0.7,
+    "features": [
+      {
+        "id": "corporate_port",
+        "label": "Port is designated for corporate workstations",
+        "weight": 0.2,
+        "matched": true,
+        "evidence": "port_class=workstation"
+      },
+      {
+        "id": "unknown_mac",
+        "label": "MAC is not in the asset inventory",
+        "weight": 0.06,
+        "matched": true,
+        "evidence": "DC:A6:32:19:77:C1 not in inventory"
+      },
+      {
+        "id": "psecure_violation",
+        "label": "Port-security violation on the same port (handled by the MAC change rule)",
+        "weight": -0.25,
+        "matched": false,
+        "evidence": null
+      }
+    ],
+    "summary": "Unauthorized Endpoint: Access-Reject MAB dca6321977c1 on Gi1/0/17: MAC not found in endpoint database",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T09:41:05.418Z",
+        "source": "radius",
+        "summary": "Access-Reject MAB dca6321977c1 on Gi1/0/17: MAC not found in endpoint database"
+      }
+    ]
+  },
+  "metrics": {
+    "t0": "2026-03-17T09:41:05.112Z",
+    "first_alert": "2026-03-17T09:41:05.418Z",
+    "detection": "2026-03-17T09:41:05.573Z",
+    "ttd": 0.461,
+    "attribution_complete": "2026-03-17T09:41:06.048Z",
+    "tta": 0.475,
+    "decision": "2026-03-17T09:41:06.200Z",
+    "applied": "2026-03-17T09:41:06.601Z",
+    "verified": "2026-03-17T09:41:06.718Z",
+    "ttc": 1.145,
+    "end_to_end": 1.606,
+    "evidence": "2026-03-17T09:41:07.039Z"
+  },
+  "artifacts": [
+    "incident.json",
+    "timeline.json",
+    "alerts.json",
+    "network-context.json",
+    "dhcp-binding.json",
+    "mac-table.json",
+    "switch-port.json",
+    "containment.json",
+    "related-connections.json",
+    "related-dns.json",
+    "README.md"
+  ]
+}

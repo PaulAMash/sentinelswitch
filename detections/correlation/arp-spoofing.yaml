@@ -1,0 +1,18 @@
+id: arp-spoofing
+name: ARP Spoofing Attempt
+class: compromised_host
+description: Dynamic ARP Inspection denials from one MAC, scored by volume and by whether the spoofed address is the VLAN gateway.
+mitre: [T1557.002]
+actor_key: mac
+trigger: {source: syslog, mnemonic: [SW_DAI-4-DHCP_SNOOPING_DENY, SW_DAI-4-INVALID_ARP]}
+aggregate_window: 5.0
+base_confidence: 0.65
+severity:
+  - {when: claims_gateway, severity: high}
+  - {when: many_denies, severity: high}
+  - {default: medium}
+features:
+  - {id: repeated_denies, label: "At least 3 DAI denials in the window",   type: event_count, match: {source: syslog, mnemonic: [SW_DAI-4-DHCP_SNOOPING_DENY, SW_DAI-4-INVALID_ARP]}, window: 10, min: 3,  weight: 0.10}
+  - {id: many_denies,     label: "At least 20 DAI denials in the window",  type: event_count, match: {source: syslog, mnemonic: [SW_DAI-4-DHCP_SNOOPING_DENY, SW_DAI-4-INVALID_ARP]}, window: 10, min: 20, weight: 0.10}
+  - {id: claims_gateway,  label: "Spoofed sender IP is the VLAN gateway",  type: event_field, field: claims_gateway, op: eq, value: true, weight: 0.12}
+  - {id: guest_source,    label: "Source is on the GUEST VLAN",            type: asset_in_vlan, vlan: 40, weight: 0.03}

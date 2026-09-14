@@ -1,0 +1,354 @@
+[
+  {
+    "ts": "2026-03-17T21:14:33.507Z",
+    "source": "suricata",
+    "kind": "alert",
+    "severity": "medium",
+    "signature_id": 1000010,
+    "signature": "SENTINELSWITCH RECON ICMP echo sweep from internal host",
+    "category": "Detection of a Network Scan",
+    "sentinel_class": "recon",
+    "src_ip": "10.20.0.47",
+    "actor_ip": "10.20.0.47",
+    "src_port": 8,
+    "dest_ip": "10.20.0.201",
+    "dest_port": 0,
+    "proto": "ICMP",
+    "app_proto": null,
+    "flow_id": 1065232202274571,
+    "mac": "A4:83:E7:12:34:56",
+    "interface": "Gi1/0/23",
+    "device": "ENG-LT-047",
+    "summary": "SENTINELSWITCH RECON ICMP echo sweep from internal host",
+    "scenario": "lateral-reconnaissance",
+    "instance": "day",
+    "raw": {
+      "timestamp": "2026-03-17T21:14:33.507000+0000",
+      "flow_id": 1065232202274571,
+      "in_iface": "eth1",
+      "event_type": "alert",
+      "src_ip": "10.20.0.47",
+      "src_port": 8,
+      "dest_ip": "10.20.0.201",
+      "dest_port": 0,
+      "proto": "ICMP",
+      "alert": {
+        "action": "allowed",
+        "gid": 1,
+        "signature_id": 1000010,
+        "rev": 2,
+        "signature": "SENTINELSWITCH RECON ICMP echo sweep from internal host",
+        "category": "Detection of a Network Scan",
+        "severity": 2,
+        "metadata": {
+          "sentinel_class": [
+            "recon"
+          ],
+          "sentinel_severity": [
+            "medium"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:36.108Z",
+    "source": "suricata",
+    "kind": "alert",
+    "severity": "low",
+    "signature_id": 1000014,
+    "signature": "SENTINELSWITCH RECON reverse DNS lookup burst",
+    "category": "Attempted Information Leak",
+    "sentinel_class": "recon",
+    "src_ip": "10.20.0.47",
+    "actor_ip": "10.20.0.47",
+    "src_port": 51870,
+    "dest_ip": "10.30.0.10",
+    "dest_port": 53,
+    "proto": "UDP",
+    "app_proto": "dns",
+    "flow_id": 1941090541639646,
+    "mac": "A4:83:E7:12:34:56",
+    "interface": "Gi1/0/23",
+    "device": "ENG-LT-047",
+    "summary": "SENTINELSWITCH RECON reverse DNS lookup burst",
+    "scenario": "lateral-reconnaissance",
+    "instance": "day",
+    "raw": {
+      "timestamp": "2026-03-17T21:14:36.108000+0000",
+      "flow_id": 1941090541639646,
+      "in_iface": "eth1",
+      "event_type": "alert",
+      "src_ip": "10.20.0.47",
+      "src_port": 51870,
+      "dest_ip": "10.30.0.10",
+      "dest_port": 53,
+      "proto": "UDP",
+      "alert": {
+        "action": "allowed",
+        "gid": 1,
+        "signature_id": 1000014,
+        "rev": 1,
+        "signature": "SENTINELSWITCH RECON reverse DNS lookup burst",
+        "category": "Attempted Information Leak",
+        "severity": 3,
+        "metadata": {
+          "sentinel_class": [
+            "recon"
+          ],
+          "sentinel_severity": [
+            "low"
+          ]
+        }
+      },
+      "app_proto": "dns"
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:37.042Z",
+    "source": "suricata",
+    "kind": "alert",
+    "severity": "low",
+    "signature_id": 1000024,
+    "signature": "SENTINELSWITCH LATERAL WinRM probe from workstation VLAN",
+    "category": "Attempted Information Leak",
+    "sentinel_class": "lateral",
+    "src_ip": "10.20.0.47",
+    "actor_ip": "10.20.0.47",
+    "src_port": 53523,
+    "dest_ip": "10.20.0.1",
+    "dest_port": 5985,
+    "proto": "TCP",
+    "app_proto": null,
+    "flow_id": 1569088455338727,
+    "mac": "A4:83:E7:12:34:56",
+    "interface": "Gi1/0/23",
+    "device": "ENG-LT-047",
+    "summary": "SENTINELSWITCH LATERAL WinRM probe from workstation VLAN",
+    "scenario": "lateral-reconnaissance",
+    "instance": "day",
+    "raw": {
+      "timestamp": "2026-03-17T21:14:37.042000+0000",
+      "flow_id": 1569088455338727,
+      "in_iface": "eth1",
+      "event_type": "alert",
+      "src_ip": "10.20.0.47",
+      "src_port": 53523,
+      "dest_ip": "10.20.0.1",
+      "dest_port": 5985,
+      "proto": "TCP",
+      "alert": {
+        "action": "allowed",
+        "gid": 1,
+        "signature_id": 1000024,
+        "rev": 1,
+        "signature": "SENTINELSWITCH LATERAL WinRM probe from workstation VLAN",
+        "category": "Attempted Information Leak",
+        "severity": 3,
+        "metadata": {
+          "sentinel_class": [
+            "lateral"
+          ],
+          "sentinel_severity": [
+            "low"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:38.198Z",
+    "source": "suricata",
+    "kind": "alert",
+    "severity": "high",
+    "signature_id": 1000021,
+    "signature": "SENTINELSWITCH LATERAL SMB probe fan-out to multiple internal hosts",
+    "category": "Attempted Information Leak",
+    "sentinel_class": "lateral",
+    "src_ip": "10.20.0.47",
+    "actor_ip": "10.20.0.47",
+    "src_port": 63349,
+    "dest_ip": "10.20.0.29",
+    "dest_port": 445,
+    "proto": "TCP",
+    "app_proto": null,
+    "flow_id": 1056833760899448,
+    "mac": "A4:83:E7:12:34:56",
+    "interface": "Gi1/0/23",
+    "device": "ENG-LT-047",
+    "summary": "SENTINELSWITCH LATERAL SMB probe fan-out to multiple internal hosts",
+    "scenario": "lateral-reconnaissance",
+    "instance": "day",
+    "raw": {
+      "timestamp": "2026-03-17T21:14:38.198000+0000",
+      "flow_id": 1056833760899448,
+      "in_iface": "eth1",
+      "event_type": "alert",
+      "src_ip": "10.20.0.47",
+      "src_port": 63349,
+      "dest_ip": "10.20.0.29",
+      "dest_port": 445,
+      "proto": "TCP",
+      "alert": {
+        "action": "allowed",
+        "gid": 1,
+        "signature_id": 1000021,
+        "rev": 3,
+        "signature": "SENTINELSWITCH LATERAL SMB probe fan-out to multiple internal hosts",
+        "category": "Attempted Information Leak",
+        "severity": 1,
+        "metadata": {
+          "sentinel_class": [
+            "lateral"
+          ],
+          "sentinel_severity": [
+            "high"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:38.292Z",
+    "source": "suricata",
+    "kind": "alert",
+    "severity": "high",
+    "signature_id": 1000022,
+    "signature": "SENTINELSWITCH LATERAL RDP probe fan-out to multiple internal hosts",
+    "category": "Attempted Information Leak",
+    "sentinel_class": "lateral",
+    "src_ip": "10.20.0.47",
+    "actor_ip": "10.20.0.47",
+    "src_port": 57344,
+    "dest_ip": "10.20.0.29",
+    "dest_port": 3389,
+    "proto": "TCP",
+    "app_proto": null,
+    "flow_id": 1991806976939031,
+    "mac": "A4:83:E7:12:34:56",
+    "interface": "Gi1/0/23",
+    "device": "ENG-LT-047",
+    "summary": "SENTINELSWITCH LATERAL RDP probe fan-out to multiple internal hosts",
+    "scenario": "lateral-reconnaissance",
+    "instance": "day",
+    "raw": {
+      "timestamp": "2026-03-17T21:14:38.292000+0000",
+      "flow_id": 1991806976939031,
+      "in_iface": "eth1",
+      "event_type": "alert",
+      "src_ip": "10.20.0.47",
+      "src_port": 57344,
+      "dest_ip": "10.20.0.29",
+      "dest_port": 3389,
+      "proto": "TCP",
+      "alert": {
+        "action": "allowed",
+        "gid": 1,
+        "signature_id": 1000022,
+        "rev": 3,
+        "signature": "SENTINELSWITCH LATERAL RDP probe fan-out to multiple internal hosts",
+        "category": "Attempted Information Leak",
+        "severity": 1,
+        "metadata": {
+          "sentinel_class": [
+            "lateral"
+          ],
+          "sentinel_severity": [
+            "high"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:39.649Z",
+    "source": "zeek",
+    "kind": "notice",
+    "severity": "high",
+    "note": "Scan::Address_Scan",
+    "msg": "10.20.0.47 scanned at least 15 unique hosts on port 445/tcp in 0m2s",
+    "sub": "",
+    "src_ip": "10.20.0.47",
+    "actor_ip": "10.20.0.47",
+    "dest_ip": null,
+    "dest_port": 445,
+    "mac": "A4:83:E7:12:34:56",
+    "interface": "Gi1/0/23",
+    "device": "ENG-LT-047",
+    "summary": "Scan::Address_Scan: 10.20.0.47 scanned at least 15 unique hosts on port 445/tcp in 0m2s",
+    "scenario": "lateral-reconnaissance",
+    "instance": "day",
+    "hosts_scanned": 15,
+    "port": 445,
+    "raw": {
+      "ts": 1773782079.649,
+      "note": "Scan::Address_Scan",
+      "msg": "10.20.0.47 scanned at least 15 unique hosts on port 445/tcp in 0m2s",
+      "sub": "",
+      "src": "10.20.0.47",
+      "peer_descr": "zeek",
+      "actions": [
+        "Notice::ACTION_LOG",
+        "Notice::ACTION_ALARM"
+      ],
+      "email_dest": [],
+      "suppress_for": 3600.0,
+      "p": 445,
+      "proto": "tcp",
+      "n": 15
+    }
+  },
+  {
+    "ts": "2026-03-17T21:14:39.826Z",
+    "source": "suricata",
+    "kind": "alert",
+    "severity": "low",
+    "signature_id": 1000023,
+    "signature": "SENTINELSWITCH LATERAL SMB session setup with anonymous credentials",
+    "category": "Attempted Information Leak",
+    "sentinel_class": "lateral",
+    "src_ip": "10.20.0.47",
+    "actor_ip": "10.20.0.47",
+    "src_port": 64868,
+    "dest_ip": "10.30.0.20",
+    "dest_port": 445,
+    "proto": "TCP",
+    "app_proto": "smb",
+    "flow_id": 1626505737912863,
+    "mac": "A4:83:E7:12:34:56",
+    "interface": "Gi1/0/23",
+    "device": "ENG-LT-047",
+    "summary": "SENTINELSWITCH LATERAL SMB session setup with anonymous credentials",
+    "scenario": "lateral-reconnaissance",
+    "instance": "day",
+    "raw": {
+      "timestamp": "2026-03-17T21:14:39.826000+0000",
+      "flow_id": 1626505737912863,
+      "in_iface": "eth1",
+      "event_type": "alert",
+      "src_ip": "10.20.0.47",
+      "src_port": 64868,
+      "dest_ip": "10.30.0.20",
+      "dest_port": 445,
+      "proto": "TCP",
+      "alert": {
+        "action": "allowed",
+        "gid": 1,
+        "signature_id": 1000023,
+        "rev": 1,
+        "signature": "SENTINELSWITCH LATERAL SMB session setup with anonymous credentials",
+        "category": "Attempted Information Leak",
+        "severity": 3,
+        "metadata": {
+          "sentinel_class": [
+            "lateral"
+          ],
+          "sentinel_severity": [
+            "low"
+          ]
+        }
+      },
+      "app_proto": "smb"
+    }
+  }
+]

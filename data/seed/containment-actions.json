@@ -1,0 +1,112 @@
+[
+  {
+    "workflow_id": "WF-2026-0039-01",
+    "incident_id": "INC-2026-0039",
+    "action": "port_shutdown",
+    "mechanism": "BPDU Guard err-disable (switch-native) + SentinelSwitch administrative hold",
+    "interface": "Gi1/0/30",
+    "switch": "SW01",
+    "from_vlan": 40,
+    "to_vlan": null,
+    "reason": "STP/BPDU Violation: %SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port.",
+    "initiating_detection": "DET-20260317T09124444-BPDU",
+    "actor": "sentinel",
+    "requested_at": "2026-03-17T09:12:45.081Z",
+    "applied_at": "2026-03-17T09:12:45.469Z",
+    "verified_at": "2026-03-17T09:12:45.588Z",
+    "status": "restored",
+    "commands": [
+      "configure terminal",
+      "interface GigabitEthernet1/0/30",
+      " shutdown",
+      "end",
+      "write memory"
+    ],
+    "transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/30\nSW01(config-if)#shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
+    "verification": {
+      "ok": true,
+      "expected": "admin down, no MAC addresses learned",
+      "transcript": "Port      Name               Status       Vlan       Duplex  Speed Type\nGi1/0/30  CONF-A DISPLAY (gu disabled     20           auto   auto 10/100/1000BaseTX",
+      "checked_at": "2026-03-17T09:12:45.588Z"
+    },
+    "restored_at": "2026-03-17T09:35:10.772Z",
+    "restored_by": "tlee",
+    "restore_note": "Unmanaged switch removed from conference room; display reconnected directly. Port recovered with shutdown / no shutdown.",
+    "restore_transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/30\nSW01(config-if)#no shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
+    "notes": [
+      "Port was already err-disabled by the switch; hold prevents errdisable recovery from re-enabling it"
+    ]
+  },
+  {
+    "workflow_id": "WF-2026-0040-02",
+    "incident_id": "INC-2026-0040",
+    "action": "port_shutdown",
+    "mechanism": "SentinelSwitch administrative shutdown",
+    "interface": "Gi1/0/17",
+    "switch": "SW01",
+    "from_vlan": 20,
+    "to_vlan": null,
+    "reason": "Unauthorized Endpoint: Access-Reject MAB dca6321977c1 on Gi1/0/17: MAC not found in endpoint database",
+    "initiating_detection": "DET-20260317T09410557-UNAU",
+    "actor": "sentinel",
+    "requested_at": "2026-03-17T09:41:06.200Z",
+    "applied_at": "2026-03-17T09:41:06.601Z",
+    "verified_at": "2026-03-17T09:41:06.718Z",
+    "status": "restored",
+    "commands": [
+      "configure terminal",
+      "interface GigabitEthernet1/0/17",
+      " shutdown",
+      "end",
+      "write memory"
+    ],
+    "transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/17\nSW01(config-if)#shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
+    "verification": {
+      "ok": true,
+      "expected": "admin down, no MAC addresses learned",
+      "transcript": "Port      Name               Status       Vlan       Duplex  Speed Type\nGi1/0/17  OPS SPARE DROP (co disabled     20           auto   auto 10/100/1000BaseTX",
+      "checked_at": "2026-03-17T09:41:06.718Z"
+    },
+    "restored_at": "2026-03-17T09:58:30.514Z",
+    "restored_by": "tlee",
+    "restore_note": "Unregistered contractor single-board computer removed after physical inspection (ticket SVC-2026-0311). Port restored to service.",
+    "restore_transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/17\nSW01(config-if)#no shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
+    "notes": []
+  },
+  {
+    "workflow_id": "WF-2026-0041-04",
+    "incident_id": "INC-2026-0041",
+    "action": "port_shutdown",
+    "mechanism": "SentinelSwitch administrative shutdown",
+    "interface": "Gi1/0/31",
+    "switch": "SW01",
+    "from_vlan": 40,
+    "to_vlan": null,
+    "reason": "Rogue DHCP: %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104",
+    "initiating_detection": "DET-20260317T11234719-ROGU",
+    "actor": "sentinel",
+    "requested_at": "2026-03-17T11:23:47.848Z",
+    "applied_at": "2026-03-17T11:23:48.244Z",
+    "verified_at": "2026-03-17T11:23:48.366Z",
+    "status": "restored",
+    "commands": [
+      "configure terminal",
+      "interface GigabitEthernet1/0/31",
+      " shutdown",
+      "end",
+      "write memory"
+    ],
+    "transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/31\nSW01(config-if)#shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
+    "verification": {
+      "ok": true,
+      "expected": "admin down, no MAC addresses learned",
+      "transcript": "Port      Name               Status       Vlan       Duplex  Speed Type\nGi1/0/31  VENDOR DROP (guest disabled     20           auto   auto 10/100/1000BaseTX",
+      "checked_at": "2026-03-17T11:23:48.366Z"
+    },
+    "restored_at": "2026-03-17T11:47:20.288Z",
+    "restored_by": "tlee",
+    "restore_note": "Vendor disabled connection sharing and left site. Port restored to service.",
+    "restore_transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/31\nSW01(config-if)#no shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
+    "notes": []
+  }
+]

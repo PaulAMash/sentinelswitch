@@ -1,0 +1,12 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show monitor session 1
+Session 1
+---------
+Type                   : Local Session
+Source VLANs           : 
+    Both               : 20,30,40
+Destination Ports      : Gi1/0/47
+    Encapsulation      : Native
+          Ingress      : Disabled
+SW01#

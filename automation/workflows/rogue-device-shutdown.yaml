@@ -1,0 +1,14 @@
+id: rogue-device-shutdown
+name: Rogue device shutdown (administrative hold)
+trigger: policy.disposition == automatic_containment and policy.action == port_shutdown
+steps:
+  - {id: open-incident, action: incidents.open}
+  - {id: correlate,     action: correlation.resolve, inputs: {actor: detection.actor}}
+  - {id: guard,         action: policy.assert_unprotected, inputs: {interface: attribution.interface}}
+  - {id: apply,         action: switch.shutdown, inputs: {interface: attribution.interface, reason: detection.summary}}
+  - {id: verify,        action: switch.verify, inputs: {interface: attribution.interface, expect_status: disabled}}
+  - {id: evidence,      action: evidence.bundle, inputs: {incident: incident.id}}
+  - {id: notify,        action: notify.dashboard}
+rollback:
+  - action: switch.no_shutdown
+    inputs: {interface: attribution.interface, reason: "restore"}

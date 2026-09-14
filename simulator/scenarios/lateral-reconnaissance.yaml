@@ -1,0 +1,46 @@
+id: lateral-reconnaissance
+name: Lateral Reconnaissance
+short: Compromised workstation sweeps the network and probes SMB/RDP across VLANs
+class: compromised_host
+rule: lateral-reconnaissance
+mitre: [T1018, T1046, T1021.002, T1021.001]
+flagship: true
+description: >
+  An authenticated engineering laptop (ENG-LT-047) begins host discovery across the USERS and SERVERS
+  VLANs, performs a burst of reverse DNS lookups for responding hosts, then fans out TCP probes to
+  SMB, RPC, RDP, SSH and WinRM ports on every host that answered. Suricata raises a high-confidence
+  fan-out signature, Zeek corroborates with an address-scan notice, and SentinelSwitch correlates the
+  source IP to the switch port and quarantines it.
+actor:
+  device: ENG-LT-047
+  ip: 10.20.0.47
+  mac: "A4:83:E7:12:34:56"
+  interface: Gi1/0/23
+  vlan: 20
+  user: jchen
+instances:
+  day:
+    incident_id: INC-2026-0042
+    start: "2026-03-17T21:14:31.284Z"
+    parameters: &lateral_params
+      # Traffic model. Alert timestamps are derived from these rates by the emitter:
+      #   sid 1000010 fires on the 200th ICMP echo request, sid 1000014 on the 50th PTR lookup,
+      #   sid 1000021/1000022 on the 8th distinct host probed on 445/3389, Zeek Scan::Address_Scan
+      #   on the 15th distinct host probed on 445 (+150 ms analysis delay).
+      icmp_sweep_subnets: [10.20.0.0/24, 10.30.0.0/24]
+      icmp_rate_pps: 90
+      ptr_burst_offset: 3.832            # reverse lookups for the SERVERS subnet begin
+      ptr_rate_qps: 50
+      tcp_probe_offset: 5.590            # TCP fan-out begins (host-major, 32 probes/s)
+      tcp_probe_ports: [445, 139, 135, 3389, 22, 5985]
+      tcp_probe_rate_pps: 32
+      smb_null_session_offset: 8.316     # sid 1000023 (low): anonymous SMB session attempt on SRV-FILE01
+      sensor_latency: 0.012              # packet-to-alert latency on the sensor
+      detect_latency: 0.169              # engine latency after the aggregation window closes
+    expected: {disposition: automatic_containment, action: quarantine_vlan, severity: high, confidence: 0.97}
+    resolution: null
+  validation:
+    start: "2026-03-17T21:14:31.284Z"
+    parameters: *lateral_params
+    expected: {disposition: automatic_containment, action: quarantine_vlan, severity: high, confidence: 0.97}
+timing: {open: 0.083, dhcp: 0.142, mac: 0.254, identity: 0.093, policy: 0.146, apply: 0.415, verify: 0.125, evidence: 0.339}

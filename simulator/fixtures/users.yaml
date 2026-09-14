@@ -1,0 +1,26 @@
+# Fictional user directory (corp.example.com). Authentication methods:
+#   eap-tls  - machine certificate (Engineering, Marketing, HR, IT, Operations)
+#   peap     - PEAP-MSCHAPv2 (Finance legacy workstations, scheduled for certificate migration)
+users:
+  - {username: mrivera,    display_name: Marco Rivera,     department: Engineering, title: Firmware Engineer,        auth_method: eap-tls}
+  - {username: lpatel,     display_name: Leena Patel,      department: Engineering, title: Software Engineer,        auth_method: eap-tls}
+  - {username: dokafor,    display_name: Daniel Okafor,    department: Engineering, title: Test Engineer,            auth_method: eap-tls}
+  - {username: anovak,     display_name: Anna Novak,       department: Finance,     title: Financial Analyst,        auth_method: peap}
+  - {username: tbrooks,    display_name: Tom Brooks,       department: Finance,     title: Accounts Payable,         auth_method: peap}
+  - {username: skim,       display_name: Soo-jin Kim,      department: HR,          title: HR Generalist,            auth_method: eap-tls}
+  - {username: rgarcia,    display_name: Rosa Garcia,      department: Engineering, title: Hardware Engineer,        auth_method: eap-tls}
+  - {username: ysato,      display_name: Yuki Sato,        department: Engineering, title: Embedded Engineer,        auth_method: eap-tls}
+  - {username: bmwangi,    display_name: Brian Mwangi,     department: Engineering, title: Systems Engineer,         auth_method: eap-tls}
+  - {username: cdubois,    display_name: Claire Dubois,    department: Marketing,   title: Content Lead,             auth_method: eap-tls}
+  - {username: hlindqvist, display_name: Henrik Lindqvist, department: Marketing,   title: Product Marketing,        auth_method: eap-tls}
+  - {username: jchen,      display_name: Jia Chen,         department: Engineering, title: Platform Engineer,        auth_method: eap-tls}
+  - {username: pnguyen,    display_name: Phuong Nguyen,    department: Engineering, title: QA Engineer,              auth_method: eap-tls}
+  - {username: eosei,      display_name: Efua Osei,        department: Operations,  title: Operations Coordinator,   auth_method: eap-tls}
+  - {username: ffischer,   display_name: Felix Fischer,    department: Operations,  title: Logistics Analyst,        auth_method: eap-tls}
+  - {username: ikowalski,  display_name: Igor Kowalski,    department: Engineering, title: Field Engineer,           auth_method: eap-tls}
+  - {username: wobrien,    display_name: Will O'Brien,     department: Finance,     title: Controller,               auth_method: peap}
+  - {username: nadeyemi,   display_name: Nkechi Adeyemi,   department: HR,          title: Recruiter,                auth_method: eap-tls}
+  - {username: gsantos,    display_name: Gabriel Santos,   department: Engineering, title: DevOps Engineer,          auth_method: eap-tls}
+  - {username: kmurphy,    display_name: Kate Murphy,      department: Engineering, title: Engineering Manager,      auth_method: eap-tls}
+  - {username: tlee,       display_name: Tina Lee,         department: IT,          title: Security Administrator,   auth_method: eap-tls, roles: [soc-analyst, network-admin]}
+  - {username: rahmed,     display_name: Rania Ahmed,      department: IT,          title: Systems Administrator,    auth_method: eap-tls, roles: [network-admin]}

@@ -1,0 +1,169 @@
+{
+  "generated_for": {
+    "day": "2026-03-17",
+    "start": "2026-03-17T00:00:00Z",
+    "end": "2026-03-18T00:00:00Z",
+    "baseline_now": "2026-03-17T21:14:00Z",
+    "seed": 20260317
+  },
+  "seed": 20260317,
+  "counts": {
+    "zeek": {
+      "conn": 9924,
+      "dns": 4102,
+      "http": 103,
+      "ssl": 2925,
+      "notice": 3,
+      "weird": 26
+    },
+    "suricata": {
+      "alerts": 12,
+      "flows": 1922,
+      "total": 1934
+    },
+    "radius": {
+      "events": 136,
+      "accepts": 123,
+      "rejects": 10
+    },
+    "syslog": 367,
+    "alerts": 42,
+    "detections": 14,
+    "incidents": 3,
+    "reviews": 4,
+    "events": 511,
+    "flagship_events": 7,
+    "devices": 36
+  },
+  "flagship": {
+    "derived": {
+      "icmp_sweep_alert": "2026-03-17T21:14:33.507Z",
+      "ptr_burst_alert": "2026-03-17T21:14:36.108Z",
+      "smb_fanout_alert": "2026-03-17T21:14:38.198Z",
+      "rdp_fanout_alert": "2026-03-17T21:14:38.292Z",
+      "winrm_alert": "2026-03-17T21:14:37.042Z",
+      "zeek_address_scan": "2026-03-17T21:14:39.649Z",
+      "smb_null_session_alert": "2026-03-17T21:14:39.826Z",
+      "probe_flow_count": 157
+    },
+    "metrics": {
+      "t0": "2026-03-17T21:14:31.284Z",
+      "first_alert": "2026-03-17T21:14:33.507Z",
+      "detection": "2026-03-17T21:14:39.867Z",
+      "ttd": 8.583,
+      "attribution_complete": "2026-03-17T21:14:40.439Z",
+      "tta": 0.572,
+      "decision": "2026-03-17T21:14:40.585Z",
+      "applied": "2026-03-17T21:14:41.000Z",
+      "verified": "2026-03-17T21:14:41.125Z",
+      "ttc": 1.258,
+      "end_to_end": 9.841,
+      "evidence": "2026-03-17T21:14:41.464Z"
+    },
+    "incident": {
+      "id": "INC-2026-0042",
+      "title": "Lateral Reconnaissance \u2014 ENG-LT-047",
+      "severity": "high",
+      "confidence": 0.97,
+      "status": "contained",
+      "opened_at": "2026-03-17T21:14:39.867Z",
+      "closed_at": null,
+      "rule": "lateral-reconnaissance",
+      "rule_name": "Lateral Reconnaissance",
+      "class": "compromised_host",
+      "mitre": [
+        "T1018",
+        "T1046",
+        "T1021.002"
+      ],
+      "scenario": "lateral-reconnaissance",
+      "instance": "day",
+      "detection_id": "DET-20260317T21143986-LATE",
+      "device": "ENG-LT-047",
+      "user": "jchen",
+      "department": "Engineering",
+      "ip": "10.20.0.47",
+      "mac": "A4:83:E7:12:34:56",
+      "vendor": "Lenovo",
+      "switch": "SW01",
+      "interface": "Gi1/0/23",
+      "original_vlan": 20,
+      "current_vlan": 50,
+      "port_class": "workstation",
+      "chain": [
+        "10.20.0.47",
+        "A4:83:E7:12:34:56",
+        "SW01",
+        "Gi1/0/23",
+        "VLAN 20",
+        "VLAN 50"
+      ],
+      "summary": "An authenticated engineering laptop (ENG-LT-047) begins host discovery across the USERS and SERVERS VLANs, performs a burst of reverse DNS lookups for responding hosts, then fans out TCP probes to SMB, RPC, RDP, SSH and WinRM ports on every host that answered. Suricata raises a high-confidence fan-out signature, Zeek corroborates with an address-scan notice, and SentinelSwitch correlates the source IP to the switch port and quarantines it.",
+      "disposition": "automatic_containment",
+      "action": "quarantine_vlan",
+      "attribution_confidence": 1.0,
+      "flags": [],
+      "impersonated_device": null,
+      "workflow_id": "WF-2026-0042-01",
+      "mechanism": "SentinelSwitch VLAN reassignment (quarantine VLAN)",
+      "contained_at": "2026-03-17T21:14:41.125Z",
+      "evidence_finalized_at": "2026-03-17T21:14:41.464Z"
+    },
+    "checks": {
+      "detect": true,
+      "attribute": true,
+      "contain": true
+    }
+  },
+  "files": {
+    "data/zeek/conn.log": {
+      "sha256": "9e4c1733c3430e9143141a6d9e7ecf4fefef000592d73fb19c992350cfadce3b",
+      "bytes": 3727779
+    },
+    "data/zeek/dns.log": {
+      "sha256": "a55e7b96dc4b8afd4d1af8b13068a5d279b3f5bd46a2e32d490ff84c51b254a2",
+      "bytes": 1684731
+    },
+    "data/zeek/http.log": {
+      "sha256": "73798838e892f2ed7c3f4f19ea6b408e55d06bf4686d0b8dc51619c2c56638ab",
+      "bytes": 51399
+    },
+    "data/zeek/notice.log": {
+      "sha256": "5d2baf3fabee415da8b7b0cc065fce5f9b24f9582223b7caa5af7179d7d589ea",
+      "bytes": 901
+    },
+    "data/zeek/ssl.log": {
+      "sha256": "3bed9b32521610b86c1e514aee82f3d93a445e5c17ee10fdf0051e1442d3a9e7",
+      "bytes": 948284
+    },
+    "data/zeek/weird.log": {
+      "sha256": "9f9f569818dbf6b6276d7ff0c2038c7022129cd32d13a8dccda3975ac95a8477",
+      "bytes": 5750
+    },
+    "data/suricata/eve.json": {
+      "sha256": "852ff4754f5ed0c7068ccb5915578343f404476e1a56d4c36d1c55349cfc30c1",
+      "bytes": 973710
+    },
+    "data/radius/auth-events.jsonl": {
+      "sha256": "31f41f411d0f9a9bed1e5a18ae0f78dfd5e58721c2cb8dbb5a7e51d5a2a17a93",
+      "bytes": 83730
+    },
+    "data/radius/radius.log": {
+      "sha256": "ed747bbc28342e85f0d192ba791ef7f37c6952b0ac40e828203aa61297b177e7",
+      "bytes": 19515
+    },
+    "data/cisco/SW01-syslog.log": {
+      "sha256": "c37c11e82b34522801f1415f9d0724acfde8080b99a9db3965a17dbaae943804",
+      "bytes": 60952
+    },
+    "data/generated/events.jsonl": {
+      "sha256": "8e3102f4c6fef52ebe50b615dd71a21817c5beccb29036ea738f45d9b99da59a",
+      "bytes": 449295
+    },
+    "data/generated/flagship-events.jsonl": {
+      "sha256": "58c7bea1f3a8cd03990068276e9e215a526438ca1de6a40da068154bf7085bdc",
+      "bytes": 7372
+    }
+  },
+  "note": "Synthetic dataset produced by simulator/generators/run.py; regenerate with `make seed`."
+}

@@ -1,0 +1,40 @@
+id: unauthorized-endpoint
+name: Unauthorized Endpoint
+short: Unregistered device connects to a corporate drop and fails MAB/802.1X
+class: rogue_device
+rule: unauthorized-endpoint
+mitre: [T1200, T1078]
+description: >
+  A single-board computer that is not in the asset inventory is connected to a spare corporate drop.
+  MAC Authentication Bypass is rejected by FreeRADIUS, no 802.1X supplicant responds, and SentinelSwitch
+  attributes the MAC to the physical interface using the AAA and syslog telemetry (the MAC address table
+  has no entry because the port never became authorized).
+actor:
+  device: unknown
+  label: unauthorized-sbc
+  ip: null
+  mac: "DC:A6:32:19:77:C1"
+  interface: Gi1/0/17
+  vlan: 20
+instances:
+  day:
+    incident_id: INC-2026-0040
+    start: "2026-03-17T09:41:05.112Z"
+    parameters: &ue_params
+      mab_reject_offset: 0.306
+      detect_latency: 0.155
+    expected: {disposition: automatic_containment, action: port_shutdown, severity: high, confidence: 0.96}
+    resolution:
+      device_removed: "2026-03-17T09:52:30Z"
+      restored_at: "2026-03-17T09:58:30.514Z"
+      restored_by: tlee
+      note: "Unregistered contractor single-board computer removed after physical inspection (ticket SVC-2026-0311). Port restored to service."
+  validation:
+    start: "2026-03-17T09:41:05.112Z"
+    parameters: *ue_params
+    expected: {disposition: automatic_containment, action: port_shutdown, severity: high, confidence: 0.96}
+timing: {open: 0.071, dhcp: 0.131, mac: 0.196, identity: 0.077, policy: 0.152, apply: 0.401, verify: 0.117, evidence: 0.321}
+setup:
+  - {op: link_up, interface: Gi1/0/17, mac: "DC:A6:32:19:77:C1", auth_state: unauthorized}
+teardown:
+  - {op: link_down, interface: Gi1/0/17, at: "2026-03-17T09:52:30Z"}

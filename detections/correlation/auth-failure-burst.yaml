@@ -1,0 +1,14 @@
+id: auth-failure-burst
+name: Repeated Authentication Failures
+class: identity
+description: Three or more RADIUS rejects for the same endpoint within five minutes.
+mitre: [T1110]
+actor_key: mac
+trigger: {source: radius, result: Access-Reject, method: [PEAP-MSCHAPv2, EAP-TLS]}
+aggregate_window: 120
+base_confidence: 0.30
+emit_threshold: 0.50
+severity: low
+features:
+  - {id: three_rejects, label: "At least 3 rejects within 5 minutes", type: event_count, match: {source: radius, result: Access-Reject}, window: 300, min: 3, weight: 0.25}
+  - {id: no_subsequent_accept, label: "No successful authentication followed", type: event_match, match: {source: radius, result: Access-Accept}, window: -300, weight: 0.15}

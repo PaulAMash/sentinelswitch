@@ -1,0 +1,31 @@
+%% Generated from diagrams/source/detection-to-containment-flow.json by diagrams/source/render.py
+flowchart LR
+    subgraph detect["Detection engineering"]
+        sources["Telemetry<br/>Suricata EVE · Zeek notices<br/>RADIUS · IOS syslog"]
+        normalize["Normalize<br/>ts · source · actor keys<br/>enrich: port class, gateway"]
+        trigger["Rule trigger<br/>e.g. sid 1000021<br/>actor = 10.20.0.47"]
+        window["Aggregation window<br/>collect corroboration<br/>1.5 s … 45 s per rule"]
+        score["Score evidence features<br/>base 0.75 + Zeek scan 0.10 + ICMP sweep 0.07 + PTR burst 0.05<br/>authorized scanner −0.35 · clamp 0.05–0.99 · severity rules"]
+    end
+    subgraph respond["Response orchestration"]
+        attrib["Attribution<br/>IP → DHCP snooping binding → MAC<br/>MAC → MAC table → interface → VLAN<br/>→ inventory identity · flags"]
+        tiers["Policy tiers<br/>≥ 0.95 & high → automatic containment<br/>≥ 0.75 → manual review<br/>otherwise → monitor"]
+        guards["Guards (downgrade only)<br/>protected ports Gi1/0/1, Gi1/0/48<br/>trunks · SPAN destination<br/>critical assets · unresolved actor"]
+        action["Action by actor class<br/>compromised host → quarantine VLAN 50<br/>rogue device → administrative shutdown<br/>identity / policy → none"]
+        verify["Verify on the switch<br/>show interfaces … switchport · MAC table"]
+        evidence["Evidence bundle<br/>timeline · alerts · binding · MAC table<br/>port before/after · decision · transcript"]
+        review["Manual review queue<br/>attribution attached, nothing changed on the switch — analyst closes, escalates or restores"]
+    end
+    sources --> normalize
+    normalize --> trigger
+    trigger --> window
+    window --> score
+    score -->|detection (severity, confidence)| attrib
+    attrib --> tiers
+    tiers -->|automatic| guards
+    guards -->|unguarded| action
+    action --> verify
+    verify --> evidence
+    tiers -->|manual review| review
+    guards -->|downgraded| review
+    review -.->|escalate / restore| evidence

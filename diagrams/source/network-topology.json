@@ -1,0 +1,456 @@
+{
+  "name": "network-topology",
+  "title": "Lab network topology and VLAN plan",
+  "subtitle": "Every endpoint is modelled on a dedicated SW01 access port; LAB-FW01 routes between VLANs, SEC-TP01 hosts the security stack",
+  "width": 1600,
+  "height": 900,
+  "mermaid_direction": "LR",
+  "groups": [
+    {
+      "id": "mgmt",
+      "label": "VLAN 10 \u00b7 MGMT \u00b7 10.10.10.0/24",
+      "x": 2,
+      "y": 5,
+      "w": 21,
+      "h": 8,
+      "color": "blue"
+    },
+    {
+      "id": "users",
+      "label": "VLAN 20 \u00b7 USERS \u00b7 10.20.0.0/24 \u00b7 802.1X",
+      "x": 2,
+      "y": 15,
+      "w": 21,
+      "h": 17,
+      "color": "cyan",
+      "note": "23 endpoints \u00b7 Gi1/0/5 \u2013 Gi1/0/37"
+    },
+    {
+      "id": "servers",
+      "label": "VLAN 30 \u00b7 SERVERS \u00b7 10.30.0.0/24",
+      "x": 58,
+      "y": 5,
+      "w": 20,
+      "h": 13.5,
+      "color": "green"
+    },
+    {
+      "id": "guest",
+      "label": "VLAN 40 \u00b7 GUEST \u00b7 10.40.0.0/24",
+      "x": 58,
+      "y": 20.5,
+      "w": 20,
+      "h": 6.5,
+      "color": "amber"
+    },
+    {
+      "id": "quarantine",
+      "label": "VLAN 50 \u00b7 QUARANTINE \u00b7 10.50.0.0/24",
+      "x": 58,
+      "y": 29,
+      "w": 20,
+      "h": 5.5,
+      "color": "red"
+    },
+    {
+      "id": "monitor",
+      "label": "VLAN 99 \u00b7 MONITORING \u00b7 10.99.0.0/24",
+      "x": 2,
+      "y": 34,
+      "w": 21,
+      "h": 6.5,
+      "color": "purple"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "fw",
+      "kind": "accent",
+      "color": "blue",
+      "x": 32,
+      "y": 6,
+      "w": 18,
+      "h": 5,
+      "label": "LAB-FW01 \u00b7 firewall / router",
+      "sub": [
+        "gateway .1 in every VLAN \u00b7 DHCP relay \u2192 SRV-DC01",
+        "10.10.10.1"
+      ],
+      "badge": "trunk"
+    },
+    {
+      "id": "sw",
+      "kind": "switch",
+      "color": "cyan",
+      "x": 30,
+      "y": 18,
+      "w": 22,
+      "h": 8,
+      "label": "SW01 \u00b7 Cisco Catalyst 2960-X",
+      "sub": [
+        "WS-C2960X-48FPD-L \u00b7 IOS 15.2(7)E8 \u00b7 10.10.10.2",
+        "DHCP snooping + DAI + IPSG on 20/30/40/50",
+        "SPAN session 1: VLANs 20/30/40 \u2192 Gi1/0/47"
+      ]
+    },
+    {
+      "id": "jump",
+      "group": "mgmt",
+      "x": 4,
+      "y": 7,
+      "w": 8,
+      "h": 4.5,
+      "label": "LAB-JUMP01",
+      "sub": [
+        "Gi1/0/2 \u00b7 10.10.10.20"
+      ]
+    },
+    {
+      "id": "pdu",
+      "group": "mgmt",
+      "x": 13.5,
+      "y": 7,
+      "w": 8,
+      "h": 4.5,
+      "label": "LAB-PDU01",
+      "sub": [
+        "Gi1/0/3 \u00b7 10.10.10.25"
+      ]
+    },
+    {
+      "id": "ws1",
+      "group": "users",
+      "x": 4,
+      "y": 17,
+      "w": 8,
+      "h": 4,
+      "label": "ENG-WS-005",
+      "sub": [
+        "Gi1/0/5 \u00b7 mrivera"
+      ]
+    },
+    {
+      "id": "ws2",
+      "group": "users",
+      "x": 13.5,
+      "y": 17,
+      "w": 8,
+      "h": 4,
+      "label": "FIN-WS-014",
+      "sub": [
+        "Gi1/0/14 \u00b7 anovak"
+      ]
+    },
+    {
+      "id": "ws3",
+      "group": "users",
+      "x": 4,
+      "y": 22,
+      "w": 8,
+      "h": 4,
+      "label": "HR-WS-016",
+      "sub": [
+        "Gi1/0/16 \u00b7 skim"
+      ]
+    },
+    {
+      "id": "lt047",
+      "group": "users",
+      "kind": "accent",
+      "color": "red",
+      "x": 13.5,
+      "y": 22,
+      "w": 8,
+      "h": 4,
+      "label": "ENG-LT-047",
+      "sub": [
+        "Gi1/0/23 \u00b7 jchen \u00b7 10.20.0.47"
+      ],
+      "badge": "flagship"
+    },
+    {
+      "id": "it037",
+      "group": "users",
+      "x": 4,
+      "y": 27,
+      "w": 8,
+      "h": 4,
+      "label": "IT-LT-037",
+      "sub": [
+        "Gi1/0/37 \u00b7 authorized scanner"
+      ]
+    },
+    {
+      "id": "printer",
+      "group": "users",
+      "x": 13.5,
+      "y": 27,
+      "w": 8,
+      "h": 4,
+      "label": "ENG-PR01",
+      "sub": [
+        "Gi1/0/28 \u00b7 MAB \u00b7 .200"
+      ]
+    },
+    {
+      "id": "dc",
+      "group": "servers",
+      "x": 60,
+      "y": 6.4,
+      "w": 8,
+      "h": 3.4,
+      "label": "SRV-DC01",
+      "sub": [
+        "Gi1/0/8 \u00b7 DNS/DHCP/AD"
+      ]
+    },
+    {
+      "id": "file",
+      "group": "servers",
+      "x": 69,
+      "y": 6.4,
+      "w": 8,
+      "h": 3.4,
+      "label": "SRV-FILE01",
+      "sub": [
+        "Gi1/0/9 \u00b7 SMB"
+      ]
+    },
+    {
+      "id": "rad",
+      "group": "servers",
+      "x": 60,
+      "y": 10.4,
+      "w": 8,
+      "h": 3.4,
+      "label": "SRV-RADIUS01",
+      "sub": [
+        "Gi1/0/10 \u00b7 FreeRADIUS"
+      ]
+    },
+    {
+      "id": "git",
+      "group": "servers",
+      "x": 60,
+      "y": 14.4,
+      "w": 8,
+      "h": 3.4,
+      "label": "SRV-GIT01",
+      "sub": [
+        "Gi1/0/12"
+      ],
+      "sub_size": 10
+    },
+    {
+      "id": "upd",
+      "group": "servers",
+      "x": 69,
+      "y": 14.4,
+      "w": 8,
+      "h": 3.4,
+      "label": "SRV-UPD01",
+      "sub": [
+        "Gi1/0/13"
+      ],
+      "sub_size": 10
+    },
+    {
+      "id": "web",
+      "group": "servers",
+      "x": 69,
+      "y": 10.4,
+      "w": 8,
+      "h": 3.4,
+      "label": "SRV-WEB01",
+      "sub": [
+        "Gi1/0/11 \u00b7 intranet"
+      ]
+    },
+    {
+      "id": "visitor",
+      "group": "guest",
+      "x": 60,
+      "y": 22.5,
+      "w": 8,
+      "h": 3.8,
+      "label": "GUEST-VISITOR-01",
+      "sub": [
+        "Gi1/0/29 \u00b7 guest VLAN"
+      ]
+    },
+    {
+      "id": "tv",
+      "group": "guest",
+      "x": 69,
+      "y": 22.5,
+      "w": 8,
+      "h": 3.8,
+      "label": "CONF-A-TV01",
+      "sub": [
+        "Gi1/0/30 \u00b7 MAB fallback"
+      ]
+    },
+    {
+      "id": "q047",
+      "group": "quarantine",
+      "kind": "accent",
+      "color": "red",
+      "x": 60,
+      "y": 30.5,
+      "w": 16.5,
+      "h": 3.5,
+      "label": "ENG-LT-047 after containment",
+      "sub": [
+        "Gi1/0/23 \u00b7 switchport access vlan 50"
+      ]
+    },
+    {
+      "id": "tp",
+      "group": "monitor",
+      "kind": "accent",
+      "color": "purple",
+      "x": 4,
+      "y": 35.5,
+      "w": 17.5,
+      "h": 4.6,
+      "label": "SEC-TP01 \u00b7 Lenovo ThinkPad \u00b7 Debian 12",
+      "sub": [
+        "eth0 trunk Gi1/0/48 (VLAN 10, 99) \u00b7 eth1 SPAN Gi1/0/47",
+        "Zeek \u00b7 Suricata \u00b7 SentinelSwitch controller"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "fw",
+      "to": "sw",
+      "label": "Gi1/0/1 \u00b7 trunk 10,20,30,40,50,99 \u00b7 protected",
+      "color": "blue",
+      "width": 2.2
+    },
+    {
+      "from": "pdu",
+      "to": "sw",
+      "label": "Gi1/0/2\u20133",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "to_offset": [
+        0,
+        -3
+      ]
+    },
+    {
+      "from": "ws2",
+      "to": "sw",
+      "label": "access VLAN 20",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "to_offset": [
+        0,
+        -1
+      ]
+    },
+    {
+      "from": "lt047",
+      "to": "sw",
+      "label": "Gi1/0/23",
+      "color": "red",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "to_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "from": "tp",
+      "to": "sw",
+      "label": "Gi1/0/48 trunk \u00b7 Gi1/0/47 SPAN",
+      "color": "purple",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "to_offset": [
+        0,
+        3
+      ],
+      "via": [
+        [
+          26,
+          37.8
+        ],
+        [
+          26,
+          25
+        ]
+      ],
+      "label_offset": [
+        0,
+        -4
+      ]
+    },
+    {
+      "from": "sw",
+      "to": "dc",
+      "label": "access VLAN 30",
+      "color": "green",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "from_offset": [
+        0,
+        -3
+      ]
+    },
+    {
+      "from": "sw",
+      "to": "visitor",
+      "label": "guest fallback",
+      "color": "amber",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "from_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "from": "sw",
+      "to": "q047",
+      "label": "automated quarantine",
+      "color": "red",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "from_offset": [
+        0,
+        3
+      ],
+      "via": [
+        [
+          56,
+          25
+        ],
+        [
+          56,
+          32.25
+        ]
+      ],
+      "label_offset": [
+        -1.4,
+        -2
+      ]
+    }
+  ]
+}

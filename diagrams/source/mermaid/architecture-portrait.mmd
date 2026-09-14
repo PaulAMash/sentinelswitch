@@ -1,0 +1,41 @@
+%% Generated from diagrams/source/architecture-portrait.json by diagrams/source/render.py
+flowchart TB
+    subgraph access["Access layer · digital twin"]
+        endpoints["Simulated endpoints<br/>23 workstations & laptops · 6 servers · guests · rogue devices"]
+        twin["Cisco Catalyst 2960-X twin · SW01<br/>VLAN 10/20/30/40/50/99 · 48 × GE ports<br/>802.1X · DHCP snooping · DAI · IPSG · port security · BPDU Guard"]
+        quarantine["VLAN 50 QUARANTINE<br/>Gi1/0/23 moved 20 → 50"]
+    end
+    subgraph telemetry["Telemetry · SEC-TP01"]
+        span["SPAN · Zeek + Suricata<br/>VLANs 20/30/40 → Gi1/0/47"]
+        syslog["IOS syslog<br/>AAA · DAI · snooping · port-sec"]
+        radius["FreeRADIUS 802.1X<br/>EAP-TLS · PEAP · MAB"]
+    end
+    subgraph controller["SentinelSwitch controller"]
+        normalize["Normalization<br/>one schema · four sources"]
+        detect["Detection + correlation<br/>rules · confidence · IP → MAC → port"]
+        policy["Policy engine<br/>≥ 0.95 & high → automatic · guards"]
+        contain["Containment controller<br/>quarantine VLAN · shutdown · verify"]
+        adapter2["Switch adapter · SimulatedCisco2960XAdapter"]
+    end
+    subgraph platform["Platform"]
+        evidence["Evidence store<br/>SQLite · data/incidents/"]
+        dashboard["Dashboard + API<br/>FastAPI · React · SSE"]
+        analyst["SOC analyst<br/>review · restore"]
+    end
+    endpoints --> twin
+    twin --> quarantine
+    twin --> span
+    twin --> syslog
+    twin --> radius
+    span --> normalize
+    syslog --> normalize
+    radius --> normalize
+    normalize --> detect
+    detect --> policy
+    policy --> contain
+    contain --> adapter2
+    adapter2 -->|switchport access vlan 50| twin
+    detect -->|detections · incidents| evidence
+    contain -->|actions · verification| dashboard
+    evidence --> dashboard
+    analyst --> dashboard

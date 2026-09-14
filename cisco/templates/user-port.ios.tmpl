@@ -1,0 +1,25 @@
+interface {{ interface }}
+ description {{ description }}
+ switchport access vlan 20
+ switchport mode access
+ switchport port-security
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ ip arp inspection limit rate 15
+ authentication event fail action next-method
+ authentication event no-response action authorize vlan 40
+ authentication order mab dot1x
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ mab
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ storm-control broadcast level 1.00
+ storm-control multicast level 1.00
+ storm-control action trap
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ ip verify source
+!

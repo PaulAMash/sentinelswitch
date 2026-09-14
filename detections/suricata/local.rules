@@ -1,0 +1,32 @@
+# SentinelSwitch local Suricata rules (sid range 1000000-1999999).
+# These rules describe the *detections modelled by the digital twin*. They are written for Suricata 7.x
+# syntax and are intended for a SPAN-fed sensor watching VLANs 20/30/40. No offensive tooling is implied.
+#
+# Variables expected in suricata.yaml:
+#   HOME_NET:      [10.10.10.0/24,10.20.0.0/24,10.30.0.0/24,10.40.0.0/24,10.50.0.0/24,10.99.0.0/24]
+#   SERVERS_NET:   [10.30.0.0/24]
+#   DNS_SERVERS:   [10.30.0.10,10.40.0.1]
+#   DHCP_SERVERS:  [10.30.0.10,10.40.0.1]
+#   NTP_SERVERS:   [10.30.0.10]
+
+# ---- Discovery ---------------------------------------------------------------------------------
+alert icmp $HOME_NET any -> $HOME_NET any (msg:"SENTINELSWITCH RECON ICMP echo sweep from internal host"; itype:8; threshold:type both, track by_src, count 200, seconds 5; classtype:network-scan; metadata:sentinel_class recon, sentinel_severity medium; sid:1000010; rev:2;)
+alert tcp $HOME_NET any -> $HOME_NET any (msg:"SENTINELSWITCH RECON TCP port sweep from internal host"; flags:S,12; flow:stateless; threshold:type both, track by_src, count 600, seconds 10; classtype:attempted-recon; metadata:sentinel_class recon, sentinel_severity medium; sid:1000011; rev:2;)
+alert tcp $HOME_NET any -> $HOME_NET any (msg:"SENTINELSWITCH RECON SYN scan across multiple internal hosts"; flags:S,12; flow:stateless; threshold:type both, track by_src, count 400, seconds 10; classtype:attempted-recon; metadata:sentinel_class recon, sentinel_severity medium; sid:1000012; rev:1;)
+alert dns $HOME_NET any -> $DNS_SERVERS 53 (msg:"SENTINELSWITCH RECON reverse DNS lookup burst"; dns.query; content:".in-addr.arpa"; endswith; threshold:type both, track by_src, count 50, seconds 10; classtype:attempted-recon; metadata:sentinel_class recon, sentinel_severity low; sid:1000014; rev:1;)
+
+# ---- Lateral movement probes -------------------------------------------------------------------
+alert tcp $HOME_NET any -> $HOME_NET 445 (msg:"SENTINELSWITCH LATERAL SMB probe fan-out to multiple internal hosts"; flags:S,12; flow:stateless; threshold:type both, track by_src, count 8, seconds 5; classtype:attempted-recon; metadata:sentinel_class lateral, sentinel_severity high; sid:1000021; rev:3;)
+alert tcp $HOME_NET any -> $HOME_NET 3389 (msg:"SENTINELSWITCH LATERAL RDP probe fan-out to multiple internal hosts"; flags:S,12; flow:stateless; threshold:type both, track by_src, count 8, seconds 5; classtype:attempted-recon; metadata:sentinel_class lateral, sentinel_severity high; sid:1000022; rev:3;)
+alert smb $HOME_NET any -> $SERVERS_NET 445 (msg:"SENTINELSWITCH LATERAL SMB session setup with anonymous credentials"; smb.ntlmssp_user; content:""; flow:established,to_server; classtype:attempted-recon; metadata:sentinel_class lateral, sentinel_severity low; sid:1000023; rev:1;)
+alert tcp $HOME_NET any -> $HOME_NET 5985 (msg:"SENTINELSWITCH LATERAL WinRM probe from workstation VLAN"; flags:S,12; flow:stateless; threshold:type limit, track by_src, count 1, seconds 60; classtype:attempted-recon; metadata:sentinel_class lateral, sentinel_severity low; sid:1000024; rev:1;)
+
+# ---- DNS anomalies -----------------------------------------------------------------------------
+alert dns $HOME_NET any -> $DNS_SERVERS 53 (msg:"SENTINELSWITCH DNS query rate threshold exceeded"; dns.query; content:"."; threshold:type both, track by_src, count 120, seconds 60; classtype:policy-violation; metadata:sentinel_class dns, sentinel_severity medium; sid:1000030; rev:2;)
+alert dns $DNS_SERVERS 53 -> $HOME_NET any (msg:"SENTINELSWITCH DNS NXDOMAIN response burst"; dns.rcode:3; threshold:type both, track by_dst, count 60, seconds 60; classtype:policy-violation; metadata:sentinel_class dns, sentinel_severity medium; sid:1000031; rev:1;)
+
+# ---- Rogue infrastructure ----------------------------------------------------------------------
+alert udp !$DHCP_SERVERS 67 -> any 68 (msg:"SENTINELSWITCH ROGUE DHCP server message from non-authorized host"; classtype:policy-violation; metadata:sentinel_class rogue, sentinel_severity high; sid:1000040; rev:2;)
+
+# ---- Policy ------------------------------------------------------------------------------------
+alert udp $HOME_NET any -> !$NTP_SERVERS 123 (msg:"SENTINELSWITCH POLICY NTP to non-approved server"; threshold:type limit, track by_src, count 1, seconds 3600; classtype:policy-violation; metadata:sentinel_class policy, sentinel_severity low; sid:1000050; rev:1;)

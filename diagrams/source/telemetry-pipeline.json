@@ -1,0 +1,481 @@
+{
+  "name": "telemetry-pipeline",
+  "title": "Telemetry and data pipeline",
+  "subtitle": "One canonical model drives every dataset, so the dashboard, CLI, Cisco transcripts, evidence bundles and documentation always agree",
+  "width": 1600,
+  "height": 900,
+  "mermaid_direction": "LR",
+  "groups": [
+    {
+      "id": "canon",
+      "label": "Canonical model \u00b7 configuration as code",
+      "x": 2,
+      "y": 5,
+      "w": 18,
+      "h": 33,
+      "color": "cyan"
+    },
+    {
+      "id": "gen",
+      "label": "Deterministic generators \u00b7 simulator/generators",
+      "x": 22,
+      "y": 5,
+      "w": 18,
+      "h": 33,
+      "color": "blue"
+    },
+    {
+      "id": "data",
+      "label": "Synthetic dataset \u00b7 data/",
+      "x": 42,
+      "y": 5,
+      "w": 16,
+      "h": 33,
+      "color": "faint"
+    },
+    {
+      "id": "app",
+      "label": "Application",
+      "x": 60,
+      "y": 5,
+      "w": 18,
+      "h": 33,
+      "color": "purple"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "fixtures",
+      "group": "canon",
+      "x": 4,
+      "y": 7.5,
+      "w": 14,
+      "h": 5.5,
+      "label": "Fixtures",
+      "sub": [
+        "inventory \u00b7 users \u00b7 VLANs",
+        "port intent \u00b7 external services"
+      ]
+    },
+    {
+      "id": "scenarios",
+      "group": "canon",
+      "x": 4,
+      "y": 15,
+      "w": 14,
+      "h": 5.5,
+      "label": "Scenario definitions",
+      "sub": [
+        "8 adversary scenarios",
+        "day + validation instances \u00b7 timing"
+      ]
+    },
+    {
+      "id": "rules",
+      "group": "canon",
+      "x": 4,
+      "y": 22.5,
+      "w": 14,
+      "h": 5.5,
+      "label": "Detections",
+      "sub": [
+        "Suricata local.rules \u00b7 Zeek scripts",
+        "correlation rules \u00b7 policy YAML"
+      ]
+    },
+    {
+      "id": "cisco_t",
+      "group": "canon",
+      "x": 4,
+      "y": 30,
+      "w": 14,
+      "h": 5.5,
+      "label": "Cisco templates",
+      "sub": [
+        "port profiles \u2192 running-config",
+        "desired state for drift"
+      ]
+    },
+    {
+      "id": "day",
+      "group": "gen",
+      "kind": "accent",
+      "color": "blue",
+      "x": 24,
+      "y": 7.5,
+      "w": 14,
+      "h": 7,
+      "label": "Day simulation",
+      "sub": [
+        "link events \u00b7 authentications",
+        "scenarios replayed through the",
+        "real pipeline against the twin"
+      ]
+    },
+    {
+      "id": "traffic",
+      "group": "gen",
+      "x": 24,
+      "y": 16.5,
+      "w": 14,
+      "h": 5,
+      "label": "Background traffic model",
+      "sub": [
+        "DNS \u00b7 TLS \u00b7 SMB \u00b7 Kerberos \u00b7 NTP"
+      ]
+    },
+    {
+      "id": "emitters",
+      "group": "gen",
+      "x": 24,
+      "y": 23.5,
+      "w": 14,
+      "h": 5,
+      "label": "Scenario emitters",
+      "sub": [
+        "alerts derived from flow rates"
+      ]
+    },
+    {
+      "id": "twin_gen",
+      "group": "gen",
+      "kind": "switch",
+      "color": "cyan",
+      "x": 24,
+      "y": 30.5,
+      "w": 14,
+      "h": 5,
+      "label": "Switch twin renderer",
+      "sub": [
+        "show commands \u00b7 running-config"
+      ]
+    },
+    {
+      "id": "zeek",
+      "group": "data",
+      "x": 44,
+      "y": 7.5,
+      "w": 12,
+      "h": 5,
+      "label": "Zeek logs",
+      "sub": [
+        "conn \u00b7 dns \u00b7 ssl \u00b7 http \u00b7 notice \u00b7 weird"
+      ]
+    },
+    {
+      "id": "eve",
+      "group": "data",
+      "x": 44,
+      "y": 13.5,
+      "w": 12,
+      "h": 4,
+      "label": "Suricata eve.json",
+      "sub": [
+        "alert + flow events"
+      ]
+    },
+    {
+      "id": "radius_d",
+      "group": "data",
+      "x": 44,
+      "y": 18.5,
+      "w": 12,
+      "h": 4,
+      "label": "RADIUS auth log",
+      "sub": [
+        "FreeRADIUS style + JSONL"
+      ]
+    },
+    {
+      "id": "syslog_d",
+      "group": "data",
+      "x": 44,
+      "y": 23.5,
+      "w": 12,
+      "h": 4,
+      "label": "IOS syslog",
+      "sub": [
+        "SW01-syslog.log"
+      ]
+    },
+    {
+      "id": "cisco_d",
+      "group": "data",
+      "x": 44,
+      "y": 28.5,
+      "w": 12,
+      "h": 4,
+      "label": "Cisco transcripts",
+      "sub": [
+        "pre / post quarantine"
+      ]
+    },
+    {
+      "id": "seed",
+      "group": "data",
+      "kind": "db",
+      "color": "cyan",
+      "x": 44,
+      "y": 33.2,
+      "w": 12,
+      "h": 4.5,
+      "label": "seed JSON + evidence",
+      "sub": [
+        "written by the day simulation"
+      ]
+    },
+    {
+      "id": "normalize",
+      "group": "app",
+      "x": 62,
+      "y": 7.5,
+      "w": 14,
+      "h": 5,
+      "label": "Normalizer",
+      "sub": [
+        "common event schema"
+      ]
+    },
+    {
+      "id": "engine",
+      "group": "app",
+      "kind": "accent",
+      "color": "amber",
+      "x": 62,
+      "y": 14.5,
+      "w": 14,
+      "h": 6,
+      "label": "Detection \u00b7 correlation \u00b7 policy",
+      "sub": [
+        "scenario runner \u00b7 validation harness",
+        "containment controller \u00b7 adapter"
+      ]
+    },
+    {
+      "id": "sqlite",
+      "group": "app",
+      "kind": "db",
+      "color": "cyan",
+      "x": 62,
+      "y": 22.5,
+      "w": 14,
+      "h": 5,
+      "label": "SQLite",
+      "sub": [
+        "operational state + twin"
+      ]
+    },
+    {
+      "id": "api",
+      "group": "app",
+      "x": 62,
+      "y": 29.5,
+      "w": 14,
+      "h": 3.5,
+      "label": "FastAPI + SSE",
+      "sub": []
+    },
+    {
+      "id": "ui",
+      "group": "app",
+      "kind": "accent",
+      "color": "purple",
+      "x": 62,
+      "y": 34,
+      "w": 14,
+      "h": 3.5,
+      "label": "React SOC dashboard",
+      "sub": []
+    }
+  ],
+  "edges": [
+    {
+      "from": "fixtures",
+      "to": "day"
+    },
+    {
+      "from": "scenarios",
+      "to": "emitters"
+    },
+    {
+      "from": "rules",
+      "to": "day",
+      "style": "dashed",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "to_offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "from": "cisco_t",
+      "to": "twin_gen"
+    },
+    {
+      "from": "day",
+      "to": "zeek"
+    },
+    {
+      "from": "traffic",
+      "to": "zeek",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "to_offset": [
+        0,
+        1.5
+      ]
+    },
+    {
+      "from": "emitters",
+      "to": "eve",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "via": [
+        [
+          41,
+          26
+        ],
+        [
+          41,
+          15.5
+        ]
+      ]
+    },
+    {
+      "from": "day",
+      "to": "radius_d",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "via": [
+        [
+          40.5,
+          12.5
+        ],
+        [
+          40.5,
+          20.5
+        ]
+      ],
+      "from_offset": [
+        0,
+        1.5
+      ]
+    },
+    {
+      "from": "day",
+      "to": "syslog_d",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "via": [
+        [
+          40,
+          13.5
+        ],
+        [
+          40,
+          25.5
+        ]
+      ],
+      "from_offset": [
+        0,
+        2.5
+      ]
+    },
+    {
+      "from": "twin_gen",
+      "to": "cisco_d"
+    },
+    {
+      "from": "zeek",
+      "to": "normalize"
+    },
+    {
+      "from": "eve",
+      "to": "normalize",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "to_offset": [
+        0,
+        1.2
+      ]
+    },
+    {
+      "from": "radius_d",
+      "to": "normalize",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "via": [
+        [
+          59,
+          20.5
+        ],
+        [
+          59,
+          11.2
+        ]
+      ],
+      "to_offset": [
+        0,
+        1.2
+      ]
+    },
+    {
+      "from": "syslog_d",
+      "to": "normalize",
+      "sides": [
+        "right",
+        "left"
+      ],
+      "via": [
+        [
+          58.6,
+          25.5
+        ],
+        [
+          58.6,
+          11.6
+        ]
+      ],
+      "to_offset": [
+        0,
+        1.6
+      ]
+    },
+    {
+      "from": "normalize",
+      "to": "engine"
+    },
+    {
+      "from": "seed",
+      "to": "sqlite",
+      "label": "make seed"
+    },
+    {
+      "from": "engine",
+      "to": "sqlite"
+    },
+    {
+      "from": "sqlite",
+      "to": "api"
+    },
+    {
+      "from": "api",
+      "to": "ui"
+    }
+  ]
+}

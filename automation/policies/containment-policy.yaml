@@ -1,0 +1,54 @@
+# SentinelSwitch containment policy.
+# The policy engine evaluates every scored detection and returns a disposition:
+#   automatic_containment  -> the containment controller acts immediately through the switch adapter
+#   manual_review          -> an analyst must approve; attribution is attached, nothing changes on the switch
+#   monitor                -> logged only
+version: 1
+quarantine_vlan: 50
+
+tiers:
+  - name: automatic_containment
+    when: {min_confidence: 0.95, severities: [high, critical]}
+  - name: manual_review
+    when: {min_confidence: 0.75}
+  - name: monitor
+    when: {}
+
+# Guards are evaluated after the tier is selected and can only reduce the disposition.
+guards:
+  protected_ports:
+    description: Infrastructure ports are never changed automatically.
+    interfaces: [Gi1/0/1, Gi1/0/48]
+    downgrade_to: manual_review
+  trunk_ports:
+    description: Trunk interfaces carry many hosts; automatic VLAN changes are never applied to them.
+    downgrade_to: manual_review
+  span_destination:
+    description: The SPAN destination feeds the sensor; changing it blinds the SOC.
+    downgrade_to: manual_review
+  critical_assets:
+    description: Servers and infrastructure with criticality critical/high require a human decision.
+    criticalities: [critical, high]
+    downgrade_to: manual_review
+  unresolved_attribution:
+    description: If the actor cannot be tied to a single access port, no automatic action is possible.
+    downgrade_to: manual_review
+
+# Which containment action applies to which actor class.
+actions:
+  compromised_host: quarantine_vlan     # keep the host reachable from the remediation network
+  rogue_device: port_shutdown           # no legitimate session exists; remove the device from the network
+  identity: none
+  policy: none
+
+verification:
+  quarantine_vlan:
+    - show interfaces {interface} switchport
+    - show mac address-table interface {interface}
+    - show vlan id {vlan}
+  port_shutdown:
+    - show interfaces {interface} status
+    - show mac address-table interface {interface}
+
+notification:
+  channels: [dashboard, syslog, evidence-bundle]

@@ -1,0 +1,26 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show authentication sessions interface Gi1/0/23
+            Interface:  GigabitEthernet1/0/23
+          MAC Address:  a483.e712.3456
+           IP Address:  10.20.0.47
+            User-Name:  jchen
+               Status:  Authz Success
+               Domain:  DATA
+      Security Policy:  Should Secure
+      Security Status:  Unsecure
+       Oper host mode:  single-host
+     Oper control dir:  both
+        Authorized By:  Authentication Server
+          Vlan Policy:  N/A
+      Session timeout:  N/A
+         Idle timeout:  N/A
+    Common Session ID:  0A0A0A020000001700123456
+      Acct Session ID:  0x00000169
+               Handle:  0xC700012B
+
+Runnable methods list:
+       Method   State
+       mab      Failed over
+       dot1x    Authc Success
+SW01#

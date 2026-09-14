@@ -1,0 +1,770 @@
+[
+  {
+    "ts": "2026-03-17T00:00:00.000Z",
+    "connections": 14,
+    "bytes": 35803089,
+    "dns_queries": 4,
+    "alerts": 0,
+    "hosts": 11
+  },
+  {
+    "ts": "2026-03-17T00:15:00.000Z",
+    "connections": 3,
+    "bytes": 859387,
+    "dns_queries": 1,
+    "alerts": 0,
+    "hosts": 3
+  },
+  {
+    "ts": "2026-03-17T00:30:00.000Z",
+    "connections": 8,
+    "bytes": 2336752,
+    "dns_queries": 4,
+    "alerts": 0,
+    "hosts": 8
+  },
+  {
+    "ts": "2026-03-17T00:45:00.000Z",
+    "connections": 10,
+    "bytes": 1003523,
+    "dns_queries": 4,
+    "alerts": 1,
+    "hosts": 7
+  },
+  {
+    "ts": "2026-03-17T01:00:00.000Z",
+    "connections": 12,
+    "bytes": 3271131,
+    "dns_queries": 5,
+    "alerts": 0,
+    "hosts": 11
+  },
+  {
+    "ts": "2026-03-17T01:15:00.000Z",
+    "connections": 3,
+    "bytes": 594768,
+    "dns_queries": 1,
+    "alerts": 0,
+    "hosts": 3
+  },
+  {
+    "ts": "2026-03-17T01:30:00.000Z",
+    "connections": 6,
+    "bytes": 1934417,
+    "dns_queries": 2,
+    "alerts": 0,
+    "hosts": 6
+  },
+  {
+    "ts": "2026-03-17T01:45:00.000Z",
+    "connections": 5,
+    "bytes": 499636,
+    "dns_queries": 2,
+    "alerts": 0,
+    "hosts": 4
+  },
+  {
+    "ts": "2026-03-17T02:00:00.000Z",
+    "connections": 10,
+    "bytes": 55904739,
+    "dns_queries": 4,
+    "alerts": 0,
+    "hosts": 10
+  },
+  {
+    "ts": "2026-03-17T02:15:00.000Z",
+    "connections": 6,
+    "bytes": 2722,
+    "dns_queries": 4,
+    "alerts": 0,
+    "hosts": 5
+  },
+  {
+    "ts": "2026-03-17T02:30:00.000Z",
+    "connections": 8,
+    "bytes": 28968389,
+    "dns_queries": 1,
+    "alerts": 0,
+    "hosts": 6
+  },
+  {
+    "ts": "2026-03-17T02:45:00.000Z",
+    "connections": 7,
+    "bytes": 2446796,
+    "dns_queries": 2,
+    "alerts": 0,
+    "hosts": 6
+  },
+  {
+    "ts": "2026-03-17T03:00:00.000Z",
+    "connections": 9,
+    "bytes": 995227,
+    "dns_queries": 5,
+    "alerts": 0,
+    "hosts": 8
+  },
+  {
+    "ts": "2026-03-17T03:15:00.000Z",
+    "connections": 5,
+    "bytes": 2309811236,
+    "dns_queries": 0,
+    "alerts": 0,
+    "hosts": 5
+  },
+  {
+    "ts": "2026-03-17T03:30:00.000Z",
+    "connections": 6,
+    "bytes": 285592,
+    "dns_queries": 3,
+    "alerts": 0,
+    "hosts": 5
+  },
+  {
+    "ts": "2026-03-17T03:45:00.000Z",
+    "connections": 5,
+    "bytes": 917822,
+    "dns_queries": 1,
+    "alerts": 0,
+    "hosts": 3
+  },
+  {
+    "ts": "2026-03-17T04:00:00.000Z",
+    "connections": 14,
+    "bytes": 4185836,
+    "dns_queries": 2,
+    "alerts": 0,
+    "hosts": 11
+  },
+  {
+    "ts": "2026-03-17T04:15:00.000Z",
+    "connections": 5,
+    "bytes": 570988,
+    "dns_queries": 2,
+    "alerts": 0,
+    "hosts": 5
+  },
+  {
+    "ts": "2026-03-17T04:30:00.000Z",
+    "connections": 9,
+    "bytes": 2369925,
+    "dns_queries": 4,
+    "alerts": 0,
+    "hosts": 9
+  },
+  {
+    "ts": "2026-03-17T04:45:00.000Z",
+    "connections": 4,
+    "bytes": 2589721,
+    "dns_queries": 1,
+    "alerts": 0,
+    "hosts": 4
+  },
+  {
+    "ts": "2026-03-17T05:00:00.000Z",
+    "connections": 11,
+    "bytes": 1172168,
+    "dns_queries": 6,
+    "alerts": 0,
+    "hosts": 9
+  },
+  {
+    "ts": "2026-03-17T05:15:00.000Z",
+    "connections": 4,
+    "bytes": 1132756,
+    "dns_queries": 0,
+    "alerts": 0,
+    "hosts": 4
+  },
+  {
+    "ts": "2026-03-17T05:30:00.000Z",
+    "connections": 17,
+    "bytes": 3701481,
+    "dns_queries": 8,
+    "alerts": 0,
+    "hosts": 10
+  },
+  {
+    "ts": "2026-03-17T05:45:00.000Z",
+    "connections": 5,
+    "bytes": 671018,
+    "dns_queries": 2,
+    "alerts": 0,
+    "hosts": 5
+  },
+  {
+    "ts": "2026-03-17T06:00:00.000Z",
+    "connections": 17,
+    "bytes": 2965659,
+    "dns_queries": 10,
+    "alerts": 0,
+    "hosts": 11
+  },
+  {
+    "ts": "2026-03-17T06:15:00.000Z",
+    "connections": 19,
+    "bytes": 1991939,
+    "dns_queries": 12,
+    "alerts": 0,
+    "hosts": 14
+  },
+  {
+    "ts": "2026-03-17T06:30:00.000Z",
+    "connections": 15,
+    "bytes": 11887449,
+    "dns_queries": 6,
+    "alerts": 0,
+    "hosts": 10
+  },
+  {
+    "ts": "2026-03-17T06:45:00.000Z",
+    "connections": 25,
+    "bytes": 7541998,
+    "dns_queries": 9,
+    "alerts": 0,
+    "hosts": 17
+  },
+  {
+    "ts": "2026-03-17T07:00:00.000Z",
+    "connections": 66,
+    "bytes": 207715333,
+    "dns_queries": 21,
+    "alerts": 0,
+    "hosts": 21
+  },
+  {
+    "ts": "2026-03-17T07:15:00.000Z",
+    "connections": 66,
+    "bytes": 412665396,
+    "dns_queries": 22,
+    "alerts": 0,
+    "hosts": 17
+  },
+  {
+    "ts": "2026-03-17T07:30:00.000Z",
+    "connections": 71,
+    "bytes": 73372314,
+    "dns_queries": 27,
+    "alerts": 0,
+    "hosts": 18
+  },
+  {
+    "ts": "2026-03-17T07:45:00.000Z",
+    "connections": 79,
+    "bytes": 53088157,
+    "dns_queries": 37,
+    "alerts": 0,
+    "hosts": 20
+  },
+  {
+    "ts": "2026-03-17T08:00:00.000Z",
+    "connections": 120,
+    "bytes": 317748752,
+    "dns_queries": 45,
+    "alerts": 10,
+    "hosts": 28
+  },
+  {
+    "ts": "2026-03-17T08:15:00.000Z",
+    "connections": 146,
+    "bytes": 770675904,
+    "dns_queries": 61,
+    "alerts": 0,
+    "hosts": 27
+  },
+  {
+    "ts": "2026-03-17T08:30:00.000Z",
+    "connections": 147,
+    "bytes": 268369048,
+    "dns_queries": 60,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T08:45:00.000Z",
+    "connections": 158,
+    "bytes": 899355471,
+    "dns_queries": 62,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T09:00:00.000Z",
+    "connections": 147,
+    "bytes": 57093671,
+    "dns_queries": 67,
+    "alerts": 2,
+    "hosts": 27
+  },
+  {
+    "ts": "2026-03-17T09:15:00.000Z",
+    "connections": 165,
+    "bytes": 176469979,
+    "dns_queries": 65,
+    "alerts": 0,
+    "hosts": 27
+  },
+  {
+    "ts": "2026-03-17T09:30:00.000Z",
+    "connections": 152,
+    "bytes": 429203729,
+    "dns_queries": 62,
+    "alerts": 5,
+    "hosts": 26
+  },
+  {
+    "ts": "2026-03-17T09:45:00.000Z",
+    "connections": 168,
+    "bytes": 346407308,
+    "dns_queries": 78,
+    "alerts": 3,
+    "hosts": 26
+  },
+  {
+    "ts": "2026-03-17T10:00:00.000Z",
+    "connections": 179,
+    "bytes": 425175072,
+    "dns_queries": 57,
+    "alerts": 1,
+    "hosts": 26
+  },
+  {
+    "ts": "2026-03-17T10:15:00.000Z",
+    "connections": 175,
+    "bytes": 181819023,
+    "dns_queries": 72,
+    "alerts": 3,
+    "hosts": 25
+  },
+  {
+    "ts": "2026-03-17T10:30:00.000Z",
+    "connections": 167,
+    "bytes": 797961324,
+    "dns_queries": 62,
+    "alerts": 0,
+    "hosts": 28
+  },
+  {
+    "ts": "2026-03-17T10:45:00.000Z",
+    "connections": 172,
+    "bytes": 37935724,
+    "dns_queries": 88,
+    "alerts": 0,
+    "hosts": 23
+  },
+  {
+    "ts": "2026-03-17T11:00:00.000Z",
+    "connections": 182,
+    "bytes": 479171213,
+    "dns_queries": 77,
+    "alerts": 3,
+    "hosts": 27
+  },
+  {
+    "ts": "2026-03-17T11:15:00.000Z",
+    "connections": 150,
+    "bytes": 278560650,
+    "dns_queries": 46,
+    "alerts": 6,
+    "hosts": 28
+  },
+  {
+    "ts": "2026-03-17T11:30:00.000Z",
+    "connections": 180,
+    "bytes": 97490978,
+    "dns_queries": 64,
+    "alerts": 0,
+    "hosts": 25
+  },
+  {
+    "ts": "2026-03-17T11:45:00.000Z",
+    "connections": 150,
+    "bytes": 1131693754,
+    "dns_queries": 51,
+    "alerts": 0,
+    "hosts": 28
+  },
+  {
+    "ts": "2026-03-17T12:00:00.000Z",
+    "connections": 105,
+    "bytes": 238761320,
+    "dns_queries": 23,
+    "alerts": 0,
+    "hosts": 30
+  },
+  {
+    "ts": "2026-03-17T12:15:00.000Z",
+    "connections": 97,
+    "bytes": 300999766,
+    "dns_queries": 35,
+    "alerts": 0,
+    "hosts": 22
+  },
+  {
+    "ts": "2026-03-17T12:30:00.000Z",
+    "connections": 125,
+    "bytes": 252293686,
+    "dns_queries": 44,
+    "alerts": 3,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T12:45:00.000Z",
+    "connections": 126,
+    "bytes": 83583058,
+    "dns_queries": 52,
+    "alerts": 0,
+    "hosts": 23
+  },
+  {
+    "ts": "2026-03-17T13:00:00.000Z",
+    "connections": 769,
+    "bytes": 683667283,
+    "dns_queries": 62,
+    "alerts": 2,
+    "hosts": 26
+  },
+  {
+    "ts": "2026-03-17T13:15:00.000Z",
+    "connections": 126,
+    "bytes": 346769673,
+    "dns_queries": 44,
+    "alerts": 0,
+    "hosts": 25
+  },
+  {
+    "ts": "2026-03-17T13:30:00.000Z",
+    "connections": 127,
+    "bytes": 523409907,
+    "dns_queries": 47,
+    "alerts": 0,
+    "hosts": 25
+  },
+  {
+    "ts": "2026-03-17T13:45:00.000Z",
+    "connections": 181,
+    "bytes": 196402405,
+    "dns_queries": 77,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T14:00:00.000Z",
+    "connections": 176,
+    "bytes": 540168762,
+    "dns_queries": 74,
+    "alerts": 0,
+    "hosts": 27
+  },
+  {
+    "ts": "2026-03-17T14:15:00.000Z",
+    "connections": 1027,
+    "bytes": 609239708,
+    "dns_queries": 922,
+    "alerts": 3,
+    "hosts": 25
+  },
+  {
+    "ts": "2026-03-17T14:30:00.000Z",
+    "connections": 168,
+    "bytes": 53270287,
+    "dns_queries": 69,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T14:45:00.000Z",
+    "connections": 171,
+    "bytes": 50272679,
+    "dns_queries": 70,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T15:00:00.000Z",
+    "connections": 195,
+    "bytes": 568947645,
+    "dns_queries": 72,
+    "alerts": 0,
+    "hosts": 26
+  },
+  {
+    "ts": "2026-03-17T15:15:00.000Z",
+    "connections": 178,
+    "bytes": 132428605,
+    "dns_queries": 72,
+    "alerts": 0,
+    "hosts": 26
+  },
+  {
+    "ts": "2026-03-17T15:30:00.000Z",
+    "connections": 180,
+    "bytes": 122208069,
+    "dns_queries": 78,
+    "alerts": 0,
+    "hosts": 25
+  },
+  {
+    "ts": "2026-03-17T15:45:00.000Z",
+    "connections": 142,
+    "bytes": 421335859,
+    "dns_queries": 64,
+    "alerts": 0,
+    "hosts": 27
+  },
+  {
+    "ts": "2026-03-17T16:00:00.000Z",
+    "connections": 158,
+    "bytes": 512748020,
+    "dns_queries": 62,
+    "alerts": 0,
+    "hosts": 30
+  },
+  {
+    "ts": "2026-03-17T16:15:00.000Z",
+    "connections": 157,
+    "bytes": 78792119,
+    "dns_queries": 62,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T16:30:00.000Z",
+    "connections": 146,
+    "bytes": 112990525,
+    "dns_queries": 54,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T16:45:00.000Z",
+    "connections": 128,
+    "bytes": 689558022,
+    "dns_queries": 44,
+    "alerts": 0,
+    "hosts": 22
+  },
+  {
+    "ts": "2026-03-17T17:00:00.000Z",
+    "connections": 132,
+    "bytes": 473623034,
+    "dns_queries": 48,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T17:15:00.000Z",
+    "connections": 121,
+    "bytes": 376264772,
+    "dns_queries": 61,
+    "alerts": 0,
+    "hosts": 24
+  },
+  {
+    "ts": "2026-03-17T17:30:00.000Z",
+    "connections": 93,
+    "bytes": 272086660,
+    "dns_queries": 44,
+    "alerts": 0,
+    "hosts": 23
+  },
+  {
+    "ts": "2026-03-17T17:45:00.000Z",
+    "connections": 106,
+    "bytes": 434403696,
+    "dns_queries": 45,
+    "alerts": 0,
+    "hosts": 25
+  },
+  {
+    "ts": "2026-03-17T18:00:00.000Z",
+    "connections": 63,
+    "bytes": 35531336,
+    "dns_queries": 14,
+    "alerts": 0,
+    "hosts": 19
+  },
+  {
+    "ts": "2026-03-17T18:15:00.000Z",
+    "connections": 71,
+    "bytes": 18157214,
+    "dns_queries": 34,
+    "alerts": 0,
+    "hosts": 20
+  },
+  {
+    "ts": "2026-03-17T18:30:00.000Z",
+    "connections": 74,
+    "bytes": 48794940,
+    "dns_queries": 32,
+    "alerts": 0,
+    "hosts": 20
+  },
+  {
+    "ts": "2026-03-17T18:45:00.000Z",
+    "connections": 53,
+    "bytes": 29495533,
+    "dns_queries": 18,
+    "alerts": 0,
+    "hosts": 19
+  },
+  {
+    "ts": "2026-03-17T19:00:00.000Z",
+    "connections": 53,
+    "bytes": 59967588,
+    "dns_queries": 17,
+    "alerts": 0,
+    "hosts": 18
+  },
+  {
+    "ts": "2026-03-17T19:15:00.000Z",
+    "connections": 46,
+    "bytes": 58215231,
+    "dns_queries": 18,
+    "alerts": 0,
+    "hosts": 16
+  },
+  {
+    "ts": "2026-03-17T19:30:00.000Z",
+    "connections": 40,
+    "bytes": 6880372,
+    "dns_queries": 18,
+    "alerts": 0,
+    "hosts": 15
+  },
+  {
+    "ts": "2026-03-17T19:45:00.000Z",
+    "connections": 59,
+    "bytes": 258152832,
+    "dns_queries": 20,
+    "alerts": 0,
+    "hosts": 18
+  },
+  {
+    "ts": "2026-03-17T20:00:00.000Z",
+    "connections": 43,
+    "bytes": 14506623,
+    "dns_queries": 13,
+    "alerts": 0,
+    "hosts": 21
+  },
+  {
+    "ts": "2026-03-17T20:15:00.000Z",
+    "connections": 39,
+    "bytes": 5664469,
+    "dns_queries": 19,
+    "alerts": 0,
+    "hosts": 17
+  },
+  {
+    "ts": "2026-03-17T20:30:00.000Z",
+    "connections": 48,
+    "bytes": 17256171,
+    "dns_queries": 21,
+    "alerts": 0,
+    "hosts": 13
+  },
+  {
+    "ts": "2026-03-17T20:45:00.000Z",
+    "connections": 28,
+    "bytes": 8507819,
+    "dns_queries": 14,
+    "alerts": 0,
+    "hosts": 14
+  },
+  {
+    "ts": "2026-03-17T21:00:00.000Z",
+    "connections": 928,
+    "bytes": 304138250,
+    "dns_queries": 270,
+    "alerts": 7,
+    "hosts": 15
+  },
+  {
+    "ts": "2026-03-17T21:15:00.000Z",
+    "connections": 38,
+    "bytes": 25624560,
+    "dns_queries": 21,
+    "alerts": 0,
+    "hosts": 14
+  },
+  {
+    "ts": "2026-03-17T21:30:00.000Z",
+    "connections": 36,
+    "bytes": 11656408,
+    "dns_queries": 12,
+    "alerts": 0,
+    "hosts": 13
+  },
+  {
+    "ts": "2026-03-17T21:45:00.000Z",
+    "connections": 30,
+    "bytes": 7961850,
+    "dns_queries": 14,
+    "alerts": 0,
+    "hosts": 11
+  },
+  {
+    "ts": "2026-03-17T22:00:00.000Z",
+    "connections": 37,
+    "bytes": 5625484,
+    "dns_queries": 21,
+    "alerts": 0,
+    "hosts": 18
+  },
+  {
+    "ts": "2026-03-17T22:15:00.000Z",
+    "connections": 29,
+    "bytes": 10982511,
+    "dns_queries": 11,
+    "alerts": 0,
+    "hosts": 12
+  },
+  {
+    "ts": "2026-03-17T22:30:00.000Z",
+    "connections": 33,
+    "bytes": 10495222,
+    "dns_queries": 9,
+    "alerts": 0,
+    "hosts": 12
+  },
+  {
+    "ts": "2026-03-17T22:45:00.000Z",
+    "connections": 28,
+    "bytes": 349706473,
+    "dns_queries": 7,
+    "alerts": 0,
+    "hosts": 12
+  },
+  {
+    "ts": "2026-03-17T23:00:00.000Z",
+    "connections": 25,
+    "bytes": 4547964,
+    "dns_queries": 8,
+    "alerts": 0,
+    "hosts": 11
+  },
+  {
+    "ts": "2026-03-17T23:15:00.000Z",
+    "connections": 30,
+    "bytes": 6818871,
+    "dns_queries": 12,
+    "alerts": 0,
+    "hosts": 14
+  },
+  {
+    "ts": "2026-03-17T23:30:00.000Z",
+    "connections": 23,
+    "bytes": 5340675,
+    "dns_queries": 12,
+    "alerts": 0,
+    "hosts": 9
+  },
+  {
+    "ts": "2026-03-17T23:45:00.000Z",
+    "connections": 34,
+    "bytes": 13832182,
+    "dns_queries": 13,
+    "alerts": 0,
+    "hosts": 12
+  }
+]

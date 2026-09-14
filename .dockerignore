@@ -1,0 +1,10 @@
+.venv
+frontend/node_modules
+frontend/dist
+data/generated/sentinelswitch.db*
+.git
+.pytest_cache
+.ruff_cache
+__pycache__
+assets/screenshots
+assets/linkedin

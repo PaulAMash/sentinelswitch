@@ -1,0 +1,38 @@
+id: port-scan
+name: Port Scan
+short: Internal host sweeps TCP ports across the SERVERS VLAN
+class: compromised_host
+rule: port-scan
+mitre: [T1046]
+description: >
+  A workstation runs a TCP port sweep against every server in VLAN 30. Suricata's local sweep signature
+  fires on SYN rate, Zeek's scan detector raises a Port_Scan notice, and SentinelSwitch scores the event
+  using both sources plus asset context: the same behaviour from an authorized scanner is logged, while an
+  unexpected scanner is quarantined.
+actor:
+  device: MKT-WS-021
+  ip: 10.20.0.31
+  mac: "B4:B5:2F:1C:21:31"
+  interface: Gi1/0/21
+  vlan: 20
+instances:
+  day:
+    start: "2026-03-17T13:05:10.447Z"
+    actor_override: {device: IT-LT-037, ip: 10.20.0.48, mac: "A4:83:E7:2B:37:48", interface: Gi1/0/37, vlan: 20, user: rahmed}
+    parameters: &ps_params
+      # sid 1000011 fires on the 600th SYN; Zeek Scan::Port_Scan on the 100th distinct port of the first host.
+      targets: [10.30.0.10, 10.30.0.20, 10.30.0.30, 10.30.0.40, 10.30.0.50, 10.30.0.60]
+      ports_per_host: 100
+      rate_pps: 240
+      sensor_latency: 0.012
+      detect_latency: 0.060
+    expected: {disposition: monitor, action: none, severity: medium, confidence: 0.61}
+    resolution:
+      reviewed_at: "2026-03-17T13:21:40Z"
+      reviewed_by: tlee
+      note: "Authorized vulnerability scan by IT-LT-037 under change CHG-2026-118. Logged only."
+  validation:
+    start: "2026-03-17T13:05:10.447Z"
+    parameters: *ps_params
+    expected: {disposition: automatic_containment, action: quarantine_vlan, severity: high, confidence: 0.96}
+timing: {open: 0.081, dhcp: 0.149, mac: 0.241, identity: 0.089, policy: 0.153, apply: 0.421, verify: 0.127, evidence: 0.352}

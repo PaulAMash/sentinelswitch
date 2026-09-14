@@ -1,0 +1,12 @@
+! Infrastructure trunk (protected: never changed by SentinelSwitch)
+interface {{ interface }}
+ description {{ description }}
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan {{ allowed_vlans }}
+ switchport mode trunk
+ switchport nonegotiate
+ ip dhcp snooping trust
+ ip arp inspection trust
+ storm-control broadcast level 5.00
+ storm-control action trap
+!

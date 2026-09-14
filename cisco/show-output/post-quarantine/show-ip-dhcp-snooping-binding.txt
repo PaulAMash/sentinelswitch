@@ -1,0 +1,36 @@
+! SentinelSwitch digital twin - simulated transcript (after INC-2026-0042 automated containment)
+! captured at 2026-03-17 21:14:31.284 UTC
+SW01#show ip dhcp snooping binding
+MacAddress          IpAddress        Lease(sec)  Type           VLAN  Interface
+------------------  ---------------  ----------  -------------  ----  --------------------
+F8:BC:12:3A:14:24   10.20.0.24       27930       dhcp-snooping  20    GigabitEthernet1/0/14
+F8:BC:12:3A:15:25   10.20.0.25       27930       dhcp-snooping  20    GigabitEthernet1/0/15
+3C:D9:2B:8E:16:26   10.20.0.26       28690       dhcp-snooping  20    GigabitEthernet1/0/16
+D4:BE:D9:6F:18:28   10.20.0.28       27930       dhcp-snooping  20    GigabitEthernet1/0/18
+D4:BE:D9:6F:19:29   10.20.0.29       27930       dhcp-snooping  20    GigabitEthernet1/0/19
+A4:83:E7:2B:20:30   10.20.0.30       24450       dhcp-snooping  20    GigabitEthernet1/0/20
+B4:B5:2F:1C:21:31   10.20.0.31       27930       dhcp-snooping  20    GigabitEthernet1/0/21
+B4:B5:2F:1C:22:32   10.20.0.32       24510       dhcp-snooping  20    GigabitEthernet1/0/22
+D4:BE:D9:6F:24:34   10.20.0.34       27930       dhcp-snooping  20    GigabitEthernet1/0/24
+F8:BC:12:3A:25:35   10.20.0.35       27930       dhcp-snooping  20    GigabitEthernet1/0/25
+F8:BC:12:3A:26:36   10.20.0.36       27930       dhcp-snooping  20    GigabitEthernet1/0/26
+A4:83:E7:2B:27:37   10.20.0.37       10830       dhcp-snooping  20    GigabitEthernet1/0/27
+30:05:5C:9A:28:01   10.20.0.200      86400       dhcp-snooping  20    GigabitEthernet1/0/28
+F8:BC:12:3A:32:42   10.20.0.42       27930       dhcp-snooping  20    GigabitEthernet1/0/32
+3C:D9:2B:8E:33:43   10.20.0.43       27930       dhcp-snooping  20    GigabitEthernet1/0/33
+D4:BE:D9:6F:34:44   10.20.0.44       27930       dhcp-snooping  20    GigabitEthernet1/0/34
+A4:83:E7:2B:35:45   10.20.0.45       6182        dhcp-snooping  20    GigabitEthernet1/0/35
+D4:BE:D9:6F:36:46   10.20.0.46       27930       dhcp-snooping  20    GigabitEthernet1/0/36
+A4:83:E7:2B:37:48   10.20.0.48       11130       dhcp-snooping  20    GigabitEthernet1/0/37
+D4:BE:D9:6F:05:15   10.20.0.15       27930       dhcp-snooping  20    GigabitEthernet1/0/5
+D4:BE:D9:6F:06:16   10.20.0.16       27930       dhcp-snooping  20    GigabitEthernet1/0/6
+A4:83:E7:2B:07:17   10.20.0.17       8790        dhcp-snooping  20    GigabitEthernet1/0/7
+AC:1F:6B:3B:0A:30   10.30.0.30       infinite    static         30    GigabitEthernet1/0/10
+AC:1F:6B:3B:0B:40   10.30.0.40       infinite    static         30    GigabitEthernet1/0/11
+AC:1F:6B:3B:0C:50   10.30.0.50       infinite    static         30    GigabitEthernet1/0/12
+AC:1F:6B:3B:0D:60   10.30.0.60       infinite    static         30    GigabitEthernet1/0/13
+AC:1F:6B:3B:08:10   10.30.0.10       infinite    static         30    GigabitEthernet1/0/8
+AC:1F:6B:3B:09:20   10.30.0.20       infinite    static         30    GigabitEthernet1/0/9
+8C:71:F8:2D:30:02   10.40.0.102      15671       dhcp-snooping  40    GigabitEthernet1/0/30
+Total number of bindings: 29
+SW01#

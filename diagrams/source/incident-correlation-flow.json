@@ -1,0 +1,42 @@
+{
+  "name": "incident-correlation-flow",
+  "title": "INC-2026-0042 — from first anomalous flow to verified quarantine in 9.8 s",
+  "subtitle": "Lateral reconnaissance from ENG-LT-047 (10.20.0.47) on 2026-03-17, timestamps from the scenario's simulated clock (UTC)",
+  "width": 1600,
+  "height": 900,
+  "mermaid_direction": "LR",
+  "groups": [
+    {"id": "tele", "label": "Telemetry and detections", "x": 2, "y": 5, "w": 76, "h": 9, "color": "amber"},
+    {"id": "corr", "label": "Attribution · IP → MAC → port → identity", "x": 2, "y": 16.5, "w": 76, "h": 9, "color": "purple"},
+    {"id": "resp", "label": "Policy · containment · verification · evidence", "x": 2, "y": 28, "w": 76, "h": 11.5, "color": "green"}
+  ],
+  "nodes": [
+    {"id": "t1", "group": "tele", "x": 4, "y": 7.5, "w": 13.5, "h": 5, "label": "21:14:31.284", "sub": ["ICMP echo sweep begins", "10.20.0.0/24 + 10.30.0.0/24 @ 90 pps"], "align": "left"},
+    {"id": "t2", "group": "tele", "x": 19.5, "y": 7.5, "w": 13.5, "h": 5, "label": "21:14:33.507", "sub": ["Suricata sid 1000010 (medium)", "ICMP sweep · 200th request"], "align": "left"},
+    {"id": "t3", "group": "tele", "x": 35, "y": 7.5, "w": 13.5, "h": 5, "label": "21:14:38.198", "sub": ["Suricata sid 1000021 (high)", "SMB fan-out · 8th host on 445"], "align": "left", "kind": "accent", "color": "red"},
+    {"id": "t4", "group": "tele", "x": 50.5, "y": 7.5, "w": 13.5, "h": 5, "label": "21:14:39.649", "sub": ["Zeek Scan::Address_Scan", "15 hosts on 445/tcp"], "align": "left"},
+    {"id": "t5", "group": "tele", "x": 66, "y": 7.5, "w": 10.5, "h": 5, "label": "21:14:39.867", "sub": ["rule matched", "conf 0.97 · high"], "align": "left", "kind": "accent", "color": "amber"},
+    {"id": "c1", "group": "corr", "x": 4, "y": 19, "w": 17, "h": 5, "label": "21:14:40.092 · DHCP snooping binding", "sub": ["10.20.0.47 → A4:83:E7:12:34:56", "VLAN 20 · Gi1/0/23 · 23,841 s remaining"], "align": "left"},
+    {"id": "c2", "group": "corr", "x": 23, "y": 19, "w": 17, "h": 5, "label": "21:14:40.346 · MAC address table", "sub": ["A4:83:E7:12:34:56 → SW01 Gi1/0/23", "VLAN 20 · DYNAMIC"], "align": "left"},
+    {"id": "c3", "group": "corr", "x": 42, "y": 19, "w": 15, "h": 5, "label": "21:14:40.346 · interface", "sub": ["Gi1/0/23 'ENG-LT-047' access", "class workstation · not protected"], "align": "left"},
+    {"id": "c4", "group": "corr", "x": 59, "y": 19, "w": 17.5, "h": 5, "label": "21:14:40.439 · identity", "sub": ["ENG-LT-047 · Lenovo · Ubuntu 24.04", "jchen (Engineering) · criticality standard"], "align": "left", "kind": "accent", "color": "purple"},
+    {"id": "r1", "group": "resp", "x": 4, "y": 30.5, "w": 17, "h": 6, "label": "21:14:40.585 · policy", "sub": ["automatic containment approved", "severity high · confidence 0.97", "guards: none triggered"], "align": "left"},
+    {"id": "r2", "group": "resp", "x": 23, "y": 30.5, "w": 17, "h": 6, "label": "21:14:41.000 · containment", "sub": ["SW01 Gi1/0/23", "switchport access vlan 20 → 50", "workflow WF-2026-0042-01"], "align": "left", "kind": "accent", "color": "green"},
+    {"id": "r3", "group": "resp", "x": 42, "y": 30.5, "w": 15, "h": 6, "label": "21:14:41.125 · verified", "sub": ["show interfaces Gi1/0/23 switchport", "Access Mode VLAN: 50 (QUARANTINE)", "MAC now learned in VLAN 50"], "align": "left"},
+    {"id": "r4", "group": "resp", "x": 59, "y": 30.5, "w": 17.5, "h": 6, "label": "21:14:41.464 · evidence", "sub": ["data/incidents/INC-2026-0042/", "11 artifacts · 895 related connections", "TTD 8.583 s · TTA 0.572 s · TTC 1.258 s"], "align": "left", "kind": "db", "color": "cyan"}
+  ],
+  "edges": [
+    {"from": "t1", "to": "t2"},
+    {"from": "t2", "to": "t3"},
+    {"from": "t3", "to": "t4"},
+    {"from": "t4", "to": "t5"},
+    {"from": "t5", "to": "c1", "label": "correlate 10.20.0.47", "sides": ["bottom", "top"], "via": [[71.25, 15.3], [12.5, 15.3]], "color": "purple"},
+    {"from": "c1", "to": "c2"},
+    {"from": "c2", "to": "c3"},
+    {"from": "c3", "to": "c4"},
+    {"from": "c4", "to": "r1", "label": "attribution complete · 0.572 s after detection", "sides": ["bottom", "top"], "via": [[67.75, 26.8], [12.5, 26.8]], "color": "green"},
+    {"from": "r1", "to": "r2"},
+    {"from": "r2", "to": "r3"},
+    {"from": "r3", "to": "r4"}
+  ]
+}

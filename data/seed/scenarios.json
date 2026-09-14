@@ -1,0 +1,692 @@
+[
+  {
+    "id": "arp-spoofing",
+    "name": "ARP Spoofing Attempt",
+    "short": "Host emits ARP replies that contradict the DHCP snooping binding table",
+    "class": "compromised_host",
+    "rule": "arp-spoofing",
+    "mitre": [
+      "T1557.002"
+    ],
+    "description": "A guest laptop sends ARP replies whose sender IP does not match its DHCP snooping binding. Dynamic ARP Inspection drops every frame and logs the violation; SentinelSwitch aggregates the DAI denials for a five-second window, scores the burst, and attributes it to the switch port.",
+    "flagship": false,
+    "actor": {
+      "device": "GUEST-VISITOR-01",
+      "ip": "10.40.0.101",
+      "mac": "F0:18:98:C4:29:01",
+      "interface": "Gi1/0/29",
+      "vlan": 40
+    },
+    "timing": {
+      "open": 0.079,
+      "dhcp": 0.147,
+      "mac": 0.233,
+      "identity": 0.088,
+      "policy": 0.151,
+      "apply": 0.428,
+      "verify": 0.131,
+      "evidence": 0.347
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T10:27:18.204Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "manual_review",
+          "action": "none",
+          "severity": "medium",
+          "confidence": 0.78
+        },
+        "parameters": {
+          "invalid_arp_count": 3,
+          "interval": 0.514,
+          "spoofed_ip": "192.168.1.23",
+          "detect_latency": 0.087
+        },
+        "resolution": {
+          "reviewed_at": "2026-03-17T10:41:12Z",
+          "reviewed_by": "tlee",
+          "note": "Guest laptop VPN client emitted stale gratuitous ARP for its previous network. DAI dropped all three frames; no further activity. Closed as benign."
+        },
+        "actor_override": null
+      },
+      "validation": {
+        "start": "2026-03-17T10:27:18.204Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "quarantine_vlan",
+          "severity": "high",
+          "confidence": 0.99
+        },
+        "parameters": {
+          "invalid_arp_count": 40,
+          "interval": 0.2,
+          "spoofed_ip": "10.40.0.1",
+          "detect_latency": 0.087
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  },
+  {
+    "id": "bpdu-violation",
+    "name": "STP/BPDU Violation",
+    "short": "Unmanaged switch inserted on an access port triggers BPDU Guard",
+    "class": "rogue_device",
+    "rule": "bpdu-violation",
+    "mitre": [
+      "T1200"
+    ],
+    "description": "An unmanaged switch with spanning tree enabled is inserted between the conference display and its access port. The first BPDU triggers BPDU Guard, which err-disables the port. SentinelSwitch confirms the err-disable from syslog, attributes the port to the last known endpoint, applies an administrative hold so errdisable auto-recovery cannot re-enable the port, and records the evidence.",
+    "flagship": false,
+    "actor": {
+      "device": "CONF-A-TV01",
+      "ip": "10.40.0.102",
+      "mac": "8C:71:F8:2D:30:02",
+      "interface": "Gi1/0/30",
+      "vlan": 40,
+      "rogue_mac": "50:C7:BF:1A:30:0E"
+    },
+    "timing": {
+      "open": 0.066,
+      "dhcp": 0.137,
+      "mac": 0.208,
+      "identity": 0.079,
+      "policy": 0.144,
+      "apply": 0.388,
+      "verify": 0.119,
+      "evidence": 0.327
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T09:12:44.271Z",
+        "incident_id": "INC-2026-0039",
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "port_shutdown",
+          "severity": "high",
+          "confidence": 0.96,
+          "mechanism": "BPDU Guard err-disable + administrative hold"
+        },
+        "parameters": {
+          "errdisable_offset": 0.005,
+          "link_down_offset": 1.01,
+          "detect_latency": 0.126
+        },
+        "resolution": {
+          "device_removed": "2026-03-17T09:34:40Z",
+          "restored_at": "2026-03-17T09:35:10.772Z",
+          "restored_by": "tlee",
+          "note": "Unmanaged switch removed from conference room; display reconnected directly. Port recovered with shutdown / no shutdown."
+        },
+        "actor_override": null
+      },
+      "validation": {
+        "start": "2026-03-17T09:12:44.271Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "port_shutdown",
+          "severity": "high",
+          "confidence": 0.96
+        },
+        "parameters": {
+          "errdisable_offset": 0.005,
+          "link_down_offset": 1.01,
+          "detect_latency": 0.126
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  },
+  {
+    "id": "dns-anomaly",
+    "name": "DNS Anomaly",
+    "short": "Host generates an abnormal volume of failing DNS lookups",
+    "class": "compromised_host",
+    "rule": "dns-anomaly",
+    "mitre": [
+      "T1071.004",
+      "T1568.002"
+    ],
+    "description": "A host suddenly issues hundreds of DNS queries per minute with a high NXDOMAIN ratio. Suricata's local rate and NXDOMAIN signatures fire, Zeek raises an NXDomain_Burst notice, and SentinelSwitch scores the burst by rate, NXDOMAIN ratio, label entropy (DGA-like names) and unique-domain count.",
+    "flagship": false,
+    "actor": {
+      "device": "OPS-WS-025",
+      "ip": "10.20.0.35",
+      "mac": "F8:BC:12:3A:25:35",
+      "interface": "Gi1/0/25",
+      "vlan": 20
+    },
+    "timing": {
+      "open": 0.077,
+      "dhcp": 0.144,
+      "mac": 0.236,
+      "identity": 0.086,
+      "policy": 0.149,
+      "apply": 0.418,
+      "verify": 0.129,
+      "evidence": 0.344
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T14:18:02.510Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "manual_review",
+          "action": "none",
+          "severity": "medium",
+          "confidence": 0.8
+        },
+        "parameters": {
+          "queries_per_minute": 141,
+          "nxdomain_ratio": 0.61,
+          "unique_domains": 38,
+          "dga_like": false,
+          "burst_minutes": 6,
+          "domain_pattern": "{n}.agent.telemetry.example.net",
+          "sensor_latency": 0.012,
+          "detect_latency": 0.059
+        },
+        "resolution": {
+          "reviewed_at": "2026-03-17T14:52:40Z",
+          "reviewed_by": "tlee",
+          "note": "Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign."
+        },
+        "actor_override": {
+          "device": "FIN-WS-014",
+          "ip": "10.20.0.24",
+          "mac": "F8:BC:12:3A:14:24",
+          "interface": "Gi1/0/14",
+          "vlan": 20,
+          "user": "anovak"
+        }
+      },
+      "validation": {
+        "start": "2026-03-17T14:18:02.510Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "quarantine_vlan",
+          "severity": "high",
+          "confidence": 0.99
+        },
+        "parameters": {
+          "queries_per_minute": 190,
+          "nxdomain_ratio": 0.93,
+          "unique_domains": 340,
+          "dga_like": true,
+          "burst_minutes": 3,
+          "domain_pattern": "{rand}.example.org",
+          "sensor_latency": 0.012,
+          "detect_latency": 0.059
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  },
+  {
+    "id": "lateral-reconnaissance",
+    "name": "Lateral Reconnaissance",
+    "short": "Compromised workstation sweeps the network and probes SMB/RDP across VLANs",
+    "class": "compromised_host",
+    "rule": "lateral-reconnaissance",
+    "mitre": [
+      "T1018",
+      "T1046",
+      "T1021.002",
+      "T1021.001"
+    ],
+    "description": "An authenticated engineering laptop (ENG-LT-047) begins host discovery across the USERS and SERVERS VLANs, performs a burst of reverse DNS lookups for responding hosts, then fans out TCP probes to SMB, RPC, RDP, SSH and WinRM ports on every host that answered. Suricata raises a high-confidence fan-out signature, Zeek corroborates with an address-scan notice, and SentinelSwitch correlates the source IP to the switch port and quarantines it.",
+    "flagship": true,
+    "actor": {
+      "device": "ENG-LT-047",
+      "ip": "10.20.0.47",
+      "mac": "A4:83:E7:12:34:56",
+      "interface": "Gi1/0/23",
+      "vlan": 20,
+      "user": "jchen"
+    },
+    "timing": {
+      "open": 0.083,
+      "dhcp": 0.142,
+      "mac": 0.254,
+      "identity": 0.093,
+      "policy": 0.146,
+      "apply": 0.415,
+      "verify": 0.125,
+      "evidence": 0.339
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T21:14:31.284Z",
+        "incident_id": "INC-2026-0042",
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "quarantine_vlan",
+          "severity": "high",
+          "confidence": 0.97
+        },
+        "parameters": {
+          "icmp_sweep_subnets": [
+            "10.20.0.0/24",
+            "10.30.0.0/24"
+          ],
+          "icmp_rate_pps": 90,
+          "ptr_burst_offset": 3.832,
+          "ptr_rate_qps": 50,
+          "tcp_probe_offset": 5.59,
+          "tcp_probe_ports": [
+            445,
+            139,
+            135,
+            3389,
+            22,
+            5985
+          ],
+          "tcp_probe_rate_pps": 32,
+          "smb_null_session_offset": 8.316,
+          "sensor_latency": 0.012,
+          "detect_latency": 0.169
+        },
+        "resolution": null,
+        "actor_override": null
+      },
+      "validation": {
+        "start": "2026-03-17T21:14:31.284Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "quarantine_vlan",
+          "severity": "high",
+          "confidence": 0.97
+        },
+        "parameters": {
+          "icmp_sweep_subnets": [
+            "10.20.0.0/24",
+            "10.30.0.0/24"
+          ],
+          "icmp_rate_pps": 90,
+          "ptr_burst_offset": 3.832,
+          "ptr_rate_qps": 50,
+          "tcp_probe_offset": 5.59,
+          "tcp_probe_ports": [
+            445,
+            139,
+            135,
+            3389,
+            22,
+            5985
+          ],
+          "tcp_probe_rate_pps": 32,
+          "smb_null_session_offset": 8.316,
+          "sensor_latency": 0.012,
+          "detect_latency": 0.169
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  },
+  {
+    "id": "mac-address-change",
+    "name": "MAC Address Change",
+    "short": "A different MAC appears on a sticky port-security workstation drop",
+    "class": "rogue_device",
+    "rule": "mac-address-change",
+    "mitre": [
+      "T1200",
+      "T1036.005"
+    ],
+    "description": "Workstation drops use sticky port security with a maximum of one address. When a device with a different MAC is connected, the switch raises a PSECURE_VIOLATION (restrict mode) and RADIUS rejects the new address. SentinelSwitch scores the event by whether the new MAC is unknown, whether it impersonates a known asset that belongs on another port, and whether AAA rejected it.",
+    "flagship": false,
+    "actor": {
+      "device": "HR-WS-016",
+      "ip": "10.20.0.26",
+      "mac": "3C:D9:2B:8E:16:26",
+      "interface": "Gi1/0/16",
+      "vlan": 20
+    },
+    "timing": {
+      "open": 0.074,
+      "dhcp": 0.151,
+      "mac": 0.227,
+      "identity": 0.091,
+      "policy": 0.158,
+      "apply": 0.409,
+      "verify": 0.128,
+      "evidence": 0.341
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T12:36:52.318Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "manual_review",
+          "action": "none",
+          "severity": "medium",
+          "confidence": 0.87
+        },
+        "parameters": {
+          "new_mac": "8C:71:F8:44:AA:16",
+          "impersonated_device": null,
+          "radius_reject_offset": 0.384,
+          "radius_reject_method": "MAB",
+          "radius_reject_reason": "MAC not found in endpoint database",
+          "unplug_offset": -42.0,
+          "detect_latency": 0.084
+        },
+        "resolution": {
+          "reviewed_at": "2026-03-17T13:12:05Z",
+          "reviewed_by": "tlee",
+          "note": "HR user connected a personal laptop through the docking station on HR-WS-016's drop. Frames were restricted by port security; user counseled, personal device removed. Closed."
+        },
+        "actor_override": null
+      },
+      "validation": {
+        "start": "2026-03-17T12:36:52.318Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "port_shutdown",
+          "severity": "high",
+          "confidence": 0.95
+        },
+        "parameters": {
+          "new_mac": "AC:1F:6B:3B:09:20",
+          "impersonated_device": "SRV-FILE01",
+          "radius_reject_offset": 3.596,
+          "radius_reject_method": "EAP-TLS",
+          "radius_reject_reason": "TLS Alert read:fatal:unknown ca (client certificate not issued by CORP-CA)",
+          "unplug_offset": -42.0,
+          "detect_latency": 0.084
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  },
+  {
+    "id": "port-scan",
+    "name": "Port Scan",
+    "short": "Internal host sweeps TCP ports across the SERVERS VLAN",
+    "class": "compromised_host",
+    "rule": "port-scan",
+    "mitre": [
+      "T1046"
+    ],
+    "description": "A workstation runs a TCP port sweep against every server in VLAN 30. Suricata's local sweep signature fires on SYN rate, Zeek's scan detector raises a Port_Scan notice, and SentinelSwitch scores the event using both sources plus asset context: the same behaviour from an authorized scanner is logged, while an unexpected scanner is quarantined.",
+    "flagship": false,
+    "actor": {
+      "device": "MKT-WS-021",
+      "ip": "10.20.0.31",
+      "mac": "B4:B5:2F:1C:21:31",
+      "interface": "Gi1/0/21",
+      "vlan": 20
+    },
+    "timing": {
+      "open": 0.081,
+      "dhcp": 0.149,
+      "mac": 0.241,
+      "identity": 0.089,
+      "policy": 0.153,
+      "apply": 0.421,
+      "verify": 0.127,
+      "evidence": 0.352
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T13:05:10.447Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "monitor",
+          "action": "none",
+          "severity": "medium",
+          "confidence": 0.61
+        },
+        "parameters": {
+          "targets": [
+            "10.30.0.10",
+            "10.30.0.20",
+            "10.30.0.30",
+            "10.30.0.40",
+            "10.30.0.50",
+            "10.30.0.60"
+          ],
+          "ports_per_host": 100,
+          "rate_pps": 240,
+          "sensor_latency": 0.012,
+          "detect_latency": 0.06
+        },
+        "resolution": {
+          "reviewed_at": "2026-03-17T13:21:40Z",
+          "reviewed_by": "tlee",
+          "note": "Authorized vulnerability scan by IT-LT-037 under change CHG-2026-118. Logged only."
+        },
+        "actor_override": {
+          "device": "IT-LT-037",
+          "ip": "10.20.0.48",
+          "mac": "A4:83:E7:2B:37:48",
+          "interface": "Gi1/0/37",
+          "vlan": 20,
+          "user": "rahmed"
+        }
+      },
+      "validation": {
+        "start": "2026-03-17T13:05:10.447Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "quarantine_vlan",
+          "severity": "high",
+          "confidence": 0.96
+        },
+        "parameters": {
+          "targets": [
+            "10.30.0.10",
+            "10.30.0.20",
+            "10.30.0.30",
+            "10.30.0.40",
+            "10.30.0.50",
+            "10.30.0.60"
+          ],
+          "ports_per_host": 100,
+          "rate_pps": 240,
+          "sensor_latency": 0.012,
+          "detect_latency": 0.06
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  },
+  {
+    "id": "rogue-dhcp",
+    "name": "Rogue DHCP",
+    "short": "Guest laptop with connection sharing enabled answers DHCP on VLAN 40",
+    "class": "rogue_device",
+    "rule": "rogue-dhcp",
+    "mitre": [
+      "T1557",
+      "T1498"
+    ],
+    "description": "A vendor laptop on the guest VLAN enables internet connection sharing, which starts a DHCP server on its wired interface. When the conference display is power-cycled and broadcasts DHCPDISCOVER, the laptop answers. DHCP snooping drops every OFFER and NAK arriving on the untrusted port and logs each drop; Suricata sees the offers on the SPAN feed and raises a local rule. SentinelSwitch attributes the server MAC to the port and shuts it down.",
+    "flagship": false,
+    "actor": {
+      "device": "VENDOR-LT-01",
+      "ip": "10.40.0.104",
+      "mac": "3C:D9:2B:71:31:04",
+      "interface": "Gi1/0/31",
+      "vlan": 40
+    },
+    "timing": {
+      "open": 0.069,
+      "dhcp": 0.139,
+      "mac": 0.219,
+      "identity": 0.081,
+      "policy": 0.149,
+      "apply": 0.396,
+      "verify": 0.122,
+      "evidence": 0.333
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T11:23:44.106Z",
+        "incident_id": "INC-2026-0041",
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "port_shutdown",
+          "severity": "high",
+          "confidence": 0.95
+        },
+        "parameters": {
+          "drops": [
+            [
+              0.0,
+              "DHCPOFFER"
+            ],
+            [
+              0.506,
+              "DHCPNAK"
+            ],
+            [
+              1.024,
+              "DHCPOFFER"
+            ],
+            [
+              1.549,
+              "DHCPNAK"
+            ],
+            [
+              2.064,
+              "DHCPOFFER"
+            ]
+          ],
+          "sensor_latency": 0.025,
+          "detect_latency": 0.085,
+          "client_device": "CONF-A-TV01"
+        },
+        "resolution": {
+          "device_removed": "2026-03-17T11:47:00Z",
+          "restored_at": "2026-03-17T11:47:20.288Z",
+          "restored_by": "tlee",
+          "note": "Vendor disabled connection sharing and left site. Port restored to service."
+        },
+        "actor_override": null
+      },
+      "validation": {
+        "start": "2026-03-17T11:23:44.106Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "port_shutdown",
+          "severity": "high",
+          "confidence": 0.95
+        },
+        "parameters": {
+          "drops": [
+            [
+              0.0,
+              "DHCPOFFER"
+            ],
+            [
+              0.506,
+              "DHCPNAK"
+            ],
+            [
+              1.024,
+              "DHCPOFFER"
+            ],
+            [
+              1.549,
+              "DHCPNAK"
+            ],
+            [
+              2.064,
+              "DHCPOFFER"
+            ]
+          ],
+          "sensor_latency": 0.025,
+          "detect_latency": 0.085,
+          "client_device": "CONF-A-TV01"
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  },
+  {
+    "id": "unauthorized-endpoint",
+    "name": "Unauthorized Endpoint",
+    "short": "Unregistered device connects to a corporate drop and fails MAB/802.1X",
+    "class": "rogue_device",
+    "rule": "unauthorized-endpoint",
+    "mitre": [
+      "T1200",
+      "T1078"
+    ],
+    "description": "A single-board computer that is not in the asset inventory is connected to a spare corporate drop. MAC Authentication Bypass is rejected by FreeRADIUS, no 802.1X supplicant responds, and SentinelSwitch attributes the MAC to the physical interface using the AAA and syslog telemetry (the MAC address table has no entry because the port never became authorized).",
+    "flagship": false,
+    "actor": {
+      "device": "unknown",
+      "label": "unauthorized-sbc",
+      "ip": null,
+      "mac": "DC:A6:32:19:77:C1",
+      "interface": "Gi1/0/17",
+      "vlan": 20
+    },
+    "timing": {
+      "open": 0.071,
+      "dhcp": 0.131,
+      "mac": 0.196,
+      "identity": 0.077,
+      "policy": 0.152,
+      "apply": 0.401,
+      "verify": 0.117,
+      "evidence": 0.321
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T09:41:05.112Z",
+        "incident_id": "INC-2026-0040",
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "port_shutdown",
+          "severity": "high",
+          "confidence": 0.96
+        },
+        "parameters": {
+          "mab_reject_offset": 0.306,
+          "detect_latency": 0.155
+        },
+        "resolution": {
+          "device_removed": "2026-03-17T09:52:30Z",
+          "restored_at": "2026-03-17T09:58:30.514Z",
+          "restored_by": "tlee",
+          "note": "Unregistered contractor single-board computer removed after physical inspection (ticket SVC-2026-0311). Port restored to service."
+        },
+        "actor_override": null
+      },
+      "validation": {
+        "start": "2026-03-17T09:41:05.112Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "automatic_containment",
+          "action": "port_shutdown",
+          "severity": "high",
+          "confidence": 0.96
+        },
+        "parameters": {
+          "mab_reject_offset": 0.306,
+          "detect_latency": 0.155
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  }
+]

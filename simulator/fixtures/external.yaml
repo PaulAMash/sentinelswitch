@@ -1,0 +1,25 @@
+# External services reachable through LAB-FW01. Addresses use RFC 5737 documentation ranges only.
+external_services:
+  - {fqdn: updates.example.net,   ip: 198.51.100.20, ports: [443],      kind: os-updates}
+  - {fqdn: pkg.example.org,       ip: 198.51.100.80, ports: [443],      kind: package-mirror}
+  - {fqdn: cdn.example.com,       ip: 203.0.113.10,  ports: [443],      kind: cdn}
+  - {fqdn: www.example.com,       ip: 203.0.113.30,  ports: [443],      kind: web}
+  - {fqdn: mail.example.com,      ip: 198.51.100.25, ports: [443, 993], kind: mail}
+  - {fqdn: api.example.org,       ip: 203.0.113.44,  ports: [443],      kind: saas-api}
+  - {fqdn: git.example.org,       ip: 198.51.100.60, ports: [443, 22],  kind: git-hosting}
+  - {fqdn: video.example.com,     ip: 203.0.113.90,  ports: [443],      kind: streaming}
+  - {fqdn: docs.example.org,      ip: 203.0.113.55,  ports: [443],      kind: web}
+  - {fqdn: telemetry.example.net, ip: 203.0.113.77,  ports: [443],      kind: agent-telemetry}
+  - {fqdn: time.example.net,      ip: 192.0.2.123,   ports: [123],      kind: ntp, approved: false}
+
+internal_services:
+  - {fqdn: dc01.corp.example.com,     ip: 10.30.0.10, ports: [53, 88, 123, 389, 636, 445]}
+  - {fqdn: files.corp.example.com,    ip: 10.30.0.20, ports: [445]}
+  - {fqdn: radius01.corp.example.com, ip: 10.30.0.30, ports: [1812, 1813]}
+  - {fqdn: intranet.corp.example.com, ip: 10.30.0.40, ports: [443]}
+  - {fqdn: git.corp.example.com,      ip: 10.30.0.50, ports: [443, 22]}
+  - {fqdn: updates.corp.example.com,  ip: 10.30.0.60, ports: [443]}
+  - {fqdn: print01.corp.example.com,  ip: 10.20.0.200, ports: [631, 9100]}
+
+approved_ntp_servers: [10.30.0.10]
+approved_dns_servers: [10.30.0.10, 10.40.0.1]

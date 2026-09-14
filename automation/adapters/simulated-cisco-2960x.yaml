@@ -1,0 +1,31 @@
+# Adapter configuration for the SimulatedCisco2960XAdapter.
+# A production adapter (IOSSSHAdapter) would expose the same interface and translate each call into the
+# IOS commands listed under `ios_commands`; the simulated adapter applies the same semantics to the twin.
+adapter: SimulatedCisco2960XAdapter
+switch: SW01
+management_ip: 10.10.10.2
+transport: simulated          # production: ssh (port 22, AAA-authenticated service account, RBAC view)
+quarantine_vlan: 50
+protected_interfaces: [Gi1/0/1, Gi1/0/48]
+never_touch: [trunk, span_destination]
+ios_commands:
+  set_access_vlan:
+    - configure terminal
+    - interface {interface}
+    - switchport access vlan {vlan}
+    - end
+    - write memory
+  shutdown:
+    - configure terminal
+    - interface {interface}
+    - shutdown
+    - end
+  no_shutdown:
+    - configure terminal
+    - interface {interface}
+    - no shutdown
+    - end
+  verify_vlan: show interfaces {interface} switchport
+  verify_status: show interfaces {interface} status
+  mac_table: show mac address-table address {mac}
+  dhcp_bindings: show ip dhcp snooping binding

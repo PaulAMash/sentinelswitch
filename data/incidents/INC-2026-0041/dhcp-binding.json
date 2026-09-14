@@ -1,0 +1,20 @@
+{
+  "binding": {
+    "mac": "3C:D9:2B:71:31:04",
+    "ip": "10.40.0.104",
+    "vlan": 40,
+    "interface": "Gi1/0/31",
+    "lease_expires": "2026-03-17T19:05:01.800Z",
+    "binding_type": "dhcp-snooping",
+    "lease_start": "2026-03-17T11:05:01.800Z"
+  },
+  "resolution_step": {
+    "name": "dhcp_binding",
+    "status": "resolved",
+    "source": "show ip dhcp snooping binding",
+    "input": "3C:D9:2B:71:31:04",
+    "output": "10.40.0.104",
+    "detail": "3C:D9:2B:71:31:04 -> 10.40.0.104 (VLAN 40, Gi1/0/31)",
+    "ts": "2026-03-17T11:23:47.399Z"
+  }
+}

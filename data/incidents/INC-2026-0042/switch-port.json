@@ -1,0 +1,78 @@
+{
+  "before": {
+    "access_vlan": 20,
+    "oper_vlan": 20,
+    "oper_status": "connected"
+  },
+  "after": {
+    "interface": "Gi1/0/23",
+    "state": {
+      "name": "Gi1/0/23",
+      "description": "ENG-LT-047",
+      "mode": "access",
+      "access_vlan": 50,
+      "native_vlan": null,
+      "allowed_vlans": [],
+      "admin_status": "up",
+      "oper_status": "connected",
+      "speed": "a-1000",
+      "duplex": "a-full",
+      "port_class": "workstation",
+      "protected": false,
+      "span_destination": false,
+      "settings": {
+        "dot1x": true,
+        "mab": true,
+        "guest_vlan": 40,
+        "port_security": {
+          "enabled": true,
+          "maximum": 1,
+          "violation": "restrict",
+          "sticky": true
+        },
+        "bpduguard": true,
+        "storm_control": {
+          "broadcast": "1.00",
+          "multicast": "1.00"
+        },
+        "dhcp_snooping_trust": false,
+        "dai_trust": false,
+        "ip_source_guard": true,
+        "spanning_tree_portfast": true
+      },
+      "oper_vlan": 50,
+      "auth_state": "authorized",
+      "auth_method": "dot1x",
+      "auth_user": "jchen",
+      "quarantined": true,
+      "original_vlan": 20,
+      "quarantine_reason": "Lateral Reconnaissance: SENTINELSWITCH LATERAL SMB probe fan-out to multiple internal hosts",
+      "quarantine_workflow": "WF-2026-0042-01",
+      "hold": false,
+      "errdisable_reason": null,
+      "last_change": "2026-03-17T21:14:41.000Z",
+      "last_input": "2026-03-17T21:14:31.284Z",
+      "last_output": "2026-03-17T21:14:31.284Z",
+      "counters": {
+        "in_packets": 0,
+        "out_packets": 0,
+        "in_bytes": 0,
+        "out_bytes": 0,
+        "input_errors": 0,
+        "crc": 0,
+        "output_errors": 0
+      },
+      "port_security": {
+        "enabled": true,
+        "violation_count": 0,
+        "last_source": null
+      },
+      "sticky_macs": []
+    },
+    "show_switchport": "Name: Gi1/0/23\nSwitchport: Enabled\nAdministrative Mode: static access\nOperational Mode: static access\nAdministrative Trunking Encapsulation: dot1q\nOperational Trunking Encapsulation: native\nNegotiation of Trunking: Off\nAccess Mode VLAN: 50 (QUARANTINE)\nTrunking Native Mode VLAN: 1 (default)\nAdministrative Native VLAN tagging: enabled\nVoice VLAN: none\nAdministrative private-vlan host-association: none\nAdministrative private-vlan mapping: none\nAdministrative private-vlan trunk native VLAN: none\nAdministrative private-vlan trunk Native VLAN tagging: enabled\nAdministrative private-vlan trunk encapsulation: dot1q\nAdministrative private-vlan trunk normal VLANs: none\nAdministrative private-vlan trunk associations: none\nAdministrative private-vlan trunk mappings: none\nOperational private-vlan: none\nTrunking VLANs Enabled: ALL\nPruning VLANs Enabled: 2-1001\nCapture Mode Disabled\nCapture VLANs Allowed: ALL\n\nProtected: false\nUnknown unicast blocked: disabled\nUnknown multicast blocked: disabled\nAppliance trust: none",
+    "show_status": "Port      Name               Status       Vlan       Duplex  Speed Type\nGi1/0/23  ENG-LT-047         connected    50         a-full a-1000 10/100/1000BaseTX",
+    "show_mac_table": "          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  50    a483.e712.3456    DYNAMIC     Gi1/0/23\nTotal Mac Addresses for this criterion: 1",
+    "show_running_config": "Building configuration...\n\nCurrent configuration : 788 bytes\n!\ninterface GigabitEthernet1/0/23\n description ENG-LT-047\n switchport access vlan 50\n switchport mode access\n switchport port-security\n switchport port-security violation restrict\n switchport port-security mac-address sticky\n ip arp inspection limit rate 15\n authentication event fail action next-method\n authentication event no-response action authorize vlan 40\n authentication order mab dot1x\n authentication priority dot1x mab\n authentication port-control auto\n authentication periodic\n authentication timer reauthenticate server\n mab\n dot1x pae authenticator\n dot1x timeout tx-period 3\n storm-control broadcast level 1.00\n storm-control multicast level 1.00\n storm-control action trap\n spanning-tree portfast\n spanning-tree bpduguard enable\n ip verify source\nend",
+    "show_port_security": "Port Security              : Enabled\nPort Status                : Secure-up\nViolation Mode             : Restrict\nAging Time                 : 0 mins\nAging Type                 : Absolute\nSecureStatic Address Aging : Disabled\nMaximum MAC Addresses      : 1\nTotal MAC Addresses        : 1\nConfigured MAC Addresses   : 0\nSticky MAC Addresses       : 0\nLast Source Address:Vlan   : 0000.0000.0000:0\nSecurity Violation Count   : 0"
+  }
+}

@@ -1,0 +1,30 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show authentication sessions
+Interface    MAC Address     Method   Domain   Status Fg  Session ID
+Gi1/0/5      d4be.d96f.0515  dot1x    DATA     Auth   X   0A0A0A0200000005006F0515
+Gi1/0/6      d4be.d96f.0616  dot1x    DATA     Auth   X   0A0A0A0200000006006F0616
+Gi1/0/14     f8bc.123a.1424  dot1x    DATA     Auth   X   0A0A0A020000000E003A1424
+Gi1/0/15     f8bc.123a.1525  dot1x    DATA     Auth   X   0A0A0A020000000F003A1525
+Gi1/0/16     3cd9.2b8e.1626  dot1x    DATA     Auth   X   0A0A0A0200000010008E1626
+Gi1/0/18     d4be.d96f.1828  dot1x    DATA     Auth   X   0A0A0A0200000012006F1828
+Gi1/0/19     d4be.d96f.1929  dot1x    DATA     Auth   X   0A0A0A0200000013006F1929
+Gi1/0/20     a483.e72b.2030  dot1x    DATA     Auth   X   0A0A0A0200000014002B2030
+Gi1/0/21     b4b5.2f1c.2131  dot1x    DATA     Auth   X   0A0A0A0200000015001C2131
+Gi1/0/22     b4b5.2f1c.2232  dot1x    DATA     Auth   X   0A0A0A0200000016001C2232
+Gi1/0/23     a483.e712.3456  dot1x    DATA     Auth   X   0A0A0A020000001700123456
+Gi1/0/24     d4be.d96f.2434  dot1x    DATA     Auth   X   0A0A0A0200000018006F2434
+Gi1/0/25     f8bc.123a.2535  dot1x    DATA     Auth   X   0A0A0A0200000019003A2535
+Gi1/0/26     f8bc.123a.2636  dot1x    DATA     Auth   X   0A0A0A020000001A003A2636
+Gi1/0/28     3005.5c9a.2801  mab      DATA     Auth   X   0A0A0A020000001C009A2801
+Gi1/0/30     8c71.f82d.3002  dot1x    DATA     Auth   X   0A0A0A020000001E002D3002
+Gi1/0/32     f8bc.123a.3242  dot1x    DATA     Auth   X   0A0A0A0200000020003A3242
+Gi1/0/33     3cd9.2b8e.3343  dot1x    DATA     Auth   X   0A0A0A0200000021008E3343
+Gi1/0/34     d4be.d96f.3444  dot1x    DATA     Auth   X   0A0A0A0200000022006F3444
+Gi1/0/36     d4be.d96f.3646  dot1x    DATA     Auth   X   0A0A0A0200000024006F3646
+
+Session count = 20
+
+Key to Session Events Blocked Status Flags:
+  X - Unknown Blocked Status
+SW01#

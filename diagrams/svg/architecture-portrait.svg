@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1260" viewBox="0 0 1000 1260" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<defs><marker id="arrow-7d8b9c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7d8b9c"/></marker><marker id="arrow-f85149" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f85149"/></marker><marker id="arrow-3fb950" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3fb950"/></marker></defs>
+<rect width="1000" height="1260" fill="#0e1218"/>
+<rect x="40.0" y="36.0" width="920.0" height="280.0" rx="12" fill="rgba(255,255,255,0.015)" stroke="#39c5d6" stroke-width="1.2" stroke-dasharray="6 5" opacity="0.9"/>
+<rect x="54.0" y="25.0" width="214.4" height="22.0" rx="6" fill="#0e1218" stroke="#39c5d6" stroke-width="1" opacity="1.0"/>
+<text x="64.0" y="40.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="700" fill="#39c5d6" text-anchor="start" opacity="1.0">ACCESS LAYER · DIGITAL TWIN</text>
+<rect x="40.0" y="356.0" width="920.0" height="170.0" rx="12" fill="rgba(255,255,255,0.015)" stroke="#58a6ff" stroke-width="1.2" stroke-dasharray="6 5" opacity="0.9"/>
+<rect x="54.0" y="345.0" width="164.0" height="22.0" rx="6" fill="#0e1218" stroke="#58a6ff" stroke-width="1" opacity="1.0"/>
+<text x="64.0" y="360.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="700" fill="#58a6ff" text-anchor="start" opacity="1.0">TELEMETRY · SEC-TP01</text>
+<rect x="40.0" y="566.0" width="520.0" height="600.0" rx="12" fill="rgba(255,255,255,0.015)" stroke="#a371f7" stroke-width="1.2" stroke-dasharray="6 5" opacity="0.9"/>
+<rect x="54.0" y="555.0" width="200.0" height="22.0" rx="6" fill="#0e1218" stroke="#a371f7" stroke-width="1" opacity="1.0"/>
+<text x="64.0" y="570.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="700" fill="#a371f7" text-anchor="start" opacity="1.0">SENTINELSWITCH CONTROLLER</text>
+<rect x="600.0" y="566.0" width="360.0" height="600.0" rx="12" fill="rgba(255,255,255,0.015)" stroke="#56657a" stroke-width="1.2" stroke-dasharray="6 5" opacity="0.9"/>
+<rect x="614.0" y="555.0" width="77.6" height="22.0" rx="6" fill="#0e1218" stroke="#56657a" stroke-width="1" opacity="1.0"/>
+<text x="624.0" y="570.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="700" fill="#56657a" text-anchor="start" opacity="1.0">PLATFORM</text>
+<path d="M340.0,166.0 L340.0,196.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M600.0,246.0 L660.0,246.0" fill="none" stroke="#f85149" stroke-width="1.6" marker-end="url(#arrow-f85149)" stroke-linejoin="round"/>
+<path d="M180.0,296.0 L180.0,346.0 L210.0,346.0 L210.0,396.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M340.0,296.0 L340.0,346.0 L500.0,346.0 L500.0,396.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M500.0,296.0 L500.0,346.0 L790.0,346.0 L790.0,396.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M210.0,496.0 L210.0,551.0 L220.0,551.0 L220.0,606.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M500.0,496.0 L500.0,556.0 L300.0,556.0 L300.0,606.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M790.0,496.0 L790.0,542.0 L380.0,542.0 L380.0,606.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M300.0,686.0 L300.0,726.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M300.0,816.0 L300.0,856.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M300.0,946.0 L300.0,986.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M300.0,1076.0 L300.0,1086.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M520.0,1121.0 L580.0,1121.0 L580.0,266.0 L600.0,266.0" fill="none" stroke="#3fb950" stroke-width="1.6" marker-end="url(#arrow-3fb950)" stroke-linejoin="round"/>
+<rect x="495.2" y="314.5" width="169.5" height="18.0" rx="4" fill="#0e1218" stroke="none" stroke-width="0" opacity="0.92"/>
+<text x="580.0" y="327.0" font-family="'SF Mono', ui-monospace, Menlo, Consolas, monospace" font-size="10.5" font-weight="500" fill="#b3c0cf" text-anchor="middle" opacity="1.0">switchport access vlan 50</text>
+<path d="M520.0,771.0 L580.0,771.0 L580.0,686.0 L640.0,686.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<rect x="504.7" y="719.5" width="150.6" height="18.0" rx="4" fill="#0e1218" stroke="none" stroke-width="0" opacity="0.92"/>
+<text x="580.0" y="732.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="500" fill="#b3c0cf" text-anchor="middle" opacity="1.0">detections · incidents</text>
+<path d="M520.0,1031.0 L576.0,1031.0 L576.0,871.0 L640.0,871.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<rect x="500.7" y="942.0" width="150.6" height="18.0" rx="4" fill="#0e1218" stroke="none" stroke-width="0" opacity="0.92"/>
+<text x="576.0" y="954.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="500" fill="#b3c0cf" text-anchor="middle" opacity="1.0">actions · verification</text>
+<path d="M780.0,756.0 L780.0,816.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<path d="M780.0,996.0 L780.0,926.0" fill="none" stroke="#7d8b9c" stroke-width="1.6" marker-end="url(#arrow-7d8b9c)" stroke-linejoin="round"/>
+<rect x="80.0" y="76.0" width="520.0" height="90.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="340.0" y="116.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Simulated endpoints</text>
+<text x="340.0" y="133.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">23 workstations &amp; laptops · 6 servers · guests · rogue devices</text>
+<rect x="80.0" y="196.0" width="520.0" height="100.0" rx="9" fill="#161d26" stroke="#39c5d6" stroke-width="1.4" opacity="1.0"/>
+<rect x="80.0" y="196.0" width="4" height="100.0" rx="2" fill="#39c5d6"/>
+<rect x="482.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="491.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="500.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="509.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="518.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="527.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="536.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="545.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="554.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="563.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="572.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<rect x="581.0" y="280.0" width="6" height="7" rx="1" fill="#0b0f14" stroke="#39c5d6" stroke-width="0.8"/>
+<text x="340.0" y="233.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Cisco Catalyst 2960-X twin · SW01</text>
+<text x="340.0" y="250.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">VLAN 10/20/30/40/50/99 · 48 × GE ports</text>
+<text x="340.0" y="265.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">802.1X · DHCP snooping · DAI · IPSG · port security · BPDU Guard</text>
+<rect x="660.0" y="196.0" width="260.0" height="100.0" rx="9" fill="#161d26" stroke="#f85149" stroke-width="1.4" opacity="1.0"/>
+<rect x="660.0" y="196.0" width="4" height="100.0" rx="2" fill="#f85149"/>
+<text x="790.0" y="241.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">VLAN 50 QUARANTINE</text>
+<text x="790.0" y="258.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">Gi1/0/23 moved 20 → 50</text>
+<rect x="80.0" y="396.0" width="260.0" height="100.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="210.0" y="441.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">SPAN · Zeek + Suricata</text>
+<text x="210.0" y="458.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">VLANs 20/30/40 → Gi1/0/47</text>
+<rect x="370.0" y="396.0" width="260.0" height="100.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="500.0" y="441.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">IOS syslog</text>
+<text x="500.0" y="458.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">AAA · DAI · snooping · port-sec</text>
+<rect x="660.0" y="396.0" width="260.0" height="100.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="790.0" y="441.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">FreeRADIUS 802.1X</text>
+<text x="790.0" y="458.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">EAP-TLS · PEAP · MAB</text>
+<rect x="80.0" y="606.0" width="440.0" height="80.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="300.0" y="641.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Normalization</text>
+<text x="300.0" y="658.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">one schema · four sources</text>
+<rect x="80.0" y="726.0" width="440.0" height="90.0" rx="9" fill="#161d26" stroke="#d29922" stroke-width="1.4" opacity="1.0"/>
+<rect x="80.0" y="726.0" width="4" height="90.0" rx="2" fill="#d29922"/>
+<text x="300.0" y="766.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Detection + correlation</text>
+<text x="300.0" y="783.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">rules · confidence · IP → MAC → port</text>
+<rect x="80.0" y="856.0" width="440.0" height="90.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="300.0" y="896.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Policy engine</text>
+<text x="300.0" y="913.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">≥ 0.95 &amp; high → automatic · guards</text>
+<rect x="80.0" y="986.0" width="440.0" height="90.0" rx="9" fill="#161d26" stroke="#3fb950" stroke-width="1.4" opacity="1.0"/>
+<rect x="80.0" y="986.0" width="4" height="90.0" rx="2" fill="#3fb950"/>
+<text x="300.0" y="1026.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Containment controller</text>
+<text x="300.0" y="1043.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">quarantine VLAN · shutdown · verify</text>
+<rect x="80.0" y="1086.0" width="440.0" height="70.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="300.0" y="1123.5" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Switch adapter · SimulatedCisco2960XAdapter</text>
+<path d="M640.0,626.0 a140.0,10 0 0 1 280.0,0 v120.0 a140.0,10 0 0 1 -280.0,0 z" fill="#161d26" stroke="#39c5d6" stroke-width="1.3"/>
+<path d="M640.0,626.0 a140.0,10 0 0 0 280.0,0" fill="none" stroke="#39c5d6" stroke-width="1.3"/>
+<text x="780.0" y="681.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Evidence store</text>
+<text x="780.0" y="698.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">SQLite · data/incidents/</text>
+<rect x="640.0" y="816.0" width="280.0" height="110.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="780.0" y="866.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">Dashboard + API</text>
+<text x="780.0" y="883.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">FastAPI · React · SSE</text>
+<rect x="640.0" y="996.0" width="280.0" height="100.0" rx="9" fill="#161d26" stroke="#34445a" stroke-width="1.1" opacity="1.0"/>
+<text x="780.0" y="1041.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#e6edf3" text-anchor="middle" opacity="1.0">SOC analyst</text>
+<text x="780.0" y="1058.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="middle" opacity="1.0">review · restore</text>
+<line x1="24" y1="1226" x2="976" y2="1226" stroke="#34445a" stroke-width="1"/>
+<text x="24.0" y="1246.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#7d8b9c" text-anchor="start" opacity="1.0">Simulated endpoints → digital twin → telemetry → detection → policy → containment → switch adapter → quarantine VLAN</text>
+<text x="976.0" y="1246.0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#7d8b9c" text-anchor="end" opacity="1.0"></text>
+</svg>

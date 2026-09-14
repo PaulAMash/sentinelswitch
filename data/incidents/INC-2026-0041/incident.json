@@ -1,0 +1,156 @@
+{
+  "id": "INC-2026-0041",
+  "title": "Rogue DHCP \u2014 VENDOR-LT-01",
+  "severity": "high",
+  "confidence": 0.95,
+  "status": "contained",
+  "opened_at": "2026-03-17T11:23:47.191Z",
+  "closed_at": null,
+  "rule": "rogue-dhcp",
+  "rule_name": "Rogue DHCP",
+  "class": "rogue_device",
+  "mitre": [
+    "T1557"
+  ],
+  "scenario": "rogue-dhcp",
+  "instance": "day",
+  "detection_id": "DET-20260317T11234719-ROGU",
+  "device": "VENDOR-LT-01",
+  "user": null,
+  "department": null,
+  "ip": "10.40.0.104",
+  "mac": "3C:D9:2B:71:31:04",
+  "vendor": "HP",
+  "switch": "SW01",
+  "interface": "Gi1/0/31",
+  "original_vlan": 40,
+  "current_vlan": 40,
+  "port_class": "conference",
+  "chain": [
+    "10.40.0.104",
+    "3C:D9:2B:71:31:04",
+    "SW01",
+    "Gi1/0/31",
+    "VLAN 40",
+    "shutdown"
+  ],
+  "summary": "A vendor laptop on the guest VLAN enables internet connection sharing, which starts a DHCP server on its wired interface. When the conference display is power-cycled and broadcasts DHCPDISCOVER, the laptop answers. DHCP snooping drops every OFFER and NAK arriving on the untrusted port and logs each drop; Suricata sees the offers on the SPAN feed and raises a local rule. SentinelSwitch attributes the server MAC to the port and shuts it down.",
+  "disposition": "automatic_containment",
+  "action": "port_shutdown",
+  "attribution_confidence": 1.0,
+  "flags": [],
+  "impersonated_device": null,
+  "workflow_id": "WF-2026-0041-04",
+  "mechanism": "SentinelSwitch administrative shutdown",
+  "contained_at": "2026-03-17T11:23:48.366Z",
+  "evidence_finalized_at": "2026-03-17T11:23:48.699Z",
+  "detection": {
+    "id": "DET-20260317T11234719-ROGU",
+    "rule": "rogue-dhcp",
+    "rule_name": "Rogue DHCP",
+    "class": "rogue_device",
+    "mitre": [
+      "T1557"
+    ],
+    "actor_key": "mac",
+    "actor_value": "3C:D9:2B:71:31:04",
+    "actor": {
+      "key": "mac",
+      "value": "3C:D9:2B:71:31:04",
+      "device": "VENDOR-LT-01",
+      "ip": "10.40.0.104",
+      "mac": "3C:D9:2B:71:31:04",
+      "interface": "Gi1/0/31",
+      "vlan": 40,
+      "user": null
+    },
+    "ts": "2026-03-17T11:23:47.191Z",
+    "trigger_ts": "2026-03-17T11:23:44.106Z",
+    "severity": "high",
+    "confidence": 0.95,
+    "base_confidence": 0.8,
+    "features": [
+      {
+        "id": "repeated_drops",
+        "label": "At least 3 dropped server messages",
+        "weight": 0.08,
+        "matched": true,
+        "evidence": "5 event(s) in 10s window (min 3)"
+      },
+      {
+        "id": "suricata_offer",
+        "label": "Suricata saw the offer on the SPAN feed (sid 1000040)",
+        "weight": 0.07,
+        "matched": true,
+        "evidence": "1 matching event(s): SENTINELSWITCH ROGUE DHCP server message from non-authorized host"
+      },
+      {
+        "id": "unknown_mac",
+        "label": "Server MAC is not in the asset inventory",
+        "weight": 0.05,
+        "matched": false,
+        "evidence": "3C:D9:2B:71:31:04 is VENDOR-LT-01"
+      }
+    ],
+    "summary": "Rogue DHCP: %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T11:23:44.106Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104"
+      },
+      {
+        "ts": "2026-03-17T11:23:44.131Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH ROGUE DHCP server message from non-authorized host"
+      },
+      {
+        "ts": "2026-03-17T11:23:44.612Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPNAK, MAC sa: 3cd9.2b71.3104"
+      },
+      {
+        "ts": "2026-03-17T11:23:45.130Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104"
+      },
+      {
+        "ts": "2026-03-17T11:23:45.655Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPNAK, MAC sa: 3cd9.2b71.3104"
+      },
+      {
+        "ts": "2026-03-17T11:23:46.170Z",
+        "source": "syslog",
+        "summary": "%DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104"
+      }
+    ]
+  },
+  "metrics": {
+    "t0": "2026-03-17T11:23:44.106Z",
+    "first_alert": "2026-03-17T11:23:44.106Z",
+    "detection": "2026-03-17T11:23:47.191Z",
+    "ttd": 3.085,
+    "attribution_complete": "2026-03-17T11:23:47.699Z",
+    "tta": 0.508,
+    "decision": "2026-03-17T11:23:47.848Z",
+    "applied": "2026-03-17T11:23:48.244Z",
+    "verified": "2026-03-17T11:23:48.366Z",
+    "ttc": 1.175,
+    "end_to_end": 4.26,
+    "evidence": "2026-03-17T11:23:48.699Z"
+  },
+  "artifacts": [
+    "incident.json",
+    "timeline.json",
+    "alerts.json",
+    "network-context.json",
+    "dhcp-binding.json",
+    "mac-table.json",
+    "switch-port.json",
+    "containment.json",
+    "related-connections.json",
+    "related-dns.json",
+    "README.md"
+  ]
+}

@@ -1,0 +1,244 @@
+# SentinelSwitch canonical environment definition.
+# Everything downstream (telemetry, Cisco artifacts, dashboard, evidence) derives from this file
+# plus inventory.yaml, users.yaml, external.yaml and the scenario definitions.
+# All identities, addresses and MAC addresses are fictional. Addressing is RFC 1918 / RFC 5737 only.
+
+organization:
+  name: Meridian Labs
+  domain: corp.example.com
+  site: LAB-01
+  timezone: UTC
+
+dataset:
+  day: "2026-03-17"
+  start: "2026-03-17T00:00:00Z"
+  end: "2026-03-18T00:00:00Z"
+  # Canonical "now" for the seeded baseline: just before the flagship incident begins.
+  baseline_now: "2026-03-17T21:14:00Z"
+  seed: 20260317
+
+switch:
+  hostname: SW01
+  model: WS-C2960X-48FPD-L
+  ios_version: "15.2(7)E8"
+  image: c2960x-universalk9-mz.152-7.E8.bin
+  serial: FOC2140X0LB
+  base_mac: "D4:E8:80:2A:1F:80"
+  management_ip: 10.10.10.2
+  management_vlan: 10
+  default_gateway: 10.10.10.1
+  uptime_reference: "2025-11-04T13:22:08Z"
+  location: "Lab rack R1, RU 20"
+  contact: "netops@corp.example.com"
+  gig_ports: 48
+  tengig_ports: 2
+  syslog_host: 10.99.0.10
+  ntp_server: 10.30.0.10
+  radius_server: 10.30.0.30
+  radius_auth_port: 1812
+  radius_acct_port: 1813
+  snmp_trap_host: 10.99.0.10
+  span_session:
+    id: 1
+    source_vlans: [20, 30, 40]
+    direction: both
+    destination: Gi1/0/47
+
+vlans:
+  - id: 10
+    name: MGMT
+    subnet: 10.10.10.0/24
+    gateway: 10.10.10.1
+    purpose: Network management plane (switch SVI, jump host, security stack management)
+    dhcp_snooping: false
+    dai: false
+  - id: 20
+    name: USERS
+    subnet: 10.20.0.0/24
+    gateway: 10.20.0.1
+    purpose: Employee workstations and laptops (802.1X)
+    dhcp_snooping: true
+    dai: true
+  - id: 30
+    name: SERVERS
+    subnet: 10.30.0.0/24
+    gateway: 10.30.0.1
+    purpose: Lab servers (directory, files, RADIUS, web, git, updates)
+    dhcp_snooping: true
+    dai: true
+  - id: 40
+    name: GUEST
+    subnet: 10.40.0.0/24
+    gateway: 10.40.0.1
+    purpose: Guest / unauthenticated devices (internet only)
+    dhcp_snooping: true
+    dai: true
+  - id: 50
+    name: QUARANTINE
+    subnet: 10.50.0.0/24
+    gateway: 10.50.0.1
+    purpose: Isolated containment VLAN (remediation portal only)
+    dhcp_snooping: true
+    dai: true
+  - id: 99
+    name: MONITORING
+    subnet: 10.99.0.0/24
+    gateway: 10.99.0.1
+    purpose: Security telemetry collectors and controller
+    dhcp_snooping: false
+    dai: false
+  - id: 999
+    name: BLACKHOLE
+    subnet: null
+    gateway: null
+    purpose: Parking VLAN for unused ports and trunk native VLAN
+    dhcp_snooping: false
+    dai: false
+
+dhcp:
+  server: 10.30.0.10
+  lease_seconds: 28800
+  scopes:
+    20: {range: [10.20.0.10, 10.20.0.199], reservations_from: 10.20.0.200}
+    40: {range: [10.40.0.100, 10.40.0.199]}
+    50: {range: [10.50.0.100, 10.50.0.150]}
+
+# Port intent for SW01. Every interface not listed under `ports` is an unused, shut-down port in VLAN 999.
+port_defaults:
+  user_port:
+    mode: access
+    access_vlan: 20
+    dot1x: true
+    mab: true
+    guest_vlan: 40
+    # Fixed workstation drops are pinned to one sticky address; 802.1X governs identity,
+    # port security governs the physical drop. Conference / spare drops override this below.
+    port_security: {enabled: true, maximum: 1, violation: restrict, sticky: true}
+    bpduguard: true
+    storm_control: {broadcast: "1.00", multicast: "1.00"}
+    dhcp_snooping_trust: false
+    dai_trust: false
+    ip_source_guard: true
+    spanning_tree_portfast: true
+  server_port:
+    mode: access
+    access_vlan: 30
+    dot1x: false
+    mab: false
+    port_security: {enabled: true, maximum: 1, violation: restrict, sticky: true}
+    bpduguard: true
+    storm_control: {broadcast: "2.00", multicast: "2.00"}
+    dhcp_snooping_trust: false
+    dai_trust: false
+    ip_source_guard: true
+    spanning_tree_portfast: true
+  mgmt_port:
+    mode: access
+    access_vlan: 10
+    dot1x: false
+    mab: false
+    port_security: {enabled: true, maximum: 1, violation: restrict, sticky: true}
+    bpduguard: true
+    storm_control: {broadcast: "1.00", multicast: "1.00"}
+    dhcp_snooping_trust: false
+    dai_trust: false
+    ip_source_guard: false
+    spanning_tree_portfast: true
+  trunk_port:
+    mode: trunk
+    native_vlan: 999
+    allowed_vlans: [10, 20, 30, 40, 50, 99]
+    dot1x: false
+    mab: false
+    port_security: {enabled: false}
+    bpduguard: false
+    storm_control: {broadcast: "5.00"}
+    dhcp_snooping_trust: true
+    dai_trust: true
+    ip_source_guard: false
+    spanning_tree_portfast: false
+  monitor_port:
+    mode: access
+    access_vlan: 99
+    dot1x: false
+    mab: false
+    port_security: {enabled: false}
+    bpduguard: true
+    dhcp_snooping_trust: false
+    dai_trust: false
+    ip_source_guard: false
+    spanning_tree_portfast: true
+  unused_port:
+    mode: access
+    access_vlan: 999
+    admin_shutdown: true
+    dot1x: false
+    mab: false
+    port_security: {enabled: false}
+    bpduguard: true
+    dhcp_snooping_trust: false
+    dai_trust: false
+    ip_source_guard: false
+    spanning_tree_portfast: true
+
+ports:
+  Gi1/0/1:  {profile: trunk_port, description: "TRUNK LAB-FW01 Gi0/1 (UPLINK)", protected: true, class: infrastructure}
+  Gi1/0/2:  {profile: mgmt_port, description: "MGMT LAB-JUMP01", class: management}
+  Gi1/0/3:  {profile: mgmt_port, description: "MGMT LAB-PDU01", class: management}
+  Gi1/0/5:  {profile: user_port, description: "ENG-WS-005", class: workstation}
+  Gi1/0/6:  {profile: user_port, description: "ENG-WS-006", class: workstation}
+  Gi1/0/7:  {profile: user_port, description: "ENG-LT-007", class: workstation}
+  Gi1/0/8:  {profile: server_port, description: "SRV-DC01 (AD DS / DNS / DHCP)", class: server}
+  Gi1/0/9:  {profile: server_port, description: "SRV-FILE01 (SMB)", class: server}
+  Gi1/0/10: {profile: server_port, description: "SRV-RADIUS01 (FreeRADIUS)", class: server}
+  Gi1/0/11: {profile: server_port, description: "SRV-WEB01 (intranet)", class: server}
+  Gi1/0/12: {profile: server_port, description: "SRV-GIT01 (git / CI)", class: server}
+  Gi1/0/13: {profile: server_port, description: "SRV-UPD01 (update mirror)", class: server}
+  Gi1/0/14: {profile: user_port, description: "FIN-WS-014", class: workstation}
+  Gi1/0/15: {profile: user_port, description: "FIN-WS-015", class: workstation}
+  Gi1/0/16: {profile: user_port, description: "HR-WS-016", class: workstation}
+  Gi1/0/17: {profile: user_port, description: "OPS SPARE DROP (corporate asset only)", class: workstation, port_security: {enabled: true, maximum: 2, violation: restrict, sticky: false}}
+  Gi1/0/18: {profile: user_port, description: "ENG-WS-018", class: workstation}
+  Gi1/0/19: {profile: user_port, description: "ENG-WS-019", class: workstation}
+  Gi1/0/20: {profile: user_port, description: "ENG-LT-020", class: workstation}
+  Gi1/0/21: {profile: user_port, description: "MKT-WS-021", class: workstation}
+  Gi1/0/22: {profile: user_port, description: "MKT-WS-022", class: workstation}
+  Gi1/0/23: {profile: user_port, description: "ENG-LT-047", class: workstation}
+  Gi1/0/24: {profile: user_port, description: "ENG-WS-024", class: workstation}
+  Gi1/0/25: {profile: user_port, description: "OPS-WS-025", class: workstation}
+  Gi1/0/26: {profile: user_port, description: "OPS-WS-026", class: workstation}
+  Gi1/0/27: {profile: user_port, description: "ENG-LT-027", class: workstation}
+  Gi1/0/28: {profile: user_port, description: "ENG-PR01 (printer, MAB)", class: printer}
+  Gi1/0/29: {profile: user_port, description: "CONF-A DROP 1 (guest fallback)", class: conference, port_security: {enabled: true, maximum: 2, violation: restrict, sticky: false}}
+  Gi1/0/30: {profile: user_port, description: "CONF-A DISPLAY (guest fallback)", class: conference, port_security: {enabled: true, maximum: 2, violation: restrict, sticky: false}}
+  Gi1/0/31: {profile: user_port, description: "VENDOR DROP (guest fallback)", class: conference, port_security: {enabled: true, maximum: 2, violation: restrict, sticky: false}}
+  Gi1/0/32: {profile: user_port, description: "FIN-WS-032", class: workstation}
+  Gi1/0/33: {profile: user_port, description: "HR-WS-033", class: workstation}
+  Gi1/0/34: {profile: user_port, description: "ENG-WS-034", class: workstation}
+  Gi1/0/35: {profile: user_port, description: "ENG-LT-035", class: workstation}
+  Gi1/0/36: {profile: user_port, description: "IT-WS-036", class: workstation}
+  Gi1/0/37: {profile: user_port, description: "IT-LT-037 (authorized scanner)", class: workstation}
+  Gi1/0/47: {profile: monitor_port, description: "SPAN DEST SEC-TP01 eth1 (SENSOR)", class: monitoring, span_destination: true}
+  Gi1/0/48: {profile: trunk_port, description: "TRUNK SEC-TP01 eth0 (SECURITY STACK)", protected: true, class: infrastructure, allowed_vlans: [10, 99]}
+
+# Configuration drift deliberately present in the *observed* switch state (see docs/architecture.md).
+# The desired state above is authoritative; these are what the twin actually reports.
+drift_injections:
+  - interface: Gi1/0/22
+    setting: description
+    observed: "MKT-WS-022 loaner"
+    at: "2026-03-17T06:47:51.104Z"
+    by: tlee
+    note: "Description edited interactively, not through the template"
+  - interface: Gi1/0/41
+    setting: admin_status
+    observed: up
+    at: "2026-03-17T16:35:12.771Z"
+    by: rahmed
+    note: "Unused port left enabled after a cabling test"
+  - interface: Gi1/0/35
+    setting: storm_control
+    observed: null
+    at: "2026-03-17T17:10:40.339Z"
+    by: rahmed
+    note: "storm-control lines missing after the interface was re-templated by hand"

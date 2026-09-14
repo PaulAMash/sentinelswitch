@@ -1,0 +1,21 @@
+{
+  "entries": [],
+  "observations": [
+    {
+      "mac": "DC:A6:32:19:77:C1",
+      "interface": "Gi1/0/17",
+      "vlan": 20,
+      "first_seen": "2026-03-17T09:41:04.112Z",
+      "last_seen": "2026-03-17T09:41:04.112Z"
+    }
+  ],
+  "resolution_step": {
+    "name": "mac_table",
+    "status": "fallback",
+    "source": "show mac address-table address",
+    "input": "DC:A6:32:19:77:C1",
+    "output": "Gi1/0/17",
+    "detail": "No MAC table entry for DC:A6:32:19:77:C1 (port not authorised); interface Gi1/0/17 taken from RADIUS NAS-Port-Id",
+    "ts": "2026-03-17T09:41:05.971Z"
+  }
+}

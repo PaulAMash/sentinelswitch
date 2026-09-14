@@ -1,0 +1,26 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show spanning-tree summary
+Switch is in rapid-pvst mode
+Root bridge for: none
+Extended system ID           is enabled
+Portfast Default             is disabled
+PortFast BPDU Guard Default  is enabled
+Portfast BPDU Filter Default is disabled
+Loopguard Default            is disabled
+EtherChannel misconfig guard is enabled
+UplinkFast                   is disabled
+BackboneFast                 is disabled
+Configured Pathcost method used is short
+
+Name                   Blocking Listening Learning Forwarding STP Active
+---------------------- -------- --------- -------- ---------- ----------
+VLAN0010                     0         0        0          4          4
+VLAN0020                     0         0        0         20         20
+VLAN0030                     0         0        0          7          7
+VLAN0040                     0         0        0          2          2
+VLAN0050                     0         0        0          1          1
+VLAN0099                     0         0        0          2          2
+---------------------- -------- --------- -------- ---------- ----------
+6 vlans                      0         0        0         36         36
+SW01#

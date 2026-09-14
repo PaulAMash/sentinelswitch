@@ -1,0 +1,17 @@
+id: mac-address-change
+name: MAC Address Change
+class: rogue_device
+description: Port-security violation on a sticky workstation drop; scored by whether the new MAC is unknown, impersonates another asset, or was rejected by AAA.
+mitre: [T1200, T1036.005]
+actor_key: interface
+trigger: {source: syslog, mnemonic: [PORT_SECURITY-2-PSECURE_VIOLATION]}
+aggregate_window: 5.0
+base_confidence: 0.65
+severity:
+  - {when: mac_belongs_elsewhere, severity: high}
+  - {default: medium}
+features:
+  - {id: unknown_mac,           label: "New MAC is not in the asset inventory",                   type: asset_unknown, mac_field: new_mac, weight: 0.12}
+  - {id: mac_belongs_elsewhere, label: "New MAC belongs to an inventory asset on another port",   type: asset_mac_belongs_elsewhere, mac_field: new_mac, weight: 0.20}
+  - {id: aaa_reject,            label: "AAA rejected the new MAC",                                 type: event_match, match: {source: radius, result: Access-Reject}, window: 10, weight: 0.10}
+  - {id: after_hours,           label: "Occurred outside business hours",                          type: outside_business_hours, weight: 0.05}

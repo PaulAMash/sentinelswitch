@@ -1,0 +1,12 @@
+{
+  "binding": null,
+  "resolution_step": {
+    "name": "dhcp_binding",
+    "status": "missing",
+    "source": "show ip dhcp snooping binding",
+    "input": "DC:A6:32:19:77:C1",
+    "output": null,
+    "detail": "No binding for this MAC (expected when the port never authorised or the device is static)",
+    "ts": "2026-03-17T09:41:05.775Z"
+  }
+}

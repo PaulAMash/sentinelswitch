@@ -1,0 +1,9 @@
+interface {{ interface }}
+ description UNUSED - parked in VLAN 999
+ switchport access vlan 999
+ switchport mode access
+ ip arp inspection limit rate 15
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ shutdown
+!

@@ -1,0 +1,120 @@
+[
+  {
+    "ts": "2026-03-17T09:12:44.271Z",
+    "phase": "telemetry",
+    "actor": "telemetry",
+    "message": "BPDU received on access port Gi1/0/30 (unmanaged switch inserted in front of CONF-A-TV01); BPDU Guard err-disabled the port",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:12:44.271Z",
+    "phase": "switch",
+    "actor": "SW01",
+    "message": "SW01 %SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port.",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:12:44.276Z",
+    "phase": "switch",
+    "actor": "SW01",
+    "message": "SW01 %PM-4-ERR_DISABLE: bpduguard error detected on Gi1/0/30, putting Gi1/0/30 in err-disable state",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:12:44.447Z",
+    "phase": "detection",
+    "actor": "sentinel",
+    "message": "Rule bpdu-violation matched: severity high, confidence 0.96 (base 0.90; errdisable_confirmed+0.06)",
+    "details": {
+      "detection_id": "DET-20260317T09124444-BPDU",
+      "sources": [
+        "syslog"
+      ]
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:44.513Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "Resolving actor Gi1/0/30 through DHCP snooping, MAC table and inventory",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T09:12:44.650Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "dhcp_binding [skipped] No IP or MAC to look up",
+    "details": {
+      "source": "show ip dhcp snooping binding"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:44.858Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "mac_table [fallback] No MAC table entry for unknown MAC (port not authorised); interface Gi1/0/30 taken from syslog interface field",
+    "details": {
+      "source": "show mac address-table address"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:44.858Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "interface [resolved] Gi1/0/30 'CONF-A DISPLAY (guest fallback)' mode=access access_vlan=20 oper_vlan=40 class=conference status=err-disabled",
+    "details": {
+      "source": "show interfaces switchport"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:44.937Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "identity [fallback] No MAC in the event; CONF-A-TV01 is the endpoint assigned to Gi1/0/30 (display, criticality=low)",
+    "details": {
+      "source": "asset inventory (port assignment)"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:45.081Z",
+    "phase": "policy",
+    "actor": "sentinel",
+    "message": "Disposition automatic_containment: Automatic containment approved (severity=high confidence=0.96); action=port_shutdown",
+    "details": {
+      "action": "port_shutdown",
+      "guards": []
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:45.085Z",
+    "phase": "incident",
+    "actor": "sentinel",
+    "message": "Incident INC-2026-0039 opened",
+    "details": {
+      "incident_id": "INC-2026-0039"
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:45.469Z",
+    "phase": "containment",
+    "actor": "sentinel",
+    "message": "SW01 Gi1/0/30: administrative shutdown (workflow WF-2026-0039-01) \u2014 BPDU Guard err-disable (switch-native) + SentinelSwitch administrative hold",
+    "details": {
+      "workflow": "WF-2026-0039-01",
+      "commands": [
+        "configure terminal",
+        "interface GigabitEthernet1/0/30",
+        " shutdown",
+        "end",
+        "write memory"
+      ]
+    }
+  },
+  {
+    "ts": "2026-03-17T09:12:45.588Z",
+    "phase": "verification",
+    "actor": "sentinel",
+    "message": "Verification succeeded: admin down, no MAC addresses learned",
+    "details": null
+  }
+]

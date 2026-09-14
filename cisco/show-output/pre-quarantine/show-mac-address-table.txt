@@ -1,0 +1,50 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show mac address-table
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+ All    0100.0ccc.cccc    STATIC      CPU
+ All    0100.0ccc.cccd    STATIC      CPU
+ All    0180.c200.0000    STATIC      CPU
+ All    0180.c200.000e    STATIC      CPU
+  10    00c0.b75d.1244    DYNAMIC     Gi1/0/3
+  10    ac1f.6b0a.1101    DYNAMIC     Gi1/0/1
+  10    d4be.d941.200a    DYNAMIC     Gi1/0/2
+  10    e86a.647c.3d10    DYNAMIC     Gi1/0/48
+  20    3005.5c9a.2801    DYNAMIC     Gi1/0/28
+  20    3cd9.2b8e.1626    DYNAMIC     Gi1/0/16
+  20    3cd9.2b8e.3343    DYNAMIC     Gi1/0/33
+  20    a483.e712.3456    DYNAMIC     Gi1/0/23
+  20    a483.e72b.2030    DYNAMIC     Gi1/0/20
+  20    ac1f.6b0a.1101    DYNAMIC     Gi1/0/1
+  20    b4b5.2f1c.2131    DYNAMIC     Gi1/0/21
+  20    b4b5.2f1c.2232    DYNAMIC     Gi1/0/22
+  20    d4be.d96f.0515    DYNAMIC     Gi1/0/5
+  20    d4be.d96f.0616    DYNAMIC     Gi1/0/6
+  20    d4be.d96f.1828    DYNAMIC     Gi1/0/18
+  20    d4be.d96f.1929    DYNAMIC     Gi1/0/19
+  20    d4be.d96f.2434    DYNAMIC     Gi1/0/24
+  20    d4be.d96f.3444    DYNAMIC     Gi1/0/34
+  20    d4be.d96f.3646    DYNAMIC     Gi1/0/36
+  20    f8bc.123a.1424    DYNAMIC     Gi1/0/14
+  20    f8bc.123a.1525    DYNAMIC     Gi1/0/15
+  20    f8bc.123a.2535    DYNAMIC     Gi1/0/25
+  20    f8bc.123a.2636    DYNAMIC     Gi1/0/26
+  20    f8bc.123a.3242    DYNAMIC     Gi1/0/32
+  30    ac1f.6b0a.1101    DYNAMIC     Gi1/0/1
+  30    ac1f.6b3b.0810    DYNAMIC     Gi1/0/8
+  30    ac1f.6b3b.0920    DYNAMIC     Gi1/0/9
+  30    ac1f.6b3b.0a30    DYNAMIC     Gi1/0/10
+  30    ac1f.6b3b.0b40    DYNAMIC     Gi1/0/11
+  30    ac1f.6b3b.0c50    DYNAMIC     Gi1/0/12
+  30    ac1f.6b3b.0d60    DYNAMIC     Gi1/0/13
+  40    8c71.f82d.3002    DYNAMIC     Gi1/0/30
+  40    ac1f.6b0a.1101    DYNAMIC     Gi1/0/1
+  50    ac1f.6b0a.1101    DYNAMIC     Gi1/0/1
+  99    ac1f.6b0a.1101    DYNAMIC     Gi1/0/1
+  99    e86a.647c.3d10    DYNAMIC     Gi1/0/48
+Total Mac Addresses for this criterion: 40
+SW01#

@@ -1,0 +1,36 @@
+{
+  "entries": [
+    {
+      "mac": "A4:83:E7:12:34:56",
+      "vlan": 20,
+      "interface": "Gi1/0/23",
+      "entry_type": "DYNAMIC",
+      "learned_at": "2026-03-17T07:52:00.000Z"
+    }
+  ],
+  "observations": [
+    {
+      "mac": "A4:83:E7:12:34:56",
+      "interface": "Gi1/0/23",
+      "vlan": 20,
+      "first_seen": "2026-03-17T07:52:00.000Z",
+      "last_seen": "2026-03-17T00:00:00.000Z"
+    },
+    {
+      "mac": "A4:83:E7:12:34:56",
+      "interface": "Gi1/0/23",
+      "vlan": 20,
+      "first_seen": "2026-03-17T07:52:00.000Z",
+      "last_seen": "2026-03-17T07:52:00.000Z"
+    }
+  ],
+  "resolution_step": {
+    "name": "mac_table",
+    "status": "resolved",
+    "source": "show mac address-table address",
+    "input": "A4:83:E7:12:34:56",
+    "output": "Gi1/0/23",
+    "detail": "A4:83:E7:12:34:56 -> SW01 Gi1/0/23 (VLAN 20, DYNAMIC)",
+    "ts": "2026-03-17T21:14:40.346Z"
+  }
+}

@@ -1,0 +1,17 @@
+id: port-scan
+name: Port Scan
+class: compromised_host
+description: TCP port sweep detected by Suricata and corroborated by Zeek Scan::Port_Scan; scored by breadth and asset context.
+mitre: [T1046]
+actor_key: actor_ip
+trigger: {source: suricata, signature_id: [1000011, 1000012]}
+aggregate_window: 1.2
+base_confidence: 0.70
+severity:
+  - {when: authorized_scanner, severity: medium}
+  - {default: high}
+features:
+  - {id: zeek_port_scan,     label: "Zeek Scan::Port_Scan for the same source",  type: event_match, match: {source: zeek, note: Scan::Port_Scan}, window: 60, weight: 0.12}
+  - {id: many_ports,         label: "At least 100 distinct destination ports",   type: event_field, from: {source: zeek, note: Scan::Port_Scan}, field: ports_scanned, op: ge, value: 100, weight: 0.08}
+  - {id: server_targets,     label: "Targets include the SERVERS VLAN",           type: event_field, from: {source: zeek, note: Scan::Port_Scan}, field: targets_servers, op: eq, value: true, weight: 0.06}
+  - {id: authorized_scanner, label: "Source is an authorized scanner",            type: asset_tag, tag: authorized_scanner, weight: -0.35}

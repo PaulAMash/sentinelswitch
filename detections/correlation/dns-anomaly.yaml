@@ -1,0 +1,17 @@
+id: dns-anomaly
+name: DNS Anomaly
+class: compromised_host
+description: Abnormal DNS query volume with a high NXDOMAIN ratio; DGA-like labels and unique-domain breadth raise confidence.
+mitre: [T1071.004, T1568.002]
+actor_key: actor_ip
+trigger: {source: suricata, signature_id: [1000030, 1000031]}
+aggregate_window: 45.0
+base_confidence: 0.60
+severity:
+  - {when: dga_like, severity: high}
+  - {default: medium}
+features:
+  - {id: nxdomain_ratio, label: "NXDOMAIN ratio at least 0.5",            type: event_field, from: {source: zeek, note: SentinelDNS::NXDomain_Burst}, field: nxdomain_ratio, op: ge, value: 0.5, weight: 0.12}
+  - {id: dga_like,       label: "High-entropy (DGA-like) query labels",    type: event_field, from: {source: zeek, note: SentinelDNS::NXDomain_Burst}, field: dga_like, op: eq, value: true, weight: 0.15}
+  - {id: high_rate,      label: "At least 100 queries per minute",         type: event_field, from: {source: zeek, note: SentinelDNS::NXDomain_Burst}, field: queries_per_minute, op: ge, value: 100, weight: 0.08}
+  - {id: many_domains,   label: "At least 200 unique domains",             type: event_field, from: {source: zeek, note: SentinelDNS::NXDomain_Burst}, field: unique_domains, op: ge, value: 200, weight: 0.05}

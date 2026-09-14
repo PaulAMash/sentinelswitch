@@ -1,0 +1,1030 @@
+[
+  {
+    "detection_id": "DET-20260317T10272329-ARP-",
+    "status": "closed",
+    "opened_at": "2026-03-17T10:27:23.989Z",
+    "closed_at": "2026-03-17T10:41:12.000Z",
+    "closed_by": "tlee",
+    "note": "Guest laptop VPN client emitted stale gratuitous ARP for its previous network. DAI dropped all three frames; no further activity. Closed as benign.",
+    "scenario": "arp-spoofing",
+    "rule": "arp-spoofing",
+    "actor": {
+      "device": "GUEST-VISITOR-01",
+      "ip": "10.40.0.101",
+      "mac": "F0:18:98:C4:29:01",
+      "interface": "Gi1/0/29",
+      "vlan": 40
+    },
+    "attribution": {
+      "ip": "10.40.0.101",
+      "mac": "F0:18:98:C4:29:01",
+      "switch": "SW01",
+      "interface": "Gi1/0/29",
+      "vlan": 40,
+      "access_vlan": 20,
+      "port_class": "conference",
+      "port_mode": "access",
+      "protected": false,
+      "trunk": false,
+      "span_destination": false,
+      "device": "GUEST-VISITOR-01",
+      "user": null,
+      "department": null,
+      "criticality": "low",
+      "vendor": "Apple",
+      "resolved": true,
+      "confidence": 1.0,
+      "flags": [],
+      "steps": [
+        {
+          "name": "dhcp_binding",
+          "status": "resolved",
+          "source": "show ip dhcp snooping binding",
+          "input": "F0:18:98:C4:29:01",
+          "output": "10.40.0.101",
+          "detail": "F0:18:98:C4:29:01 -> 10.40.0.101 (VLAN 40, Gi1/0/29)",
+          "ts": "2026-03-17T10:27:23.517Z"
+        },
+        {
+          "name": "mac_table",
+          "status": "resolved",
+          "source": "show mac address-table address",
+          "input": "F0:18:98:C4:29:01",
+          "output": "Gi1/0/29",
+          "detail": "F0:18:98:C4:29:01 -> SW01 Gi1/0/29 (VLAN 40, DYNAMIC)",
+          "ts": "2026-03-17T10:27:23.750Z"
+        },
+        {
+          "name": "interface",
+          "status": "resolved",
+          "source": "show interfaces switchport",
+          "input": "Gi1/0/29",
+          "output": "VLAN 40",
+          "detail": "Gi1/0/29 'CONF-A DROP 1 (guest fallback)' mode=access access_vlan=20 oper_vlan=40 class=conference status=connected",
+          "ts": "2026-03-17T10:27:23.750Z"
+        },
+        {
+          "name": "identity",
+          "status": "resolved",
+          "source": "asset inventory / AAA session",
+          "input": "F0:18:98:C4:29:01",
+          "output": "GUEST-VISITOR-01",
+          "detail": "GUEST-VISITOR-01 (guest-laptop, Apple, macOS) criticality=low",
+          "ts": "2026-03-17T10:27:23.838Z"
+        }
+      ],
+      "binding": {
+        "mac": "F0:18:98:C4:29:01",
+        "ip": "10.40.0.101",
+        "vlan": 40,
+        "interface": "Gi1/0/29",
+        "lease_expires": "2026-03-17T17:58:01.800Z",
+        "binding_type": "dhcp-snooping",
+        "lease_start": "2026-03-17T09:58:01.800Z"
+      },
+      "mac_entries": [
+        {
+          "mac": "F0:18:98:C4:29:01",
+          "vlan": 40,
+          "interface": "Gi1/0/29",
+          "entry_type": "DYNAMIC",
+          "learned_at": "2026-03-17T09:58:00.000Z"
+        }
+      ],
+      "observations": [
+        {
+          "mac": "F0:18:98:C4:29:01",
+          "interface": "Gi1/0/29",
+          "vlan": 40,
+          "first_seen": "2026-03-17T09:58:00.000Z",
+          "last_seen": "2026-03-17T00:00:00.000Z"
+        },
+        {
+          "mac": "F0:18:98:C4:29:01",
+          "interface": "Gi1/0/29",
+          "vlan": 40,
+          "first_seen": "2026-03-17T09:58:00.000Z",
+          "last_seen": "2026-03-17T09:58:00.000Z"
+        }
+      ],
+      "started_at": "2026-03-17T10:27:23.291Z",
+      "completed_at": "2026-03-17T10:27:23.838Z",
+      "impersonated_device": null,
+      "port_owner": "GUEST-VISITOR-01"
+    },
+    "decision": {
+      "disposition": "manual_review",
+      "action": "none",
+      "reason": "Manual review required (severity=medium confidence=0.78); below the automatic-containment threshold",
+      "factors": [
+        {
+          "factor": "severity",
+          "value": "medium"
+        },
+        {
+          "factor": "confidence",
+          "value": 0.78
+        },
+        {
+          "factor": "corroborating_sources",
+          "value": 1
+        },
+        {
+          "factor": "actor_class",
+          "value": "compromised_host"
+        },
+        {
+          "factor": "interface",
+          "value": "Gi1/0/29"
+        },
+        {
+          "factor": "port_class",
+          "value": "conference"
+        },
+        {
+          "factor": "asset_criticality",
+          "value": "low"
+        },
+        {
+          "factor": "protected",
+          "value": false
+        }
+      ],
+      "guards_triggered": [],
+      "quarantine_vlan": null,
+      "tier_before_guards": "manual_review"
+    },
+    "timeline": [
+      {
+        "ts": "2026-03-17T10:27:18.204Z",
+        "phase": "telemetry",
+        "actor": "telemetry",
+        "message": "Dynamic ARP Inspection dropping ARP from f018.98c4.2901 on Gi1/0/29 claiming 192.168.1.23 (binding says 10.40.0.101)",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T10:27:18.204Z",
+        "phase": "switch",
+        "actor": "SW01",
+        "message": "SW01 %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi1/0/29, vlan 40.([f018.98c4.2901/192.168.1.23/0000.0000.0000/0.0.0.0/10:27:18 UTC Tue Mar 17 2026])",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T10:27:18.718Z",
+        "phase": "switch",
+        "actor": "SW01",
+        "message": "SW01 %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Res) on Gi1/0/29, vlan 40.([f018.98c4.2901/192.168.1.23/0000.0000.0000/10.40.0.101/10:27:18 UTC Tue Mar 17 2026])",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T10:27:19.232Z",
+        "phase": "switch",
+        "actor": "SW01",
+        "message": "SW01 %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Res) on Gi1/0/29, vlan 40.([f018.98c4.2901/192.168.1.23/0000.0000.0000/0.0.0.0/10:27:19 UTC Tue Mar 17 2026])",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T10:27:23.291Z",
+        "phase": "detection",
+        "actor": "sentinel",
+        "message": "Rule arp-spoofing matched: severity medium, confidence 0.78 (base 0.65; repeated_denies+0.10, guest_source+0.03)",
+        "details": {
+          "detection_id": "DET-20260317T10272329-ARP-",
+          "sources": [
+            "syslog"
+          ]
+        }
+      },
+      {
+        "ts": "2026-03-17T10:27:23.370Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "Resolving actor F0:18:98:C4:29:01 through DHCP snooping, MAC table and inventory",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T10:27:23.517Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "dhcp_binding [resolved] F0:18:98:C4:29:01 -> 10.40.0.101 (VLAN 40, Gi1/0/29)",
+        "details": {
+          "source": "show ip dhcp snooping binding"
+        }
+      },
+      {
+        "ts": "2026-03-17T10:27:23.750Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "mac_table [resolved] F0:18:98:C4:29:01 -> SW01 Gi1/0/29 (VLAN 40, DYNAMIC)",
+        "details": {
+          "source": "show mac address-table address"
+        }
+      },
+      {
+        "ts": "2026-03-17T10:27:23.750Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "interface [resolved] Gi1/0/29 'CONF-A DROP 1 (guest fallback)' mode=access access_vlan=20 oper_vlan=40 class=conference status=connected",
+        "details": {
+          "source": "show interfaces switchport"
+        }
+      },
+      {
+        "ts": "2026-03-17T10:27:23.838Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "identity [resolved] GUEST-VISITOR-01 (guest-laptop, Apple, macOS) criticality=low",
+        "details": {
+          "source": "asset inventory / AAA session"
+        }
+      },
+      {
+        "ts": "2026-03-17T10:27:23.989Z",
+        "phase": "policy",
+        "actor": "sentinel",
+        "message": "Disposition manual_review: Manual review required (severity=medium confidence=0.78); below the automatic-containment threshold",
+        "details": {
+          "action": "none",
+          "guards": []
+        }
+      },
+      {
+        "ts": "2026-03-17T10:41:12.000Z",
+        "phase": "resolution",
+        "actor": "tlee",
+        "message": "Review closed by tlee: Guest laptop VPN client emitted stale gratuitous ARP for its previous network. DAI dropped all three frames; no further activity. Closed as benign.",
+        "details": null
+      }
+    ],
+    "severity": "medium",
+    "confidence": 0.78,
+    "title": "ARP Spoofing Attempt \u2014 GUEST-VISITOR-01"
+  },
+  {
+    "detection_id": "DET-20260317T12365740-MAC-",
+    "status": "closed",
+    "opened_at": "2026-03-17T12:36:58.103Z",
+    "closed_at": "2026-03-17T13:12:05.000Z",
+    "closed_by": "tlee",
+    "note": "HR user connected a personal laptop through the docking station on HR-WS-016's drop. Frames were restricted by port security; user counseled, personal device removed. Closed.",
+    "scenario": "mac-address-change",
+    "rule": "mac-address-change",
+    "actor": {
+      "device": "HR-WS-016",
+      "ip": "10.20.0.26",
+      "mac": "3C:D9:2B:8E:16:26",
+      "interface": "Gi1/0/16",
+      "vlan": 20
+    },
+    "attribution": {
+      "ip": null,
+      "mac": "8C:71:F8:44:AA:16",
+      "switch": "SW01",
+      "interface": "Gi1/0/16",
+      "vlan": 20,
+      "access_vlan": 20,
+      "port_class": "workstation",
+      "port_mode": "access",
+      "protected": false,
+      "trunk": false,
+      "span_destination": false,
+      "device": null,
+      "user": null,
+      "department": null,
+      "criticality": "standard",
+      "vendor": "Samsung",
+      "resolved": true,
+      "confidence": 0.9,
+      "flags": [
+        "no_binding",
+        "mac_not_learned",
+        "unknown_device"
+      ],
+      "steps": [
+        {
+          "name": "dhcp_binding",
+          "status": "missing",
+          "source": "show ip dhcp snooping binding",
+          "input": "8C:71:F8:44:AA:16",
+          "output": null,
+          "detail": "No binding for this MAC (expected when the port never authorised or the device is static)",
+          "ts": "2026-03-17T12:36:57.627Z"
+        },
+        {
+          "name": "mac_table",
+          "status": "fallback",
+          "source": "show mac address-table address",
+          "input": "8C:71:F8:44:AA:16",
+          "output": "Gi1/0/16",
+          "detail": "No MAC table entry for 8C:71:F8:44:AA:16 (port not authorised); interface Gi1/0/16 taken from syslog interface field",
+          "ts": "2026-03-17T12:36:57.854Z"
+        },
+        {
+          "name": "interface",
+          "status": "resolved",
+          "source": "show interfaces switchport",
+          "input": "Gi1/0/16",
+          "output": "VLAN 20",
+          "detail": "Gi1/0/16 'HR-WS-016' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+          "ts": "2026-03-17T12:36:57.854Z"
+        },
+        {
+          "name": "identity",
+          "status": "missing",
+          "source": "asset inventory / AAA session",
+          "input": "8C:71:F8:44:AA:16",
+          "output": null,
+          "detail": "8C:71:F8:44:AA:16 is not in the asset inventory (OUI vendor: Samsung)",
+          "ts": "2026-03-17T12:36:57.945Z"
+        }
+      ],
+      "binding": null,
+      "mac_entries": [],
+      "observations": [
+        {
+          "mac": "8C:71:F8:44:AA:16",
+          "interface": "Gi1/0/16",
+          "vlan": 20,
+          "first_seen": "2026-03-17T12:36:50.018Z",
+          "last_seen": "2026-03-17T12:36:50.018Z"
+        }
+      ],
+      "started_at": "2026-03-17T12:36:57.402Z",
+      "completed_at": "2026-03-17T12:36:57.945Z",
+      "impersonated_device": null,
+      "port_owner": "HR-WS-016"
+    },
+    "decision": {
+      "disposition": "manual_review",
+      "action": "none",
+      "reason": "Manual review required (severity=medium confidence=0.87); below the automatic-containment threshold",
+      "factors": [
+        {
+          "factor": "severity",
+          "value": "medium"
+        },
+        {
+          "factor": "confidence",
+          "value": 0.87
+        },
+        {
+          "factor": "corroborating_sources",
+          "value": 2
+        },
+        {
+          "factor": "actor_class",
+          "value": "rogue_device"
+        },
+        {
+          "factor": "interface",
+          "value": "Gi1/0/16"
+        },
+        {
+          "factor": "port_class",
+          "value": "workstation"
+        },
+        {
+          "factor": "asset_criticality",
+          "value": "standard"
+        },
+        {
+          "factor": "protected",
+          "value": false
+        }
+      ],
+      "guards_triggered": [],
+      "quarantine_vlan": null,
+      "tier_before_guards": "manual_review"
+    },
+    "timeline": [
+      {
+        "ts": "2026-03-17T12:36:52.318Z",
+        "phase": "telemetry",
+        "actor": "telemetry",
+        "message": "port-security violation on Gi1/0/16: 8c71.f844.aa16 differs from sticky address 3cd9.2b8e.1626",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T12:36:52.318Z",
+        "phase": "switch",
+        "actor": "SW01",
+        "message": "SW01 %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 8c71.f844.aa16 on port GigabitEthernet1/0/16.",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T12:36:52.702Z",
+        "phase": "aaa",
+        "actor": "freeradius",
+        "message": "RADIUS Access-Reject (MAB) for 8C:71:F8:44:AA:16 on Gi1/0/16: MAC not found in endpoint database",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T12:36:52.728Z",
+        "phase": "switch",
+        "actor": "SW01",
+        "message": "SW01 %MAB-5-FAIL: Authentication failed for client (8c71.f844.aa16) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010004544C1",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T12:36:57.402Z",
+        "phase": "detection",
+        "actor": "sentinel",
+        "message": "Rule mac-address-change matched: severity medium, confidence 0.87 (base 0.65; unknown_mac+0.12, aaa_reject+0.10)",
+        "details": {
+          "detection_id": "DET-20260317T12365740-MAC-",
+          "sources": [
+            "radius",
+            "syslog"
+          ]
+        }
+      },
+      {
+        "ts": "2026-03-17T12:36:57.476Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "Resolving actor 8C:71:F8:44:AA:16 through DHCP snooping, MAC table and inventory",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T12:36:57.627Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "dhcp_binding [missing] No binding for this MAC (expected when the port never authorised or the device is static)",
+        "details": {
+          "source": "show ip dhcp snooping binding"
+        }
+      },
+      {
+        "ts": "2026-03-17T12:36:57.854Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "mac_table [fallback] No MAC table entry for 8C:71:F8:44:AA:16 (port not authorised); interface Gi1/0/16 taken from syslog interface field",
+        "details": {
+          "source": "show mac address-table address"
+        }
+      },
+      {
+        "ts": "2026-03-17T12:36:57.854Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "interface [resolved] Gi1/0/16 'HR-WS-016' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+        "details": {
+          "source": "show interfaces switchport"
+        }
+      },
+      {
+        "ts": "2026-03-17T12:36:57.945Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "identity [missing] 8C:71:F8:44:AA:16 is not in the asset inventory (OUI vendor: Samsung)",
+        "details": {
+          "source": "asset inventory / AAA session"
+        }
+      },
+      {
+        "ts": "2026-03-17T12:36:58.103Z",
+        "phase": "policy",
+        "actor": "sentinel",
+        "message": "Disposition manual_review: Manual review required (severity=medium confidence=0.87); below the automatic-containment threshold",
+        "details": {
+          "action": "none",
+          "guards": []
+        }
+      },
+      {
+        "ts": "2026-03-17T13:12:05.000Z",
+        "phase": "resolution",
+        "actor": "tlee",
+        "message": "Review closed by tlee: HR user connected a personal laptop through the docking station on HR-WS-016's drop. Frames were restricted by port security; user counseled, personal device removed. Closed.",
+        "details": null
+      }
+    ],
+    "severity": "medium",
+    "confidence": 0.87,
+    "title": "MAC Address Change \u2014 HR-WS-016"
+  },
+  {
+    "detection_id": "DET-20260317T13051421-PORT",
+    "status": "closed",
+    "opened_at": "2026-03-17T13:05:14.928Z",
+    "closed_at": "2026-03-17T13:21:40.000Z",
+    "closed_by": "tlee",
+    "note": "Authorized vulnerability scan by IT-LT-037 under change CHG-2026-118. Logged only.",
+    "scenario": "port-scan",
+    "rule": "port-scan",
+    "actor": {
+      "device": "IT-LT-037",
+      "ip": "10.20.0.48",
+      "mac": "A4:83:E7:2B:37:48",
+      "interface": "Gi1/0/37",
+      "vlan": 20,
+      "user": "rahmed"
+    },
+    "attribution": {
+      "ip": "10.20.0.48",
+      "mac": "A4:83:E7:2B:37:48",
+      "switch": "SW01",
+      "interface": "Gi1/0/37",
+      "vlan": 20,
+      "access_vlan": 20,
+      "port_class": "workstation",
+      "port_mode": "access",
+      "protected": false,
+      "trunk": false,
+      "span_destination": false,
+      "device": "IT-LT-037",
+      "user": "rahmed",
+      "department": "IT",
+      "criticality": "standard",
+      "vendor": "Lenovo",
+      "resolved": true,
+      "confidence": 1.0,
+      "flags": [],
+      "steps": [
+        {
+          "name": "dhcp_binding",
+          "status": "resolved",
+          "source": "show ip dhcp snooping binding",
+          "input": "10.20.0.48",
+          "output": "A4:83:E7:2B:37:48",
+          "detail": "10.20.0.48 -> A4:83:E7:2B:37:48 (dhcp-snooping, VLAN 20, Gi1/0/37, 26087s remaining)",
+          "ts": "2026-03-17T13:05:14.445Z"
+        },
+        {
+          "name": "mac_table",
+          "status": "resolved",
+          "source": "show mac address-table address",
+          "input": "A4:83:E7:2B:37:48",
+          "output": "Gi1/0/37",
+          "detail": "A4:83:E7:2B:37:48 -> SW01 Gi1/0/37 (VLAN 20, DYNAMIC)",
+          "ts": "2026-03-17T13:05:14.686Z"
+        },
+        {
+          "name": "interface",
+          "status": "resolved",
+          "source": "show interfaces switchport",
+          "input": "Gi1/0/37",
+          "output": "VLAN 20",
+          "detail": "Gi1/0/37 'IT-LT-037 (authorized scanner)' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+          "ts": "2026-03-17T13:05:14.686Z"
+        },
+        {
+          "name": "identity",
+          "status": "resolved",
+          "source": "asset inventory / AAA session",
+          "input": "A4:83:E7:2B:37:48",
+          "output": "IT-LT-037",
+          "detail": "IT-LT-037 (laptop, Lenovo, Ubuntu 24.04 LTS) criticality=standard user=rahmed (Rania Ahmed, IT)",
+          "ts": "2026-03-17T13:05:14.775Z"
+        }
+      ],
+      "binding": {
+        "mac": "A4:83:E7:2B:37:48",
+        "ip": "10.20.0.48",
+        "vlan": 20,
+        "interface": "Gi1/0/37",
+        "lease_expires": "2026-03-17T20:20:01.800Z",
+        "binding_type": "dhcp-snooping",
+        "lease_start": "2026-03-17T08:20:01.800Z"
+      },
+      "mac_entries": [
+        {
+          "mac": "A4:83:E7:2B:37:48",
+          "vlan": 20,
+          "interface": "Gi1/0/37",
+          "entry_type": "DYNAMIC",
+          "learned_at": "2026-03-17T08:20:00.000Z"
+        }
+      ],
+      "observations": [
+        {
+          "mac": "A4:83:E7:2B:37:48",
+          "interface": "Gi1/0/37",
+          "vlan": 20,
+          "first_seen": "2026-03-17T08:20:00.000Z",
+          "last_seen": "2026-03-17T00:00:00.000Z"
+        },
+        {
+          "mac": "A4:83:E7:2B:37:48",
+          "interface": "Gi1/0/37",
+          "vlan": 20,
+          "first_seen": "2026-03-17T08:20:00.000Z",
+          "last_seen": "2026-03-17T08:20:00.000Z"
+        }
+      ],
+      "started_at": "2026-03-17T13:05:14.215Z",
+      "completed_at": "2026-03-17T13:05:14.775Z",
+      "impersonated_device": null,
+      "port_owner": "IT-LT-037"
+    },
+    "decision": {
+      "disposition": "monitor",
+      "action": "none",
+      "reason": "Monitor only (severity=medium confidence=0.61)",
+      "factors": [
+        {
+          "factor": "severity",
+          "value": "medium"
+        },
+        {
+          "factor": "confidence",
+          "value": 0.61
+        },
+        {
+          "factor": "corroborating_sources",
+          "value": 2
+        },
+        {
+          "factor": "actor_class",
+          "value": "compromised_host"
+        },
+        {
+          "factor": "interface",
+          "value": "Gi1/0/37"
+        },
+        {
+          "factor": "port_class",
+          "value": "workstation"
+        },
+        {
+          "factor": "asset_criticality",
+          "value": "standard"
+        },
+        {
+          "factor": "protected",
+          "value": false
+        }
+      ],
+      "guards_triggered": [],
+      "quarantine_vlan": null,
+      "tier_before_guards": "monitor"
+    },
+    "timeline": [
+      {
+        "ts": "2026-03-17T13:05:10.447Z",
+        "phase": "telemetry",
+        "actor": "telemetry",
+        "message": "TCP port sweep from 10.20.0.48: 100 ports x 6 hosts in 10.30.0.0/24 (240 probes/s)",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T13:05:11.009Z",
+        "phase": "alert",
+        "actor": "zeek",
+        "message": "Zeek notice Scan::Port_Scan: 10.20.0.48 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T13:05:12.955Z",
+        "phase": "alert",
+        "actor": "suricata",
+        "message": "Suricata sid 1000011 (medium): SENTINELSWITCH RECON TCP port sweep from internal host",
+        "details": {
+          "src": "10.20.0.48",
+          "dest": "10.30.0.30",
+          "dest_port": 1028
+        }
+      },
+      {
+        "ts": "2026-03-17T13:05:14.215Z",
+        "phase": "detection",
+        "actor": "sentinel",
+        "message": "Rule port-scan matched: severity medium, confidence 0.61 (base 0.70; zeek_port_scan+0.12, many_ports+0.08, server_targets+0.06, authorized_scanner-0.35)",
+        "details": {
+          "detection_id": "DET-20260317T13051421-PORT",
+          "sources": [
+            "suricata",
+            "zeek"
+          ]
+        }
+      },
+      {
+        "ts": "2026-03-17T13:05:14.296Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "Resolving actor 10.20.0.48 through DHCP snooping, MAC table and inventory",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T13:05:14.445Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "dhcp_binding [resolved] 10.20.0.48 -> A4:83:E7:2B:37:48 (dhcp-snooping, VLAN 20, Gi1/0/37, 26087s remaining)",
+        "details": {
+          "source": "show ip dhcp snooping binding"
+        }
+      },
+      {
+        "ts": "2026-03-17T13:05:14.686Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "mac_table [resolved] A4:83:E7:2B:37:48 -> SW01 Gi1/0/37 (VLAN 20, DYNAMIC)",
+        "details": {
+          "source": "show mac address-table address"
+        }
+      },
+      {
+        "ts": "2026-03-17T13:05:14.686Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "interface [resolved] Gi1/0/37 'IT-LT-037 (authorized scanner)' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+        "details": {
+          "source": "show interfaces switchport"
+        }
+      },
+      {
+        "ts": "2026-03-17T13:05:14.775Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "identity [resolved] IT-LT-037 (laptop, Lenovo, Ubuntu 24.04 LTS) criticality=standard user=rahmed (Rania Ahmed, IT)",
+        "details": {
+          "source": "asset inventory / AAA session"
+        }
+      },
+      {
+        "ts": "2026-03-17T13:05:14.928Z",
+        "phase": "policy",
+        "actor": "sentinel",
+        "message": "Disposition monitor: Monitor only (severity=medium confidence=0.61)",
+        "details": {
+          "action": "none",
+          "guards": []
+        }
+      },
+      {
+        "ts": "2026-03-17T13:21:40.000Z",
+        "phase": "resolution",
+        "actor": "tlee",
+        "message": "Review closed by tlee: Authorized vulnerability scan by IT-LT-037 under change CHG-2026-118. Logged only.",
+        "details": null
+      }
+    ],
+    "severity": "medium",
+    "confidence": 0.61,
+    "title": "Port Scan \u2014 IT-LT-037"
+  },
+  {
+    "detection_id": "DET-20260317T14192804-DNS-",
+    "status": "closed",
+    "opened_at": "2026-03-17T14:19:28.736Z",
+    "closed_at": "2026-03-17T14:52:40.000Z",
+    "closed_by": "tlee",
+    "note": "Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign.",
+    "scenario": "dns-anomaly",
+    "rule": "dns-anomaly",
+    "actor": {
+      "device": "FIN-WS-014",
+      "ip": "10.20.0.24",
+      "mac": "F8:BC:12:3A:14:24",
+      "interface": "Gi1/0/14",
+      "vlan": 20,
+      "user": "anovak"
+    },
+    "attribution": {
+      "ip": "10.20.0.24",
+      "mac": "F8:BC:12:3A:14:24",
+      "switch": "SW01",
+      "interface": "Gi1/0/14",
+      "vlan": 20,
+      "access_vlan": 20,
+      "port_class": "workstation",
+      "port_mode": "access",
+      "protected": false,
+      "trunk": false,
+      "span_destination": false,
+      "device": "FIN-WS-014",
+      "user": "anovak",
+      "department": "Finance",
+      "criticality": "standard",
+      "vendor": "Dell",
+      "resolved": true,
+      "confidence": 1.0,
+      "flags": [],
+      "steps": [
+        {
+          "name": "dhcp_binding",
+          "status": "resolved",
+          "source": "show ip dhcp snooping binding",
+          "input": "10.20.0.24",
+          "output": "F8:BC:12:3A:14:24",
+          "detail": "10.20.0.24 -> F8:BC:12:3A:14:24 (dhcp-snooping, VLAN 20, Gi1/0/14, 24033s remaining)",
+          "ts": "2026-03-17T14:19:28.265Z"
+        },
+        {
+          "name": "mac_table",
+          "status": "resolved",
+          "source": "show mac address-table address",
+          "input": "F8:BC:12:3A:14:24",
+          "output": "Gi1/0/14",
+          "detail": "F8:BC:12:3A:14:24 -> SW01 Gi1/0/14 (VLAN 20, DYNAMIC)",
+          "ts": "2026-03-17T14:19:28.501Z"
+        },
+        {
+          "name": "interface",
+          "status": "resolved",
+          "source": "show interfaces switchport",
+          "input": "Gi1/0/14",
+          "output": "VLAN 20",
+          "detail": "Gi1/0/14 'FIN-WS-014' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+          "ts": "2026-03-17T14:19:28.501Z"
+        },
+        {
+          "name": "identity",
+          "status": "resolved",
+          "source": "asset inventory / AAA session",
+          "input": "F8:BC:12:3A:14:24",
+          "output": "FIN-WS-014",
+          "detail": "FIN-WS-014 (workstation, Dell, Windows 11 Enterprise) criticality=standard user=anovak (Anna Novak, Finance)",
+          "ts": "2026-03-17T14:19:28.587Z"
+        }
+      ],
+      "binding": {
+        "mac": "F8:BC:12:3A:14:24",
+        "ip": "10.20.0.24",
+        "vlan": 20,
+        "interface": "Gi1/0/14",
+        "lease_expires": "2026-03-17T21:00:01.800Z",
+        "binding_type": "dhcp-snooping",
+        "lease_start": "2026-03-15T21:00:01.800Z"
+      },
+      "mac_entries": [
+        {
+          "mac": "F8:BC:12:3A:14:24",
+          "vlan": 20,
+          "interface": "Gi1/0/14",
+          "entry_type": "DYNAMIC",
+          "learned_at": "2026-03-15T21:00:00.000Z"
+        }
+      ],
+      "observations": [
+        {
+          "mac": "F8:BC:12:3A:14:24",
+          "interface": "Gi1/0/14",
+          "vlan": 20,
+          "first_seen": "2026-03-17T00:00:00.000Z",
+          "last_seen": "2026-03-17T00:00:00.000Z"
+        }
+      ],
+      "started_at": "2026-03-17T14:19:28.044Z",
+      "completed_at": "2026-03-17T14:19:28.587Z",
+      "impersonated_device": null,
+      "port_owner": "FIN-WS-014"
+    },
+    "decision": {
+      "disposition": "manual_review",
+      "action": "none",
+      "reason": "Manual review required (severity=medium confidence=0.80); below the automatic-containment threshold",
+      "factors": [
+        {
+          "factor": "severity",
+          "value": "medium"
+        },
+        {
+          "factor": "confidence",
+          "value": 0.8
+        },
+        {
+          "factor": "corroborating_sources",
+          "value": 2
+        },
+        {
+          "factor": "actor_class",
+          "value": "compromised_host"
+        },
+        {
+          "factor": "interface",
+          "value": "Gi1/0/14"
+        },
+        {
+          "factor": "port_class",
+          "value": "workstation"
+        },
+        {
+          "factor": "asset_criticality",
+          "value": "standard"
+        },
+        {
+          "factor": "protected",
+          "value": false
+        }
+      ],
+      "guards_triggered": [],
+      "quarantine_vlan": null,
+      "tier_before_guards": "manual_review"
+    },
+    "timeline": [
+      {
+        "ts": "2026-03-17T14:18:02.510Z",
+        "phase": "telemetry",
+        "actor": "telemetry",
+        "message": "DNS query burst from 10.20.0.24: ~141 queries/min, 61% NXDOMAIN, 38 unique names",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T14:18:42.985Z",
+        "phase": "alert",
+        "actor": "suricata",
+        "message": "Suricata sid 1000031 (medium): SENTINELSWITCH DNS NXDOMAIN response burst",
+        "details": {
+          "src": "10.30.0.10",
+          "dest": "10.20.0.24",
+          "dest_port": 49815
+        }
+      },
+      {
+        "ts": "2026-03-17T14:18:53.207Z",
+        "phase": "alert",
+        "actor": "suricata",
+        "message": "Suricata sid 1000030 (medium): SENTINELSWITCH DNS query rate threshold exceeded",
+        "details": {
+          "src": "10.20.0.24",
+          "dest": "10.30.0.10",
+          "dest_port": 53
+        }
+      },
+      {
+        "ts": "2026-03-17T14:19:02.610Z",
+        "phase": "alert",
+        "actor": "zeek",
+        "message": "Zeek notice SentinelDNS::NXDomain_Burst: 10.20.0.24 DNS NXDOMAIN burst",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T14:19:28.044Z",
+        "phase": "detection",
+        "actor": "sentinel",
+        "message": "Rule dns-anomaly matched: severity medium, confidence 0.80 (base 0.60; nxdomain_ratio+0.12, high_rate+0.08)",
+        "details": {
+          "detection_id": "DET-20260317T14192804-DNS-",
+          "sources": [
+            "suricata",
+            "zeek"
+          ]
+        }
+      },
+      {
+        "ts": "2026-03-17T14:19:28.121Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "Resolving actor 10.20.0.24 through DHCP snooping, MAC table and inventory",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T14:19:28.265Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "dhcp_binding [resolved] 10.20.0.24 -> F8:BC:12:3A:14:24 (dhcp-snooping, VLAN 20, Gi1/0/14, 24033s remaining)",
+        "details": {
+          "source": "show ip dhcp snooping binding"
+        }
+      },
+      {
+        "ts": "2026-03-17T14:19:28.501Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "mac_table [resolved] F8:BC:12:3A:14:24 -> SW01 Gi1/0/14 (VLAN 20, DYNAMIC)",
+        "details": {
+          "source": "show mac address-table address"
+        }
+      },
+      {
+        "ts": "2026-03-17T14:19:28.501Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "interface [resolved] Gi1/0/14 'FIN-WS-014' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected",
+        "details": {
+          "source": "show interfaces switchport"
+        }
+      },
+      {
+        "ts": "2026-03-17T14:19:28.587Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "identity [resolved] FIN-WS-014 (workstation, Dell, Windows 11 Enterprise) criticality=standard user=anovak (Anna Novak, Finance)",
+        "details": {
+          "source": "asset inventory / AAA session"
+        }
+      },
+      {
+        "ts": "2026-03-17T14:19:28.736Z",
+        "phase": "policy",
+        "actor": "sentinel",
+        "message": "Disposition manual_review: Manual review required (severity=medium confidence=0.80); below the automatic-containment threshold",
+        "details": {
+          "action": "none",
+          "guards": []
+        }
+      },
+      {
+        "ts": "2026-03-17T14:52:40.000Z",
+        "phase": "resolution",
+        "actor": "tlee",
+        "message": "Review closed by tlee: Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign.",
+        "details": null
+      }
+    ],
+    "severity": "medium",
+    "confidence": 0.8,
+    "title": "DNS Anomaly \u2014 FIN-WS-014"
+  }
+]

@@ -1,0 +1,153 @@
+[
+  {
+    "ts": "2026-03-17T11:23:44.106Z",
+    "phase": "telemetry",
+    "actor": "telemetry",
+    "message": "DHCP snooping dropping DHCPOFFER from 3cd9.2b71.3104 on untrusted port Gi1/0/31 (client CONF-A-TV01 broadcast DHCPDISCOVER)",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T11:23:44.106Z",
+    "phase": "switch",
+    "actor": "SW01",
+    "message": "SW01 %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T11:23:44.131Z",
+    "phase": "alert",
+    "actor": "suricata",
+    "message": "Suricata sid 1000040 (high): SENTINELSWITCH ROGUE DHCP server message from non-authorized host",
+    "details": {
+      "src": "10.40.0.104",
+      "dest": "255.255.255.255",
+      "dest_port": 68
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:44.612Z",
+    "phase": "switch",
+    "actor": "SW01",
+    "message": "SW01 %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPNAK, MAC sa: 3cd9.2b71.3104",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T11:23:45.130Z",
+    "phase": "switch",
+    "actor": "SW01",
+    "message": "SW01 %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T11:23:45.655Z",
+    "phase": "switch",
+    "actor": "SW01",
+    "message": "SW01 %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPNAK, MAC sa: 3cd9.2b71.3104",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T11:23:46.170Z",
+    "phase": "switch",
+    "actor": "SW01",
+    "message": "SW01 %DHCP_SNOOPING-5-DHCP_SNOOPING_UNTRUSTED_PORT: DHCP_SNOOPING drop message on untrusted port, message type: DHCPOFFER, MAC sa: 3cd9.2b71.3104",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T11:23:47.191Z",
+    "phase": "detection",
+    "actor": "sentinel",
+    "message": "Rule rogue-dhcp matched: severity high, confidence 0.95 (base 0.80; repeated_drops+0.08, suricata_offer+0.07)",
+    "details": {
+      "detection_id": "DET-20260317T11234719-ROGU",
+      "sources": [
+        "suricata",
+        "syslog"
+      ]
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:47.260Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "Resolving actor 3C:D9:2B:71:31:04 through DHCP snooping, MAC table and inventory",
+    "details": null
+  },
+  {
+    "ts": "2026-03-17T11:23:47.399Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "dhcp_binding [resolved] 3C:D9:2B:71:31:04 -> 10.40.0.104 (VLAN 40, Gi1/0/31)",
+    "details": {
+      "source": "show ip dhcp snooping binding"
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:47.618Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "mac_table [resolved] 3C:D9:2B:71:31:04 -> SW01 Gi1/0/31 (VLAN 40, DYNAMIC)",
+    "details": {
+      "source": "show mac address-table address"
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:47.618Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "interface [resolved] Gi1/0/31 'VENDOR DROP (guest fallback)' mode=access access_vlan=20 oper_vlan=40 class=conference status=connected",
+    "details": {
+      "source": "show interfaces switchport"
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:47.699Z",
+    "phase": "correlation",
+    "actor": "sentinel",
+    "message": "identity [resolved] VENDOR-LT-01 (guest-laptop, HP, Windows 11 Home) criticality=low",
+    "details": {
+      "source": "asset inventory / AAA session"
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:47.848Z",
+    "phase": "policy",
+    "actor": "sentinel",
+    "message": "Disposition automatic_containment: Automatic containment approved (severity=high confidence=0.95); action=port_shutdown",
+    "details": {
+      "action": "port_shutdown",
+      "guards": []
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:47.852Z",
+    "phase": "incident",
+    "actor": "sentinel",
+    "message": "Incident INC-2026-0041 opened",
+    "details": {
+      "incident_id": "INC-2026-0041"
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:48.244Z",
+    "phase": "containment",
+    "actor": "sentinel",
+    "message": "SW01 Gi1/0/31: administrative shutdown (workflow WF-2026-0041-04) \u2014 SentinelSwitch administrative shutdown",
+    "details": {
+      "workflow": "WF-2026-0041-04",
+      "commands": [
+        "configure terminal",
+        "interface GigabitEthernet1/0/31",
+        " shutdown",
+        "end",
+        "write memory"
+      ]
+    }
+  },
+  {
+    "ts": "2026-03-17T11:23:48.366Z",
+    "phase": "verification",
+    "actor": "sentinel",
+    "message": "Verification succeeded: admin down, no MAC addresses learned",
+    "details": null
+  }
+]

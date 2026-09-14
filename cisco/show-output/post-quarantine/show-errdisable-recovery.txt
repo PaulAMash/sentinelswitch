@@ -1,0 +1,34 @@
+! SentinelSwitch digital twin - simulated transcript (after INC-2026-0042 automated containment)
+! captured at 2026-03-17 21:14:31.284 UTC
+SW01#show errdisable recovery
+ErrDisable Reason            Timer Status
+-----------------            --------------
+arp-inspection               Enabled
+bpduguard                    Disabled
+channel-misconfig (STP)      Disabled
+dhcp-rate-limit              Enabled
+dtp-flap                     Disabled
+gbic-invalid                 Disabled
+inline-power                 Disabled
+l2ptguard                    Disabled
+link-flap                    Disabled
+loopback                     Disabled
+mac-limit                    Disabled
+pagp-flap                    Disabled
+port-mode-failure            Disabled
+pppoe-ia-rate-limit          Disabled
+psecure-violation            Enabled
+security-violation           Disabled
+sfp-config-mismatch          Disabled
+small-frame                  Disabled
+storm-control                Enabled
+udld                         Disabled
+vmps                         Disabled
+
+Timer interval: 300 seconds
+
+Interfaces that will be enabled at the next timeout:
+
+Interface       Errdisable reason       Time left(sec)
+---------       -----------------       --------------
+SW01#

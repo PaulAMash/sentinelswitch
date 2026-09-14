@@ -1,0 +1,13 @@
+{
+  "entries": [],
+  "observations": [],
+  "resolution_step": {
+    "name": "mac_table",
+    "status": "fallback",
+    "source": "show mac address-table address",
+    "input": null,
+    "output": "Gi1/0/30",
+    "detail": "No MAC table entry for unknown MAC (port not authorised); interface Gi1/0/30 taken from syslog interface field",
+    "ts": "2026-03-17T09:12:44.858Z"
+  }
+}

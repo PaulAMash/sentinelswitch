@@ -1,0 +1,78 @@
+{
+  "before": {
+    "access_vlan": 40,
+    "oper_vlan": 40,
+    "oper_status": "connected"
+  },
+  "after": {
+    "interface": "Gi1/0/30",
+    "state": {
+      "name": "Gi1/0/30",
+      "description": "CONF-A DISPLAY (guest fallback)",
+      "mode": "access",
+      "access_vlan": 20,
+      "native_vlan": null,
+      "allowed_vlans": [],
+      "admin_status": "down",
+      "oper_status": "disabled",
+      "speed": "a-1000",
+      "duplex": "a-full",
+      "port_class": "conference",
+      "protected": false,
+      "span_destination": false,
+      "settings": {
+        "dot1x": true,
+        "mab": true,
+        "guest_vlan": 40,
+        "port_security": {
+          "enabled": true,
+          "maximum": 2,
+          "violation": "restrict",
+          "sticky": false
+        },
+        "bpduguard": true,
+        "storm_control": {
+          "broadcast": "1.00",
+          "multicast": "1.00"
+        },
+        "dhcp_snooping_trust": false,
+        "dai_trust": false,
+        "ip_source_guard": true,
+        "spanning_tree_portfast": true
+      },
+      "oper_vlan": 40,
+      "auth_state": "n/a",
+      "auth_method": null,
+      "auth_user": null,
+      "quarantined": false,
+      "original_vlan": null,
+      "quarantine_reason": "STP/BPDU Violation: %SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port.",
+      "quarantine_workflow": "WF-2026-0039-01",
+      "hold": true,
+      "errdisable_reason": "bpduguard",
+      "last_change": "2026-03-17T09:12:45.469Z",
+      "last_input": "2026-03-17T09:12:44.271Z",
+      "last_output": "2026-03-17T09:12:44.271Z",
+      "counters": {
+        "in_packets": 200155,
+        "out_packets": 149307,
+        "in_bytes": 90069750,
+        "out_bytes": 63604782,
+        "input_errors": 0,
+        "crc": 0,
+        "output_errors": 0
+      },
+      "port_security": {
+        "enabled": true,
+        "violation_count": 0,
+        "last_source": "8C:71:F8:2D:30:02"
+      },
+      "sticky_macs": []
+    },
+    "show_switchport": "Name: Gi1/0/30\nSwitchport: Enabled\nAdministrative Mode: static access\nOperational Mode: down\nAdministrative Trunking Encapsulation: dot1q\nOperational Trunking Encapsulation: native\nNegotiation of Trunking: Off\nAccess Mode VLAN: 20 (USERS)\nTrunking Native Mode VLAN: 1 (default)\nAdministrative Native VLAN tagging: enabled\nVoice VLAN: none\nAdministrative private-vlan host-association: none\nAdministrative private-vlan mapping: none\nAdministrative private-vlan trunk native VLAN: none\nAdministrative private-vlan trunk Native VLAN tagging: enabled\nAdministrative private-vlan trunk encapsulation: dot1q\nAdministrative private-vlan trunk normal VLANs: none\nAdministrative private-vlan trunk associations: none\nAdministrative private-vlan trunk mappings: none\nOperational private-vlan: none\nTrunking VLANs Enabled: ALL\nPruning VLANs Enabled: 2-1001\nCapture Mode Disabled\nCapture VLANs Allowed: ALL\n\nProtected: false\nUnknown unicast blocked: disabled\nUnknown multicast blocked: disabled\nAppliance trust: none",
+    "show_status": "Port      Name               Status       Vlan       Duplex  Speed Type\nGi1/0/30  CONF-A DISPLAY (gu disabled     20           auto   auto 10/100/1000BaseTX",
+    "show_mac_table": "          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\nTotal Mac Addresses for this criterion: 0",
+    "show_running_config": "Building configuration...\n\nCurrent configuration : 810 bytes\n!\ninterface GigabitEthernet1/0/30\n description CONF-A DISPLAY (guest fallback)\n switchport access vlan 20\n switchport mode access\n switchport port-security\n switchport port-security maximum 2\n switchport port-security violation restrict\n ip arp inspection limit rate 15\n authentication event fail action next-method\n authentication event no-response action authorize vlan 40\n authentication order mab dot1x\n authentication priority dot1x mab\n authentication port-control auto\n authentication periodic\n authentication timer reauthenticate server\n mab\n dot1x pae authenticator\n dot1x timeout tx-period 3\n storm-control broadcast level 1.00\n storm-control multicast level 1.00\n storm-control action trap\n spanning-tree portfast\n spanning-tree bpduguard enable\n ip verify source\n shutdown\nend",
+    "show_port_security": "Port Security              : Enabled\nPort Status                : Secure-down\nViolation Mode             : Restrict\nAging Time                 : 0 mins\nAging Type                 : Absolute\nSecureStatic Address Aging : Disabled\nMaximum MAC Addresses      : 2\nTotal MAC Addresses        : 0\nConfigured MAC Addresses   : 0\nSticky MAC Addresses       : 0\nLast Source Address:Vlan   : 8c71.f82d.3002:20\nSecurity Violation Count   : 0"
+  }
+}

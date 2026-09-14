@@ -1,0 +1,12 @@
+{
+  "binding": null,
+  "resolution_step": {
+    "name": "dhcp_binding",
+    "status": "skipped",
+    "source": "show ip dhcp snooping binding",
+    "input": null,
+    "output": null,
+    "detail": "No IP or MAC to look up",
+    "ts": "2026-03-17T09:12:44.650Z"
+  }
+}

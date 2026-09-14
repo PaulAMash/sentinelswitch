@@ -1,0 +1,18 @@
+# Self-contained stack: API + dashboard in one container, no external services.
+# The container seeds the deterministic dataset on first start and applies the flagship incident so the
+# dashboard opens in the "INC-2026-0042 contained" state. Set SENTINEL_AUTO_DEMO=0 for the baseline.
+services:
+  sentinelswitch:
+    build: .
+    image: sentinelswitch:latest
+    container_name: sentinelswitch
+    ports:
+      - "8000:8000"
+    environment:
+      SENTINEL_AUTO_SEED: "1"
+      SENTINEL_AUTO_DEMO: "1"
+      SENTINEL_DB: /app/state/sentinelswitch.db
+    volumes:
+      - sentinel-state:/app/state
+volumes:
+  sentinel-state:

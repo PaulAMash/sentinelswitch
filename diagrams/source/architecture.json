@@ -1,0 +1,433 @@
+{
+  "name": "architecture",
+  "title": "SentinelSwitch \u2014 system architecture",
+  "subtitle": "Digital twin of a Cisco Catalyst 2960-X access layer with a SPAN-fed sensor, AAA telemetry and an autonomous detection \u2192 attribution \u2192 containment loop",
+  "width": 1600,
+  "height": 900,
+  "mermaid_direction": "TB",
+  "groups": [
+    {
+      "id": "access",
+      "label": "Access layer \u00b7 digital twin",
+      "x": 2,
+      "y": 5,
+      "w": 46,
+      "h": 8.5,
+      "color": "cyan"
+    },
+    {
+      "id": "telemetry",
+      "label": "Telemetry \u00b7 SEC-TP01 (Linux ThinkPad)",
+      "x": 2,
+      "y": 15.5,
+      "w": 46,
+      "h": 9,
+      "color": "blue"
+    },
+    {
+      "id": "controller",
+      "label": "SentinelSwitch controller \u00b7 Python / FastAPI",
+      "x": 2,
+      "y": 27,
+      "w": 76,
+      "h": 12,
+      "color": "purple"
+    },
+    {
+      "id": "platform",
+      "label": "Platform",
+      "x": 50,
+      "y": 5,
+      "w": 28,
+      "h": 19.5,
+      "color": "faint"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "endpoints",
+      "group": "access",
+      "x": 4,
+      "y": 7,
+      "w": 15,
+      "h": 5.5,
+      "label": "Simulated endpoints",
+      "sub": [
+        "23 workstations & laptops \u00b7 6 servers",
+        "guests, printer, rogue devices"
+      ]
+    },
+    {
+      "id": "twin",
+      "group": "access",
+      "kind": "switch",
+      "color": "cyan",
+      "x": 24,
+      "y": 7,
+      "w": 22,
+      "h": 5.5,
+      "label": "Cisco Catalyst 2960-X digital twin \u00b7 SW01",
+      "sub": [
+        "VLAN 10 / 20 / 30 / 40 / 50 / 99 \u00b7 48 \u00d7 GE access ports",
+        "802.1X \u00b7 MAB \u00b7 DHCP snooping \u00b7 DAI \u00b7 IPSG \u00b7 port security \u00b7 BPDU Guard"
+      ],
+      "badge": "WS-C2960X-48FPD-L"
+    },
+    {
+      "id": "span",
+      "group": "telemetry",
+      "x": 4,
+      "y": 17.5,
+      "w": 13,
+      "h": 5.5,
+      "label": "SPAN session 1",
+      "sub": [
+        "source VLANs 20/30/40 \u2192 Gi1/0/47",
+        "Zeek + Suricata on eth1"
+      ]
+    },
+    {
+      "id": "syslog",
+      "group": "telemetry",
+      "x": 19,
+      "y": 17.5,
+      "w": 12,
+      "h": 5.5,
+      "label": "IOS syslog",
+      "sub": [
+        "logging host 10.99.0.10",
+        "AAA \u00b7 DAI \u00b7 snooping \u00b7 port-security"
+      ]
+    },
+    {
+      "id": "radius",
+      "group": "telemetry",
+      "x": 33,
+      "y": 17.5,
+      "w": 13,
+      "h": 5.5,
+      "label": "FreeRADIUS \u00b7 SRV-RADIUS01",
+      "sub": [
+        "802.1X EAP-TLS / PEAP \u00b7 MAB",
+        "Accept \u00b7 Reject \u00b7 guest VLAN"
+      ]
+    },
+    {
+      "id": "normalize",
+      "group": "controller",
+      "x": 4,
+      "y": 30,
+      "w": 10,
+      "h": 6,
+      "label": "Normalization",
+      "sub": [
+        "one event schema for",
+        "Suricata \u00b7 Zeek \u00b7 RADIUS \u00b7 syslog"
+      ]
+    },
+    {
+      "id": "detect",
+      "group": "controller",
+      "kind": "accent",
+      "color": "amber",
+      "x": 17.5,
+      "y": 30,
+      "w": 13,
+      "h": 6,
+      "label": "Detection + correlation",
+      "sub": [
+        "declarative rules \u00b7 evidence features",
+        "confidence \u00b7 severity \u00b7 IP \u2192 MAC \u2192 port"
+      ]
+    },
+    {
+      "id": "policy",
+      "group": "controller",
+      "x": 34,
+      "y": 30,
+      "w": 11,
+      "h": 6,
+      "label": "Policy engine",
+      "sub": [
+        "\u2265 0.95 & high \u2192 automatic",
+        "\u2265 0.75 \u2192 review \u00b7 guards"
+      ]
+    },
+    {
+      "id": "contain",
+      "group": "controller",
+      "kind": "accent",
+      "color": "green",
+      "x": 48.5,
+      "y": 30,
+      "w": 12,
+      "h": 6,
+      "label": "Containment controller",
+      "sub": [
+        "quarantine VLAN / shutdown",
+        "verify \u00b7 rollback \u00b7 workflow"
+      ]
+    },
+    {
+      "id": "adapter",
+      "group": "controller",
+      "x": 64,
+      "y": 30,
+      "w": 12,
+      "h": 6,
+      "label": "Switch adapter",
+      "sub": [
+        "SwitchAdapter interface",
+        "`SimulatedCisco2960XAdapter`"
+      ]
+    },
+    {
+      "id": "quarantine",
+      "group": "platform",
+      "kind": "accent",
+      "color": "red",
+      "x": 52,
+      "y": 7,
+      "w": 10,
+      "h": 5.5,
+      "label": "VLAN 50 QUARANTINE",
+      "sub": [
+        "10.50.0.0/24",
+        "remediation only"
+      ]
+    },
+    {
+      "id": "evidence",
+      "group": "platform",
+      "kind": "db",
+      "color": "cyan",
+      "x": 66,
+      "y": 6.5,
+      "w": 10,
+      "h": 7,
+      "label": "Evidence store",
+      "sub": [
+        "SQLite state",
+        "data/incidents/<id>/"
+      ]
+    },
+    {
+      "id": "dashboard",
+      "group": "platform",
+      "x": 66,
+      "y": 16.5,
+      "w": 10,
+      "h": 6,
+      "label": "Dashboard + API",
+      "sub": [
+        "FastAPI \u00b7 SSE",
+        "React SOC console"
+      ]
+    },
+    {
+      "id": "analyst",
+      "group": "platform",
+      "x": 52,
+      "y": 16.5,
+      "w": 10,
+      "h": 6,
+      "label": "SOC analyst",
+      "sub": [
+        "review queue",
+        "restore \u00b7 verify"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "endpoints",
+      "to": "twin",
+      "label": "48 \u00d7 GE ports"
+    },
+    {
+      "from": "twin",
+      "to": "quarantine",
+      "label": "Gi1/0/23 \u00b7 20 \u2192 50",
+      "color": "red",
+      "from_offset": [
+        0,
+        -0.9
+      ],
+      "to_offset": [
+        0,
+        -0.9
+      ]
+    },
+    {
+      "from": "twin",
+      "to": "span",
+      "label": "mirrored frames",
+      "sides": [
+        "bottom",
+        "top"
+      ],
+      "from_offset": [
+        -7,
+        0
+      ]
+    },
+    {
+      "from": "twin",
+      "to": "syslog",
+      "label": "UDP 514",
+      "sides": [
+        "bottom",
+        "top"
+      ]
+    },
+    {
+      "from": "twin",
+      "to": "radius",
+      "label": "RADIUS 1812",
+      "sides": [
+        "bottom",
+        "top"
+      ],
+      "from_offset": [
+        7,
+        0
+      ]
+    },
+    {
+      "from": "span",
+      "to": "normalize",
+      "sides": [
+        "bottom",
+        "top"
+      ]
+    },
+    {
+      "from": "syslog",
+      "to": "normalize",
+      "sides": [
+        "bottom",
+        "top"
+      ],
+      "to_offset": [
+        1.8,
+        0
+      ]
+    },
+    {
+      "from": "radius",
+      "to": "normalize",
+      "sides": [
+        "bottom",
+        "top"
+      ],
+      "to_offset": [
+        3.6,
+        0
+      ],
+      "via": [
+        [
+          39.5,
+          26
+        ],
+        [
+          12.6,
+          26
+        ]
+      ]
+    },
+    {
+      "from": "normalize",
+      "to": "detect",
+      "label": "events"
+    },
+    {
+      "from": "detect",
+      "to": "policy",
+      "label": "detection"
+    },
+    {
+      "from": "policy",
+      "to": "contain",
+      "label": "decision"
+    },
+    {
+      "from": "contain",
+      "to": "adapter",
+      "label": "action"
+    },
+    {
+      "from": "adapter",
+      "to": "twin",
+      "label": "switchport access vlan 50",
+      "color": "green",
+      "mono": true,
+      "sides": [
+        "top",
+        "right"
+      ],
+      "via": [
+        [
+          70,
+          26
+        ],
+        [
+          49.5,
+          26
+        ],
+        [
+          49.5,
+          10.9
+        ]
+      ],
+      "to_offset": [
+        0,
+        1.15
+      ],
+      "label_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "from": "contain",
+      "to": "evidence",
+      "label": "incident + bundle",
+      "sides": [
+        "top",
+        "left"
+      ],
+      "via": [
+        [
+          54.5,
+          26
+        ],
+        [
+          64,
+          26
+        ],
+        [
+          64,
+          10
+        ]
+      ],
+      "label_offset": [
+        -1.6,
+        -6.5
+      ]
+    },
+    {
+      "from": "evidence",
+      "to": "dashboard",
+      "label": "read",
+      "sides": [
+        "bottom",
+        "top"
+      ]
+    },
+    {
+      "from": "analyst",
+      "to": "dashboard",
+      "label": "review \u00b7 restore"
+    }
+  ]
+}

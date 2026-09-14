@@ -1,0 +1,36 @@
+{
+  "entries": [
+    {
+      "mac": "3C:D9:2B:71:31:04",
+      "vlan": 40,
+      "interface": "Gi1/0/31",
+      "entry_type": "DYNAMIC",
+      "learned_at": "2026-03-17T11:05:00.000Z"
+    }
+  ],
+  "observations": [
+    {
+      "mac": "3C:D9:2B:71:31:04",
+      "interface": "Gi1/0/31",
+      "vlan": 40,
+      "first_seen": "2026-03-17T11:05:00.000Z",
+      "last_seen": "2026-03-17T00:00:00.000Z"
+    },
+    {
+      "mac": "3C:D9:2B:71:31:04",
+      "interface": "Gi1/0/31",
+      "vlan": 40,
+      "first_seen": "2026-03-17T11:05:00.000Z",
+      "last_seen": "2026-03-17T11:05:00.000Z"
+    }
+  ],
+  "resolution_step": {
+    "name": "mac_table",
+    "status": "resolved",
+    "source": "show mac address-table address",
+    "input": "3C:D9:2B:71:31:04",
+    "output": "Gi1/0/31",
+    "detail": "3C:D9:2B:71:31:04 -> SW01 Gi1/0/31 (VLAN 40, DYNAMIC)",
+    "ts": "2026-03-17T11:23:47.618Z"
+  }
+}

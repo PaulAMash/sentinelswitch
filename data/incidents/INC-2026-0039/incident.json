@@ -1,0 +1,123 @@
+{
+  "id": "INC-2026-0039",
+  "title": "STP/BPDU Violation \u2014 CONF-A-TV01",
+  "severity": "high",
+  "confidence": 0.96,
+  "status": "contained",
+  "opened_at": "2026-03-17T09:12:44.447Z",
+  "closed_at": null,
+  "rule": "bpdu-violation",
+  "rule_name": "STP/BPDU Violation",
+  "class": "rogue_device",
+  "mitre": [
+    "T1200"
+  ],
+  "scenario": "bpdu-violation",
+  "instance": "day",
+  "detection_id": "DET-20260317T09124444-BPDU",
+  "device": "CONF-A-TV01",
+  "user": null,
+  "department": null,
+  "ip": null,
+  "mac": null,
+  "vendor": "Samsung",
+  "switch": "SW01",
+  "interface": "Gi1/0/30",
+  "original_vlan": 40,
+  "current_vlan": 40,
+  "port_class": "conference",
+  "chain": [
+    "SW01",
+    "Gi1/0/30",
+    "VLAN 40",
+    "shutdown"
+  ],
+  "summary": "An unmanaged switch with spanning tree enabled is inserted between the conference display and its access port. The first BPDU triggers BPDU Guard, which err-disables the port. SentinelSwitch confirms the err-disable from syslog, attributes the port to the last known endpoint, applies an administrative hold so errdisable auto-recovery cannot re-enable the port, and records the evidence.",
+  "disposition": "automatic_containment",
+  "action": "port_shutdown",
+  "attribution_confidence": 0.95,
+  "flags": [
+    "mac_not_learned",
+    "identity_from_port"
+  ],
+  "impersonated_device": null,
+  "workflow_id": "WF-2026-0039-01",
+  "mechanism": "BPDU Guard err-disable (switch-native) + SentinelSwitch administrative hold",
+  "contained_at": "2026-03-17T09:12:45.588Z",
+  "evidence_finalized_at": "2026-03-17T09:12:45.915Z",
+  "detection": {
+    "id": "DET-20260317T09124444-BPDU",
+    "rule": "bpdu-violation",
+    "rule_name": "STP/BPDU Violation",
+    "class": "rogue_device",
+    "mitre": [
+      "T1200"
+    ],
+    "actor_key": "interface",
+    "actor_value": "Gi1/0/30",
+    "actor": {
+      "key": "interface",
+      "value": "Gi1/0/30",
+      "device": "CONF-A-TV01",
+      "ip": "10.40.0.102",
+      "mac": "8C:71:F8:2D:30:02",
+      "interface": "Gi1/0/30",
+      "vlan": 40,
+      "user": null
+    },
+    "ts": "2026-03-17T09:12:44.447Z",
+    "trigger_ts": "2026-03-17T09:12:44.271Z",
+    "severity": "high",
+    "confidence": 0.96,
+    "base_confidence": 0.9,
+    "features": [
+      {
+        "id": "errdisable_confirmed",
+        "label": "Port manager confirmed err-disable",
+        "weight": 0.06,
+        "matched": true,
+        "evidence": "1 matching event(s): %PM-4-ERR_DISABLE: bpduguard error detected on Gi1/0/30, putting Gi1/0/30 in err-disable state"
+      }
+    ],
+    "summary": "STP/BPDU Violation: %SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port.",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T09:12:44.271Z",
+        "source": "syslog",
+        "summary": "%SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/30 with BPDU Guard enabled. Disabling port."
+      },
+      {
+        "ts": "2026-03-17T09:12:44.276Z",
+        "source": "syslog",
+        "summary": "%PM-4-ERR_DISABLE: bpduguard error detected on Gi1/0/30, putting Gi1/0/30 in err-disable state"
+      }
+    ]
+  },
+  "metrics": {
+    "t0": "2026-03-17T09:12:44.271Z",
+    "first_alert": "2026-03-17T09:12:44.271Z",
+    "detection": "2026-03-17T09:12:44.447Z",
+    "ttd": 0.176,
+    "attribution_complete": "2026-03-17T09:12:44.937Z",
+    "tta": 0.49,
+    "decision": "2026-03-17T09:12:45.081Z",
+    "applied": "2026-03-17T09:12:45.469Z",
+    "verified": "2026-03-17T09:12:45.588Z",
+    "ttc": 1.141,
+    "end_to_end": 1.317,
+    "evidence": "2026-03-17T09:12:45.915Z"
+  },
+  "artifacts": [
+    "incident.json",
+    "timeline.json",
+    "alerts.json",
+    "network-context.json",
+    "dhcp-binding.json",
+    "mac-table.json",
+    "switch-port.json",
+    "containment.json",
+    "related-connections.json",
+    "related-dns.json",
+    "README.md"
+  ]
+}

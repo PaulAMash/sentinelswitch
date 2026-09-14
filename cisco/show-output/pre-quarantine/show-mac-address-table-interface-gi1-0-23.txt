@@ -1,0 +1,11 @@
+! SentinelSwitch digital twin - simulated transcript (baseline, before INC-2026-0042)
+! captured at 2026-03-17 21:14:00.000 UTC
+SW01#show mac address-table interface Gi1/0/23
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  20    a483.e712.3456    DYNAMIC     Gi1/0/23
+Total Mac Addresses for this criterion: 1
+SW01#
