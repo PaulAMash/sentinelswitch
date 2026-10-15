@@ -23,9 +23,9 @@ a switch adapter, reads the interface back to verify, and writes an evidence bun
 verified containment: 1.26 seconds on the simulated clock; first anomalous packet to containment:
 9.8 seconds.
 
-Eight adversary scenarios (unauthorized endpoint, ARP spoofing, rogue DHCP, MAC change, port scan,
-DNS anomaly, lateral reconnaissance, BPDU violation) run through the same pipeline in a validation
-harness — all detect, attribute and contain, with measured mean times to detect / attribute /
+Nine adversary scenarios (unauthorized endpoint, ARP spoofing, rogue DHCP, MAC change, port scan,
+DNS anomaly, lateral reconnaissance, BPDU violation, critical-asset scan) run through the same pipeline in a validation
+harness — all detect and attribute, eight contain and one is deliberately withheld for analyst review, with measured mean times to detect / attribute /
 contain. The same behaviour scores differently in context: an authorized vulnerability scanner is
 logged, a personal laptop on a docking station goes to review, a compromised host is quarantined.
 Infrastructure trunks and the SPAN destination can never be changed automatically.

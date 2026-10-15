@@ -1,0 +1,23 @@
+id: analyst-decision
+name: Analyst decision for a detection routed to manual review
+trigger: policy.disposition == manual_review
+steps:
+  - {id: present,   action: reviews.open, inputs: {detection: detection.id, attribution: attribution, decision: policy.decision}}
+  - {id: decide,    action: rbac.require, inputs: {role: soc-analyst}}
+  - id: approve
+    when: analyst.decision == approve
+    action: containment.execute
+    inputs: {authorization: {mode: analyst, authorized_by: analyst, note: analyst.note}, action: policy.actions[detection.class]}
+  - id: verify
+    when: analyst.decision == approve
+    action: switch.verify
+  - id: reject
+    when: analyst.decision == reject
+    action: reviews.close
+    inputs: {authorization: {mode: rejected, authorized_by: analyst, note: analyst.note}}
+  - {id: reassess, action: assurance.run, inputs: {trigger: "response-{detection.id}"}}
+notes: >
+  Detection, correlation, identification, recommendation, authorization, execution and verification are
+  separate records. An approval executes through the same controller and adapter as the automatic path;
+  a rejection records who declined containment and why. Guards (protected ports, trunks, SPAN
+  destination, critical assets, unresolved attribution) always route here.

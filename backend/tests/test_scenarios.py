@@ -8,7 +8,7 @@ from sentinelswitch.validation.harness import run_validation
 def test_validation_all_pass(env):
     report = run_validation(env)
     assert report.all_passed
-    assert report.metrics["scenarios"] == 8 and report.metrics["passed"] == 8
+    assert report.metrics["scenarios"] == 9 and report.metrics["passed"] == 9
     assert 0 < report.metrics["mtta"] < report.metrics["mttc"] < report.metrics["mttd"]
     names = [r["name"] for r in report.results]
     assert names == [
@@ -20,10 +20,20 @@ def test_validation_all_pass(env):
         "DNS Anomaly",
         "Lateral Reconnaissance",
         "STP/BPDU Violation",
+        "Critical Asset Scan",
     ]
     mechanisms = {r["scenario_id"]: r["mechanism"] for r in report.results}
     assert "BPDU Guard" in mechanisms["bpdu-violation"]
     assert mechanisms["lateral-reconnaissance"].startswith("SentinelSwitch VLAN reassignment")
+    # The negative path: high confidence on a critical asset is withheld from automation by the guard.
+    negative = next(r for r in report.results if r["scenario_id"] == "critical-asset-scan")
+    assert negative["expected"]["disposition"] == "manual_review" and negative["action"] == "none"
+    assert negative["ttc"] is None
+    assert "critical_assets" in negative["guards"]
+    # A validated safety decision is reported as withheld, never as a containment.
+    assert negative["response"] == "withheld" and negative["post_state"]["access_vlan"] == 30
+    assert {r["response"] for r in report.results if r["scenario_id"] != "critical-asset-scan"} == {"contained"}
+    assert report.metrics["contained"] == 8 and report.metrics["withheld"] == 1
 
 
 def test_flagship_evidence_bundle(env, tmp_path):

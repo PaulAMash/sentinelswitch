@@ -28,12 +28,12 @@ export function Coverage() {
       <div className="page-head">
         <div>
           <h1>Detection coverage</h1>
-          <p>Eight adversary scenarios replayed through the full pipeline against an isolated copy of the twin. Timings are measured on the scenario's simulated clock, from the first anomalous event to verified containment.</p>
+          <p>{m.scenarios} adversary scenarios replayed through the full pipeline against an isolated copy of the twin. CONTAINED means automatic containment was applied and verified on the switch; WITHHELD means policy correctly kept automation away from the target and left the decision to an analyst. Timings are measured on the scenario's simulated clock, from the first anomalous event to verified containment.</p>
         </div>
         <button className="btn primary" onClick={rerun} disabled={busy}>Re-run validation</button>
       </div>
       <div className="grid kpis">
-        <Kpi label="Scenarios passed" value={`${m.passed} / ${m.scenarios}`} tone={m.all_passed ? 'good' : 'danger'} hint="detect · attribute · contain" />
+        <Kpi label="Scenarios passed" value={`${m.passed} / ${m.scenarios}`} tone={m.all_passed ? 'good' : 'danger'} hint={m.contained != null ? `${m.contained} contained · ${m.withheld} withheld by policy` : 'detect · attribute · response'} />
         <Kpi label="Mean time to detect" value={fmtSeconds(m.mttd)} tone="accent" hint={`range ${fmtSeconds(m.min_ttd)} – ${fmtSeconds(m.max_ttd)}`} />
         <Kpi label="Mean time to attribute" value={fmtSeconds(m.mtta)} tone="accent" hint="detection → identity resolved" />
         <Kpi label="Mean time to contain" value={fmtSeconds(m.mttc)} tone="accent" hint={`median ${fmtSeconds(m.median_ttc)}`} />
@@ -43,7 +43,7 @@ export function Coverage() {
         <div className="table-wrap">
           <table className="data matrix">
             <thead>
-              <tr><th>scenario</th><th>class</th><th>detect</th><th>attribute</th><th>contain</th><th>severity</th><th>confidence</th><th>ttd</th><th>tta</th><th>ttc</th><th>mechanism</th><th>port</th></tr>
+              <tr><th>scenario</th><th>class</th><th>detect</th><th>attribute</th><th>response</th><th>severity</th><th>confidence</th><th>ttd</th><th>tta</th><th>ttc</th><th>mechanism</th><th>port</th></tr>
             </thead>
             <tbody>
               {data.results.map((r) => (
@@ -52,7 +52,7 @@ export function Coverage() {
                   <td className="dim">{r.class.replace('_', ' ')}</td>
                   <td className={`pf ${r.detect ? 'pass' : 'fail'}`}>{r.detect ? 'PASS' : 'FAIL'}</td>
                   <td className={`pf ${r.attribute ? 'pass' : 'fail'}`}>{r.attribute ? 'PASS' : 'FAIL'}</td>
-                  <td className={`pf ${r.contain ? 'pass' : 'fail'}`}>{r.contain ? 'PASS' : 'FAIL'}</td>
+                  <td className={`pf ${r.contain ? 'pass' : 'fail'}`} title={r.response === 'withheld' ? 'automation correctly withheld by policy; analyst decision required' : undefined}>{r.response === 'withheld' ? 'WITHHELD' : r.response === 'contained' ? 'CONTAINED' : r.contain ? 'PASS' : 'FAIL'}</td>
                   <td>{r.severity && <Sev s={r.severity} />}</td>
                   <td className="mono">{r.confidence?.toFixed(2)}</td>
                   <td className="mono num">{fmtSeconds(r.ttd)}</td>

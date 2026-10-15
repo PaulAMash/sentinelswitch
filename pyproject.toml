@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sentinelswitch"
-version = "1.0.0"
-description = "SentinelSwitch - Autonomous Network Detection & Response Lab (Cisco Catalyst 2960-X digital twin)"
+version = "2.0.0"
+description = "SentinelSwitch 2.0 - Evidence-Driven Network Security & Response Lab (Cisco Catalyst 2960-X digital twin)"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}

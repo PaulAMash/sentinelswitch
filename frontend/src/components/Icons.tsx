@@ -43,6 +43,12 @@ export const Icon = {
   reset: () => (
     <svg viewBox="0 0 24 24" {...P}><path d="M4 12a8 8 0 1 0 2.3-5.7" /><path d="M4 4v5h5" /></svg>
   ),
+  posture: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" /><path d="M8 12h8M12 8v8" /></svg>
+  ),
+  findings: () => (
+    <svg viewBox="0 0 24 24" {...P}><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5M11 8v3l2 1" /></svg>
+  ),
   close: () => (
     <svg viewBox="0 0 24 24" {...P}><path d="M6 6l12 12M18 6L6 18" /></svg>
   ),

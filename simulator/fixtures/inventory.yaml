@@ -1,4 +1,7 @@
 # Canonical asset inventory for the SentinelSwitch digital twin.
+# `zone` frames each asset in the simulated esports event network (production-workstation, player-station,
+# tournament-administration, tournament-services, broadcast-infrastructure, broadcast-noc, network-management,
+# guest-event-access). Zones are labels only; VLANs, addresses and controls are unchanged.
 # All hostnames, MAC addresses, users and vendors are fictional. OUIs are illustrative only.
 #
 # schedule: when the device is attached to its switch port on the dataset day (UTC).
@@ -27,6 +30,7 @@ devices:
   # ---- Infrastructure / management ---------------------------------------------------------
   - hostname: LAB-FW01
     role: firewall
+    zone: network-management
     vendor: Supermicro
     os: pfSense-style firewall (x86)
     mac: "AC:1F:6B:0A:11:01"
@@ -41,6 +45,7 @@ devices:
     tags: [infrastructure, gateway]
   - hostname: LAB-JUMP01
     role: jump-host
+    zone: network-management
     vendor: Dell
     os: Ubuntu 24.04 LTS
     mac: "D4:BE:D9:41:20:0A"
@@ -53,6 +58,7 @@ devices:
     tags: [infrastructure, admin]
   - hostname: LAB-PDU01
     role: pdu
+    zone: network-management
     vendor: APC
     os: embedded
     mac: "00:C0:B7:5D:12:44"
@@ -65,6 +71,7 @@ devices:
     tags: [infrastructure, iot]
   - hostname: SEC-TP01
     role: security-stack
+    zone: broadcast-noc
     vendor: Lenovo
     os: Debian 12 (ThinkPad T480)
     mac: "E8:6A:64:7C:3D:10"
@@ -82,6 +89,7 @@ devices:
   # ---- Servers (VLAN 30) -------------------------------------------------------------------
   - hostname: SRV-DC01
     role: directory
+    zone: tournament-services
     services: [dns, dhcp, kerberos, ldap, ntp]
     vendor: Supermicro
     os: Windows Server 2022
@@ -95,6 +103,7 @@ devices:
     tags: [server, identity]
   - hostname: SRV-FILE01
     role: file-server
+    zone: tournament-services
     services: [smb]
     vendor: Supermicro
     os: Windows Server 2022
@@ -108,6 +117,7 @@ devices:
     tags: [server, data]
   - hostname: SRV-RADIUS01
     role: aaa
+    zone: tournament-services
     services: [radius]
     vendor: Supermicro
     os: Debian 12 (FreeRADIUS 3.2)
@@ -121,6 +131,7 @@ devices:
     tags: [server, identity, aaa]
   - hostname: SRV-WEB01
     role: web
+    zone: tournament-services
     services: [https]
     vendor: Supermicro
     os: Ubuntu 24.04 LTS (nginx)
@@ -134,6 +145,7 @@ devices:
     tags: [server, intranet]
   - hostname: SRV-GIT01
     role: git
+    zone: tournament-services
     services: [https, ssh]
     vendor: Supermicro
     os: Ubuntu 24.04 LTS (Gitea)
@@ -147,6 +159,7 @@ devices:
     tags: [server, engineering]
   - hostname: SRV-UPD01
     role: update-mirror
+    zone: tournament-services
     services: [https]
     vendor: Supermicro
     os: Ubuntu 24.04 LTS (apt-mirror / WSUS-style)
@@ -160,34 +173,34 @@ devices:
     tags: [server, updates]
 
   # ---- Workstations and laptops (VLAN 20, 802.1X) ------------------------------------------
-  - {hostname: ENG-WS-005, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:05:15", ip: 10.20.0.15, vlan: 20, interface: Gi1/0/5,  user: mrivera,    criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: ENG-WS-006, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:06:16", ip: 10.20.0.16, vlan: 20, interface: Gi1/0/6,  user: lpatel,     criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: ENG-LT-007, role: laptop,      vendor: Lenovo, os: Ubuntu 24.04 LTS,      mac: "A4:83:E7:2B:07:17", ip: 10.20.0.17, vlan: 20, interface: Gi1/0/7,  user: dokafor,    criticality: standard, auth: eap-tls, schedule: ["07:41", "17:52"]}
-  - {hostname: FIN-WS-014, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:14:24", ip: 10.20.0.24, vlan: 20, interface: Gi1/0/14, user: anovak,     criticality: standard, auth: peap,    schedule: always}
-  - {hostname: FIN-WS-015, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:15:25", ip: 10.20.0.25, vlan: 20, interface: Gi1/0/15, user: tbrooks,    criticality: standard, auth: peap,    schedule: always}
-  - {hostname: HR-WS-016,  role: workstation, vendor: HP,     os: Windows 11 Enterprise, mac: "3C:D9:2B:8E:16:26", ip: 10.20.0.26, vlan: 20, interface: Gi1/0/16, user: skim,       criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: ENG-WS-018, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:18:28", ip: 10.20.0.28, vlan: 20, interface: Gi1/0/18, user: rgarcia,    criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: ENG-WS-019, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:19:29", ip: 10.20.0.29, vlan: 20, interface: Gi1/0/19, user: ysato,      criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: ENG-LT-020, role: laptop,      vendor: Lenovo, os: Windows 11 Enterprise, mac: "A4:83:E7:2B:20:30", ip: 10.20.0.30, vlan: 20, interface: Gi1/0/20, user: bmwangi,    criticality: standard, auth: eap-tls, schedule: ["08:02", "23:59"]}
-  - {hostname: MKT-WS-021, role: workstation, vendor: HP,     os: Windows 11 Enterprise, mac: "B4:B5:2F:1C:21:31", ip: 10.20.0.31, vlan: 20, interface: Gi1/0/21, user: cdubois,    criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: MKT-WS-022, role: workstation, vendor: HP,     os: Windows 11 Enterprise, mac: "B4:B5:2F:1C:22:32", ip: 10.20.0.32, vlan: 20, interface: Gi1/0/22, user: hlindqvist, criticality: standard, auth: eap-tls, schedule: ["08:03", "23:59"], notes: "Machine certificate expired overnight; renewed 08:37"}
-  - {hostname: ENG-LT-047, role: laptop,      vendor: Lenovo, os: Ubuntu 24.04 LTS,      mac: "A4:83:E7:12:34:56", ip: 10.20.0.47, vlan: 20, interface: Gi1/0/23, user: jchen,      criticality: standard, auth: eap-tls, schedule: ["07:52", "23:59"], asset_tag: "MER-LT-0047"}
-  - {hostname: ENG-WS-024, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:24:34", ip: 10.20.0.34, vlan: 20, interface: Gi1/0/24, user: pnguyen,    criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: OPS-WS-025, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:25:35", ip: 10.20.0.35, vlan: 20, interface: Gi1/0/25, user: eosei,      criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: OPS-WS-026, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:26:36", ip: 10.20.0.36, vlan: 20, interface: Gi1/0/26, user: ffischer,   criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: ENG-LT-027, role: laptop,      vendor: Lenovo, os: Windows 11 Enterprise, mac: "A4:83:E7:2B:27:37", ip: 10.20.0.37, vlan: 20, interface: Gi1/0/27, user: ikowalski,  criticality: standard, auth: eap-tls, schedule: ["08:15", "18:05"]}
-  - {hostname: ENG-PR01,   role: printer,     vendor: Brother, os: embedded,             mac: "30:05:5C:9A:28:01", ip: 10.20.0.200, vlan: 20, interface: Gi1/0/28, user: null,     criticality: low,      auth: mab,     schedule: always, dhcp_reservation: true}
-  - {hostname: FIN-WS-032, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:32:42", ip: 10.20.0.42, vlan: 20, interface: Gi1/0/32, user: wobrien,    criticality: standard, auth: peap,    schedule: always}
-  - {hostname: HR-WS-033,  role: workstation, vendor: HP,     os: Windows 11 Enterprise, mac: "3C:D9:2B:8E:33:43", ip: 10.20.0.43, vlan: 20, interface: Gi1/0/33, user: nadeyemi,   criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: ENG-WS-034, role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:34:44", ip: 10.20.0.44, vlan: 20, interface: Gi1/0/34, user: gsantos,    criticality: standard, auth: eap-tls, schedule: always}
-  - {hostname: ENG-LT-035, role: laptop,      vendor: Lenovo, os: Windows 11 Enterprise, mac: "A4:83:E7:2B:35:45", ip: 10.20.0.45, vlan: 20, interface: Gi1/0/35, user: kmurphy,    criticality: standard, auth: eap-tls, schedule: ["07:58", "16:48"]}
-  - {hostname: IT-WS-036,  role: workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:36:46", ip: 10.20.0.46, vlan: 20, interface: Gi1/0/36, user: tlee,       criticality: standard, auth: eap-tls, schedule: always, tags: [security-admin]}
-  - {hostname: IT-LT-037,  role: laptop,      vendor: Lenovo, os: Ubuntu 24.04 LTS,      mac: "A4:83:E7:2B:37:48", ip: 10.20.0.48, vlan: 20, interface: Gi1/0/37, user: rahmed,     criticality: standard, auth: eap-tls, schedule: ["08:20", "19:10"], tags: [authorized_scanner], notes: "Authorized vulnerability scanner under change CHG-2026-118"}
+  - {hostname: ENG-WS-005, role: workstation, zone: production-workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:05:15", ip: 10.20.0.15, vlan: 20, interface: Gi1/0/5,  user: mrivera,    criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: ENG-WS-006, role: workstation, zone: production-workstation, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:06:16", ip: 10.20.0.16, vlan: 20, interface: Gi1/0/6,  user: lpatel,     criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: ENG-LT-007, role: laptop, zone: production-workstation,      vendor: Lenovo, os: Ubuntu 24.04 LTS,      mac: "A4:83:E7:2B:07:17", ip: 10.20.0.17, vlan: 20, interface: Gi1/0/7,  user: dokafor,    criticality: standard, auth: eap-tls, schedule: ["07:41", "17:52"]}
+  - {hostname: FIN-WS-014, role: workstation, zone: tournament-administration, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:14:24", ip: 10.20.0.24, vlan: 20, interface: Gi1/0/14, user: anovak,     criticality: standard, auth: peap,    schedule: always}
+  - {hostname: FIN-WS-015, role: workstation, zone: tournament-administration, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:15:25", ip: 10.20.0.25, vlan: 20, interface: Gi1/0/15, user: tbrooks,    criticality: standard, auth: peap,    schedule: always}
+  - {hostname: HR-WS-016,  role: workstation, zone: tournament-administration, vendor: HP,     os: Windows 11 Enterprise, mac: "3C:D9:2B:8E:16:26", ip: 10.20.0.26, vlan: 20, interface: Gi1/0/16, user: skim,       criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: ENG-WS-018, role: workstation, zone: player-station, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:18:28", ip: 10.20.0.28, vlan: 20, interface: Gi1/0/18, user: rgarcia,    criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: ENG-WS-019, role: workstation, zone: player-station, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:19:29", ip: 10.20.0.29, vlan: 20, interface: Gi1/0/19, user: ysato,      criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: ENG-LT-020, role: laptop, zone: production-workstation,      vendor: Lenovo, os: Windows 11 Enterprise, mac: "A4:83:E7:2B:20:30", ip: 10.20.0.30, vlan: 20, interface: Gi1/0/20, user: bmwangi,    criticality: standard, auth: eap-tls, schedule: ["08:02", "23:59"]}
+  - {hostname: MKT-WS-021, role: workstation, zone: broadcast-infrastructure, vendor: HP,     os: Windows 11 Enterprise, mac: "B4:B5:2F:1C:21:31", ip: 10.20.0.31, vlan: 20, interface: Gi1/0/21, user: cdubois,    criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: MKT-WS-022, role: workstation, zone: broadcast-infrastructure, vendor: HP,     os: Windows 11 Enterprise, mac: "B4:B5:2F:1C:22:32", ip: 10.20.0.32, vlan: 20, interface: Gi1/0/22, user: hlindqvist, criticality: standard, auth: eap-tls, schedule: ["08:03", "23:59"], notes: "Machine certificate expired overnight; renewed 08:37"}
+  - {hostname: ENG-LT-047, role: laptop, zone: production-workstation,      vendor: Lenovo, os: Ubuntu 24.04 LTS,      mac: "A4:83:E7:12:34:56", ip: 10.20.0.47, vlan: 20, interface: Gi1/0/23, user: jchen,      criticality: standard, auth: eap-tls, schedule: ["07:52", "23:59"], asset_tag: "MER-LT-0047"}
+  - {hostname: ENG-WS-024, role: workstation, zone: player-station, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:24:34", ip: 10.20.0.34, vlan: 20, interface: Gi1/0/24, user: pnguyen,    criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: OPS-WS-025, role: workstation, zone: tournament-administration, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:25:35", ip: 10.20.0.35, vlan: 20, interface: Gi1/0/25, user: eosei,      criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: OPS-WS-026, role: workstation, zone: tournament-administration, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:26:36", ip: 10.20.0.36, vlan: 20, interface: Gi1/0/26, user: ffischer,   criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: ENG-LT-027, role: laptop, zone: production-workstation,      vendor: Lenovo, os: Windows 11 Enterprise, mac: "A4:83:E7:2B:27:37", ip: 10.20.0.37, vlan: 20, interface: Gi1/0/27, user: ikowalski,  criticality: standard, auth: eap-tls, schedule: ["08:15", "18:05"]}
+  - {hostname: ENG-PR01,   role: printer, zone: tournament-administration,     vendor: Brother, os: embedded,             mac: "30:05:5C:9A:28:01", ip: 10.20.0.200, vlan: 20, interface: Gi1/0/28, user: null,     criticality: low,      auth: mab,     schedule: always, dhcp_reservation: true}
+  - {hostname: FIN-WS-032, role: workstation, zone: tournament-administration, vendor: Dell,   os: Windows 11 Enterprise, mac: "F8:BC:12:3A:32:42", ip: 10.20.0.42, vlan: 20, interface: Gi1/0/32, user: wobrien,    criticality: standard, auth: peap,    schedule: always}
+  - {hostname: HR-WS-033,  role: workstation, zone: tournament-administration, vendor: HP,     os: Windows 11 Enterprise, mac: "3C:D9:2B:8E:33:43", ip: 10.20.0.43, vlan: 20, interface: Gi1/0/33, user: nadeyemi,   criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: ENG-WS-034, role: workstation, zone: player-station, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:34:44", ip: 10.20.0.44, vlan: 20, interface: Gi1/0/34, user: gsantos,    criticality: standard, auth: eap-tls, schedule: always}
+  - {hostname: ENG-LT-035, role: laptop, zone: production-workstation,      vendor: Lenovo, os: Windows 11 Enterprise, mac: "A4:83:E7:2B:35:45", ip: 10.20.0.45, vlan: 20, interface: Gi1/0/35, user: kmurphy,    criticality: standard, auth: eap-tls, schedule: ["07:58", "16:48"]}
+  - {hostname: IT-WS-036,  role: workstation, zone: network-management, vendor: Dell,   os: Windows 11 Enterprise, mac: "D4:BE:D9:6F:36:46", ip: 10.20.0.46, vlan: 20, interface: Gi1/0/36, user: tlee,       criticality: standard, auth: eap-tls, schedule: always, tags: [security-admin]}
+  - {hostname: IT-LT-037,  role: laptop, zone: network-management,      vendor: Lenovo, os: Ubuntu 24.04 LTS,      mac: "A4:83:E7:2B:37:48", ip: 10.20.0.48, vlan: 20, interface: Gi1/0/37, user: rahmed,     criticality: standard, auth: eap-tls, schedule: ["08:20", "19:10"], tags: [authorized_scanner], notes: "Authorized vulnerability scanner under change CHG-2026-118"}
 
   # ---- Guest devices (802.1X no-response -> guest VLAN 40) ---------------------------------
-  - {hostname: GUEST-VISITOR-01, role: guest-laptop, vendor: Apple,   os: macOS,    mac: "F0:18:98:C4:29:01", ip: 10.40.0.101, vlan: 40, interface: Gi1/0/29, user: null, criticality: low, auth: none, schedule: ["09:58", "10:49"], dhcp_hostname: "MacBook-Pro", tags: [guest]}
-  - {hostname: CONF-A-TV01,      role: display,      vendor: Samsung, os: embedded, mac: "8C:71:F8:2D:30:02", ip: 10.40.0.102, vlan: 40, interface: Gi1/0/30, user: null, criticality: low, auth: none, schedule: always, tags: [guest, iot]}
-  - {hostname: VENDOR-LT-01,     role: guest-laptop, vendor: HP,      os: Windows 11 Home, mac: "3C:D9:2B:71:31:04", ip: 10.40.0.104, vlan: 40, interface: Gi1/0/31, user: null, criticality: low, auth: none, schedule: ["11:05", "11:47"], dhcp_hostname: "DESKTOP-4K2M1QP", tags: [guest]}
+  - {hostname: GUEST-VISITOR-01, role: guest-laptop, zone: guest-event-access, vendor: Apple,   os: macOS,    mac: "F0:18:98:C4:29:01", ip: 10.40.0.101, vlan: 40, interface: Gi1/0/29, user: null, criticality: low, auth: none, schedule: ["09:58", "10:49"], dhcp_hostname: "MacBook-Pro", tags: [guest]}
+  - {hostname: CONF-A-TV01,      role: display, zone: broadcast-infrastructure,      vendor: Samsung, os: embedded, mac: "8C:71:F8:2D:30:02", ip: 10.40.0.102, vlan: 40, interface: Gi1/0/30, user: null, criticality: low, auth: none, schedule: always, tags: [guest, iot]}
+  - {hostname: VENDOR-LT-01,     role: guest-laptop, zone: guest-event-access, vendor: HP,      os: Windows 11 Home, mac: "3C:D9:2B:71:31:04", ip: 10.40.0.104, vlan: 40, interface: Gi1/0/31, user: null, criticality: low, auth: none, schedule: ["11:05", "11:47"], dhcp_hostname: "DESKTOP-4K2M1QP", tags: [guest]}
 
 # Devices that are NOT part of the authorized inventory but appear in the dataset day.
 unknown_devices:

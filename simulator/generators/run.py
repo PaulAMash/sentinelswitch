@@ -654,6 +654,7 @@ def _device_dict(env: Environment, d) -> dict[str, Any]:
         "dhcp_reservation": d.dhcp_reservation,
         "asset_tag": d.asset_tag,
         "notes": d.notes,
+        "zone": d.zone,
         "known": True,
     }
 

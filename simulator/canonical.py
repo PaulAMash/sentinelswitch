@@ -123,6 +123,7 @@ class Device:
     dhcp_hostname: str | None = None
     asset_tag: str | None = None
     notes: str | None = None
+    zone: str | None = None
 
     @property
     def device_type(self) -> str:
@@ -441,6 +442,7 @@ def load_environment() -> Environment:
                 dhcp_hostname=d.get("dhcp_hostname"),
                 asset_tag=d.get("asset_tag"),
                 notes=d.get("notes"),
+                zone=d.get("zone"),
             )
         )
 

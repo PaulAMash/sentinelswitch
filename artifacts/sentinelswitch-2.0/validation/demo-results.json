@@ -1,0 +1,224 @@
+{
+  "steps": [
+    {
+      "step": "reset + baseline",
+      "detail": "seeded 36 devices; baseline assessment ASR-20260317T211400-baseline-seed: {'PASS': 200, 'FAIL': 4, 'UNKNOWN': 1, 'STALE': 1}",
+      "assessment": {
+        "run_id": "ASR-20260317T211400-baseline-seed",
+        "assessed_at": "2026-03-17T21:14:00.000Z",
+        "trigger": "baseline-seed",
+        "actor": "sentinel-assurance",
+        "controls": 13,
+        "assessments": 206,
+        "counts": {
+          "PASS": 200,
+          "FAIL": 4,
+          "UNKNOWN": 1,
+          "STALE": 1
+        },
+        "retired": 0,
+        "findings_open": 5,
+        "clock": "simulated (switch twin)"
+      }
+    },
+    {
+      "step": "flagship incident",
+      "detail": "INC-2026-0042 detected 21:14:39.867Z conf 0.97 \u2192 Gi1/0/23 VLAN 20\u219250 verified 21:14:41.125Z (TTD 8.583s, TTC 1.258s)",
+      "incident": "INC-2026-0042",
+      "metrics": {
+        "t0": "2026-03-17T21:14:31.284Z",
+        "first_alert": "2026-03-17T21:14:33.507Z",
+        "detection": "2026-03-17T21:14:39.867Z",
+        "ttd": 8.583,
+        "attribution_complete": "2026-03-17T21:14:40.439Z",
+        "tta": 0.572,
+        "decision": "2026-03-17T21:14:40.585Z",
+        "applied": "2026-03-17T21:14:41.000Z",
+        "verified": "2026-03-17T21:14:41.125Z",
+        "ttc": 1.258,
+        "end_to_end": 9.841,
+        "evidence": "2026-03-17T21:14:41.464Z",
+        "assessment_run": "ASR-20260317T211441-post-containment"
+      },
+      "authorization": {
+        "mode": "automatic",
+        "status": "authorized",
+        "authorized_by": "policy-engine",
+        "authorized_at": "2026-03-17T21:14:40.585Z",
+        "basis": "policy tier automatic_containment",
+        "reason": "Automatic containment approved (severity=high confidence=0.97); action=quarantine_vlan",
+        "guards": [],
+        "action": "quarantine_vlan",
+        "note": null
+      }
+    },
+    {
+      "step": "post-containment",
+      "detail": "ASR-20260317T211441-post-containment: {'PASS': 203, 'FAIL': 4, 'UNKNOWN': 1, 'STALE': 1}",
+      "assessment": {
+        "run_id": "ASR-20260317T211441-post-containment",
+        "assessed_at": "2026-03-17T21:14:41.464Z",
+        "trigger": "post-containment",
+        "actor": "sentinel-assurance",
+        "controls": 13,
+        "assessments": 209,
+        "counts": {
+          "PASS": 203,
+          "FAIL": 4,
+          "UNKNOWN": 1,
+          "STALE": 1
+        },
+        "retired": 0,
+        "findings_open": 5,
+        "clock": "simulated (switch twin)"
+      }
+    },
+    {
+      "step": "negative path",
+      "detail": "1 detection(s) withheld from automation by policy guards; 1 awaiting analyst decision",
+      "withheld": [
+        "DET-20260317T20371618-PORT"
+      ]
+    },
+    {
+      "step": "analyst decision",
+      "detail": "DET-20260317T20371618-PORT (Critical Asset Scan \u2014 SRV-GIT01): containment rejected by tlee",
+      "review": "DET-20260317T20371618-PORT",
+      "authorization": {
+        "mode": "rejected",
+        "status": "rejected",
+        "authorized_by": "tlee",
+        "authorized_at": "2026-03-17T21:16:31.284Z",
+        "basis": "policy tier manual_review (before guards: automatic_containment)",
+        "reason": "Tier 'automatic_containment' downgraded to 'manual_review' by guard(s): critical_assets (severity=high confidence=0.96)",
+        "guards": [
+          "critical_assets"
+        ],
+        "action": "none",
+        "note": "Containment declined: critical_assets; investigated and closed as benign after review."
+      }
+    },
+    {
+      "step": "remediate",
+      "detail": "FND-CONFIG-BASELINE-Gi1-0-22 \u2192 verified",
+      "finding": "FND-CONFIG-BASELINE-Gi1-0-22",
+      "status": "verified",
+      "run": "ASR-20260317T211547-remediation-FND-CONFIG-BASELINE-Gi1-0-22"
+    },
+    {
+      "step": "remediate",
+      "detail": "FND-CONFIG-BASELINE-Gi1-0-35 \u2192 verified",
+      "finding": "FND-CONFIG-BASELINE-Gi1-0-35",
+      "status": "verified",
+      "run": "ASR-20260317T211647-remediation-FND-CONFIG-BASELINE-Gi1-0-35"
+    },
+    {
+      "step": "remediate",
+      "detail": "FND-ENDPOINT-IDENTITY-Gi1-0-30 \u2192 verified",
+      "finding": "FND-ENDPOINT-IDENTITY-Gi1-0-30",
+      "status": "verified",
+      "run": "ASR-20260317T211747-remediation-FND-ENDPOINT-IDENTITY-Gi1-0-30"
+    },
+    {
+      "step": "remediate",
+      "detail": "FND-SENSOR-COVERAGE-vlan-50 \u2192 verified",
+      "finding": "FND-SENSOR-COVERAGE-vlan-50",
+      "status": "verified",
+      "run": "ASR-20260317T211847-remediation-FND-SENSOR-COVERAGE-vlan-50"
+    },
+    {
+      "step": "remediate",
+      "detail": "FND-UNUSED-PORTS-Gi1-0-41 \u2192 verified",
+      "finding": "FND-UNUSED-PORTS-Gi1-0-41",
+      "status": "verified",
+      "run": "ASR-20260317T211947-remediation-FND-UNUSED-PORTS-Gi1-0-41"
+    },
+    {
+      "step": "restore + recovery",
+      "detail": "INC-2026-0042 resolved; recovery assessment ASR-20260317T214936-recovery-INC-2026-0042: {'PASS': 208, 'FAIL': 0, 'UNKNOWN': 1, 'STALE': 0}",
+      "assessment": {
+        "run_id": "ASR-20260317T214936-recovery-INC-2026-0042",
+        "assessed_at": "2026-03-17T21:49:36.284Z",
+        "trigger": "recovery-INC-2026-0042",
+        "actor": "sentinel-assurance",
+        "controls": 13,
+        "assessments": 209,
+        "counts": {
+          "PASS": 208,
+          "FAIL": 0,
+          "UNKNOWN": 1,
+          "STALE": 0
+        },
+        "retired": 1,
+        "findings_open": 0,
+        "clock": "simulated (switch twin)"
+      }
+    },
+    {
+      "step": "export",
+      "detail": "security-posture-report.json, security-posture-report.html, security-posture-report.pdf",
+      "json": "artifacts/sentinelswitch-2.0/reports/security-posture-report.json",
+      "html": "artifacts/sentinelswitch-2.0/reports/security-posture-report.html",
+      "pdf": "artifacts/sentinelswitch-2.0/reports/security-posture-report.pdf"
+    }
+  ],
+  "final_posture": {
+    "assessments": 209,
+    "controls": 13,
+    "pass": 208,
+    "fail": 0,
+    "unknown": 1,
+    "stale": 0,
+    "determinate": 208,
+    "retired": 1,
+    "coverage_pct": 99.5,
+    "pass_rate_of_determinate_pct": 100.0,
+    "pass_rate_of_all_pct": 99.5
+  },
+  "findings": {
+    "verified": 5
+  },
+  "validation": {
+    "scenarios": 9,
+    "passed": 9,
+    "contained": 8,
+    "withheld": 1,
+    "mttd": 10.446,
+    "mtta": 0.533,
+    "mttc": 1.214,
+    "mean_end_to_end": 12.495,
+    "max_ttd": 64.004,
+    "min_ttd": 0.176,
+    "median_ttc": 1.239,
+    "all_passed": true
+  },
+  "incident": "INC-2026-0042",
+  "generated_at": "2026-03-17T21:49:31.284Z",
+  "remediated": [
+    {
+      "finding": "FND-CONFIG-BASELINE-Gi1-0-22",
+      "status": "verified",
+      "run": "ASR-20260317T211547-remediation-FND-CONFIG-BASELINE-Gi1-0-22"
+    },
+    {
+      "finding": "FND-CONFIG-BASELINE-Gi1-0-35",
+      "status": "verified",
+      "run": "ASR-20260317T211647-remediation-FND-CONFIG-BASELINE-Gi1-0-35"
+    },
+    {
+      "finding": "FND-ENDPOINT-IDENTITY-Gi1-0-30",
+      "status": "verified",
+      "run": "ASR-20260317T211747-remediation-FND-ENDPOINT-IDENTITY-Gi1-0-30"
+    },
+    {
+      "finding": "FND-SENSOR-COVERAGE-vlan-50",
+      "status": "verified",
+      "run": "ASR-20260317T211847-remediation-FND-SENSOR-COVERAGE-vlan-50"
+    },
+    {
+      "finding": "FND-UNUSED-PORTS-Gi1-0-41",
+      "status": "verified",
+      "run": "ASR-20260317T211947-remediation-FND-UNUSED-PORTS-Gi1-0-41"
+    }
+  ]
+}

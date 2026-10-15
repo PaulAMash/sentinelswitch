@@ -1590,5 +1590,93 @@
       "suppress_for": 3600.0,
       "n": 141
     }
+  },
+  {
+    "id": "ALT-00043",
+    "ts": "2026-03-17T20:37:12.980Z",
+    "source": "zeek",
+    "severity": "medium",
+    "signature": "Scan::Port_Scan",
+    "signature_id": null,
+    "category": "zeek",
+    "src_ip": "10.30.0.50",
+    "src_port": null,
+    "dest_ip": "10.30.0.10",
+    "dest_port": null,
+    "proto": null,
+    "mac": "AC:1F:6B:3B:0C:50",
+    "interface": "Gi1/0/12",
+    "device": "SRV-GIT01",
+    "summary": "Scan::Port_Scan: 10.30.0.50 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s",
+    "status": "review",
+    "detection_id": "DET-20260317T20371618-PORT",
+    "incident_id": null,
+    "scenario": "critical-asset-scan",
+    "raw": {
+      "ts": 1773779832.98,
+      "note": "Scan::Port_Scan",
+      "msg": "10.30.0.50 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s",
+      "sub": "",
+      "src": "10.30.0.50",
+      "peer_descr": "zeek",
+      "actions": [
+        "Notice::ACTION_LOG"
+      ],
+      "email_dest": [],
+      "suppress_for": 3600.0,
+      "dst": "10.30.0.10",
+      "proto": "tcp",
+      "n": 100
+    }
+  },
+  {
+    "id": "ALT-00044",
+    "ts": "2026-03-17T20:37:14.926Z",
+    "source": "suricata",
+    "severity": "medium",
+    "signature": "SENTINELSWITCH RECON TCP port sweep from internal host",
+    "signature_id": 1000011,
+    "category": "recon",
+    "src_ip": "10.30.0.50",
+    "src_port": 51642,
+    "dest_ip": "10.30.0.30",
+    "dest_port": 1028,
+    "proto": "TCP",
+    "mac": "AC:1F:6B:3B:0C:50",
+    "interface": "Gi1/0/12",
+    "device": "SRV-GIT01",
+    "summary": "SENTINELSWITCH RECON TCP port sweep from internal host",
+    "status": "review",
+    "detection_id": "DET-20260317T20371618-PORT",
+    "incident_id": null,
+    "scenario": "critical-asset-scan",
+    "raw": {
+      "timestamp": "2026-03-17T20:37:14.926000+0000",
+      "flow_id": 1271673275548658,
+      "in_iface": "eth1",
+      "event_type": "alert",
+      "src_ip": "10.30.0.50",
+      "src_port": 51642,
+      "dest_ip": "10.30.0.30",
+      "dest_port": 1028,
+      "proto": "TCP",
+      "alert": {
+        "action": "allowed",
+        "gid": 1,
+        "signature_id": 1000011,
+        "rev": 2,
+        "signature": "SENTINELSWITCH RECON TCP port sweep from internal host",
+        "category": "Attempted Information Leak",
+        "severity": 2,
+        "metadata": {
+          "sentinel_class": [
+            "recon"
+          ],
+          "sentinel_severity": [
+            "medium"
+          ]
+        }
+      }
+    }
   }
 ]

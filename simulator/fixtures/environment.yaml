@@ -4,10 +4,15 @@
 # All identities, addresses and MAC addresses are fictional. Addressing is RFC 1918 / RFC 5737 only.
 
 organization:
-  name: Meridian Labs
+  name: Meridian Esports League
   domain: corp.example.com
-  site: LAB-01
+  site: Regional Finals LAN (simulated event network)
   timezone: UTC
+  context: >
+    The twin is presented as a segmented esports tournament network: production workstations and
+    player stations on the USERS VLAN, tournament services on the SERVERS VLAN, spectator and vendor
+    access on the GUEST VLAN, broadcast/NOC monitoring on the MONITORING VLAN. The assets, telemetry
+    and incidents are simulated; the controls and workflow apply to any enterprise access layer.
 
 dataset:
   day: "2026-03-17"
@@ -40,7 +45,7 @@ switch:
   snmp_trap_host: 10.99.0.10
   span_session:
     id: 1
-    source_vlans: [20, 30, 40]
+    source_vlans: [20, 30, 40, 50]
     direction: both
     destination: Gi1/0/47
 
@@ -56,21 +61,21 @@ vlans:
     name: USERS
     subnet: 10.20.0.0/24
     gateway: 10.20.0.1
-    purpose: Employee workstations and laptops (802.1X)
+    purpose: Production workstations, tournament admin and player stations (802.1X)
     dhcp_snooping: true
     dai: true
   - id: 30
     name: SERVERS
     subnet: 10.30.0.0/24
     gateway: 10.30.0.1
-    purpose: Lab servers (directory, files, RADIUS, web, git, updates)
+    purpose: Tournament services (directory, files, RADIUS, intranet, git/CI, updates)
     dhcp_snooping: true
     dai: true
   - id: 40
     name: GUEST
     subnet: 10.40.0.0/24
     gateway: 10.40.0.1
-    purpose: Guest / unauthenticated devices (internet only)
+    purpose: Spectator, vendor and event-floor devices (internet only)
     dhcp_snooping: true
     dai: true
   - id: 50
@@ -84,7 +89,7 @@ vlans:
     name: MONITORING
     subnet: 10.99.0.0/24
     gateway: 10.99.0.1
-    purpose: Security telemetry collectors and controller
+    purpose: "Broadcast/NOC monitoring: security telemetry collector and controller"
     dhcp_snooping: false
     dai: false
   - id: 999
@@ -242,3 +247,9 @@ drift_injections:
     at: "2026-03-17T17:10:40.339Z"
     by: rahmed
     note: "storm-control lines missing after the interface was re-templated by hand"
+  - interface: null
+    setting: span_session
+    observed: {source_vlans: [20, 30, 40]}
+    at: "2026-03-17T12:20:33.418Z"
+    by: rahmed
+    note: "VLAN 50 removed from SPAN session 1 during a sensor NIC capacity test and never re-added"

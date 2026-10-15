@@ -1,3 +1,3 @@
-"""SentinelSwitch - Autonomous Network Detection & Response Lab."""
+"""SentinelSwitch 2.0 - Evidence-Driven Network Security & Response Lab."""
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"

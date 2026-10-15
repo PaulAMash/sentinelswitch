@@ -11,7 +11,7 @@ export interface Meta {
   organization: { name: string; domain: string; site: string; timezone: string }
   switch: { hostname: string; model: string; ios_version: string; management_ip: string; now: string; summary: Record<string, number> }
   demo: DemoStatus
-  counts: Record<string, number>
+  counts: Record<string, number> & { findings_open?: number; reviews_open?: number }
   flagship_incident: string
 }
 
@@ -150,6 +150,7 @@ export interface ContainmentAction {
   restore_note: string | null
   restore_transcript: string | null
   notes: string[]
+  authorization?: Authorization
 }
 
 export interface Incident {
@@ -191,6 +192,7 @@ export interface Incident {
   contained_at?: string
   evidence_finalized_at?: string
   evidence_path?: string
+  authorization?: Authorization
 }
 
 export interface TimelineEntry {
@@ -230,6 +232,9 @@ export interface Review {
   severity: Severity
   confidence: number
   title: string
+  authorization?: Authorization
+  incident_id?: string
+  class?: string
 }
 
 export interface Device {
@@ -260,6 +265,7 @@ export interface Device {
   department: string | null
   notes: string | null
   asset_tag: string | null
+  zone: string | null
 }
 
 export interface UnknownDevice {
@@ -411,6 +417,9 @@ export interface ValidationRow {
   detect: boolean
   attribute: boolean
   contain: boolean
+  /** contained = automatic containment applied and verified; withheld = automation correctly withheld by policy */
+  response?: 'contained' | 'withheld' | 'failed'
+  disposition?: string | null
   passed: boolean
   severity: Severity | null
   confidence: number | null
@@ -450,7 +459,7 @@ export interface Scenario {
 
 export interface Validation {
   results: ValidationRow[]
-  metrics: { scenarios: number; passed: number; mttd: number; mtta: number; mttc: number; mean_end_to_end: number; max_ttd: number; min_ttd: number; median_ttc: number; all_passed: boolean }
+  metrics: { scenarios: number; passed: number; contained?: number; withheld?: number; mttd: number; mtta: number; mttc: number; mean_end_to_end: number; max_ttd: number; min_ttd: number; median_ttc: number; all_passed: boolean }
   scenarios: Scenario[]
 }
 
@@ -505,7 +514,172 @@ export interface About {
   stack: string[]
 }
 
-const BASE = import.meta.env.VITE_API_BASE ?? ''
+// ---- SentinelSwitch 2.0 assurance ---------------------------------------------------------------
+export type AssessmentStatus = 'PASS' | 'FAIL' | 'UNKNOWN' | 'STALE'
+export type FindingStatus = 'open' | 'reopened' | 'remediation_requested' | 'remediated' | 'remediation_failed' | 'verified' | 'closed'
+
+export interface CsfRef {
+  id: string
+  text: string
+}
+
+export interface EvidenceItem {
+  source: string
+  ref: string
+  collected_at: string
+  detail: string
+}
+
+export interface AssessmentScope {
+  type: 'interface' | 'incident' | 'source' | 'vlan' | 'global'
+  id: string
+  asset: string | null
+  interface: string | null
+  vlan: number | null
+  switch: string
+  description?: string
+}
+
+export interface Assessment {
+  id: string
+  run_id: string
+  control_id: string
+  control_name: string
+  category: string
+  framework: { nist_csf_2_0: CsfRef[] }
+  scope: AssessmentScope
+  assessed_at: string
+  expected: unknown
+  observed: unknown
+  status: AssessmentStatus
+  severity: 'high' | 'medium' | 'low'
+  explanation: string
+  evidence: EvidenceItem[]
+  evidence_collected_at: string
+  freshness: { window_seconds: number | null; applied: boolean; oldest_evidence_at?: string; age_seconds?: number; fresh?: boolean }
+  related_incidents: string[]
+  detector: string
+  source_of_truth: string
+  remediation: { guidance: string; commands: string[]; action: Record<string, unknown> | null }
+  finding_id: string | null
+  limitations: string | null
+}
+
+export interface Finding {
+  id: string
+  control_id: string
+  control_name: string
+  category: string
+  scope: AssessmentScope
+  asset: string | null
+  severity: 'high' | 'medium' | 'low'
+  status: FindingStatus
+  result: AssessmentStatus
+  opened_at: string
+  updated_at: string
+  first_run_id: string
+  last_run_id: string
+  occurrences: number
+  assessment_id: string
+  expected: unknown
+  observed: unknown
+  explanation: string
+  related_incidents: string[]
+  remediation: { guidance: string; commands: string[]; action: Record<string, unknown> | null; status: string; requested_at: string | null; requested_by: string | null; executed_at: string | null; executed_by?: string; transcript: string | null; note?: string | null }
+  verification: { outcome: AssessmentStatus | null; at: string | null; run_id: string | null; after_remediation?: boolean }
+  resolved_at: string | null
+}
+
+export interface FindingEvent {
+  ts: string
+  event: string
+  actor: string | null
+  detail?: string
+  transcript?: string
+}
+
+export interface ControlCatalogEntry {
+  id: string
+  name: string
+  description: string
+  category: string
+  severity: 'high' | 'medium' | 'low'
+  scope_type: string
+  source_of_truth: string
+  csf: CsfRef[]
+  freshness_window: number | null
+  states: AssessmentStatus[]
+  remediation: string
+  limitations: string
+}
+
+export interface ControlStatus {
+  control_id: string
+  name: string
+  category: string
+  severity: string
+  scope_type: string
+  csf: CsfRef[]
+  assessments: number
+  pass: number
+  fail: number
+  unknown: number
+  stale: number
+  open_findings: number
+  status: AssessmentStatus | 'NOT_ASSESSED'
+}
+
+export interface AssessmentRun {
+  run_id: string
+  assessed_at: string
+  trigger: string
+  actor: string
+  controls: number
+  assessments: number
+  counts: Record<AssessmentStatus, number>
+  findings_open: number
+  clock: string
+}
+
+export interface Posture {
+  generated_for: string
+  clock: string | null
+  last_run: AssessmentRun | null
+  runs: number
+  totals: { assessments: number; controls: number; pass: number; fail: number; unknown: number; stale: number; determinate: number; retired?: number; coverage_pct: number | null; pass_rate_of_determinate_pct: number | null; pass_rate_of_all_pct: number | null }
+  definitions: Record<string, string>
+  findings: { open: number; closed: number; by_severity: Record<'high' | 'medium' | 'low', number>; by_status: Record<string, number>; by_result: Record<string, number>; open_items: Finding[]; recently_closed: Finding[] }
+  assets_with_open_findings: { asset: string; interface: string | null; findings: number; worst: 'high' | 'medium' | 'low'; controls: string[] }[]
+  unverified: { id: string; control_id: string; scope: AssessmentScope; status: AssessmentStatus; explanation: string }[]
+  by_control: ControlStatus[]
+  by_category: { category: string; pass: number; fail: number; unknown: number; stale: number }[]
+  csf: { id: string; text: string; function: string; controls: string[]; pass: number; fail: number; unknown: number; stale: number }[]
+  incidents: { total: number; open: number; resolved: number }
+  recent_runs: AssessmentRun[]
+  scope_note: string
+}
+
+export interface Authorization {
+  mode: 'automatic' | 'analyst' | 'rejected'
+  status: 'authorized' | 'pending' | 'rejected'
+  authorized_by: string
+  authorized_at: string | null
+  basis: string
+  reason: string
+  guards: string[]
+  action: string
+  note: string | null
+}
+
+export interface ReportInfo {
+  json: string
+  html: string
+  pdf: string | null
+  assessments: number
+  findings: number
+}
+
+export const BASE = import.meta.env.VITE_API_BASE ?? ''
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, { ...init, headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) } })
@@ -550,4 +724,20 @@ export const endpoints = {
   demoStatus: () => api<DemoStatus>('/api/demo/status'),
   demoRun: () => api<{ incident: Incident; metrics: Record<string, unknown>; checks: Record<string, boolean>; timeline: TimelineEntry[] }>('/api/demo/run', { method: 'POST' }),
   demoReset: () => api<unknown>('/api/demo/reset', { method: 'POST' }),
+  // SentinelSwitch 2.0
+  posture: () => api<Posture>('/api/posture'),
+  controls: () => api<{ catalog: ControlCatalogEntry[]; status: ControlStatus[]; last_run: AssessmentRun | null }>('/api/controls'),
+  control: (id: string) => api<{ control: ControlCatalogEntry; assessments: Assessment[]; findings: Finding[] }>(`/api/controls/${id}`),
+  assessments: (q = '') => api<Assessment[]>(`/api/assessments${q}`),
+  assessment: (id: string) => api<{ assessment: Assessment; history: Assessment[]; finding: Finding | null; control: ControlCatalogEntry | null }>(`/api/assessments/${id}`),
+  assessmentRuns: () => api<AssessmentRun[]>('/api/assessments/runs'),
+  runAssessment: (actor = 'tlee') => api<AssessmentRun>('/api/assessments/run', { method: 'POST', body: JSON.stringify({ actor, note: '' }) }),
+  findings: (q = '') => api<Finding[]>(`/api/findings${q}`),
+  finding: (id: string) => api<{ finding: Finding; events: FindingEvent[]; assessment: Assessment | null; history: Assessment[]; control: ControlCatalogEntry | null }>(`/api/findings/${id}`),
+  remediate: (id: string, body: { actor: string; note: string }) => api<{ finding: Finding; executed: boolean; transcript?: string; commands?: string[]; run?: AssessmentRun; refused?: string }>(`/api/findings/${id}/remediate`, { method: 'POST', body: JSON.stringify(body) }),
+  review: (id: string) => api<Review & { authorization?: Authorization; incident_id?: string }>(`/api/reviews/${id}`),
+  approveReview: (id: string, body: { actor: string; note: string }) => api<{ incident: Incident; action: ContainmentAction; review: Review }>(`/api/reviews/${id}/approve`, { method: 'POST', body: JSON.stringify(body) }),
+  rejectReview: (id: string, body: { actor: string; note: string }) => api<{ review: Review }>(`/api/reviews/${id}/reject`, { method: 'POST', body: JSON.stringify(body) }),
+  reportJson: () => api<Record<string, unknown>>('/api/reports/posture.json'),
+  reportGenerate: () => api<ReportInfo>('/api/reports/generate', { method: 'POST' }),
 }

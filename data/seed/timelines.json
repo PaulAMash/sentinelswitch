@@ -87,6 +87,15 @@
       }
     },
     {
+      "ts": "2026-03-17T09:12:45.083Z",
+      "phase": "authorization",
+      "actor": "sentinel",
+      "message": "Containment authorized by policy-engine (policy tier automatic_containment); action port_shutdown",
+      "details": {
+        "mode": "automatic"
+      }
+    },
+    {
       "ts": "2026-03-17T09:12:45.085Z",
       "phase": "incident",
       "actor": "sentinel",
@@ -234,6 +243,15 @@
       "details": {
         "action": "port_shutdown",
         "guards": []
+      }
+    },
+    {
+      "ts": "2026-03-17T09:41:06.202Z",
+      "phase": "authorization",
+      "actor": "sentinel",
+      "message": "Containment authorized by policy-engine (policy tier automatic_containment); action port_shutdown",
+      "details": {
+        "mode": "automatic"
       }
     },
     {
@@ -387,6 +405,16 @@
       }
     },
     {
+      "ts": "2026-03-17T10:27:23.991Z",
+      "phase": "authorization",
+      "actor": "sentinel",
+      "message": "Automatic containment NOT authorized: confidence below the automatic tier; analyst approval required",
+      "details": {
+        "mode": "pending",
+        "guards": []
+      }
+    },
+    {
       "ts": "2026-03-17T10:41:12.000Z",
       "phase": "resolution",
       "actor": "tlee",
@@ -512,6 +540,15 @@
       "details": {
         "action": "port_shutdown",
         "guards": []
+      }
+    },
+    {
+      "ts": "2026-03-17T11:23:47.850Z",
+      "phase": "authorization",
+      "actor": "sentinel",
+      "message": "Containment authorized by policy-engine (policy tier automatic_containment); action port_shutdown",
+      "details": {
+        "mode": "automatic"
       }
     },
     {
@@ -662,6 +699,16 @@
       "message": "Disposition manual_review: Manual review required (severity=medium confidence=0.87); below the automatic-containment threshold",
       "details": {
         "action": "none",
+        "guards": []
+      }
+    },
+    {
+      "ts": "2026-03-17T12:36:58.105Z",
+      "phase": "authorization",
+      "actor": "sentinel",
+      "message": "Automatic containment NOT authorized: confidence below the automatic tier; analyst approval required",
+      "details": {
+        "mode": "pending",
         "guards": []
       }
     },
@@ -877,11 +924,128 @@
       }
     },
     {
+      "ts": "2026-03-17T14:19:28.738Z",
+      "phase": "authorization",
+      "actor": "sentinel",
+      "message": "Automatic containment NOT authorized: confidence below the automatic tier; analyst approval required",
+      "details": {
+        "mode": "pending",
+        "guards": []
+      }
+    },
+    {
       "ts": "2026-03-17T14:52:40.000Z",
       "phase": "resolution",
       "actor": "tlee",
       "message": "Review closed by tlee: Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign.",
       "details": null
+    }
+  ],
+  "DET-20260317T20371618-PORT": [
+    {
+      "ts": "2026-03-17T20:37:12.418Z",
+      "phase": "telemetry",
+      "actor": "telemetry",
+      "message": "TCP port sweep from 10.30.0.50: 100 ports x 6 hosts in 10.30.0.0/24 (240 probes/s)",
+      "details": null
+    },
+    {
+      "ts": "2026-03-17T20:37:12.980Z",
+      "phase": "alert",
+      "actor": "zeek",
+      "message": "Zeek notice Scan::Port_Scan: 10.30.0.50 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s",
+      "details": null
+    },
+    {
+      "ts": "2026-03-17T20:37:14.926Z",
+      "phase": "alert",
+      "actor": "suricata",
+      "message": "Suricata sid 1000011 (medium): SENTINELSWITCH RECON TCP port sweep from internal host",
+      "details": {
+        "src": "10.30.0.50",
+        "dest": "10.30.0.30",
+        "dest_port": 1028
+      }
+    },
+    {
+      "ts": "2026-03-17T20:37:16.186Z",
+      "phase": "detection",
+      "actor": "sentinel",
+      "message": "Rule port-scan matched: severity high, confidence 0.96 (base 0.70; zeek_port_scan+0.12, many_ports+0.08, server_targets+0.06)",
+      "details": {
+        "detection_id": "DET-20260317T20371618-PORT",
+        "sources": [
+          "suricata",
+          "zeek"
+        ]
+      }
+    },
+    {
+      "ts": "2026-03-17T20:37:16.267Z",
+      "phase": "correlation",
+      "actor": "sentinel",
+      "message": "Resolving actor 10.30.0.50 through DHCP snooping, MAC table and inventory",
+      "details": null
+    },
+    {
+      "ts": "2026-03-17T20:37:16.416Z",
+      "phase": "correlation",
+      "actor": "sentinel",
+      "message": "dhcp_binding [resolved] 10.30.0.50 -> AC:1F:6B:3B:0C:50 (static, VLAN 30, Gi1/0/12, static)",
+      "details": {
+        "source": "show ip dhcp snooping binding"
+      }
+    },
+    {
+      "ts": "2026-03-17T20:37:16.657Z",
+      "phase": "correlation",
+      "actor": "sentinel",
+      "message": "mac_table [resolved] AC:1F:6B:3B:0C:50 -> SW01 Gi1/0/12 (VLAN 30, DYNAMIC)",
+      "details": {
+        "source": "show mac address-table address"
+      }
+    },
+    {
+      "ts": "2026-03-17T20:37:16.657Z",
+      "phase": "correlation",
+      "actor": "sentinel",
+      "message": "interface [resolved] Gi1/0/12 'SRV-GIT01 (git / CI)' mode=access access_vlan=30 oper_vlan=30 class=server status=connected",
+      "details": {
+        "source": "show interfaces switchport"
+      }
+    },
+    {
+      "ts": "2026-03-17T20:37:16.746Z",
+      "phase": "correlation",
+      "actor": "sentinel",
+      "message": "identity [resolved] SRV-GIT01 (git, Supermicro, Ubuntu 24.04 LTS (Gitea)) criticality=high",
+      "details": {
+        "source": "asset inventory / AAA session"
+      }
+    },
+    {
+      "ts": "2026-03-17T20:37:16.899Z",
+      "phase": "policy",
+      "actor": "sentinel",
+      "message": "Disposition manual_review: Tier 'automatic_containment' downgraded to 'manual_review' by guard(s): critical_assets (severity=high confidence=0.96)",
+      "details": {
+        "action": "none",
+        "guards": [
+          "critical_assets"
+        ]
+      }
+    },
+    {
+      "ts": "2026-03-17T20:37:16.901Z",
+      "phase": "authorization",
+      "actor": "sentinel",
+      "message": "Automatic containment NOT authorized: guard(s) critical_assets require analyst approval",
+      "details": {
+        "mode": "pending",
+        "guards": [
+          "critical_assets"
+        ]
+      }
     }
   ]
 }

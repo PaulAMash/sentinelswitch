@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sqlite3
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -15,11 +16,22 @@ class Store:
     def __init__(self, env: Environment, db_path: Path):
         self.env = env
         self.db_path = db_path
-        self.conn: sqlite3.Connection = connect(db_path)
+        # One connection per thread: FastAPI runs sync endpoints in a threadpool, and a sqlite3 connection
+        # must not be used from two threads at once (WAL mode lets readers and a writer coexist).
+        self._local = threading.local()
+        self._local.conn = connect(db_path)  # open eagerly so the schema exists before first use
 
     # ---- generic ------------------------------------------------------------------------------
     def reset(self) -> None:
         reset_schema(self.conn)
+
+    @property
+    def conn(self) -> sqlite3.Connection:
+        c = getattr(self._local, "conn", None)
+        if c is None:
+            c = connect(self.db_path)
+            self._local.conn = c
+        return c
 
     def kv_get(self, key: str, default: Any = None) -> Any:
         row = self.conn.execute("SELECT value FROM kv WHERE key=?", (key,)).fetchone()
@@ -169,6 +181,99 @@ class Store:
         with tx(self.conn) as c:
             c.execute("INSERT OR REPLACE INTO scenarios(id, doc) VALUES (?,?)", (s["id"], dumps(s)))
 
+    # ---- assurance (control assessments, findings) ---------------------------------------------
+    def put_assessment_run(self, r: dict[str, Any]) -> None:
+        with tx(self.conn) as c:
+            c.execute(
+                "INSERT OR REPLACE INTO assessment_runs(run_id, assessed_at, trigger, doc) VALUES (?,?,?,?)",
+                (r["run_id"], r["assessed_at"], r.get("trigger"), dumps(r)),
+            )
+
+    def put_assessment(self, a: dict[str, Any]) -> None:
+        with tx(self.conn) as c:
+            c.execute(
+                "INSERT OR REPLACE INTO assessments(id, control_id, scope_id, status, severity, assessed_at, finding_id, doc) VALUES (?,?,?,?,?,?,?,?)",
+                (
+                    a["id"],
+                    a["control_id"],
+                    a["scope"]["id"],
+                    a["status"],
+                    a["severity"],
+                    a["assessed_at"],
+                    a.get("finding_id"),
+                    dumps(a),
+                ),
+            )
+
+    def put_assessment_history(self, run_id: str, a: dict[str, Any]) -> None:
+        with tx(self.conn) as c:
+            c.execute(
+                "INSERT INTO assessment_history(run_id, assessment_id, status, assessed_at, doc) VALUES (?,?,?,?,?)",
+                (run_id, a["id"], a["status"], a["assessed_at"], dumps(a)),
+            )
+
+    def put_finding(self, f: dict[str, Any]) -> None:
+        with tx(self.conn) as c:
+            c.execute(
+                "INSERT OR REPLACE INTO findings(id, control_id, scope_id, status, severity, opened_at, updated_at, doc) VALUES (?,?,?,?,?,?,?,?)",
+                (
+                    f["id"],
+                    f["control_id"],
+                    f["scope"]["id"],
+                    f["status"],
+                    f["severity"],
+                    f["opened_at"],
+                    f["updated_at"],
+                    dumps(f),
+                ),
+            )
+
+    def put_finding_event(self, finding_id: str, ev: dict[str, Any]) -> None:
+        with tx(self.conn) as c:
+            c.execute(
+                "INSERT INTO finding_events(finding_id, ts, event, actor, doc) VALUES (?,?,?,?,?)",
+                (finding_id, ev["ts"], ev["event"], ev.get("actor"), dumps(ev)),
+            )
+
+    def assessment_runs(self) -> list[dict[str, Any]]:
+        return self._docs("assessment_runs", order="assessed_at DESC")
+
+    def assessment_run(self, run_id: str) -> dict[str, Any] | None:
+        return self._doc("assessment_runs", "run_id", run_id)
+
+    def assessments(self, *, status: str | None = None, control_id: str | None = None) -> list[dict[str, Any]]:
+        clauses, params = [], []
+        if status:
+            clauses.append("status=?")
+            params.append(status)
+        if control_id:
+            clauses.append("control_id=?")
+            params.append(control_id)
+        return self._docs("assessments", " AND ".join(clauses), tuple(params), order="control_id, scope_id")
+
+    def assessment(self, assessment_id: str) -> dict[str, Any] | None:
+        return self._doc("assessments", "id", assessment_id)
+
+    def assessment_history(self, assessment_id: str | None = None, run_id: str | None = None) -> list[dict[str, Any]]:
+        clauses, params = [], []
+        if assessment_id:
+            clauses.append("assessment_id=?")
+            params.append(assessment_id)
+        if run_id:
+            clauses.append("run_id=?")
+            params.append(run_id)
+        return self._docs("assessment_history", " AND ".join(clauses), tuple(params), order="seq")
+
+    def findings(self, *, status: str | None = None) -> list[dict[str, Any]]:
+        rows = self._docs("findings", "status=?" if status else "", (status,) if status else (), order="opened_at, id")
+        return rows
+
+    def finding(self, finding_id: str) -> dict[str, Any] | None:
+        return self._doc("findings", "id", finding_id)
+
+    def finding_events(self, finding_id: str) -> list[dict[str, Any]]:
+        return self._docs("finding_events", "finding_id=?", (finding_id,), order="seq")
+
     def bulk(self, fn, rows: list[dict[str, Any]]) -> None:
         for r in rows:
             fn(r)
@@ -220,6 +325,9 @@ class Store:
     def reviews(self) -> list[dict[str, Any]]:
         return self._docs("reviews", order="opened_at DESC")
 
+    def review(self, detection_id: str) -> dict[str, Any] | None:
+        return self._doc("reviews", "detection_id", detection_id)
+
     def timeline(self, owner_id: str) -> list[dict[str, Any]]:
         row = self.conn.execute("SELECT doc FROM timelines WHERE owner_id=?", (owner_id,)).fetchone()
         return loads(row["doc"]) if row else []
@@ -247,6 +355,23 @@ class Store:
 
     def counts(self) -> dict[str, int]:
         out = {}
-        for t in ("devices", "alerts", "detections", "incidents", "reviews", "containment_actions", "auth_events"):
+        for t in (
+            "devices",
+            "alerts",
+            "detections",
+            "incidents",
+            "reviews",
+            "containment_actions",
+            "auth_events",
+            "assessments",
+            "findings",
+            "assessment_runs",
+        ):
             out[t] = self.conn.execute(f"SELECT COUNT(*) AS n FROM {t}").fetchone()["n"]
+        out["findings_open"] = self.conn.execute(
+            "SELECT COUNT(*) AS n FROM findings WHERE status IN ('open','reopened','remediation_requested','remediated','remediation_failed')"
+        ).fetchone()["n"]
+        out["reviews_open"] = self.conn.execute("SELECT COUNT(*) AS n FROM reviews WHERE status='review'").fetchone()[
+            "n"
+        ]
         return out

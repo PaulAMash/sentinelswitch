@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 
 from sentinelswitch import __version__
 from sentinelswitch.app.events import bus
+from sentinelswitch.app.locks import serialized
 from sentinelswitch.containment.policy import load_policy
 from sentinelswitch.detection.engine import load_rules
 from sentinelswitch.detection.suricata_rules import load_rules as load_suricata_rules
@@ -38,7 +39,7 @@ def meta(request: Request) -> dict[str, Any]:
     twin = store.load_twin()
     return {
         "name": "SentinelSwitch",
-        "tagline": "Autonomous Network Detection & Response Lab",
+        "tagline": "Evidence-Driven Network Security & Response Lab",
         "version": __version__,
         "simulation": True,
         "dataset": env.dataset,
@@ -215,10 +216,13 @@ class RestoreBody(BaseModel):
 
 
 @router.post("/incidents/{incident_id}/restore")
+@serialized
 def restore(request: Request, incident_id: str, body: RestoreBody) -> dict[str, Any]:
-    store, env, _ = _ctx(request)
+    store, env, settings = _ctx(request)
     try:
-        result = demo_service.restore_incident(store, env, incident_id, actor=body.actor, note=body.note)
+        result = demo_service.restore_incident(
+            store, env, incident_id, actor=body.actor, note=body.note, settings=settings
+        )
     except KeyError:
         raise HTTPException(404, "incident not found") from None
     except RuntimeError as exc:
@@ -426,21 +430,14 @@ def auth(request: Request) -> dict[str, Any]:
 def validation(request: Request) -> dict[str, Any]:
     store, _, _ = _ctx(request)
     rows = store.validation()
-    order = [
-        "unauthorized-endpoint",
-        "arp-spoofing",
-        "rogue-dhcp",
-        "mac-address-change",
-        "port-scan",
-        "dns-anomaly",
-        "lateral-reconnaissance",
-        "bpdu-violation",
-    ]
+    from sentinelswitch.validation.harness import SCENARIO_ORDER as order
+
     rows.sort(key=lambda r: order.index(r["scenario_id"]) if r["scenario_id"] in order else 99)
     return {"results": rows, "metrics": store.kv_get("validation_metrics", {}), "scenarios": store.scenarios()}
 
 
 @router.post("/validation/run")
+@serialized
 def validation_run(request: Request) -> dict[str, Any]:
     store, env, _ = _ctx(request)
     report = run_validation(env, store.load_baseline_twin())
@@ -469,6 +466,7 @@ def demo_status(request: Request) -> dict[str, Any]:
 
 
 @router.post("/demo/run")
+@serialized
 def demo_run(request: Request) -> dict[str, Any]:
     store, env, settings = _ctx(request)
     try:
@@ -487,6 +485,7 @@ def demo_run(request: Request) -> dict[str, Any]:
 
 
 @router.post("/demo/reset")
+@serialized
 def demo_reset(request: Request) -> dict[str, Any]:
     store, env, settings = _ctx(request)
     summary = seed_database(store, env, settings.seed_dir, settings.incidents_dir)
@@ -505,7 +504,7 @@ def about(request: Request) -> dict[str, Any]:
     )
     return {
         "name": "SentinelSwitch",
-        "tagline": "Autonomous Network Detection & Response Lab",
+        "tagline": "Evidence-Driven Network Security & Response Lab",
         "version": __version__,
         "organization": env.organization,
         "switch": env.switch,

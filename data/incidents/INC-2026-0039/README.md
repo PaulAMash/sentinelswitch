@@ -69,6 +69,7 @@ Building configuration...
 | 09:12:44.858 | correlation | interface [resolved] Gi1/0/30 'CONF-A DISPLAY (guest fallback)' mode=access access_vlan=20 oper_vlan=40 class=conference status=err-disabled |
 | 09:12:44.937 | correlation | identity [fallback] No MAC in the event; CONF-A-TV01 is the endpoint assigned to Gi1/0/30 (display, criticality=low) |
 | 09:12:45.081 | policy | Disposition automatic_containment: Automatic containment approved (severity=high confidence=0.96); action=port_shutdown |
+| 09:12:45.083 | authorization | Containment authorized by policy-engine (policy tier automatic_containment); action port_shutdown |
 | 09:12:45.085 | incident | Incident INC-2026-0039 opened |
 | 09:12:45.469 | containment | SW01 Gi1/0/30: administrative shutdown (workflow WF-2026-0039-01) — BPDU Guard err-disable (switch-native) + SentinelSwitch administrative hold |
 | 09:12:45.588 | verification | Verification succeeded: admin down, no MAC addresses learned |

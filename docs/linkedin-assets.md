@@ -15,7 +15,7 @@ this set.
 | 04 | `04-correlation.png` | IP → MAC → SW01 → Gi1/0/23 → VLAN 20 → VLAN 50 chain with every resolution step | attribution from the evidence bundle |
 | 05 | `05-auto-quarantine.png` | VLAN 20 → VLAN 50, time to contain, front panel with Gi1/0/23 highlighted, decision/action/verification timeline | `/api/incidents/…`, `/api/switch` |
 | 06 | `06-cisco-verification.png` | `show interfaces Gi1/0/23 switchport`, `show mac address-table interface Gi1/0/23`, `show vlan id 50` from the twin after containment | `/api/switch/show` |
-| 07 | `07-validation-results.png` | validation matrix (8 × PASS) with MTTD / MTTA / MTTC | `/api/validation` |
+| 07 | `07-validation-results.png` | validation matrix (9 × PASS) with MTTD / MTTA / MTTC | `/api/validation` |
 
 Recommended carousel order is 01 → 07. Each card tells one step of the story:
 
@@ -25,7 +25,7 @@ Recommended carousel order is 01 → 07. Each card tells one step of the story:
 4. **Correlation** — the detection becomes a physical switch port.
 5. **Auto-quarantine** — the policy acts and verifies.
 6. **Cisco verification** — proof on the switch.
-7. **Validation** — the same pipeline against eight scenarios.
+7. **Validation** — the same pipeline against nine scenarios.
 
 ## GitHub images (`assets/github/`)
 

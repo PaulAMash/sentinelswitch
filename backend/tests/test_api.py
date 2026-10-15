@@ -3,7 +3,7 @@ def test_meta_and_overview(api_client):
     assert meta["simulation"] is True and meta["switch"]["hostname"] == "SW01"
     kpis = api_client.get("/api/overview").json()["kpis"]
     assert kpis["devices_total"] == 36 and kpis["quarantined_hosts"] == 0
-    assert kpis["validation_passed"] == 8
+    assert kpis["validation_passed"] == 9
 
 
 def test_alerts_incidents_devices(api_client):
@@ -64,8 +64,8 @@ def test_demo_run_restore_reset(api_client):
 
 def test_validation_and_rules(api_client):
     v = api_client.get("/api/validation").json()
-    assert len(v["results"]) == 8 and all(r["passed"] for r in v["results"])
+    assert len(v["results"]) == 9 and all(r["passed"] for r in v["results"])
     assert v["metrics"]["mttd"] > 0
     rules = api_client.get("/api/rules").json()
     assert len(rules["correlation"]) >= 8 and len(rules["suricata"]) >= 10
-    assert api_client.post("/api/validation/run").json()["metrics"]["passed"] == 8
+    assert api_client.post("/api/validation/run").json()["metrics"]["passed"] == 9

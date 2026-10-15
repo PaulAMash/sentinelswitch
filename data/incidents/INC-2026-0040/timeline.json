@@ -93,6 +93,15 @@
     }
   },
   {
+    "ts": "2026-03-17T09:41:06.202Z",
+    "phase": "authorization",
+    "actor": "sentinel",
+    "message": "Containment authorized by policy-engine (policy tier automatic_containment); action port_shutdown",
+    "details": {
+      "mode": "automatic"
+    }
+  },
+  {
     "ts": "2026-03-17T09:41:06.204Z",
     "phase": "incident",
     "actor": "sentinel",

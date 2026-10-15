@@ -45,10 +45,11 @@ export function Sev({ s }: { s: string }) {
 
 export function Ts({ ts, date = false }: { ts: string | null | undefined; date?: boolean }) {
   if (!ts) return <span className="ts">—</span>
+  // Simulated-clock timestamps are UTC; the tooltip always carries the full ISO value.
   return (
-    <span className="ts">
-      {date && <span className="date">{ts.slice(5, 10)} </span>}
-      {fmtTime(ts)}
+    <span className="ts" title={`${ts} (UTC, simulated clock)`}>
+      {date && <><span className="date">{ts.slice(0, 10)}</span>{' '}</>}
+      <span className="time">{fmtTime(ts)}</span>
     </span>
   )
 }

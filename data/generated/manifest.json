@@ -9,29 +9,29 @@
   "seed": 20260317,
   "counts": {
     "zeek": {
-      "conn": 9924,
+      "conn": 10524,
       "dns": 4102,
       "http": 103,
       "ssl": 2925,
-      "notice": 3,
+      "notice": 4,
       "weird": 26
     },
     "suricata": {
-      "alerts": 12,
-      "flows": 1922,
-      "total": 1934
+      "alerts": 13,
+      "flows": 2527,
+      "total": 2540
     },
     "radius": {
       "events": 136,
       "accepts": 123,
       "rejects": 10
     },
-    "syslog": 367,
-    "alerts": 42,
-    "detections": 14,
+    "syslog": 369,
+    "alerts": 44,
+    "detections": 15,
     "incidents": 3,
-    "reviews": 4,
-    "events": 511,
+    "reviews": 5,
+    "events": 515,
     "flagship_events": 7,
     "devices": 36
   },
@@ -104,6 +104,17 @@
       "attribution_confidence": 1.0,
       "flags": [],
       "impersonated_device": null,
+      "authorization": {
+        "mode": "automatic",
+        "status": "authorized",
+        "authorized_by": "policy-engine",
+        "authorized_at": "2026-03-17T21:14:40.585Z",
+        "basis": "policy tier automatic_containment",
+        "reason": "Automatic containment approved (severity=high confidence=0.97); action=quarantine_vlan",
+        "guards": [],
+        "action": "quarantine_vlan",
+        "note": null
+      },
       "workflow_id": "WF-2026-0042-01",
       "mechanism": "SentinelSwitch VLAN reassignment (quarantine VLAN)",
       "contained_at": "2026-03-17T21:14:41.125Z",
@@ -117,23 +128,23 @@
   },
   "files": {
     "data/zeek/conn.log": {
-      "sha256": "9e4c1733c3430e9143141a6d9e7ecf4fefef000592d73fb19c992350cfadce3b",
-      "bytes": 3727779
+      "sha256": "bd3a76d5ae4d99aec5f36c0f9dbb6b99f2b1f176b41ffa800ece25ad2e22bdba",
+      "bytes": 3936818
     },
     "data/zeek/dns.log": {
-      "sha256": "a55e7b96dc4b8afd4d1af8b13068a5d279b3f5bd46a2e32d490ff84c51b254a2",
+      "sha256": "e79bd6687e8d25b34617be223f609f0b9a835c6ea4a587471e03aee7a6258f9f",
       "bytes": 1684731
     },
     "data/zeek/http.log": {
-      "sha256": "73798838e892f2ed7c3f4f19ea6b408e55d06bf4686d0b8dc51619c2c56638ab",
+      "sha256": "9a45d0b060a9224bb6e4d50e601055aad5b30662ba89911326ba76260709d2e3",
       "bytes": 51399
     },
     "data/zeek/notice.log": {
-      "sha256": "5d2baf3fabee415da8b7b0cc065fce5f9b24f9582223b7caa5af7179d7d589ea",
-      "bytes": 901
+      "sha256": "49a00ead6f824388e2bd33c03d97cb07527ed5205905947f36b79cbda14b3d68",
+      "bytes": 1187
     },
     "data/zeek/ssl.log": {
-      "sha256": "3bed9b32521610b86c1e514aee82f3d93a445e5c17ee10fdf0051e1442d3a9e7",
+      "sha256": "f07cf0128d604b680c01f84e3070bfcd3e866f038d9bf11f69c94ce59ab898fc",
       "bytes": 948284
     },
     "data/zeek/weird.log": {
@@ -141,8 +152,8 @@
       "bytes": 5750
     },
     "data/suricata/eve.json": {
-      "sha256": "852ff4754f5ed0c7068ccb5915578343f404476e1a56d4c36d1c55349cfc30c1",
-      "bytes": 973710
+      "sha256": "d0f73d8ccf57b4dc37cbc8a94546d97b914c7bc0c85cc7df95417374125944cc",
+      "bytes": 1300164
     },
     "data/radius/auth-events.jsonl": {
       "sha256": "31f41f411d0f9a9bed1e5a18ae0f78dfd5e58721c2cb8dbb5a7e51d5a2a17a93",
@@ -153,12 +164,12 @@
       "bytes": 19515
     },
     "data/cisco/SW01-syslog.log": {
-      "sha256": "c37c11e82b34522801f1415f9d0724acfde8080b99a9db3965a17dbaae943804",
-      "bytes": 60952
+      "sha256": "be777d02c0b8e8838dec654330b5418f7701b07c7d248242b9c2d0ae6353c258",
+      "bytes": 61236
     },
     "data/generated/events.jsonl": {
-      "sha256": "8e3102f4c6fef52ebe50b615dd71a21817c5beccb29036ea738f45d9b99da59a",
-      "bytes": 449295
+      "sha256": "2b461116bac4c9e2ef8aabb28b1fa7e38a2b12076a86d39dab658a0af7a988e5",
+      "bytes": 452557
     },
     "data/generated/flagship-events.jsonl": {
       "sha256": "58c7bea1f3a8cd03990068276e9e215a526438ca1de6a40da068154bf7085bdc",

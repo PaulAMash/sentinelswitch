@@ -75,6 +75,17 @@
     "restored_by": null,
     "restore_note": null,
     "restore_transcript": null,
-    "notes": []
+    "notes": [],
+    "authorization": {
+      "mode": "automatic",
+      "status": "authorized",
+      "authorized_by": "policy-engine",
+      "authorized_at": "2026-03-17T11:23:47.848Z",
+      "basis": "policy tier automatic_containment",
+      "reason": "Automatic containment approved (severity=high confidence=0.95); action=port_shutdown",
+      "guards": [],
+      "action": "port_shutdown",
+      "note": null
+    }
   }
 }

@@ -41,6 +41,17 @@
     "identity_from_port"
   ],
   "impersonated_device": null,
+  "authorization": {
+    "mode": "automatic",
+    "status": "authorized",
+    "authorized_by": "policy-engine",
+    "authorized_at": "2026-03-17T09:12:45.081Z",
+    "basis": "policy tier automatic_containment",
+    "reason": "Automatic containment approved (severity=high confidence=0.96); action=port_shutdown",
+    "guards": [],
+    "action": "port_shutdown",
+    "note": null
+  },
   "workflow_id": "WF-2026-0039-01",
   "mechanism": "BPDU Guard err-disable (switch-native) + SentinelSwitch administrative hold",
   "contained_at": "2026-03-17T09:12:45.588Z",

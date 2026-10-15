@@ -70,6 +70,7 @@ Building configuration...
 | 09:41:05.971 | correlation | interface [resolved] Gi1/0/17 'OPS SPARE DROP (corporate asset only)' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected |
 | 09:41:06.048 | correlation | identity [missing] DC:A6:32:19:77:C1 is not in the asset inventory (OUI vendor: Raspberry Pi Foundation) |
 | 09:41:06.200 | policy | Disposition automatic_containment: Automatic containment approved (severity=high confidence=0.96); action=port_shutdown |
+| 09:41:06.202 | authorization | Containment authorized by policy-engine (policy tier automatic_containment); action port_shutdown |
 | 09:41:06.204 | incident | Incident INC-2026-0040 opened |
 | 09:41:06.601 | containment | SW01 Gi1/0/17: administrative shutdown (workflow WF-2026-0040-02) — SentinelSwitch administrative shutdown |
 | 09:41:06.718 | verification | Verification succeeded: admin down, no MAC addresses learned |

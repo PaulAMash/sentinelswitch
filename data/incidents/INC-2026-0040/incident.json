@@ -44,6 +44,17 @@
     "unknown_device"
   ],
   "impersonated_device": null,
+  "authorization": {
+    "mode": "automatic",
+    "status": "authorized",
+    "authorized_by": "policy-engine",
+    "authorized_at": "2026-03-17T09:41:06.200Z",
+    "basis": "policy tier automatic_containment",
+    "reason": "Automatic containment approved (severity=high confidence=0.96); action=port_shutdown",
+    "guards": [],
+    "action": "port_shutdown",
+    "note": null
+  },
   "workflow_id": "WF-2026-0040-02",
   "mechanism": "SentinelSwitch administrative shutdown",
   "contained_at": "2026-03-17T09:41:06.718Z",

@@ -196,6 +196,32 @@ class SimulatedCisco2960XAdapter(SwitchAdapter):
             notes=[result.get("action", "none")],
         )
 
+    # ---- remediation ------------------------------------------------------------------------
+    def apply_baseline(
+        self, interface: str, settings: list[str], *, intent, reason: str, actor: str, at: datetime
+    ) -> tuple[str, list[str]]:
+        """Re-apply the named settings from the port intent and return (transcript, commands)."""
+        name = short_ifname(interface)
+        self._guard(name)
+        lines = self.twin.apply_intent(
+            name, settings, intent.settings, intent.description, actor=actor, reason=reason, at=at
+        )
+        commands = ["configure terminal"] + lines + ["end", "write memory"]
+        return self._transcript(commands, at), commands
+
+    def add_span_source(self, vlan: int, *, reason: str, actor: str, at: datetime) -> tuple[str, list[str]]:
+        lines = self.twin.add_span_source(vlan, actor=actor, reason=reason, at=at)
+        commands = ["configure terminal"] + [f" {ln}" for ln in lines] + ["end", "write memory"]
+        return self._transcript(commands, at), commands
+
+    def reauthenticate(self, interface: str, *, reason: str, actor: str, at: datetime) -> dict[str, Any]:
+        name = short_ifname(interface)
+        self._guard(name)
+        events = self.twin.reauthenticate(name, actor=actor, reason=reason, at=at)
+        cmd = f"clear authentication sessions interface {self.twin.interfaces[name].long_name}"
+        transcript = f"{self.twin.hostname}#{cmd}\n{self.twin.hostname}#"
+        return {"transcript": transcript, "commands": [cmd], "auth_events": events}
+
     # ---- verification -----------------------------------------------------------------------
     def verify_vlan(self, interface: str, vlan: int) -> tuple[bool, str]:
         name = short_ifname(interface)

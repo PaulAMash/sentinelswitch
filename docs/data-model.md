@@ -8,7 +8,7 @@
 | `simulator/fixtures/inventory.yaml` | 36 devices with MAC, IP, VLAN, port, owner, criticality, authentication method, attach schedule; 4 unregistered devices; OUI hints |
 | `simulator/fixtures/users.yaml` | 22 fictional users with department and EAP method |
 | `simulator/fixtures/external.yaml` | external services on RFC 5737 documentation ranges, internal service names |
-| `simulator/scenarios/*.yaml` | eight scenarios: actor, `day` and `validation` instances, traffic parameters, expected outcome, resolution, engine timing |
+| `simulator/scenarios/*.yaml` | nine scenarios: actor, `day` and `validation` instances, traffic parameters, expected outcome, resolution, engine timing |
 | `detections/**` | Suricata rules, Zeek scripts, correlation rules |
 | `automation/policies/containment-policy.yaml` | tiers, guards, actions |
 
@@ -43,13 +43,18 @@ Alert ──detection_id──▶ Detection ──incident_id──▶ Incident 
                                    └──review────▶ Review                 └──▶ Timeline entries
 Incident ──▶ data/incidents/<id>/ (11 artifacts)
 ValidationResult (scenario_id) ──▶ Scenario
+
+AssessmentRun (ASR-…) ──▶ AssessmentHistory rows (one per control × scope per run)
+Control (CTL-…) ──▶ Assessment (ASM-<control>-<scope>, latest result) ──finding_id──▶ Finding (FND-<control>-<scope>)
+                                                                                        └──▶ FindingEvent (append-only)
+Assessment.related_incidents ──▶ Incident;  ContainmentAction.authorization / Incident.authorization / Review.authorization ──▶ Authorization record
 ```
 
 ## SQLite tables
 
 | table | key | document |
 | --- | --- | --- |
-| `kv` | `twin`, `twin_baseline`, `demo`, `validation_metrics`, `dataset` | switch twin JSON and application state |
+| `kv` | `twin`, `twin_baseline`, `demo`, `validation_metrics`, `dataset`, `last_assessment_run` | switch twin JSON and application state |
 | `devices`, `unknown_devices`, `users` | hostname / mac / username | inventory joined with schedule and tags |
 | `alerts` | `ALT-nnnnn` | every alert-worthy raw event with status, detection and incident links |
 | `detections` | `DET-…` | scored correlation detections with features and event references |
@@ -61,9 +66,32 @@ ValidationResult (scenario_id) ──▶ Scenario
 | `traffic_buckets` | 15-minute timestamp | connections, bytes, DNS queries, alerts, hosts |
 | `validation_results` | scenario id | harness rows |
 | `scenarios` | scenario id | scenario definitions for the UI |
+| `assessment_runs` | `run_id` (`ASR-…`); columns `assessed_at`, `trigger` | run summary: counts per state, `findings_open`, actor |
+| `assessments` | `id` (`ASM-<control>-<scope>`); columns `control_id` (indexed), `scope_id`, `status`, `severity`, `assessed_at`, `finding_id` | the **latest** result per (control, scope); `status` becomes `RETIRED` once the scope stops existing (excluded from posture totals) |
+| `assessment_history` | `seq` (autoincrement); columns `run_id` (indexed), `assessment_id`, `status`, `assessed_at` | every result of every run, append-only |
+| `findings` | `id` (`FND-<control>-<scope>`); columns `control_id`, `scope_id`, `status`, `severity`, `opened_at`, `updated_at` | finding record with remediation and verification blocks; never deleted |
+| `finding_events` | `seq` (autoincrement); columns `finding_id` (indexed), `ts`, `event`, `actor` | lifecycle events (`opened`, `reopened`, `remediation_requested`, `remediation_executed`, `remediation_refused`, `verification_failed`, `verified`, `scope_retired`) |
 
 Documents are stored as JSON text with a few indexed columns; the access layer is
 `backend/sentinelswitch/services/store.py`.
+
+## Assurance records (2.0)
+
+`seed_database()` recreates every table, so the assurance tables start empty and are filled by the
+baseline assessment at the end of seeding. `containment_actions`, `incidents` and `reviews`
+documents gained an `authorization` object (see [containment.md](containment.md#authorization-record)).
+
+| document | produced by | shape |
+| --- | --- | --- |
+| assessment run | `AssessmentEngine.run()` | `run_id`, `assessed_at`, `trigger`, `actor`, `controls`, `assessments`, `counts{PASS,FAIL,UNKNOWN,STALE}`, `findings_open`, `clock` |
+| assessment | `AssessmentEngine._finalize()` | `id`, `run_id`, control fields, `framework.nist_csf_2_0`, `scope{type,id,asset,interface,vlan,switch}`, `expected`, `observed`, `status`, `severity`, `explanation`, `evidence[]`, `freshness`, `related_incidents`, `remediation{guidance,commands,action}`, `finding_id` |
+| finding | `AssessmentEngine._reconcile()`, updated by `RemediationService` | assessment fields plus `status`, `result`, `opened_at`, `updated_at`, `first_run_id`, `last_run_id`, `occurrences`, `remediation{…,status,requested_at,requested_by,executed_at,executed_by,transcript,note}`, `verification{outcome,at,run_id,after_remediation}`, `resolved_at` |
+| finding event | engine and remediation service | `ts`, `event`, `actor`, `detail`, optional `transcript` |
+
+`assessments` keeps one row per assessment id (the latest result); the per-run rows live in
+`assessment_history`. Scopes that stop being evaluated (an incident that was resolved) keep their
+last row, which is why the posture total can exceed the last run's count. Field-by-field types are
+in [export-schema.md](export-schema.md); the id scheme and lifecycle in [controls.md](controls.md).
 
 ## Switch twin
 

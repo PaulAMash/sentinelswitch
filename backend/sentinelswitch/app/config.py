@@ -14,6 +14,8 @@ class Settings:
     root: Path = ROOT
     data_dir: Path = Path(os.environ.get("SENTINEL_DATA_DIR", str(ROOT / "data")))
     db_path: Path = Path(os.environ.get("SENTINEL_DB", str(ROOT / "data" / "generated" / "sentinelswitch.db")))
+    incidents_dir: Path = Path(os.environ.get("SENTINEL_INCIDENTS_DIR", str(ROOT / "data" / "incidents")))
+    artifacts_dir: Path = Path(os.environ.get("SENTINEL_ARTIFACTS_DIR", str(ROOT / "artifacts" / "sentinelswitch-2.0")))
     host: str = os.environ.get("SENTINEL_HOST", "127.0.0.1")
     port: int = int(os.environ.get("SENTINEL_PORT", "8000"))
     frontend_dist: Path = Path(os.environ.get("SENTINEL_FRONTEND_DIST", str(ROOT / "frontend" / "dist")))
@@ -26,10 +28,6 @@ class Settings:
     @property
     def seed_dir(self) -> Path:
         return self.data_dir / "seed"
-
-    @property
-    def incidents_dir(self) -> Path:
-        return self.data_dir / "incidents"
 
     @property
     def zeek_dir(self) -> Path:

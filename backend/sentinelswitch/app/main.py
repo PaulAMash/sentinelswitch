@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from sentinelswitch import __version__
+from sentinelswitch.api.assurance_routes import router as assurance_router
 from sentinelswitch.api.routes import router
 from sentinelswitch.app.config import Settings, get_settings
 from sentinelswitch.services import demo as demo_service
@@ -35,7 +36,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(
         title="SentinelSwitch",
         version=__version__,
-        description="Autonomous Network Detection & Response Lab (digital twin)",
+        description="Evidence-Driven Network Security & Response Lab (digital twin)",
         lifespan=lifespan,
     )
     app.state.store = store
@@ -45,6 +46,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         CORSMiddleware, allow_origins=list(settings.cors_origins), allow_methods=["*"], allow_headers=["*"]
     )
     app.include_router(router)
+    app.include_router(assurance_router)
 
     dist = settings.frontend_dist
     if dist.exists() and (dist / "index.html").exists():

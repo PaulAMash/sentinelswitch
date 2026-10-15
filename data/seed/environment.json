@@ -1,9 +1,10 @@
 {
   "organization": {
-    "name": "Meridian Labs",
+    "name": "Meridian Esports League",
     "domain": "corp.example.com",
-    "site": "LAB-01",
-    "timezone": "UTC"
+    "site": "Regional Finals LAN (simulated event network)",
+    "timezone": "UTC",
+    "context": "The twin is presented as a segmented esports tournament network: production workstations and player stations on the USERS VLAN, tournament services on the SERVERS VLAN, spectator and vendor access on the GUEST VLAN, broadcast/NOC monitoring on the MONITORING VLAN. The assets, telemetry and incidents are simulated; the controls and workflow apply to any enterprise access layer.\n"
   },
   "dataset": {
     "day": "2026-03-17",
@@ -38,7 +39,8 @@
       "source_vlans": [
         20,
         30,
-        40
+        40,
+        50
       ],
       "direction": "both",
       "destination": "Gi1/0/47"
@@ -59,7 +61,7 @@
       "name": "USERS",
       "subnet": "10.20.0.0/24",
       "gateway": "10.20.0.1",
-      "purpose": "Employee workstations and laptops (802.1X)",
+      "purpose": "Production workstations, tournament admin and player stations (802.1X)",
       "dhcp_snooping": true,
       "dai": true
     },
@@ -68,7 +70,7 @@
       "name": "SERVERS",
       "subnet": "10.30.0.0/24",
       "gateway": "10.30.0.1",
-      "purpose": "Lab servers (directory, files, RADIUS, web, git, updates)",
+      "purpose": "Tournament services (directory, files, RADIUS, intranet, git/CI, updates)",
       "dhcp_snooping": true,
       "dai": true
     },
@@ -77,7 +79,7 @@
       "name": "GUEST",
       "subnet": "10.40.0.0/24",
       "gateway": "10.40.0.1",
-      "purpose": "Guest / unauthenticated devices (internet only)",
+      "purpose": "Spectator, vendor and event-floor devices (internet only)",
       "dhcp_snooping": true,
       "dai": true
     },
@@ -95,7 +97,7 @@
       "name": "MONITORING",
       "subnet": "10.99.0.0/24",
       "gateway": "10.99.0.1",
-      "purpose": "Security telemetry collectors and controller",
+      "purpose": "Broadcast/NOC monitoring: security telemetry collector and controller",
       "dhcp_snooping": false,
       "dai": false
     },

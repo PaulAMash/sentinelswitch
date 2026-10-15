@@ -77,6 +77,7 @@ Building configuration...
 | 21:14:40.346 | correlation | interface [resolved] Gi1/0/23 'ENG-LT-047' mode=access access_vlan=20 oper_vlan=20 class=workstation status=connected |
 | 21:14:40.439 | correlation | identity [resolved] ENG-LT-047 (laptop, Lenovo, Ubuntu 24.04 LTS) criticality=standard user=jchen (Jia Chen, Engineering) |
 | 21:14:40.585 | policy | Disposition automatic_containment: Automatic containment approved (severity=high confidence=0.97); action=quarantine_vlan |
+| 21:14:40.587 | authorization | Containment authorized by policy-engine (policy tier automatic_containment); action quarantine_vlan |
 | 21:14:40.589 | incident | Incident INC-2026-0042 opened |
 | 21:14:41.000 | containment | SW01 Gi1/0/23: switchport access vlan 20 → 50 (workflow WF-2026-0042-01) |
 | 21:14:41.050 | telemetry | Telemetry from 10.20.0.47 no longer observed on monitored VLANs (23 further probe flows not seen) |

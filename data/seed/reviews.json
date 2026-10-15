@@ -1,5 +1,16 @@
 [
   {
+    "authorization": {
+      "mode": "analyst",
+      "status": "rejected",
+      "authorized_by": "tlee",
+      "authorized_at": "2026-03-17T10:41:12.000Z",
+      "basis": "policy tier manual_review",
+      "reason": "Manual review required (severity=medium confidence=0.78); below the automatic-containment threshold",
+      "guards": [],
+      "action": "none",
+      "note": "Containment declined after review: Guest laptop VPN client emitted stale gratuitous ARP for its previous network. DAI dropped all three frames; no further activity. Closed as benign."
+    },
     "detection_id": "DET-20260317T10272329-ARP-",
     "status": "closed",
     "opened_at": "2026-03-17T10:27:23.989Z",
@@ -249,6 +260,16 @@
         }
       },
       {
+        "ts": "2026-03-17T10:27:23.991Z",
+        "phase": "authorization",
+        "actor": "sentinel",
+        "message": "Automatic containment NOT authorized: confidence below the automatic tier; analyst approval required",
+        "details": {
+          "mode": "pending",
+          "guards": []
+        }
+      },
+      {
         "ts": "2026-03-17T10:41:12.000Z",
         "phase": "resolution",
         "actor": "tlee",
@@ -261,6 +282,17 @@
     "title": "ARP Spoofing Attempt \u2014 GUEST-VISITOR-01"
   },
   {
+    "authorization": {
+      "mode": "analyst",
+      "status": "rejected",
+      "authorized_by": "tlee",
+      "authorized_at": "2026-03-17T13:12:05.000Z",
+      "basis": "policy tier manual_review",
+      "reason": "Manual review required (severity=medium confidence=0.87); below the automatic-containment threshold",
+      "guards": [],
+      "action": "none",
+      "note": "Containment declined after review: HR user connected a personal laptop through the docking station on HR-WS-016's drop. Frames were restricted by port security; user counseled, personal device removed. Closed."
+    },
     "detection_id": "DET-20260317T12365740-MAC-",
     "status": "closed",
     "opened_at": "2026-03-17T12:36:58.103Z",
@@ -492,6 +524,16 @@
         }
       },
       {
+        "ts": "2026-03-17T12:36:58.105Z",
+        "phase": "authorization",
+        "actor": "sentinel",
+        "message": "Automatic containment NOT authorized: confidence below the automatic tier; analyst approval required",
+        "details": {
+          "mode": "pending",
+          "guards": []
+        }
+      },
+      {
         "ts": "2026-03-17T13:12:05.000Z",
         "phase": "resolution",
         "actor": "tlee",
@@ -504,6 +546,17 @@
     "title": "MAC Address Change \u2014 HR-WS-016"
   },
   {
+    "authorization": {
+      "mode": "analyst",
+      "status": "rejected",
+      "authorized_by": "tlee",
+      "authorized_at": "2026-03-17T13:21:40.000Z",
+      "basis": "policy tier monitor",
+      "reason": "Monitor only (severity=medium confidence=0.61)",
+      "guards": [],
+      "action": "none",
+      "note": "Containment declined after review: Authorized vulnerability scan by IT-LT-037 under change CHG-2026-118. Logged only."
+    },
     "detection_id": "DET-20260317T13051421-PORT",
     "status": "closed",
     "opened_at": "2026-03-17T13:05:14.928Z",
@@ -764,6 +817,17 @@
     "title": "Port Scan \u2014 IT-LT-037"
   },
   {
+    "authorization": {
+      "mode": "analyst",
+      "status": "rejected",
+      "authorized_by": "tlee",
+      "authorized_at": "2026-03-17T14:52:40.000Z",
+      "basis": "policy tier manual_review",
+      "reason": "Manual review required (severity=medium confidence=0.80); below the automatic-containment threshold",
+      "guards": [],
+      "action": "none",
+      "note": "Containment declined after review: Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign."
+    },
     "detection_id": "DET-20260317T14192804-DNS-",
     "status": "closed",
     "opened_at": "2026-03-17T14:19:28.736Z",
@@ -1016,6 +1080,16 @@
         }
       },
       {
+        "ts": "2026-03-17T14:19:28.738Z",
+        "phase": "authorization",
+        "actor": "sentinel",
+        "message": "Automatic containment NOT authorized: confidence below the automatic tier; analyst approval required",
+        "details": {
+          "mode": "pending",
+          "guards": []
+        }
+      },
+      {
         "ts": "2026-03-17T14:52:40.000Z",
         "phase": "resolution",
         "actor": "tlee",
@@ -1026,5 +1100,279 @@
     "severity": "medium",
     "confidence": 0.8,
     "title": "DNS Anomaly \u2014 FIN-WS-014"
+  },
+  {
+    "authorization": {
+      "mode": "automatic",
+      "status": "pending",
+      "authorized_by": "policy-engine",
+      "authorized_at": null,
+      "basis": "policy tier manual_review (before guards: automatic_containment)",
+      "reason": "Tier 'automatic_containment' downgraded to 'manual_review' by guard(s): critical_assets (severity=high confidence=0.96)",
+      "guards": [
+        "critical_assets"
+      ],
+      "action": "none",
+      "note": null
+    },
+    "detection_id": "DET-20260317T20371618-PORT",
+    "status": "review",
+    "opened_at": "2026-03-17T20:37:16.899Z",
+    "closed_at": null,
+    "closed_by": null,
+    "note": null,
+    "scenario": "critical-asset-scan",
+    "rule": "port-scan",
+    "actor": {
+      "device": "SRV-GIT01",
+      "ip": "10.30.0.50",
+      "mac": "AC:1F:6B:3B:0C:50",
+      "interface": "Gi1/0/12",
+      "vlan": 30
+    },
+    "attribution": {
+      "ip": "10.30.0.50",
+      "mac": "AC:1F:6B:3B:0C:50",
+      "switch": "SW01",
+      "interface": "Gi1/0/12",
+      "vlan": 30,
+      "access_vlan": 30,
+      "port_class": "server",
+      "port_mode": "access",
+      "protected": false,
+      "trunk": false,
+      "span_destination": false,
+      "device": "SRV-GIT01",
+      "user": null,
+      "department": null,
+      "criticality": "high",
+      "vendor": "Supermicro",
+      "resolved": true,
+      "confidence": 1.0,
+      "flags": [],
+      "steps": [
+        {
+          "name": "dhcp_binding",
+          "status": "resolved",
+          "source": "show ip dhcp snooping binding",
+          "input": "10.30.0.50",
+          "output": "AC:1F:6B:3B:0C:50",
+          "detail": "10.30.0.50 -> AC:1F:6B:3B:0C:50 (static, VLAN 30, Gi1/0/12, static)",
+          "ts": "2026-03-17T20:37:16.416Z"
+        },
+        {
+          "name": "mac_table",
+          "status": "resolved",
+          "source": "show mac address-table address",
+          "input": "AC:1F:6B:3B:0C:50",
+          "output": "Gi1/0/12",
+          "detail": "AC:1F:6B:3B:0C:50 -> SW01 Gi1/0/12 (VLAN 30, DYNAMIC)",
+          "ts": "2026-03-17T20:37:16.657Z"
+        },
+        {
+          "name": "interface",
+          "status": "resolved",
+          "source": "show interfaces switchport",
+          "input": "Gi1/0/12",
+          "output": "VLAN 30",
+          "detail": "Gi1/0/12 'SRV-GIT01 (git / CI)' mode=access access_vlan=30 oper_vlan=30 class=server status=connected",
+          "ts": "2026-03-17T20:37:16.657Z"
+        },
+        {
+          "name": "identity",
+          "status": "resolved",
+          "source": "asset inventory / AAA session",
+          "input": "AC:1F:6B:3B:0C:50",
+          "output": "SRV-GIT01",
+          "detail": "SRV-GIT01 (git, Supermicro, Ubuntu 24.04 LTS (Gitea)) criticality=high",
+          "ts": "2026-03-17T20:37:16.746Z"
+        }
+      ],
+      "binding": {
+        "mac": "AC:1F:6B:3B:0C:50",
+        "ip": "10.30.0.50",
+        "vlan": 30,
+        "interface": "Gi1/0/12",
+        "lease_expires": "2036-03-14T00:00:00.000Z",
+        "binding_type": "static",
+        "lease_start": "2026-03-15T21:00:00.000Z"
+      },
+      "mac_entries": [
+        {
+          "mac": "AC:1F:6B:3B:0C:50",
+          "vlan": 30,
+          "interface": "Gi1/0/12",
+          "entry_type": "DYNAMIC",
+          "learned_at": "2026-03-15T21:00:00.000Z"
+        }
+      ],
+      "observations": [
+        {
+          "mac": "AC:1F:6B:3B:0C:50",
+          "interface": "Gi1/0/12",
+          "vlan": 30,
+          "first_seen": "2026-03-17T00:00:00.000Z",
+          "last_seen": "2026-03-17T00:00:00.000Z"
+        }
+      ],
+      "started_at": "2026-03-17T20:37:16.186Z",
+      "completed_at": "2026-03-17T20:37:16.746Z",
+      "impersonated_device": null,
+      "port_owner": "SRV-GIT01"
+    },
+    "decision": {
+      "disposition": "manual_review",
+      "action": "none",
+      "reason": "Tier 'automatic_containment' downgraded to 'manual_review' by guard(s): critical_assets (severity=high confidence=0.96)",
+      "factors": [
+        {
+          "factor": "severity",
+          "value": "high"
+        },
+        {
+          "factor": "confidence",
+          "value": 0.96
+        },
+        {
+          "factor": "corroborating_sources",
+          "value": 2
+        },
+        {
+          "factor": "actor_class",
+          "value": "compromised_host"
+        },
+        {
+          "factor": "interface",
+          "value": "Gi1/0/12"
+        },
+        {
+          "factor": "port_class",
+          "value": "server"
+        },
+        {
+          "factor": "asset_criticality",
+          "value": "high"
+        },
+        {
+          "factor": "protected",
+          "value": false
+        }
+      ],
+      "guards_triggered": [
+        "critical_assets"
+      ],
+      "quarantine_vlan": null,
+      "tier_before_guards": "automatic_containment"
+    },
+    "timeline": [
+      {
+        "ts": "2026-03-17T20:37:12.418Z",
+        "phase": "telemetry",
+        "actor": "telemetry",
+        "message": "TCP port sweep from 10.30.0.50: 100 ports x 6 hosts in 10.30.0.0/24 (240 probes/s)",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T20:37:12.980Z",
+        "phase": "alert",
+        "actor": "zeek",
+        "message": "Zeek notice Scan::Port_Scan: 10.30.0.50 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T20:37:14.926Z",
+        "phase": "alert",
+        "actor": "suricata",
+        "message": "Suricata sid 1000011 (medium): SENTINELSWITCH RECON TCP port sweep from internal host",
+        "details": {
+          "src": "10.30.0.50",
+          "dest": "10.30.0.30",
+          "dest_port": 1028
+        }
+      },
+      {
+        "ts": "2026-03-17T20:37:16.186Z",
+        "phase": "detection",
+        "actor": "sentinel",
+        "message": "Rule port-scan matched: severity high, confidence 0.96 (base 0.70; zeek_port_scan+0.12, many_ports+0.08, server_targets+0.06)",
+        "details": {
+          "detection_id": "DET-20260317T20371618-PORT",
+          "sources": [
+            "suricata",
+            "zeek"
+          ]
+        }
+      },
+      {
+        "ts": "2026-03-17T20:37:16.267Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "Resolving actor 10.30.0.50 through DHCP snooping, MAC table and inventory",
+        "details": null
+      },
+      {
+        "ts": "2026-03-17T20:37:16.416Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "dhcp_binding [resolved] 10.30.0.50 -> AC:1F:6B:3B:0C:50 (static, VLAN 30, Gi1/0/12, static)",
+        "details": {
+          "source": "show ip dhcp snooping binding"
+        }
+      },
+      {
+        "ts": "2026-03-17T20:37:16.657Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "mac_table [resolved] AC:1F:6B:3B:0C:50 -> SW01 Gi1/0/12 (VLAN 30, DYNAMIC)",
+        "details": {
+          "source": "show mac address-table address"
+        }
+      },
+      {
+        "ts": "2026-03-17T20:37:16.657Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "interface [resolved] Gi1/0/12 'SRV-GIT01 (git / CI)' mode=access access_vlan=30 oper_vlan=30 class=server status=connected",
+        "details": {
+          "source": "show interfaces switchport"
+        }
+      },
+      {
+        "ts": "2026-03-17T20:37:16.746Z",
+        "phase": "correlation",
+        "actor": "sentinel",
+        "message": "identity [resolved] SRV-GIT01 (git, Supermicro, Ubuntu 24.04 LTS (Gitea)) criticality=high",
+        "details": {
+          "source": "asset inventory / AAA session"
+        }
+      },
+      {
+        "ts": "2026-03-17T20:37:16.899Z",
+        "phase": "policy",
+        "actor": "sentinel",
+        "message": "Disposition manual_review: Tier 'automatic_containment' downgraded to 'manual_review' by guard(s): critical_assets (severity=high confidence=0.96)",
+        "details": {
+          "action": "none",
+          "guards": [
+            "critical_assets"
+          ]
+        }
+      },
+      {
+        "ts": "2026-03-17T20:37:16.901Z",
+        "phase": "authorization",
+        "actor": "sentinel",
+        "message": "Automatic containment NOT authorized: guard(s) critical_assets require analyst approval",
+        "details": {
+          "mode": "pending",
+          "guards": [
+            "critical_assets"
+          ]
+        }
+      }
+    ],
+    "severity": "high",
+    "confidence": 0.96,
+    "title": "Critical Asset Scan \u2014 SRV-GIT01"
   }
 ]

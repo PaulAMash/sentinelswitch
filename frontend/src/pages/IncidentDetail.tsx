@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { kv } from '../lib/kv'
+import { kv, type KVRow } from '../lib/kv'
 import { Link, useParams } from 'react-router-dom'
-import { endpoints } from '../lib/api'
+import { endpoints, type Authorization } from '../lib/api'
 import { useApi } from '../lib/hooks'
 import { Card, Chip, KV, Loading, Sev, Tabs, Term, Ts } from '../components/ui'
 import { Chain, Steps } from '../components/Chain'
@@ -17,18 +17,23 @@ export function IncidentDetail() {
   const { data, error, reload } = useApi(() => endpoints.incident(id), [id])
   const [tab, setTab] = useState<Tab>('timeline')
   const [busy, setBusy] = useState(false)
+  const [restoreError, setRestoreError] = useState<string | null>(null)
   if (!data) return <Loading error={error} />
   const inc = data.incident
   const det = data.detection
   const att = data.attribution
   const action = data.actions.find((a) => ['verified', 'restored', 'failed'].includes(a.status)) ?? data.actions[0]
+  const auth: Authorization | undefined = inc.authorization ?? action?.authorization
   const metrics = (det && att && action) ? { ttd: null as number | null } : null
   void metrics
   const restore = async () => {
     setBusy(true)
+    setRestoreError(null)
     try {
       await endpoints.restore(inc.id, { actor: 'tlee', note: 'Endpoint re-imaged and cleared by IT; returning to production VLAN.' })
       reload()
+    } catch (e) {
+      setRestoreError((e as Error).message)
     } finally {
       setBusy(false)
     }
@@ -56,6 +61,7 @@ export function IncidentDetail() {
             </button>
           )}
           <Link className="btn" to={`/evidence/${inc.id}`}>Evidence bundle</Link>
+          {restoreError && <div className="error">Restore failed: {restoreError}</div>}
         </div>
       </div>
 
@@ -64,7 +70,8 @@ export function IncidentDetail() {
         <Card><KV rows={[kv('ip', inc.ip ?? '—'), kv('mac', inc.mac ?? '—'), kv('attribution', `${((inc.attribution_confidence ?? 1) * 100).toFixed(0)}% · ${inc.flags.length ? inc.flags.join(', ') : 'clean'}`)]} /></Card>
         <Card><KV rows={[kv('switch', inc.switch), kv('interface', inc.interface ?? '—'), kv('port class', inc.port_class ?? '—')]} /></Card>
         <Card><KV rows={[kv('original vlan', vlanName(inc.original_vlan)), kv('current vlan', vlanName(inc.current_vlan)), kv('mechanism', inc.action === 'quarantine_vlan' ? 'quarantine VLAN' : inc.action === 'port_shutdown' ? 'administrative shutdown' : inc.mechanism ?? '—')]} /></Card>
-        <Card><KV rows={[kv('opened', <Ts ts={inc.opened_at} />), kv('contained', <Ts ts={inc.contained_at} />), kv('closed', inc.closed_at ? <><Ts ts={inc.closed_at} /> <span className="dim">by {inc.closed_by}</span></> : '—')]} /></Card>
+        <Card><KV rows={[kv('opened', <Ts ts={inc.opened_at} date />), kv('contained', <Ts ts={inc.contained_at} date />), kv('closed', inc.closed_at ? <><Ts ts={inc.closed_at} date /> <span className="dim">by {inc.closed_by}</span></> : '—')]} /></Card>
+        <Card><KV rows={authRows(auth)} /></Card>
       </div>
 
       <Card title="Correlation chain" sub="IP → DHCP binding → MAC → MAC table → port → VLAN → containment">
@@ -145,6 +152,26 @@ export function IncidentDetail() {
               <div className="stack">
                 <h3>Policy evaluation</h3>
                 <DecisionView incidentId={inc.id} />
+                <h3 style={{ marginTop: 6 }}>Authorization</h3>
+                {auth ? (
+                  <>
+                    <div className="row">
+                      <Chip kind={auth.status} />
+                      <span className="mono">{auth.mode}</span>
+                      <span className="dim">{auth.action}</span>
+                    </div>
+                    <KV rows={[
+                      kv('authorized by', auth.authorized_by),
+                      kv('authorized at', <Ts ts={auth.authorized_at} date />),
+                      kv('basis', auth.basis),
+                      kv('reason', <span className="wrap">{auth.reason}</span>),
+                      kv('guards', auth.guards.length ? <span className="mono">{auth.guards.join(', ')}</span> : 'none'),
+                      kv('note', auth.note ?? '—')]} />
+                    <div className="small dim">The authorization record is written separately from the policy decision and from execution: the policy tier says what the engine would do, the authorization says who allowed it and on what basis.</div>
+                  </>
+                ) : (
+                  <div className="dim">No authorization record is attached to this incident.</div>
+                )}
               </div>
               <div className="stack">
                 <h3>Containment action</h3>
@@ -159,7 +186,7 @@ export function IncidentDetail() {
                   kv('verified', <><Ts ts={action.verified_at} /> {action.verification?.ok ? <Chip kind="ok">ok</Chip> : <Chip kind="fail">failed</Chip>}</>),
                   kv('actor', action.actor),
                   kv('status', <Chip kind={action.status} />),
-                  ...(action.restored_at ? [kv('restored', <><Ts ts={action.restored_at} /> by {action.restored_by} — {action.restore_note}</>)] : [])]} />
+                  ...(action.restored_at ? [kv('restored', <><Ts ts={action.restored_at} date /> by {action.restored_by} — {action.restore_note}</>)] : [])]} />
                 <Term text={action.transcript} hl={['switchport access vlan', 'shutdown']} />
               </div>
             </div>
@@ -220,6 +247,19 @@ function DecisionView({ incidentId }: { incidentId: string }) {
       <div className="small dim">guards triggered: {d.guards_triggered.length ? d.guards_triggered.join(', ') : 'none — protected ports, trunks, SPAN destination and critical assets are exempt from automatic action'}</div>
     </>
   )
+}
+
+function authRows(a: Authorization | undefined): KVRow[] {
+  if (!a) return [kv('authorization', <span className="dim">not recorded</span>)]
+  return [
+    kv('authorization', <><Chip kind={a.status} /> <span className="dim">{a.mode}</span></>),
+    kv('authorized by', a.authorized_by),
+    kv('authorized at', <Ts ts={a.authorized_at} date />),
+    // a zero-width space after each underscore lets long policy-tier names wrap inside the narrow card
+    kv('basis', <span className="wrap">{a.basis.replaceAll('_', '_\u200b')}</span>),
+    kv('guards', a.guards.length ? <span className="mono">{a.guards.join(', ')}</span> : 'none'),
+    kv('note', a.note ?? '—'),
+  ]
 }
 
 function describe(name: string): string {

@@ -43,9 +43,41 @@ class ContainmentAction:
     restore_note: str | None = None
     restore_transcript: str | None = None
     notes: list[str] = field(default_factory=list)
+    authorization: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+def authorization_record(
+    decision: Decision,
+    *,
+    at: datetime,
+    mode: str = "automatic",
+    authorized_by: str = "policy-engine",
+    note: str | None = None,
+) -> dict[str, Any]:
+    """The authorization decision is recorded separately from execution and from verification.
+
+    mode: automatic (policy tier) | analyst (manual approval) | rejected (explicitly declined)
+    """
+    authorized = decision.disposition == "automatic_containment" if mode == "automatic" else mode == "analyst"
+    return {
+        "mode": mode,
+        "status": "authorized" if authorized else ("rejected" if mode == "rejected" else "pending"),
+        "authorized_by": authorized_by,
+        "authorized_at": ts_iso(at) if authorized or mode == "rejected" else None,
+        "basis": f"policy tier {decision.disposition}"
+        + (
+            f" (before guards: {decision.tier_before_guards})"
+            if decision.tier_before_guards and decision.tier_before_guards != decision.disposition
+            else ""
+        ),
+        "reason": decision.reason,
+        "guards": list(decision.guards_triggered),
+        "action": decision.action,
+        "note": note,
+    }
 
 
 class ContainmentController:
@@ -70,11 +102,15 @@ class ContainmentController:
         clock: Clock,
         timing: dict[str, float],
         native_state: str | None = None,
+        authorization: dict[str, Any] | None = None,
     ) -> ContainmentAction:
         requested = clock.now
         wf = self._workflow_id(incident_id, requested)
         iface = attribution.interface
         mechanism = MECHANISMS.get(decision.action, decision.action)
+        if authorization is None:
+            # Authorization is an input to execution, never something the executor grants itself.
+            raise ValueError("contain() requires an authorization record (see authorization_record())")
         action = ContainmentAction(
             workflow_id=wf,
             incident_id=incident_id,
@@ -91,8 +127,9 @@ class ContainmentController:
             applied_at=None,
             verified_at=None,
             status="pending",
+            authorization=authorization,
         )
-        if decision.disposition != "automatic_containment" or decision.action == "none":
+        if authorization.get("status") != "authorized" or decision.action == "none":
             action.status = "not_applicable"
             action.notes.append(f"Disposition {decision.disposition}; no automatic action")
             return action

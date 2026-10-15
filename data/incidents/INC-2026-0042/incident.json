@@ -42,6 +42,17 @@
   "attribution_confidence": 1.0,
   "flags": [],
   "impersonated_device": null,
+  "authorization": {
+    "mode": "automatic",
+    "status": "authorized",
+    "authorized_by": "policy-engine",
+    "authorized_at": "2026-03-17T21:14:40.585Z",
+    "basis": "policy tier automatic_containment",
+    "reason": "Automatic containment approved (severity=high confidence=0.97); action=quarantine_vlan",
+    "guards": [],
+    "action": "quarantine_vlan",
+    "note": null
+  },
   "workflow_id": "WF-2026-0042-01",
   "mechanism": "SentinelSwitch VLAN reassignment (quarantine VLAN)",
   "contained_at": "2026-03-17T21:14:41.125Z",

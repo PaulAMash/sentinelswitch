@@ -546,6 +546,17 @@
     "disposition": "manual_review",
     "incident_id": null,
     "review": {
+      "authorization": {
+        "mode": "analyst",
+        "status": "rejected",
+        "authorized_by": "tlee",
+        "authorized_at": "2026-03-17T10:41:12.000Z",
+        "basis": "policy tier manual_review",
+        "reason": "Manual review required (severity=medium confidence=0.78); below the automatic-containment threshold",
+        "guards": [],
+        "action": "none",
+        "note": "Containment declined after review: Guest laptop VPN client emitted stale gratuitous ARP for its previous network. DAI dropped all three frames; no further activity. Closed as benign."
+      },
       "detection_id": "DET-20260317T10272329-ARP-",
       "status": "closed",
       "opened_at": "2026-03-17T10:27:23.989Z",
@@ -867,6 +878,17 @@
     "disposition": "manual_review",
     "incident_id": null,
     "review": {
+      "authorization": {
+        "mode": "analyst",
+        "status": "rejected",
+        "authorized_by": "tlee",
+        "authorized_at": "2026-03-17T13:12:05.000Z",
+        "basis": "policy tier manual_review",
+        "reason": "Manual review required (severity=medium confidence=0.87); below the automatic-containment threshold",
+        "guards": [],
+        "action": "none",
+        "note": "Containment declined after review: HR user connected a personal laptop through the docking station on HR-WS-016's drop. Frames were restricted by port security; user counseled, personal device removed. Closed."
+      },
       "detection_id": "DET-20260317T12365740-MAC-",
       "status": "closed",
       "opened_at": "2026-03-17T12:36:58.103Z",
@@ -948,6 +970,17 @@
     "disposition": "monitor",
     "incident_id": null,
     "review": {
+      "authorization": {
+        "mode": "analyst",
+        "status": "rejected",
+        "authorized_by": "tlee",
+        "authorized_at": "2026-03-17T13:21:40.000Z",
+        "basis": "policy tier monitor",
+        "reason": "Monitor only (severity=medium confidence=0.61)",
+        "guards": [],
+        "action": "none",
+        "note": "Containment declined after review: Authorized vulnerability scan by IT-LT-037 under change CHG-2026-118. Logged only."
+      },
       "detection_id": "DET-20260317T13051421-PORT",
       "status": "closed",
       "opened_at": "2026-03-17T13:05:14.928Z",
@@ -1035,12 +1068,117 @@
     "disposition": "manual_review",
     "incident_id": null,
     "review": {
+      "authorization": {
+        "mode": "analyst",
+        "status": "rejected",
+        "authorized_by": "tlee",
+        "authorized_at": "2026-03-17T14:52:40.000Z",
+        "basis": "policy tier manual_review",
+        "reason": "Manual review required (severity=medium confidence=0.80); below the automatic-containment threshold",
+        "guards": [],
+        "action": "none",
+        "note": "Containment declined after review: Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign."
+      },
       "detection_id": "DET-20260317T14192804-DNS-",
       "status": "closed",
       "opened_at": "2026-03-17T14:19:28.736Z",
       "closed_at": "2026-03-17T14:52:40.000Z",
       "closed_by": "tlee",
       "note": "Endpoint-management agent on FIN-WS-014 was querying decommissioned telemetry hostnames after a failed update. Agent updated; queries stopped. Closed as benign."
+    }
+  },
+  {
+    "id": "DET-20260317T20371618-PORT",
+    "rule": "port-scan",
+    "rule_name": "Port Scan",
+    "class": "compromised_host",
+    "mitre": [
+      "T1046"
+    ],
+    "actor_key": "actor_ip",
+    "actor_value": "10.30.0.50",
+    "actor": {
+      "key": "actor_ip",
+      "value": "10.30.0.50",
+      "device": "SRV-GIT01",
+      "ip": "10.30.0.50",
+      "mac": "AC:1F:6B:3B:0C:50",
+      "interface": "Gi1/0/12",
+      "vlan": 30,
+      "user": null
+    },
+    "ts": "2026-03-17T20:37:16.186Z",
+    "trigger_ts": "2026-03-17T20:37:14.926Z",
+    "severity": "high",
+    "confidence": 0.96,
+    "base_confidence": 0.7,
+    "features": [
+      {
+        "id": "zeek_port_scan",
+        "label": "Zeek Scan::Port_Scan for the same source",
+        "weight": 0.12,
+        "matched": true,
+        "evidence": "1 matching event(s): Scan::Port_Scan: 10.30.0.50 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s"
+      },
+      {
+        "id": "many_ports",
+        "label": "At least 100 distinct destination ports",
+        "weight": 0.08,
+        "matched": true,
+        "evidence": "ports_scanned=100"
+      },
+      {
+        "id": "server_targets",
+        "label": "Targets include the SERVERS VLAN",
+        "weight": 0.06,
+        "matched": true,
+        "evidence": "targets_servers=True"
+      },
+      {
+        "id": "authorized_scanner",
+        "label": "Source is an authorized scanner",
+        "weight": -0.35,
+        "matched": false,
+        "evidence": null
+      }
+    ],
+    "summary": "Port Scan: SENTINELSWITCH RECON TCP port sweep from internal host",
+    "event_refs": [
+      {
+        "ts": "2026-03-17T20:37:12.980Z",
+        "source": "zeek",
+        "summary": "Scan::Port_Scan: 10.30.0.50 scanned at least 100 unique ports of host 10.30.0.10 in 0m0s"
+      },
+      {
+        "ts": "2026-03-17T20:37:14.926Z",
+        "source": "suricata",
+        "summary": "SENTINELSWITCH RECON TCP port sweep from internal host"
+      }
+    ],
+    "scenario": "critical-asset-scan",
+    "instance": "day",
+    "disposition": "manual_review",
+    "incident_id": null,
+    "review": {
+      "authorization": {
+        "mode": "automatic",
+        "status": "pending",
+        "authorized_by": "policy-engine",
+        "authorized_at": null,
+        "basis": "policy tier manual_review (before guards: automatic_containment)",
+        "reason": "Tier 'automatic_containment' downgraded to 'manual_review' by guard(s): critical_assets (severity=high confidence=0.96)",
+        "guards": [
+          "critical_assets"
+        ],
+        "action": "none",
+        "note": null
+      },
+      "detection_id": "DET-20260317T20371618-PORT",
+      "status": "review",
+      "opened_at": "2026-03-17T20:37:16.899Z",
+      "closed_at": null,
+      "closed_by": null,
+      "note": null
     }
   }
 ]

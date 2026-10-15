@@ -23,6 +23,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "network-management",
     "known": true
   },
   {
@@ -49,6 +50,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "network-management",
     "known": true
   },
   {
@@ -75,6 +77,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "network-management",
     "known": true
   },
   {
@@ -105,6 +108,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "broadcast-noc",
     "known": true
   },
   {
@@ -137,6 +141,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-services",
     "known": true
   },
   {
@@ -165,6 +170,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-services",
     "known": true
   },
   {
@@ -194,6 +200,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-services",
     "known": true
   },
   {
@@ -222,6 +229,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-services",
     "known": true
   },
   {
@@ -251,6 +259,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-services",
     "known": true
   },
   {
@@ -279,6 +288,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-services",
     "known": true
   },
   {
@@ -302,6 +312,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "production-workstation",
     "known": true
   },
   {
@@ -325,6 +336,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "production-workstation",
     "known": true
   },
   {
@@ -351,6 +363,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "production-workstation",
     "known": true
   },
   {
@@ -374,6 +387,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-administration",
     "known": true
   },
   {
@@ -397,6 +411,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-administration",
     "known": true
   },
   {
@@ -420,6 +435,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-administration",
     "known": true
   },
   {
@@ -443,6 +459,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "player-station",
     "known": true
   },
   {
@@ -466,6 +483,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "player-station",
     "known": true
   },
   {
@@ -492,6 +510,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "production-workstation",
     "known": true
   },
   {
@@ -515,6 +534,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "broadcast-infrastructure",
     "known": true
   },
   {
@@ -541,6 +561,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": "Machine certificate expired overnight; renewed 08:37",
+    "zone": "broadcast-infrastructure",
     "known": true
   },
   {
@@ -567,6 +588,7 @@
     "dhcp_reservation": false,
     "asset_tag": "MER-LT-0047",
     "notes": null,
+    "zone": "production-workstation",
     "known": true
   },
   {
@@ -590,6 +612,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "player-station",
     "known": true
   },
   {
@@ -613,6 +636,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-administration",
     "known": true
   },
   {
@@ -636,6 +660,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-administration",
     "known": true
   },
   {
@@ -662,6 +687,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "production-workstation",
     "known": true
   },
   {
@@ -685,6 +711,7 @@
     "dhcp_reservation": true,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-administration",
     "known": true
   },
   {
@@ -708,6 +735,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-administration",
     "known": true
   },
   {
@@ -731,6 +759,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "tournament-administration",
     "known": true
   },
   {
@@ -754,6 +783,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "player-station",
     "known": true
   },
   {
@@ -780,6 +810,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "production-workstation",
     "known": true
   },
   {
@@ -805,6 +836,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "network-management",
     "known": true
   },
   {
@@ -833,6 +865,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": "Authorized vulnerability scanner under change CHG-2026-118",
+    "zone": "network-management",
     "known": true
   },
   {
@@ -861,6 +894,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "guest-event-access",
     "known": true
   },
   {
@@ -887,6 +921,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "broadcast-infrastructure",
     "known": true
   },
   {
@@ -915,6 +950,7 @@
     "dhcp_reservation": false,
     "asset_tag": null,
     "notes": null,
+    "zone": "guest-event-access",
     "known": true
   },
   {

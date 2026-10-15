@@ -62,7 +62,7 @@ export function Overview() {
         <Kpi label="802.1X success" value={pct(k.auth_success_rate)} tone="good" hint={`${k.auth_accepts} accepts · ${k.auth_rejects} rejects`} />
         <Kpi label="Traffic observed" value={k.traffic_human} hint={`${fmtNum(k.connections)} connections on SPAN`} />
         <Kpi label="Active VLANs" value={k.active_vlans} hint={k.active_vlan_ids.join(', ')} />
-        <Kpi label="Mean time to detect" value={fmtSeconds(k.mttd)} tone="accent" hint="8 validation scenarios" />
+        <Kpi label="Mean time to detect" value={fmtSeconds(k.mttd)} tone="accent" hint={`${k.validation_total ?? "—"} validation scenarios`} />
         <Kpi label="Mean time to contain" value={fmtSeconds(k.mttc)} tone="accent" hint="detection → verified" />
       </div>
 

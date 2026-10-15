@@ -143,6 +143,91 @@
     }
   },
   {
+    "id": "critical-asset-scan",
+    "name": "Critical Asset Scan",
+    "short": "Port sweep originating from a high-criticality server; automation is withheld by the policy guard",
+    "class": "compromised_host",
+    "rule": "port-scan",
+    "mitre": [
+      "T1046"
+    ],
+    "description": "The CI runner on SRV-GIT01 starts a dependency scanner that was misconfigured to probe the whole SERVERS subnet. Suricata and Zeek detect the sweep and the correlation rule scores it high enough for automatic containment, but the policy guard refuses automatic action against a high-criticality server: the detection is routed to manual review with the attribution attached, and nothing changes on the switch until an analyst decides. This is the negative path of the response workflow.",
+    "flagship": false,
+    "actor": {
+      "device": "SRV-GIT01",
+      "ip": "10.30.0.50",
+      "mac": "AC:1F:6B:3B:0C:50",
+      "interface": "Gi1/0/12",
+      "vlan": 30
+    },
+    "timing": {
+      "open": 0.081,
+      "dhcp": 0.149,
+      "mac": 0.241,
+      "identity": 0.089,
+      "policy": 0.153,
+      "apply": 0.421,
+      "verify": 0.127,
+      "evidence": 0.352
+    },
+    "instances": {
+      "day": {
+        "start": "2026-03-17T20:37:12.418Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "manual_review",
+          "action": "none",
+          "severity": "high",
+          "confidence": 0.96,
+          "guard": "critical_assets"
+        },
+        "parameters": {
+          "targets": [
+            "10.30.0.10",
+            "10.30.0.20",
+            "10.30.0.30",
+            "10.30.0.40",
+            "10.30.0.60",
+            "10.30.0.1"
+          ],
+          "ports_per_host": 100,
+          "rate_pps": 240,
+          "sensor_latency": 0.012,
+          "detect_latency": 0.06
+        },
+        "resolution": null,
+        "actor_override": null
+      },
+      "validation": {
+        "start": "2026-03-17T20:37:12.418Z",
+        "incident_id": null,
+        "expected": {
+          "disposition": "manual_review",
+          "action": "none",
+          "severity": "high",
+          "confidence": 0.96,
+          "guard": "critical_assets"
+        },
+        "parameters": {
+          "targets": [
+            "10.30.0.10",
+            "10.30.0.20",
+            "10.30.0.30",
+            "10.30.0.40",
+            "10.30.0.60",
+            "10.30.0.1"
+          ],
+          "ports_per_host": 100,
+          "rate_pps": 240,
+          "sensor_latency": 0.012,
+          "detect_latency": 0.06
+        },
+        "resolution": null,
+        "actor_override": null
+      }
+    }
+  },
+  {
     "id": "dns-anomaly",
     "name": "DNS Anomaly",
     "short": "Host generates an abnormal volume of failing DNS lookups",

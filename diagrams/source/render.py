@@ -90,6 +90,7 @@ class Renderer:
         self.h = int(spec.get("height", 900))
         self.nodes: dict[str, dict[str, Any]] = {n["id"]: n for n in spec.get("nodes", [])}
         self.parts: list[str] = []
+        self._markers: dict[str, str] = {}
 
     # ---- geometry --------------------------------------------------------------------------
     def box(self, n: dict[str, Any]) -> tuple[float, float, float, float]:
@@ -251,8 +252,6 @@ class Renderer:
                 _text(mx, my + 3.5, label, 10.5, PALETTE["text2"], 500, "middle", mono=e.get("mono", False))
             )
 
-    _markers: dict[str, str] = {}
-
     def _marker(self, c: str) -> str:
         key = c.replace("#", "").replace("(", "").replace(")", "").replace(",", "").replace(".", "")
         self._markers[key] = c
@@ -287,7 +286,7 @@ class Renderer:
                 self.h - 14,
                 s.get(
                     "footer",
-                    "SentinelSwitch · Autonomous Network Detection & Response Lab · digital twin with synthetic telemetry",
+                    "SentinelSwitch · Evidence-Driven Network Security & Response Lab · digital twin with synthetic telemetry",
                 ),
                 11,
                 PALETTE["muted"],
@@ -295,7 +294,7 @@ class Renderer:
             _text(
                 self.w - 24,
                 self.h - 14,
-                s.get("footer_right", "Detect · Attribute · Contain"),
+                s.get("footer_right", "Detect · Attribute · Authorize · Contain · Verify"),
                 11,
                 PALETTE["muted"],
                 600,

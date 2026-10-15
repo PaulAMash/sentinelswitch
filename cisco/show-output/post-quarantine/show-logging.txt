@@ -9,7 +9,7 @@ No Inactive Message Discriminator.
 
     Console logging: level informational, 0 messages logged, xml disabled, filtering disabled
     Monitor logging: level debugging, 0 messages logged, xml disabled, filtering disabled
-    Buffer logging:  level informational, 2183 messages logged, xml disabled, filtering disabled
+    Buffer logging:  level informational, 2185 messages logged, xml disabled, filtering disabled
     Exception Logging: size (4096 bytes)
     Count and timestamp logging messages: disabled
     File logging: disabled
@@ -17,7 +17,7 @@ No Inactive Message Discriminator.
 
 No active filter modules.
 
-    Trap logging: level informational, 2183 message lines logged
+    Trap logging: level informational, 2185 message lines logged
         Logging to 10.99.0.10  (udp port 514, audit disabled, link up), 0 message lines rate-limited, 0 message lines dropped-by-MD, xml disabled, sequence number disabled, filtering disabled
 
 Log Buffer (65536 bytes):
@@ -232,161 +232,163 @@ Log Buffer (65536 bytes):
 002024: Mar 17 12:15:04.103: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.2737) on Interface Gi1/0/27 AuditSessionID 0A0A0A020000001B0035E84E
 002025: Mar 17 12:20:03.965: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3748) on Interface Gi1/0/37 AuditSessionID 0A0A0A0200000025003A51FB
 002026: Mar 17 12:20:03.992: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3748) on Interface Gi1/0/37 AuditSessionID 0A0A0A0200000025003A51FB
-002027: Mar 17 12:31:22.452: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A02000000150022E579
-002028: Mar 17 12:31:22.479: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A02000000150022E579
-002029: Mar 17 12:36:10.318: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/16, changed state to down
-002030: Mar 17 12:36:10.326: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/16, changed state to down
-002031: Mar 17 12:36:50.018: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/16, changed state to up
-002032: Mar 17 12:36:51.022: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/16, changed state to up
-002033: Mar 17 12:36:52.318: %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 8c71.f844.aa16 on port GigabitEthernet1/0/16.
-002034: Mar 17 12:36:52.728: %MAB-5-FAIL: Authentication failed for client (8c71.f844.aa16) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010004544C1
-002035: Mar 17 12:37:55.666: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023A014
-002036: Mar 17 12:37:55.693: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023A014
-002037: Mar 17 13:10:08.619: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A02000000180077F65B
-002038: Mar 17 13:10:08.646: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A02000000180077F65B
-002039: Mar 17 13:15:45.833: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B0239
-002040: Mar 17 13:15:45.860: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B0239
-002041: Mar 17 13:42:49.471: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046479E
-002042: Mar 17 13:42:49.498: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046479E
-002043: Mar 17 14:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 14:00:07 UTC Tue Mar 17 2026
-002044: Mar 17 14:00:36.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/35, changed state to down
-002045: Mar 17 14:00:36.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/35, changed state to down
-002046: Mar 17 14:02:11.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/29, changed state to up
-002047: Mar 17 14:02:12.004: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/29, changed state to up
-002048: Mar 17 14:02:13.651: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3545) on Interface Gi1/0/29 AuditSessionID 0A0A0A020000001D003B4770
-002049: Mar 17 14:02:13.678: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3545) on Interface Gi1/0/29 AuditSessionID 0A0A0A020000001D003B4770
-002050: Mar 17 14:04:09.905: %MAB-5-SUCCESS: Authentication successful for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A583C3
-002051: Mar 17 14:04:09.932: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A583C3
-002052: Mar 17 14:19:49.841: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010009231E4
-002053: Mar 17 14:19:49.868: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010009231E4
-002054: Mar 17 14:28:18.975: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D7749
-002055: Mar 17 14:28:19.002: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D7749
-002056: Mar 17 14:32:51.990: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007DD53D
-002057: Mar 17 14:32:52.017: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007DD53D
-002058: Mar 17 14:40:31.726: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006F80D1
-002059: Mar 17 14:40:31.753: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006F80D1
-002060: Mar 17 14:55:40.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/29, changed state to down
-002061: Mar 17 14:55:40.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/29, changed state to down
-002062: Mar 17 14:57:32.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/35, changed state to up
-002063: Mar 17 14:57:33.004: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/35, changed state to up
-002064: Mar 17 14:57:34.840: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3545) on Interface Gi1/0/35 AuditSessionID 0A0A0A0200000023003B665F
-002065: Mar 17 14:57:34.867: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3545) on Interface Gi1/0/35 AuditSessionID 0A0A0A0200000023003B665F
-002066: Mar 17 15:08:35.919: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A020000000600703B6C
-002067: Mar 17 15:08:35.946: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A020000000600703B6C
-002068: Mar 17 15:09:11.073: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074A81B
-002069: Mar 17 15:09:11.100: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074A81B
-002070: Mar 17 15:19:54.025: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CBCD4
-002071: Mar 17 15:19:54.052: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CBCD4
-002072: Mar 17 15:30:48.704: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A02000000120073ED80
-002073: Mar 17 15:30:48.731: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A02000000120073ED80
-002074: Mar 17 15:34:21.294: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A00446B91
-002075: Mar 17 15:34:21.321: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A00446B91
-002076: Mar 17 15:41:03.302: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.0717) on Interface Gi1/0/7 AuditSessionID 0A0A0A0200000007002CD718
-002077: Mar 17 15:41:03.329: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.0717) on Interface Gi1/0/7 AuditSessionID 0A0A0A0200000007002CD718
-002078: Mar 17 15:52:14.875: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A4CE3
-002079: Mar 17 15:52:14.902: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A4CE3
-002080: Mar 17 15:55:52.112: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C5FE1
-002081: Mar 17 15:55:52.139: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C5FE1
-002082: Mar 17 15:57:18.933: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043B0F6
-002083: Mar 17 15:57:18.960: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043B0F6
-002084: Mar 17 15:58:03.793: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3545) on Interface Gi1/0/35 AuditSessionID 0A0A0A020000002300395880
-002085: Mar 17 15:58:03.820: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3545) on Interface Gi1/0/35 AuditSessionID 0A0A0A020000002300395880
-002086: Mar 17 16:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 16:00:07 UTC Tue Mar 17 2026
-002087: Mar 17 16:02:03.139: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.2030) on Interface Gi1/0/20 AuditSessionID 0A0A0A0200000014003149CD
-002088: Mar 17 16:02:03.166: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.2030) on Interface Gi1/0/20 AuditSessionID 0A0A0A0200000014003149CD
-002089: Mar 17 16:15:04.313: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.2737) on Interface Gi1/0/27 AuditSessionID 0A0A0A020000001B0036073D
-002090: Mar 17 16:15:04.340: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.2737) on Interface Gi1/0/27 AuditSessionID 0A0A0A020000001B0036073D
-002091: Mar 17 16:20:03.744: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3748) on Interface Gi1/0/37 AuditSessionID 0A0A0A0200000025003A70EA
-002092: Mar 17 16:20:03.771: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3748) on Interface Gi1/0/37 AuditSessionID 0A0A0A0200000025003A70EA
-002093: Mar 17 16:31:22.452: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A020000001500230468
-002094: Mar 17 16:31:22.479: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A020000001500230468
-002095: Mar 17 16:34:54.471: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: rahmed] [Source: 10.10.10.20] [localport: 22] at 16:34:54 UTC Tue Mar 17 2026
-002096: Mar 17 16:35:12.771: %SYS-5-CONFIG_I: Configured from console by rahmed on vty0 (10.10.10.20)
-002097: Mar 17 16:37:55.387: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023BF03
-002098: Mar 17 16:37:55.414: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023BF03
-002099: Mar 17 16:48:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/35, changed state to down
-002100: Mar 17 16:48:00.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/35, changed state to down
-002101: Mar 17 17:10:08.619: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A02000000180078154A
-002102: Mar 17 17:10:08.646: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A02000000180078154A
-002103: Mar 17 17:10:22.039: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: rahmed] [Source: 10.10.10.20] [localport: 22] at 17:10:22 UTC Tue Mar 17 2026
-002104: Mar 17 17:10:40.339: %SYS-5-CONFIG_I: Configured from console by rahmed on vty0 (10.10.10.20)
-002105: Mar 17 17:15:45.833: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B2128
-002106: Mar 17 17:15:45.860: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B2128
-002107: Mar 17 17:42:49.471: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046668D
-002108: Mar 17 17:42:49.498: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046668D
-002109: Mar 17 17:52:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/7, changed state to down
-002110: Mar 17 17:52:00.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/7, changed state to down
-002111: Mar 17 18:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 18:00:07 UTC Tue Mar 17 2026
-002112: Mar 17 18:04:09.905: %MAB-5-SUCCESS: Authentication successful for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A5A2B2
-002113: Mar 17 18:04:09.932: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A5A2B2
-002114: Mar 17 18:05:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/27, changed state to down
-002115: Mar 17 18:05:00.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/27, changed state to down
-002116: Mar 17 18:19:49.841: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010009250D3
-002117: Mar 17 18:19:49.868: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010009250D3
-002118: Mar 17 18:28:18.975: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D9638
-002119: Mar 17 18:28:19.002: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D9638
-002120: Mar 17 18:32:51.990: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007DF42C
-002121: Mar 17 18:32:52.017: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007DF42C
-002122: Mar 17 18:40:31.726: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006F9FC0
-002123: Mar 17 18:40:31.753: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006F9FC0
-002124: Mar 17 19:08:35.919: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A020000000600705A5B
-002125: Mar 17 19:08:35.946: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A020000000600705A5B
-002126: Mar 17 19:09:11.073: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074C70A
-002127: Mar 17 19:09:11.100: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074C70A
-002128: Mar 17 19:10:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/37, changed state to down
-002129: Mar 17 19:10:00.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/37, changed state to down
-002130: Mar 17 19:19:54.025: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CDBC3
-002131: Mar 17 19:19:54.052: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CDBC3
-002132: Mar 17 19:30:48.704: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A020000001200740C6F
-002133: Mar 17 19:30:48.731: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A020000001200740C6F
-002134: Mar 17 19:34:21.294: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A00448A80
-002135: Mar 17 19:34:21.321: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A00448A80
-002136: Mar 17 19:52:14.879: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A6BD2
-002137: Mar 17 19:52:14.906: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A6BD2
-002138: Mar 17 19:55:52.112: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C7ED0
-002139: Mar 17 19:55:52.139: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C7ED0
-002140: Mar 17 19:57:18.933: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043CFE5
-002141: Mar 17 19:57:18.960: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043CFE5
-002142: Mar 17 20:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 20:00:07 UTC Tue Mar 17 2026
-002143: Mar 17 20:02:03.195: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.2030) on Interface Gi1/0/20 AuditSessionID 0A0A0A0200000014003168BC
-002144: Mar 17 20:02:03.222: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.2030) on Interface Gi1/0/20 AuditSessionID 0A0A0A0200000014003168BC
-002145: Mar 17 20:31:22.452: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A020000001500232357
-002146: Mar 17 20:31:22.479: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A020000001500232357
-002147: Mar 17 20:37:55.738: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023DDF2
-002148: Mar 17 20:37:55.765: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023DDF2
-002149: Mar 17 21:10:08.619: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A020000001800783439
-002150: Mar 17 21:10:08.646: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A020000001800783439
-002151: Mar 17 21:14:40.788: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel] [Source: 10.99.0.10] [localport: 22] at 21:14:41 UTC Tue Mar 17 2026
-002152: Mar 17 21:14:41.000: %SYS-5-CONFIG_I: Configured from console by sentinel on vty1 (10.99.0.10)
-002153: Mar 17 21:15:45.833: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B4017
-002154: Mar 17 21:15:45.860: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B4017
-002155: Mar 17 21:42:49.471: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046857C
-002156: Mar 17 21:42:49.498: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046857C
-002157: Mar 17 22:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 22:00:07 UTC Tue Mar 17 2026
-002158: Mar 17 22:04:09.905: %MAB-5-SUCCESS: Authentication successful for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A5C1A1
-002159: Mar 17 22:04:09.932: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A5C1A1
-002160: Mar 17 22:19:49.841: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A020000001000926FC2
-002161: Mar 17 22:19:49.868: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A020000001000926FC2
-002162: Mar 17 22:28:18.975: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003DB527
-002163: Mar 17 22:28:19.002: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003DB527
-002164: Mar 17 22:32:51.990: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007E131B
-002165: Mar 17 22:32:52.017: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007E131B
-002166: Mar 17 22:40:31.726: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006FBEAF
-002167: Mar 17 22:40:31.753: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006FBEAF
-002168: Mar 17 23:08:35.919: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A02000000060070794A
-002169: Mar 17 23:08:35.946: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A02000000060070794A
-002170: Mar 17 23:09:11.073: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074E5F9
-002171: Mar 17 23:09:11.100: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074E5F9
-002172: Mar 17 23:19:54.025: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CFAB2
-002173: Mar 17 23:19:54.052: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CFAB2
-002174: Mar 17 23:30:48.704: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A020000001200742B5E
-002175: Mar 17 23:30:48.731: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A020000001200742B5E
-002176: Mar 17 23:34:21.294: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A0044A96F
-002177: Mar 17 23:34:21.321: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A0044A96F
-002178: Mar 17 23:52:14.761: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A8AC1
-002179: Mar 17 23:52:14.788: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A8AC1
-002180: Mar 17 23:55:52.112: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C9DBF
-002181: Mar 17 23:55:52.139: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C9DBF
-002182: Mar 17 23:57:18.933: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043EED4
-002183: Mar 17 23:57:18.960: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043EED4
+002027: Mar 17 12:20:15.118: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: rahmed] [Source: 10.10.10.20] [localport: 22] at 12:20:15 UTC Tue Mar 17 2026
+002028: Mar 17 12:20:33.418: %SYS-5-CONFIG_I: Configured from console by rahmed on vty0 (10.10.10.20)
+002029: Mar 17 12:31:22.452: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A02000000150022E579
+002030: Mar 17 12:31:22.479: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A02000000150022E579
+002031: Mar 17 12:36:10.318: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/16, changed state to down
+002032: Mar 17 12:36:10.326: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/16, changed state to down
+002033: Mar 17 12:36:50.018: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/16, changed state to up
+002034: Mar 17 12:36:51.022: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/16, changed state to up
+002035: Mar 17 12:36:52.318: %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 8c71.f844.aa16 on port GigabitEthernet1/0/16.
+002036: Mar 17 12:36:52.728: %MAB-5-FAIL: Authentication failed for client (8c71.f844.aa16) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010004544C1
+002037: Mar 17 12:37:55.666: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023A014
+002038: Mar 17 12:37:55.693: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023A014
+002039: Mar 17 13:10:08.619: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A02000000180077F65B
+002040: Mar 17 13:10:08.646: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A02000000180077F65B
+002041: Mar 17 13:15:45.833: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B0239
+002042: Mar 17 13:15:45.860: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B0239
+002043: Mar 17 13:42:49.471: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046479E
+002044: Mar 17 13:42:49.498: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046479E
+002045: Mar 17 14:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 14:00:07 UTC Tue Mar 17 2026
+002046: Mar 17 14:00:36.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/35, changed state to down
+002047: Mar 17 14:00:36.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/35, changed state to down
+002048: Mar 17 14:02:11.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/29, changed state to up
+002049: Mar 17 14:02:12.004: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/29, changed state to up
+002050: Mar 17 14:02:13.651: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3545) on Interface Gi1/0/29 AuditSessionID 0A0A0A020000001D003B4770
+002051: Mar 17 14:02:13.678: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3545) on Interface Gi1/0/29 AuditSessionID 0A0A0A020000001D003B4770
+002052: Mar 17 14:04:09.905: %MAB-5-SUCCESS: Authentication successful for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A583C3
+002053: Mar 17 14:04:09.932: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A583C3
+002054: Mar 17 14:19:49.841: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010009231E4
+002055: Mar 17 14:19:49.868: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010009231E4
+002056: Mar 17 14:28:18.975: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D7749
+002057: Mar 17 14:28:19.002: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D7749
+002058: Mar 17 14:32:51.990: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007DD53D
+002059: Mar 17 14:32:52.017: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007DD53D
+002060: Mar 17 14:40:31.726: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006F80D1
+002061: Mar 17 14:40:31.753: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006F80D1
+002062: Mar 17 14:55:40.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/29, changed state to down
+002063: Mar 17 14:55:40.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/29, changed state to down
+002064: Mar 17 14:57:32.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/35, changed state to up
+002065: Mar 17 14:57:33.004: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/35, changed state to up
+002066: Mar 17 14:57:34.840: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3545) on Interface Gi1/0/35 AuditSessionID 0A0A0A0200000023003B665F
+002067: Mar 17 14:57:34.867: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3545) on Interface Gi1/0/35 AuditSessionID 0A0A0A0200000023003B665F
+002068: Mar 17 15:08:35.919: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A020000000600703B6C
+002069: Mar 17 15:08:35.946: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A020000000600703B6C
+002070: Mar 17 15:09:11.073: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074A81B
+002071: Mar 17 15:09:11.100: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074A81B
+002072: Mar 17 15:19:54.025: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CBCD4
+002073: Mar 17 15:19:54.052: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CBCD4
+002074: Mar 17 15:30:48.704: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A02000000120073ED80
+002075: Mar 17 15:30:48.731: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A02000000120073ED80
+002076: Mar 17 15:34:21.294: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A00446B91
+002077: Mar 17 15:34:21.321: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A00446B91
+002078: Mar 17 15:41:03.302: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.0717) on Interface Gi1/0/7 AuditSessionID 0A0A0A0200000007002CD718
+002079: Mar 17 15:41:03.329: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.0717) on Interface Gi1/0/7 AuditSessionID 0A0A0A0200000007002CD718
+002080: Mar 17 15:52:14.875: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A4CE3
+002081: Mar 17 15:52:14.902: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A4CE3
+002082: Mar 17 15:55:52.112: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C5FE1
+002083: Mar 17 15:55:52.139: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C5FE1
+002084: Mar 17 15:57:18.933: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043B0F6
+002085: Mar 17 15:57:18.960: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043B0F6
+002086: Mar 17 15:58:03.793: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3545) on Interface Gi1/0/35 AuditSessionID 0A0A0A020000002300395880
+002087: Mar 17 15:58:03.820: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3545) on Interface Gi1/0/35 AuditSessionID 0A0A0A020000002300395880
+002088: Mar 17 16:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 16:00:07 UTC Tue Mar 17 2026
+002089: Mar 17 16:02:03.139: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.2030) on Interface Gi1/0/20 AuditSessionID 0A0A0A0200000014003149CD
+002090: Mar 17 16:02:03.166: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.2030) on Interface Gi1/0/20 AuditSessionID 0A0A0A0200000014003149CD
+002091: Mar 17 16:15:04.313: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.2737) on Interface Gi1/0/27 AuditSessionID 0A0A0A020000001B0036073D
+002092: Mar 17 16:15:04.340: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.2737) on Interface Gi1/0/27 AuditSessionID 0A0A0A020000001B0036073D
+002093: Mar 17 16:20:03.744: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.3748) on Interface Gi1/0/37 AuditSessionID 0A0A0A0200000025003A70EA
+002094: Mar 17 16:20:03.771: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.3748) on Interface Gi1/0/37 AuditSessionID 0A0A0A0200000025003A70EA
+002095: Mar 17 16:31:22.452: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A020000001500230468
+002096: Mar 17 16:31:22.479: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A020000001500230468
+002097: Mar 17 16:34:54.471: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: rahmed] [Source: 10.10.10.20] [localport: 22] at 16:34:54 UTC Tue Mar 17 2026
+002098: Mar 17 16:35:12.771: %SYS-5-CONFIG_I: Configured from console by rahmed on vty0 (10.10.10.20)
+002099: Mar 17 16:37:55.387: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023BF03
+002100: Mar 17 16:37:55.414: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023BF03
+002101: Mar 17 16:48:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/35, changed state to down
+002102: Mar 17 16:48:00.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/35, changed state to down
+002103: Mar 17 17:10:08.619: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A02000000180078154A
+002104: Mar 17 17:10:08.646: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A02000000180078154A
+002105: Mar 17 17:10:22.039: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: rahmed] [Source: 10.10.10.20] [localport: 22] at 17:10:22 UTC Tue Mar 17 2026
+002106: Mar 17 17:10:40.339: %SYS-5-CONFIG_I: Configured from console by rahmed on vty0 (10.10.10.20)
+002107: Mar 17 17:15:45.833: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B2128
+002108: Mar 17 17:15:45.860: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B2128
+002109: Mar 17 17:42:49.471: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046668D
+002110: Mar 17 17:42:49.498: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046668D
+002111: Mar 17 17:52:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/7, changed state to down
+002112: Mar 17 17:52:00.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/7, changed state to down
+002113: Mar 17 18:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 18:00:07 UTC Tue Mar 17 2026
+002114: Mar 17 18:04:09.905: %MAB-5-SUCCESS: Authentication successful for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A5A2B2
+002115: Mar 17 18:04:09.932: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A5A2B2
+002116: Mar 17 18:05:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/27, changed state to down
+002117: Mar 17 18:05:00.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/27, changed state to down
+002118: Mar 17 18:19:49.841: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010009250D3
+002119: Mar 17 18:19:49.868: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A0200000010009250D3
+002120: Mar 17 18:28:18.975: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D9638
+002121: Mar 17 18:28:19.002: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003D9638
+002122: Mar 17 18:32:51.990: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007DF42C
+002123: Mar 17 18:32:52.017: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007DF42C
+002124: Mar 17 18:40:31.726: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006F9FC0
+002125: Mar 17 18:40:31.753: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006F9FC0
+002126: Mar 17 19:08:35.919: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A020000000600705A5B
+002127: Mar 17 19:08:35.946: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A020000000600705A5B
+002128: Mar 17 19:09:11.073: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074C70A
+002129: Mar 17 19:09:11.100: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074C70A
+002130: Mar 17 19:10:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet1/0/37, changed state to down
+002131: Mar 17 19:10:00.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/37, changed state to down
+002132: Mar 17 19:19:54.025: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CDBC3
+002133: Mar 17 19:19:54.052: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CDBC3
+002134: Mar 17 19:30:48.704: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A020000001200740C6F
+002135: Mar 17 19:30:48.731: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A020000001200740C6F
+002136: Mar 17 19:34:21.294: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A00448A80
+002137: Mar 17 19:34:21.321: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A00448A80
+002138: Mar 17 19:52:14.879: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A6BD2
+002139: Mar 17 19:52:14.906: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A6BD2
+002140: Mar 17 19:55:52.112: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C7ED0
+002141: Mar 17 19:55:52.139: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C7ED0
+002142: Mar 17 19:57:18.933: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043CFE5
+002143: Mar 17 19:57:18.960: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043CFE5
+002144: Mar 17 20:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 20:00:07 UTC Tue Mar 17 2026
+002145: Mar 17 20:02:03.195: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e72b.2030) on Interface Gi1/0/20 AuditSessionID 0A0A0A0200000014003168BC
+002146: Mar 17 20:02:03.222: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e72b.2030) on Interface Gi1/0/20 AuditSessionID 0A0A0A0200000014003168BC
+002147: Mar 17 20:31:22.452: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A020000001500232357
+002148: Mar 17 20:31:22.479: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2131) on Interface Gi1/0/21 AuditSessionID 0A0A0A020000001500232357
+002149: Mar 17 20:37:55.738: %DOT1X-5-SUCCESS: Authentication successful for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023DDF2
+002150: Mar 17 20:37:55.765: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (b4b5.2f1c.2232) on Interface Gi1/0/22 AuditSessionID 0A0A0A02000000160023DDF2
+002151: Mar 17 21:10:08.619: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A020000001800783439
+002152: Mar 17 21:10:08.646: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A020000001800783439
+002153: Mar 17 21:14:40.788: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel] [Source: 10.99.0.10] [localport: 22] at 21:14:41 UTC Tue Mar 17 2026
+002154: Mar 17 21:14:41.000: %SYS-5-CONFIG_I: Configured from console by sentinel on vty1 (10.99.0.10)
+002155: Mar 17 21:15:45.833: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B4017
+002156: Mar 17 21:15:45.860: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.3343) on Interface Gi1/0/33 AuditSessionID 0A0A0A0200000021009B4017
+002157: Mar 17 21:42:49.471: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046857C
+002158: Mar 17 21:42:49.498: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.3242) on Interface Gi1/0/32 AuditSessionID 0A0A0A02000000200046857C
+002159: Mar 17 22:00:07.200: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: sentinel-ro] [Source: 10.99.0.10] [localport: 22] at 22:00:07 UTC Tue Mar 17 2026
+002160: Mar 17 22:04:09.905: %MAB-5-SUCCESS: Authentication successful for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A5C1A1
+002161: Mar 17 22:04:09.932: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3005.5c9a.2801) on Interface Gi1/0/28 AuditSessionID 0A0A0A020000001C00A5C1A1
+002162: Mar 17 22:19:49.841: %DOT1X-5-SUCCESS: Authentication successful for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A020000001000926FC2
+002163: Mar 17 22:19:49.868: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (3cd9.2b8e.1626) on Interface Gi1/0/16 AuditSessionID 0A0A0A020000001000926FC2
+002164: Mar 17 22:28:18.975: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003DB527
+002165: Mar 17 22:28:19.002: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1525) on Interface Gi1/0/15 AuditSessionID 0A0A0A020000000F003DB527
+002166: Mar 17 22:32:51.990: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007E131B
+002167: Mar 17 22:32:52.017: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3646) on Interface Gi1/0/36 AuditSessionID 0A0A0A0200000024007E131B
+002168: Mar 17 22:40:31.726: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006FBEAF
+002169: Mar 17 22:40:31.753: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0515) on Interface Gi1/0/5 AuditSessionID 0A0A0A0200000005006FBEAF
+002170: Mar 17 23:08:35.919: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A02000000060070794A
+002171: Mar 17 23:08:35.946: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.0616) on Interface Gi1/0/6 AuditSessionID 0A0A0A02000000060070794A
+002172: Mar 17 23:09:11.073: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074E5F9
+002173: Mar 17 23:09:11.100: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1929) on Interface Gi1/0/19 AuditSessionID 0A0A0A02000000130074E5F9
+002174: Mar 17 23:19:54.025: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CFAB2
+002175: Mar 17 23:19:54.052: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.3444) on Interface Gi1/0/34 AuditSessionID 0A0A0A0200000022007CFAB2
+002176: Mar 17 23:30:48.704: %DOT1X-5-SUCCESS: Authentication successful for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A020000001200742B5E
+002177: Mar 17 23:30:48.731: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (d4be.d96f.1828) on Interface Gi1/0/18 AuditSessionID 0A0A0A020000001200742B5E
+002178: Mar 17 23:34:21.294: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A0044A96F
+002179: Mar 17 23:34:21.321: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2636) on Interface Gi1/0/26 AuditSessionID 0A0A0A020000001A0044A96F
+002180: Mar 17 23:52:14.761: %DOT1X-5-SUCCESS: Authentication successful for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A8AC1
+002181: Mar 17 23:52:14.788: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (a483.e712.3456) on Interface Gi1/0/23 AuditSessionID 0A0A0A0200000017001A8AC1
+002182: Mar 17 23:55:52.112: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C9DBF
+002183: Mar 17 23:55:52.139: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.1424) on Interface Gi1/0/14 AuditSessionID 0A0A0A020000000E003C9DBF
+002184: Mar 17 23:57:18.933: %DOT1X-5-SUCCESS: Authentication successful for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043EED4
+002185: Mar 17 23:57:18.960: %AUTHMGR-5-SUCCESS: Authorization succeeded for client (f8bc.123a.2535) on Interface Gi1/0/25 AuditSessionID 0A0A0A02000000190043EED4
 SW01#

@@ -721,6 +721,7 @@ def emit_bpdu(env: Environment, out: ScenarioOutput, rf: RecordFactory) -> None:
 
 
 EMITTERS = {
+    "critical-asset-scan": emit_port_scan,
     "lateral-reconnaissance": emit_lateral,
     "unauthorized-endpoint": emit_unauthorized,
     "arp-spoofing": emit_arp,

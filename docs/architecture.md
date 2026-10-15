@@ -22,9 +22,42 @@ infrastructure.
 | Detection | Attribution | `backend/sentinelswitch/correlation/engine.py` | IP → DHCP binding → MAC → MAC table → interface → VLAN → identity, with explicit flags |
 | Response | Policy engine | `automation/policies/containment-policy.yaml`, `containment/policy.py` | Tiers by confidence and severity, guards that can only downgrade |
 | Response | Containment controller | `containment/controller.py` | Executes quarantine VLAN moves or administrative shutdowns, verifies, supports rollback |
-| Response | Switch adapter | `containment/adapters.py` | `SwitchAdapter` interface; `SimulatedCisco2960XAdapter` ships |
+| Response | Switch adapter | `containment/adapters.py` | `SwitchAdapter` interface; `SimulatedCisco2960XAdapter` ships; 2.0 adds `apply_baseline`, `add_span_source`, `reauthenticate` for remediation |
+| Response | Authorization record | `containment/controller.py` (`authorization_record`) | Who allowed an action and when: `automatic` (policy tier), `analyst`, `rejected`; attached to incidents, actions and reviews |
+| Response | Analyst decisions | `services/response.py` | `approve_review` executes a reviewed detection through the controller with an analyst authorization; `reject_review` records the refusal |
+| Assurance | Control catalog | `assurance/controls.py` | 13 controls with source of truth, severity, freshness window and NIST CSF 2.0 references |
+| Assurance | Assessment engine | `assurance/engine.py` | `AssessmentEngine.run()`: one assessment per (control, scope), PASS/FAIL/UNKNOWN/STALE, append-only history, finding reconciliation |
+| Assurance | Posture summary | `assurance/posture.py` | counts with explicit denominators; by control, category and CSF subcategory; no composite score |
+| Assurance | Remediation service | `assurance/remediation.py` | requested → executed → re-assessed → verified, through the switch adapter |
+| Assurance | Export | `assurance/export.py` | schema 2.0 JSON, ten-section HTML, PDF via Playwright |
 | Platform | Evidence store | SQLite + `data/incidents/<id>/` | Operational state in SQLite, per-incident evidence bundles on disk |
 | Platform | Dashboard + API | `backend/sentinelswitch/app`, `frontend/` | FastAPI with Server-Sent Events, React + TypeScript SOC console |
+| Platform | Assurance API | `api/assurance_routes.py` | `/api/posture`, `/api/controls`, `/api/assessments`, `/api/findings`, `/api/reviews`, `/api/reports` |
+
+## Assurance layer
+
+SentinelSwitch 2.0 adds a control-assessment layer that reads the same twin and store the
+response pipeline writes to. It never changes the switch on its own: `AssessmentEngine` only
+reads, `RemediationService` writes through `SimulatedCisco2960XAdapter` (the same guards as
+containment), and every result is persisted before it is reported.
+
+```
+port intent + twin + store ──▶ AssessmentEngine.run() ──▶ assessments (latest) + assessment_history (append-only)
+                                        │
+                                        └─ reconcile ──▶ findings (FND-…) + finding_events
+findings ──▶ RemediationService.remediate() ──▶ adapter ──▶ twin ──▶ AssessmentEngine.run() (verify)
+store ──▶ posture.summary() ──▶ /api/posture, dashboard
+store + bundles ──▶ export.build_export() ──▶ JSON 2.0 ──▶ render_html() ──▶ write_pdf()
+```
+
+Assessments are triggered at the moments that matter for the story: after seeding (`baseline-seed`),
+after the flagship replay (`post-containment`), after every remediation (`remediation-<finding>`)
+and after a restore (`recovery-<incident>`); `POST /api/assessments/run` and `sentinelswitch assess`
+run one on demand. Containment itself gained an explicit **authorization** step between the policy
+decision and execution, so an executed action can be checked against who allowed it and when.
+The catalog, states, freshness policy and lifecycle are in [controls.md](controls.md); the
+end-to-end sequence in [workflow-2.0.md](workflow-2.0.md); the export in
+[export-schema.md](export-schema.md).
 
 ## Trust boundaries
 
@@ -76,7 +109,11 @@ browser ──HTTP/SSE──▶ FastAPI ──▶ Store (SQLite) ──▶ Switc
                           ├─ /api/demo/run ──▶ ScenarioRunner ──▶ DetectionEngine ──▶ CorrelationEngine
                           │                                         ──▶ PolicyEngine ──▶ ContainmentController ──▶ SimulatedCisco2960XAdapter
                           │                                         ──▶ evidence bundle (data/incidents/INC-2026-0042/)
-                          └─ /api/switch/show ──▶ cli_render (IOS transcripts from the twin)
+                          ├─ /api/switch/show ──▶ cli_render (IOS transcripts from the twin)
+                          ├─ /api/assessments/run ──▶ AssessmentEngine ──▶ assessments / assessment_history / findings / finding_events
+                          ├─ /api/findings/{id}/remediate ──▶ RemediationService ──▶ SimulatedCisco2960XAdapter ──▶ AssessmentEngine (verify)
+                          ├─ /api/reviews/{id}/approve|reject ──▶ services.response ──▶ authorization record ──▶ ContainmentController
+                          └─ /api/reports/* ──▶ assurance.export (JSON 2.0 / HTML / PDF)
 ```
 
 The same `ScenarioRunner` is used by the data generator (to replay the day's historical incidents),
@@ -90,6 +127,10 @@ every step, which is what keeps the numbers consistent across surfaces.
 * `data/generated/sentinelswitch.db` — SQLite working state. Not committed; rebuilt by `make seed`.
 * `data/incidents/INC-2026-0039..0041/` — historical incidents produced by the day simulation.
   Committed. `INC-2026-0042/` is produced by `make demo` and removed by `make reset`.
+* `artifacts/sentinelswitch-2.0/` — reports (`reports/security-posture-report.{json,html,pdf}`),
+  the `demo2` record (`validation/demo-results.json`) and dashboard screenshots. Written by
+  `make demo-2`, `make report`, `POST /api/reports/generate` and `make screenshots-2`;
+  location overridable with `SENTINEL_ARTIFACTS_DIR`.
 
 ## Related diagrams
 

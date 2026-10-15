@@ -6,6 +6,7 @@ import argparse
 import json
 import sys
 import time
+from pathlib import Path
 
 from rich.console import Console
 from rich.panel import Panel
@@ -51,6 +52,11 @@ PHASE_LABEL = {
 }
 
 
+def _rel(path: Path, root: Path) -> str:
+    """Repository-relative path for records that are shared (no local home-directory paths)."""
+    return str(path.relative_to(root)) if path.is_relative_to(root) else path.name
+
+
 def _store():
     settings = get_settings()
     env = load_environment()
@@ -63,7 +69,7 @@ def banner(subtitle: str) -> None:
             Text.assemble(
                 ("SentinelSwitch ", "bold cyan"),
                 ("· ", "dim"),
-                ("Autonomous Network Detection & Response Lab", "white"),
+                ("Evidence-Driven Network Security & Response Lab", "white"),
                 ("\n" + subtitle, "dim"),
             ),
             border_style="cyan",
@@ -112,7 +118,7 @@ def cmd_seed(args) -> int:
     v = summary.get("validation") or {}
     if v:
         console.print(
-            f"[green]✓[/] validation: {v['passed']}/{v['scenarios']} scenarios passed  MTTD {v['mttd']}s  MTTA {v['mtta']}s  MTTC {v['mttc']}s"
+            f"[green]✓[/] validation: {v['passed']}/{v['scenarios']} scenarios met their expected outcome ({v.get('contained')} contained, {v.get('withheld')} withheld by policy)  MTTD {v['mttd']}s  MTTA {v['mtta']}s  MTTC {v['mttc']}s"
         )
     console.print("[dim]baseline state: Gi1/0/23 in VLAN 20, flagship incident not yet replayed[/]")
     return 0
@@ -213,12 +219,12 @@ def cmd_validate(args) -> int:
             )
         )
         return 0 if report.all_passed else 1
-    banner("Security validation: 8 adversary scenarios replayed against an isolated twin")
+    banner(f"Security validation: {len(report.results)} adversary scenarios replayed against an isolated twin")
     table = Table(title="SENTINELSWITCH SECURITY VALIDATION", header_style="bold", title_style="bold cyan")
     table.add_column("Scenario")
     table.add_column("Detect", justify="center")
     table.add_column("Attribute", justify="center")
-    table.add_column("Contain", justify="center")
+    table.add_column("Response", justify="center")
     table.add_column("Conf", justify="right")
     table.add_column("TTD", justify="right")
     table.add_column("TTA", justify="right")
@@ -228,12 +234,17 @@ def cmd_validate(args) -> int:
     def pf(ok: bool) -> str:
         return "[bold green]PASS[/]" if ok else "[bold red]FAIL[/]"
 
+    def response(r: dict) -> str:
+        return {"contained": "[bold green]CONTAINED[/]", "withheld": "[bold cyan]WITHHELD[/]"}.get(
+            r.get("response", ""), "[bold red]FAIL[/]"
+        )
+
     for r in report.results:
         table.add_row(
             r["name"],
             pf(r["detect"]),
             pf(r["attribute"]),
-            pf(r["contain"]),
+            response(r),
             f"{r['confidence']:.2f}",
             f"{r['ttd']:.3f}s",
             f"{r['tta']:.3f}s",
@@ -248,7 +259,8 @@ def cmd_validate(args) -> int:
     console.print(f"  Mean Time To Attribute  [bold]{m['mtta']:.3f} s[/]")
     console.print(f"  Mean Time To Contain    [bold]{m['mttc']:.3f} s[/]   (detection → switch state verified)")
     console.print(
-        f"  {m['passed']}/{m['scenarios']} scenarios passed"
+        f"  {m['passed']}/{m['scenarios']} scenarios met their expected outcome"
+        f" ({m['contained']} contained and verified, {m['withheld']} withheld by policy for analyst review)"
         + ("  [green]✓ all controls validated[/]" if report.all_passed else "  [red]✗ failures present[/]")
     )
     return 0 if report.all_passed else 1
@@ -316,6 +328,278 @@ def cmd_status(args) -> int:
     return 0
 
 
+def _assurance(store, env, settings):
+    from sentinelswitch.assurance.engine import AssessmentEngine
+
+    return AssessmentEngine(env, store, settings.incidents_dir)
+
+
+def _print_run(run: dict) -> None:
+    c = run["counts"]
+    console.print(
+        f"[green]✓[/] {run['run_id']}: {run['assessments']} assessments over {run['controls']} controls at {run['assessed_at'][11:23]}Z — "
+        f"[green]{c['PASS']} pass[/] · [red]{c['FAIL']} fail[/] · [yellow]{c['STALE']} stale[/] · [dim]{c['UNKNOWN']} unknown[/] · {run['findings_open']} open findings"
+    )
+
+
+def cmd_assess(args) -> int:
+    store, env, settings = _store()
+    if store.kv_get("twin") is None:
+        seed_database(store, env, settings.seed_dir, settings.incidents_dir, run_validation_suite=False)
+    run = _assurance(store, env, settings).run(args.trigger, actor=args.actor)
+    if args.json:
+        print(json.dumps(run, indent=2))
+        return 0
+    banner("Control assessment against the current twin state")
+    _print_run(run)
+    for a in store.assessments():
+        if a["status"] != "PASS":
+            console.print(
+                f"  [{'red' if a['status'] == 'FAIL' else 'yellow' if a['status'] == 'STALE' else 'dim'}]{a['status']:<7}[/] {a['id']:<44} {a['explanation'][:110]}"
+            )
+    return 0
+
+
+def cmd_findings(args) -> int:
+    from sentinelswitch.assurance.engine import FINDING_OPEN_STATES
+
+    store, env, settings = _store()
+    rows = store.findings()
+    if not args.all:
+        rows = [f for f in rows if f["status"] in FINDING_OPEN_STATES]
+    table = Table(title="Findings", header_style="bold")
+    for col in ("id", "severity", "result", "status", "asset", "control", "opened"):
+        table.add_column(col)
+    for f in rows:
+        table.add_row(
+            f["id"],
+            f["severity"],
+            f.get("result", "FAIL"),
+            f["status"],
+            str(f.get("asset") or f["scope"]["id"]),
+            f["control_name"],
+            f["opened_at"][11:19],
+        )
+    console.print(table)
+    return 0
+
+
+def cmd_remediate(args) -> int:
+    from sentinelswitch.assurance.engine import FINDING_OPEN_STATES
+    from sentinelswitch.assurance.remediation import RemediationError, RemediationService
+
+    store, env, settings = _store()
+    svc = RemediationService(env, store, _assurance(store, env, settings))
+    ids = args.finding_ids or []
+    if args.all:
+        ids = [
+            f["id"]
+            for f in store.findings()
+            if f["status"] in FINDING_OPEN_STATES and (f.get("remediation") or {}).get("action")
+        ]
+    if not ids:
+        console.print("[yellow]nothing to remediate[/]")
+        return 0
+    rc = 0
+    for fid in ids:
+        try:
+            res = svc.remediate(fid, actor=args.actor, note=args.note or "", reassess=not args.no_reassess)
+        except (KeyError, RemediationError) as exc:
+            console.print(f"[red]✗[/] {fid}: {exc}")
+            rc = 1
+            continue
+        f = res["finding"]
+        if not res.get("executed"):
+            console.print(f"[red]✗[/] {fid} → {f['status']}: {res.get('refused')}")
+            rc = 1
+            continue
+        console.print(
+            f"[green]✓[/] {fid} → {f['status']}"
+            + (f"  (verified by {f['verification']['run_id']})" if f.get("verification", {}).get("run_id") else "")
+        )
+        if res.get("transcript"):
+            console.print(Text(res["transcript"], style="dim"))
+    return rc
+
+
+def cmd_report(args) -> int:
+    from sentinelswitch.assurance.export import build_export, write_html, write_json, write_pdf
+
+    store, env, settings = _store()
+    out_dir = Path(args.out) if args.out else settings.artifacts_dir / "reports"
+    doc = build_export(store, env, settings.incidents_dir)
+    j = write_json(doc, out_dir / "security-posture-report.json")
+    h = write_html(doc, out_dir / "security-posture-report.html")
+    console.print(f"[green]✓[/] {j}")
+    console.print(f"[green]✓[/] {h}")
+    if not args.no_pdf:
+        pdf = write_pdf(h, out_dir / "security-posture-report.pdf")
+        console.print(f"[green]✓[/] {pdf}" if pdf else "[yellow]PDF skipped (Playwright Chromium not available)[/]")
+    # validate the JSON round-trips and carries the required top-level keys
+    required = {
+        "schema_version",
+        "generated_at",
+        "posture",
+        "controls",
+        "assessments",
+        "findings",
+        "incidents",
+        "containment_actions",
+        "framework_mapping",
+        "limitations",
+    }
+    loaded = json.loads(j.read_text(encoding="utf-8"))
+    missing = required - set(loaded)
+    if missing:
+        console.print(f"[red]export missing keys: {sorted(missing)}[/]")
+        return 1
+    console.print(
+        f"[dim]{len(loaded['assessments'])} assessments · {len(loaded['findings'])} findings · {len(loaded['incidents'])} incidents · schema {loaded['schema_version']}[/]"
+    )
+    return 0
+
+
+def cmd_demo2(args) -> int:
+    """SentinelSwitch 2.0 end-to-end workflow: reset → baseline assessment → flagship incident → post-containment
+    assessment → remediation of open findings → reassessment → restore → recovery assessment → report."""
+    from sentinelswitch.assurance.engine import FINDING_OPEN_STATES
+    from sentinelswitch.assurance.export import build_export, write_html, write_json, write_pdf
+    from sentinelswitch.assurance.remediation import RemediationService
+
+    store, env, settings = _store()
+    banner(
+        "SentinelSwitch 2.0 — evidence-driven workflow: assess → detect → attribute → authorize → contain → verify → remediate → report"
+    )
+    results: dict = {"steps": []}
+
+    def step(name: str, detail: str, **data):
+        console.print(
+            Text.assemble((f"{len(results['steps']) + 1:>2}. ", "dim"), (f"{name:<22}", "bold cyan"), (detail, "white"))
+        )
+        results["steps"].append({"step": name, "detail": detail, **data})
+
+    seed_summary = seed_database(store, env, settings.seed_dir, settings.incidents_dir)
+    step(
+        "reset + baseline",
+        f"seeded {seed_summary['counts']['devices']} devices; baseline assessment {seed_summary['assessment']['run_id']}: {seed_summary['assessment']['counts']}",
+        assessment=seed_summary["assessment"],
+    )
+    flag = demo_service.run_flagship(store, env, settings)
+    inc = flag.incident
+    step(
+        "flagship incident",
+        f"{inc['id']} detected {flag.metrics['detection'][11:23]}Z conf {flag.detection.confidence} → {inc['interface']} VLAN {inc['original_vlan']}→{inc['current_vlan']} verified {flag.metrics['verified'][11:23]}Z (TTD {flag.metrics['ttd']}s, TTC {flag.metrics['ttc']}s)",
+        incident=inc["id"],
+        metrics=flag.metrics,
+        authorization=inc.get("authorization"),
+    )
+    post_run = store.assessment_run(flag.metrics["assessment_run"])
+    step("post-containment", f"{post_run['run_id']}: {post_run['counts']}", assessment=post_run)
+    reviews = [r for r in store.reviews() if r["status"] == "review"]
+    step(
+        "negative path",
+        f"{len([r for r in store.reviews() if (r.get('decision') or {}).get('guards_triggered')])} detection(s) withheld from automation by policy guards; {len(reviews)} awaiting analyst decision",
+        withheld=[r["detection_id"] for r in store.reviews() if (r.get("decision") or {}).get("guards_triggered")],
+    )
+    from sentinelswitch.services import response as response_service
+
+    for r in [r for r in store.reviews() if r["status"] == "review"]:
+        guards = (r.get("decision") or {}).get("guards_triggered") or []
+        res = response_service.reject_review(
+            store,
+            env,
+            r["detection_id"],
+            actor="tlee",
+            note=f"Containment declined: {', '.join(guards) or 'confidence below the automatic tier'}; investigated and closed as benign after review.",
+        )
+        step(
+            "analyst decision",
+            f"{r['detection_id']} ({r['title']}): containment rejected by tlee",
+            review=r["detection_id"],
+            authorization=res["review"]["authorization"],
+        )
+    svc = RemediationService(env, store, _assurance(store, env, settings))
+    remediated = []
+    for fid in [
+        f["id"]
+        for f in store.findings()
+        if f["status"] in FINDING_OPEN_STATES and (f.get("remediation") or {}).get("action")
+    ]:
+        current = store.finding(fid)
+        if current is None or current["status"] not in FINDING_OPEN_STATES:
+            step(
+                "remediate",
+                f"{fid} already {current['status'] if current else 'gone'} (verified by an earlier reassessment)",
+                finding=fid,
+                status=current["status"] if current else None,
+            )
+            continue
+        res = svc.remediate(fid, actor="tlee", note="SentinelSwitch 2.0 demo remediation")
+        remediated.append({"finding": fid, "status": res["finding"]["status"], "run": res.get("run", {}).get("run_id")})
+        step("remediate", f"{fid} → {res['finding']['status']}", **remediated[-1])
+    restore = demo_service.restore_incident(
+        store,
+        env,
+        inc["id"],
+        actor="tlee",
+        note="Endpoint re-imaged and cleared by IT; returning to production VLAN.",
+        settings=settings,
+    )
+    step(
+        "restore + recovery",
+        f"{inc['id']} resolved; recovery assessment {restore['assessment_run']['run_id']}: {restore['assessment_run']['counts']}",
+        assessment=restore["assessment_run"],
+    )
+    out_dir = settings.artifacts_dir / "reports"
+    doc = build_export(store, env, settings.incidents_dir)
+    j = write_json(doc, out_dir / "security-posture-report.json")
+    h = write_html(doc, out_dir / "security-posture-report.html")
+    pdf = None if args.no_pdf else write_pdf(h, out_dir / "security-posture-report.pdf")
+    step(
+        "export",
+        f"{j.name}, {h.name}" + (f", {pdf.name}" if pdf else " (PDF skipped)"),
+        json=_rel(j, settings.root),
+        html=_rel(h, settings.root),
+        pdf=_rel(pdf, settings.root) if pdf else None,
+    )
+    final = store.kv_get("validation_metrics", {})
+    post = doc["posture"]["totals"]
+    results.update(
+        {
+            "final_posture": post,
+            "findings": doc["posture"]["findings_by_status"],
+            "validation": final,
+            "incident": inc["id"],
+            "generated_at": doc["generated_at"],
+            "remediated": remediated,
+        }
+    )
+    vdir = settings.artifacts_dir / "validation"
+    vdir.mkdir(parents=True, exist_ok=True)
+    (vdir / "demo-results.json").write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
+    console.print(
+        Panel(
+            Text.assemble(
+                ("final posture  ", "dim"),
+                (
+                    f"{post['assessments']} assessments · {post['pass']} pass · {post['fail']} fail · {post['unknown']} unknown · {post['stale']} stale · coverage {post['coverage_pct']}% · determinate pass rate {post['pass_rate_of_determinate_pct']}%\n",
+                    "white",
+                ),
+                ("findings       ", "dim"),
+                (json.dumps(doc["posture"]["findings_by_status"]) + "\n", "white"),
+                ("artifacts      ", "dim"),
+                (
+                    f"{out_dir.relative_to(settings.root) if out_dir.is_relative_to(settings.root) else out_dir}  ·  {vdir / 'demo-results.json'}",
+                    "white",
+                ),
+            ),
+            title="[bold green]workflow complete[/]",
+            border_style="green",
+        )
+    )
+    return 0
+
+
 def cmd_serve(args) -> int:
     import uvicorn
 
@@ -335,7 +619,7 @@ def cmd_serve(args) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="sentinelswitch", description="SentinelSwitch — Autonomous Network Detection & Response Lab"
+        prog="sentinelswitch", description="SentinelSwitch — Evidence-Driven Network Security & Response Lab"
     )
     parser.add_argument("--version", action="version", version=f"sentinelswitch {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -359,6 +643,28 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("command")
     p.set_defaults(fn=cmd_show)
     sub.add_parser("status", help="print database / demo state").set_defaults(fn=cmd_status)
+    p = sub.add_parser("assess", help="run the control assessment engine against the current twin state")
+    p.add_argument("--trigger", default="cli")
+    p.add_argument("--actor", default="tlee")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(fn=cmd_assess)
+    p = sub.add_parser("findings", help="list findings")
+    p.add_argument("--all", action="store_true", help="include verified / closed findings")
+    p.set_defaults(fn=cmd_findings)
+    p = sub.add_parser("remediate", help="request, execute and verify remediation for findings")
+    p.add_argument("finding_ids", nargs="*")
+    p.add_argument("--all", action="store_true", help="remediate every open finding with an executable action")
+    p.add_argument("--actor", default="tlee")
+    p.add_argument("--note", default="")
+    p.add_argument("--no-reassess", action="store_true")
+    p.set_defaults(fn=cmd_remediate)
+    p = sub.add_parser("report", help="export the posture + incident report (JSON, HTML, PDF)")
+    p.add_argument("--out")
+    p.add_argument("--no-pdf", action="store_true")
+    p.set_defaults(fn=cmd_report)
+    p = sub.add_parser("demo2", help="SentinelSwitch 2.0 end-to-end workflow with exports (deterministic)")
+    p.add_argument("--no-pdf", action="store_true")
+    p.set_defaults(fn=cmd_demo2)
     p = sub.add_parser("serve", help="start the API + dashboard server")
     p.add_argument("--host")
     p.add_argument("--port", type=int)

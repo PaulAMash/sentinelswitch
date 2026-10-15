@@ -35,7 +35,18 @@
     "restore_transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/30\nSW01(config-if)#no shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
     "notes": [
       "Port was already err-disabled by the switch; hold prevents errdisable recovery from re-enabling it"
-    ]
+    ],
+    "authorization": {
+      "mode": "automatic",
+      "status": "authorized",
+      "authorized_by": "policy-engine",
+      "authorized_at": "2026-03-17T09:12:45.081Z",
+      "basis": "policy tier automatic_containment",
+      "reason": "Automatic containment approved (severity=high confidence=0.96); action=port_shutdown",
+      "guards": [],
+      "action": "port_shutdown",
+      "note": null
+    }
   },
   {
     "workflow_id": "WF-2026-0040-02",
@@ -71,7 +82,18 @@
     "restored_by": "tlee",
     "restore_note": "Unregistered contractor single-board computer removed after physical inspection (ticket SVC-2026-0311). Port restored to service.",
     "restore_transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/17\nSW01(config-if)#no shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
-    "notes": []
+    "notes": [],
+    "authorization": {
+      "mode": "automatic",
+      "status": "authorized",
+      "authorized_by": "policy-engine",
+      "authorized_at": "2026-03-17T09:41:06.200Z",
+      "basis": "policy tier automatic_containment",
+      "reason": "Automatic containment approved (severity=high confidence=0.96); action=port_shutdown",
+      "guards": [],
+      "action": "port_shutdown",
+      "note": null
+    }
   },
   {
     "workflow_id": "WF-2026-0041-04",
@@ -107,6 +129,17 @@
     "restored_by": "tlee",
     "restore_note": "Vendor disabled connection sharing and left site. Port restored to service.",
     "restore_transcript": "SW01#configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\nSW01(config)#interface GigabitEthernet1/0/31\nSW01(config-if)#no shutdown\nSW01(config-if)#end\nSW01#write memory\nBuilding configuration...\n[OK]",
-    "notes": []
+    "notes": [],
+    "authorization": {
+      "mode": "automatic",
+      "status": "authorized",
+      "authorized_by": "policy-engine",
+      "authorized_at": "2026-03-17T11:23:47.848Z",
+      "basis": "policy tier automatic_containment",
+      "reason": "Automatic containment approved (severity=high confidence=0.95); action=port_shutdown",
+      "guards": [],
+      "action": "port_shutdown",
+      "note": null
+    }
   }
 ]

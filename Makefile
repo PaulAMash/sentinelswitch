@@ -1,4 +1,4 @@
-# SentinelSwitch — Autonomous Network Detection & Response Lab
+# SentinelSwitch — Evidence-Driven Network Security & Response Lab
 # Every target works from a fresh clone on macOS / Linux with Python 3.11+ and Node 20+.
 
 PY      ?= python3
@@ -36,7 +36,22 @@ reset: ## Restore the deterministic baseline (removes the flagship evidence bund
 demo: ## Replay the flagship incident INC-2026-0042 end to end in the terminal
 	$(PYTHON) -m sentinelswitch demo --reset
 
-validate-security: ## Run the security validation harness (8 scenarios, MTTD/MTTA/MTTC)
+demo-2: ## SentinelSwitch 2.0 workflow: assess → incident → authorize → contain → verify → remediate → recover → export
+	$(PYTHON) -m sentinelswitch demo2
+
+assess: ## Run the control assessment engine against the current twin state
+	$(PYTHON) -m sentinelswitch assess
+
+findings: ## List open findings
+	$(PYTHON) -m sentinelswitch findings
+
+remediate: ## Request, execute and verify remediation for every open finding with an executable action
+	$(PYTHON) -m sentinelswitch remediate --all
+
+report: ## Export the posture + incident report (JSON, HTML, PDF when Chromium is available)
+	$(PYTHON) -m sentinelswitch report
+
+validate-security: ## Run the security validation harness (9 scenarios, MTTD/MTTA/MTTC)
 	$(PYTHON) -m sentinelswitch validate
 
 drift: ## Report configuration drift between desired intent and the observed twin
@@ -68,10 +83,13 @@ format: ## Auto-format Python
 	$(BIN)/ruff check --fix backend simulator scripts diagrams/source
 
 diagrams: ## Render SVG + Mermaid + PNG diagrams into diagrams/
-	$(PYTHON) scripts/diagrams.py
+	$(PYTHON) scripts/diagrams.py --allow-missing-png
 
-screenshots: build diagrams ## Regenerate every screenshot, LinkedIn card, GitHub image and branding PNG
+screenshots: build diagrams ## Regenerate every screenshot, LinkedIn card, GitHub image, branding PNG and the 2.0 artifact screenshots
 	$(PYTHON) scripts/screenshots.py
+
+screenshots-2: build ## Only the SentinelSwitch 2.0 artifact screenshots (artifacts/sentinelswitch-2.0/screenshots)
+	$(PYTHON) scripts/screenshots.py --only-2
 
 media: screenshots ## Alias for screenshots
 
@@ -82,4 +100,4 @@ clean: ## Remove build artifacts and the local database (keeps the committed dat
 	rm -rf frontend/dist data/generated/sentinelswitch.db* .pytest_cache .ruff_cache
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +
 
-.PHONY: help setup generate seed reset demo validate-security drift build dev dev-frontend serve test lint format diagrams screenshots media docker-up clean
+.PHONY: help setup generate seed reset demo demo-2 assess findings remediate report validate-security drift build dev dev-frontend serve test lint format diagrams screenshots screenshots-2 media docker-up clean

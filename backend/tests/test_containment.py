@@ -1,7 +1,7 @@
 import pytest
 
 from sentinelswitch.containment.adapters import ProtectedInterfaceError, SimulatedCisco2960XAdapter
-from sentinelswitch.containment.controller import ContainmentController
+from sentinelswitch.containment.controller import ContainmentController, authorization_record
 from sentinelswitch.containment.policy import PolicyEngine
 from sentinelswitch.correlation.engine import Clock, CorrelationEngine
 from simulator.canonical import parse_ts
@@ -23,6 +23,7 @@ def test_quarantine_action_changes_twin_and_verifies(env, twin):
         incident_id="INC-2026-0042",
         clock=clock,
         timing=TIMING,
+        authorization=authorization_record(d, at=(clock).now),
     )
     assert act.status == "verified" and act.verification["ok"]
     assert act.from_vlan == 20 and act.to_vlan == 50
@@ -45,6 +46,7 @@ def test_rollback(env, twin):
         incident_id="INC-X",
         clock=Clock(twin.now),
         timing=TIMING,
+        authorization=authorization_record(d, at=(Clock(twin.now)).now),
     )
     ctl.restore(act, actor="tlee", note="remediated", at=parse_ts("2026-03-17T22:00:00Z"))
     assert act.status == "restored" and act.restored_by == "tlee"
@@ -80,6 +82,7 @@ def test_controller_never_quarantines_protected_even_if_forced(env, twin):
         incident_id=None,
         clock=Clock(twin.now),
         timing=TIMING,
+        authorization=authorization_record(forced, at=twin.now),
     )
     assert act.status == "refused"
     assert twin.interfaces["Gi1/0/1"].is_trunk and twin.interfaces["Gi1/0/1"].oper_status == "connected"
@@ -99,6 +102,7 @@ def test_shutdown_action(env, twin):
         incident_id="INC-Y",
         clock=Clock(twin.now),
         timing=TIMING,
+        authorization=authorization_record(d, at=(Clock(twin.now)).now),
     )
     assert act.action == "port_shutdown" and act.status == "verified"
     assert twin.interfaces["Gi1/0/17"].admin_status == "down" and twin.interfaces["Gi1/0/17"].hold
@@ -118,6 +122,7 @@ def test_manual_review_does_not_touch_switch(env, twin):
         incident_id=None,
         clock=Clock(twin.now),
         timing=TIMING,
+        authorization=authorization_record(d, at=(Clock(twin.now)).now),
     )
     assert act.status == "not_applicable"
     assert twin.to_dict() == before

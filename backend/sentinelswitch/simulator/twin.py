@@ -15,7 +15,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Any
 
-from simulator.canonical import Environment, add_seconds, long_ifname, mac_norm, parse_ts, ts_iso
+from simulator.canonical import Environment, add_seconds, long_ifname, mac_cisco, mac_norm, parse_ts, ts_iso
 
 
 @dataclass
@@ -266,8 +266,12 @@ class SwitchTwin:
 
     def apply_drift(self, injections: list[dict[str, Any]]) -> None:
         for inj in injections:
-            iface = self.interfaces[inj["interface"]]
             setting, observed = inj["setting"], inj.get("observed")
+            if setting == "span_session":
+                # global drift: the SPAN session was edited by hand
+                self.span = {**self.span, **dict(observed or {})}
+                continue
+            iface = self.interfaces[inj["interface"]]
             if setting == "admin_status":
                 iface.admin_status = observed
                 if observed == "up" and iface.oper_status == "disabled":
@@ -583,6 +587,184 @@ class SwitchTwin:
         else:
             result.update({"action": "none"})
         return result
+
+    def apply_intent(
+        self,
+        interface: str,
+        settings: list[str],
+        intent_settings: dict[str, Any],
+        description: str | None,
+        *,
+        actor: str,
+        reason: str | None,
+        at: datetime,
+    ) -> list[str]:
+        """Re-apply the named settings from the port intent (configuration as code) and return the IOS lines."""
+        iface = self.interfaces[interface]
+        lines: list[str] = []
+        for key in settings:
+            if key == "admin_status":
+                want_down = bool(intent_settings.get("admin_shutdown"))
+                iface.admin_status = "down" if want_down else "up"
+                iface.oper_status = (
+                    "disabled"
+                    if want_down
+                    else ("notconnect" if iface.oper_status == "disabled" else iface.oper_status)
+                )
+                if want_down:
+                    self._forget_interface(interface)
+                lines.append(" shutdown" if want_down else " no shutdown")
+            elif key == "description":
+                iface.description = description or iface.description
+                lines.append(f" description {iface.description}")
+            elif key == "access_vlan":
+                iface.access_vlan = intent_settings.get("access_vlan", iface.access_vlan)
+                iface.oper_vlan = iface.access_vlan
+                lines.append(f" switchport access vlan {iface.access_vlan}")
+            elif key == "storm_control":
+                sc = intent_settings.get("storm_control")
+                if sc:
+                    iface.settings["storm_control"] = dict(sc)
+                    for kind in ("broadcast", "multicast"):
+                        if kind in sc:
+                            lines.append(f" storm-control {kind} level {sc[kind]}")
+                    lines.append(" storm-control action trap")
+                else:
+                    iface.settings.pop("storm_control", None)
+                    lines.append(" no storm-control broadcast level")
+            elif key == "port_security":
+                ps = intent_settings.get("port_security", {})
+                iface.settings["port_security"] = dict(ps)
+                lines.append(" switchport port-security")
+                lines.append(f" switchport port-security maximum {ps.get('maximum', 1)}")
+                lines.append(f" switchport port-security violation {ps.get('violation', 'restrict')}")
+                if ps.get("sticky"):
+                    lines.append(" switchport port-security mac-address sticky")
+            elif key in {
+                "dot1x",
+                "mab",
+                "bpduguard",
+                "ip_source_guard",
+                "spanning_tree_portfast",
+                "dhcp_snooping_trust",
+                "dai_trust",
+            }:
+                value = intent_settings.get(key)
+                if value is None:
+                    iface.settings.pop(key, None)
+                else:
+                    iface.settings[key] = value
+                lines.append(f" ! re-applied {key} = {value}")
+            else:
+                raise ValueError(f"setting {key} cannot be remediated automatically")
+        iface.last_change = ts_iso(at)
+        self._record_change(at, actor, interface, [f"interface {iface.long_name}"] + lines, reason)
+        return [f"interface {iface.long_name}"] + lines
+
+    def add_span_source(self, vlan: int, *, actor: str, reason: str | None, at: datetime) -> list[str]:
+        sources = list(self.span.get("source_vlans", []))
+        if vlan not in sources:
+            sources.append(vlan)
+            self.span["source_vlans"] = sorted(sources)
+        cmd = f"monitor session {self.span['id']} source vlan {' , '.join(str(v) for v in self.span['source_vlans'])} {self.span.get('direction', 'both')}"
+        self._record_change(at, actor, None, [cmd], reason)
+        return [cmd]
+
+    def reauthenticate(self, interface: str, *, actor: str, reason: str | None, at: datetime) -> list[dict[str, Any]]:
+        """Bounce the authentication session on a port; the attached device re-authenticates immediately.
+        Returns the RADIUS-style events the twin produced."""
+        iface = self.interfaces[interface]
+        events: list[dict[str, Any]] = []
+        self._record_change(
+            at, actor, interface, [f"clear authentication sessions interface {iface.long_name}"], reason
+        )
+        idx = int(interface.rsplit("/", 1)[-1])
+        for n, entry in enumerate(self.macs_on_interface(interface)):
+            dev = self.env.device_by_mac(entry.mac)
+            ts = add_seconds(at, 0.8 + n * 0.3)
+            base = {
+                "timestamp": ts_iso(ts),
+                "event_id": f"RAD-R-{at.strftime('%H%M%S')}-{idx:02d}{n}",
+                "device": dev.hostname if dev else None,
+                "calling_station_id": entry.mac.replace(":", "-"),
+                "called_station_id": self.base_mac.replace(":", "-"),
+                "nas_identifier": self.hostname,
+                "nas_ip_address": self.management_ip,
+                "nas_port": 50000 + idx,
+                "nas_port_id": iface.long_name,
+                "nas_port_type": "Ethernet",
+                "audit_session_id": f"0A0A0A02{idx:08X}{int(entry.mac.replace(':', '')[-6:], 16):08X}",
+            }
+            if iface.auth_method == "dot1x-timeout" or (dev and dev.vlan == 40):
+                mab = dict(
+                    base,
+                    username=mac_cisco(entry.mac).replace(".", ""),
+                    identity=entry.mac.replace(":", "-"),
+                    user=None,
+                    service_type="Call-Check",
+                    result="Access-Reject",
+                    method="MAB",
+                    eap_type=None,
+                    assigned_vlan=None,
+                    vlan_source=None,
+                    session_timeout=None,
+                    reason="MAC not found in endpoint database",
+                )
+                guest = dict(
+                    base,
+                    timestamp=ts_iso(add_seconds(ts, 6.42)),
+                    event_id=base["event_id"] + "G",
+                    username="(none)",
+                    identity=entry.mac.replace(":", "-"),
+                    user=None,
+                    service_type="Framed-User",
+                    result="Guest-VLAN",
+                    method="dot1x (no supplicant response)",
+                    eap_type=None,
+                    assigned_vlan=iface.settings.get("guest_vlan", 40),
+                    vlan_source="guest-vlan",
+                    session_timeout=None,
+                    reason="No EAPOL response after 2 x tx-period; guest VLAN authorised locally by the switch",
+                )
+                events += [mab, guest]
+                self.syslog(
+                    add_seconds(ts, 0.041),
+                    "AUTHMGR",
+                    5,
+                    "VLANASSIGN",
+                    f"VLAN {guest['assigned_vlan']} assigned to Interface {interface} AuditSessionID {base['audit_session_id']}",
+                )
+            else:
+                method = (
+                    "MAB"
+                    if (dev and dev.auth == "mab")
+                    else ("PEAP-MSCHAPv2" if dev and dev.auth == "peap" else "EAP-TLS")
+                )
+                username = dev.user if dev and dev.user else mac_cisco(entry.mac).replace(".", "")
+                events.append(
+                    dict(
+                        base,
+                        username=username,
+                        identity=(f"{dev.user}@corp.example.com" if dev and dev.user else entry.mac.replace(":", "-")),
+                        user=(dev.user if dev else None),
+                        service_type="Framed-User" if method != "MAB" else "Call-Check",
+                        result="Access-Accept",
+                        method=method,
+                        eap_type={"EAP-TLS": 13, "PEAP-MSCHAPv2": 25}.get(method),
+                        assigned_vlan=iface.access_vlan,
+                        vlan_source="port-default",
+                        session_timeout=14400,
+                        reason=None,
+                    )
+                )
+                self.syslog(
+                    add_seconds(ts, 0.031),
+                    "MAB" if method == "MAB" else "DOT1X",
+                    5,
+                    "SUCCESS",
+                    f"Authentication successful for client ({mac_cisco(entry.mac)}) on Interface {interface} AuditSessionID {base['audit_session_id']}",
+                )
+        return events
 
     def port_security_violation(self, interface: str, mac: str, at: datetime) -> None:
         iface = self.interfaces[interface]

@@ -46,6 +46,11 @@ def rasterize(svgs: list[Path], scale: int = 2) -> list[Path]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-png", action="store_true")
+    ap.add_argument(
+        "--allow-missing-png",
+        action="store_true",
+        help="exit 0 when Chromium is unavailable (vector output still written)",
+    )
     args = ap.parse_args()
     svgs = render_all()
     for s in svgs:
@@ -56,7 +61,7 @@ def main() -> int:
                 print("png ", p.relative_to(ROOT))
         except Exception as exc:  # noqa: BLE001
             print(f"PNG rasterisation skipped ({exc}); run `python -m playwright install chromium`", file=sys.stderr)
-            return 1
+            return 0 if args.allow_missing_png else 1
     return 0
 
 

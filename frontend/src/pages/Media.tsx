@@ -78,8 +78,8 @@ function Frame({ step, title, sub, children, landscape = false }: { step?: strin
       </div>
       <div className="m-body">{children}</div>
       <div className="m-foot">
-        <span><b>SentinelSwitch</b> · Autonomous Network Detection &amp; Response Lab</span>
-        <span>Detect · Attribute · Contain</span>
+        <span><b>SentinelSwitch</b> · Evidence-Driven Network Security &amp; Response Lab</span>
+        <span>Detect · Attribute · Authorize · Contain · Verify</span>
       </div>
     </div>
   )
@@ -216,17 +216,17 @@ export function Media() {
       )
     case '07-validation-results':
       return (
-        <Frame step="07 / 07" title="Eight adversary scenarios, replayed end to end" sub="Each scenario runs through the real pipeline against an isolated twin. Timings are measured on the simulated clock from the first anomalous event.">
+        <Frame step="07 / 07" title={`${b.validation.results.length} adversary scenarios, replayed end to end`} sub="Each scenario runs through the real pipeline against an isolated twin, including one withheld from automation by the critical-asset guard. Timings are measured on the simulated clock from the first anomalous event.">
           <Card title="SentinelSwitch security validation" bodyClass="tight">
             <table className="data matrix">
-              <thead><tr><th>scenario</th><th>detect</th><th>attribute</th><th>contain</th><th>ttd</th><th>ttc</th></tr></thead>
+              <thead><tr><th>scenario</th><th>detect</th><th>attribute</th><th>response</th><th>ttd</th><th>ttc</th></tr></thead>
               <tbody>
                 {b.validation.results.map((r) => (
                   <tr key={r.scenario_id}>
                     <td className="strong">{r.name}</td>
                     <td className={`pf ${r.detect ? 'pass' : 'fail'}`}>{r.detect ? 'PASS' : 'FAIL'}</td>
                     <td className={`pf ${r.attribute ? 'pass' : 'fail'}`}>{r.attribute ? 'PASS' : 'FAIL'}</td>
-                    <td className={`pf ${r.contain ? 'pass' : 'fail'}`}>{r.contain ? 'PASS' : 'FAIL'}</td>
+                    <td className={`pf ${r.contain ? 'pass' : 'fail'}`} title={r.response === 'withheld' ? 'automation correctly withheld by policy; analyst decision required' : undefined}>{r.response === 'withheld' ? 'WITHHELD' : r.response === 'contained' ? 'CONTAINED' : r.contain ? 'PASS' : 'FAIL'}</td>
                     <td className="mono num">{fmtSeconds(r.ttd)}</td>
                     <td className="mono num">{fmtSeconds(r.ttc)}</td>
                   </tr>
@@ -237,7 +237,7 @@ export function Media() {
           <div className="grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
             <Kpi label="Mean time to detect" value={fmtSeconds(b.validation.metrics.mttd)} tone="accent" hint={`range ${fmtSeconds(b.validation.metrics.min_ttd)} – ${fmtSeconds(b.validation.metrics.max_ttd)}`} />
             <Kpi label="Mean time to attribute" value={fmtSeconds(b.validation.metrics.mtta)} tone="accent" hint="detection → identity" />
-            <Kpi label="Mean time to contain" value={fmtSeconds(b.validation.metrics.mttc)} tone="accent" hint="detection → verified" />
+            <Kpi label="Mean time to contain" value={fmtSeconds(b.validation.metrics.mttc)} tone="accent" hint="detection → verified (contained scenarios)" />
           </div>
           <div className="notice" style={{ fontSize: 16 }}>Mechanisms exercised: 802.1X/MAB, Dynamic ARP Inspection, DHCP snooping, sticky port security, BPDU Guard, SPAN-fed Suricata and Zeek, quarantine VLAN and administrative shutdown through the switch adapter.</div>
         </Frame>
@@ -250,7 +250,7 @@ export function Media() {
             <span className="chip sim">Simulation · synthetic telemetry</span>
           </div>
           <div>
-            <h1 style={{ fontSize: 44 }}>Autonomous Network Detection &amp; Response Lab</h1>
+            <h1 style={{ fontSize: 44 }}>Evidence-Driven Network Security &amp; Response Lab</h1>
             <p className="m-sub" style={{ marginTop: 8, fontSize: 19, maxWidth: 1250 }}>A reproducible digital twin of a Cisco Catalyst 2960-X access layer: Zeek and Suricata-style telemetry, 802.1X, IP → MAC → port attribution and automated quarantine — with evidence.</p>
           </div>
           <div className="card" style={{ padding: '4px 14px 0' }}>
@@ -265,7 +265,7 @@ export function Media() {
               <Kpi label="Mean time to contain" value={fmtSeconds(k.mttc)} tone="accent" />
             </div>
           )}
-          <div className="m-foot" style={{ paddingTop: 14 }}><span>Python · FastAPI · SQLite · React · TypeScript · Cisco IOS · Zeek · Suricata · FreeRADIUS</span><span>Detect · Attribute · Contain</span></div>
+          <div className="m-foot" style={{ paddingTop: 14 }}><span>Python · FastAPI · SQLite · React · TypeScript · Cisco IOS · Zeek · Suricata · FreeRADIUS</span><span>Detect · Attribute · Authorize · Contain · Verify</span></div>
         </div>
       )
     default:

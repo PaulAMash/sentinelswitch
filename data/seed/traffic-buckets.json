@@ -657,11 +657,11 @@
   },
   {
     "ts": "2026-03-17T20:30:00.000Z",
-    "connections": 48,
+    "connections": 648,
     "bytes": 17256171,
     "dns_queries": 21,
-    "alerts": 0,
-    "hosts": 13
+    "alerts": 2,
+    "hosts": 14
   },
   {
     "ts": "2026-03-17T20:45:00.000Z",

@@ -38,6 +38,30 @@ The controller never trusts its own write. After a VLAN move it reads back
 `admin down`, `disabled`, and no MAC addresses on the port. A failed verification marks the
 action `failed` and the incident `containment_failed`.
 
+## Authorization record
+
+Since 2.0 the policy decision (what *should* happen) and the authorization (who *allowed* it and
+when) are recorded separately. `authorization_record()` in `containment/controller.py` builds the
+record right after the policy decision; `ScenarioRunner` attaches it to the incident or the review,
+and the controller stores it on the containment action.
+
+| field | value |
+| --- | --- |
+| `mode` | `automatic` (policy tier), `analyst` (manual approval), `rejected` (explicitly declined) |
+| `status` | `authorized` when the tier is `automatic_containment` or an analyst approved; `rejected`; otherwise `pending` |
+| `authorized_by` | `policy-engine` or the analyst username |
+| `authorized_at` | set when authorized or rejected; `null` while pending |
+| `basis` | `policy tier <disposition>` plus `(before guards: <tier>)` when a guard downgraded it |
+| `reason`, `guards`, `action` | copied from the decision |
+| `note` | analyst note |
+
+The controller refuses to execute unless `status == authorized` (the action is recorded as
+`not_applicable`), and the timeline gains an `authorization` phase: `Containment authorized by
+policy-engine (policy tier automatic_containment); action quarantine_vlan`, or `Automatic
+containment NOT authorized: guard(s) critical_assets require analyst approval`. The control
+`CTL-RESPONSE-AUTHORIZED` later verifies that every executed action's `authorized_at` precedes its
+`applied_at` ([controls.md](controls.md)).
+
 ## Protected interfaces
 
 Two layers refuse to touch infrastructure:
@@ -54,6 +78,43 @@ Two layers refuse to touch infrastructure:
 `switchport access vlan <original>` or `no shutdown`, records who released containment and why,
 updates the incident to `resolved`, and appends the transcript to the timeline. The historical
 incidents in the dataset (INC-2026-0039 … 0041) all went through this path.
+
+## Analyst decisions
+
+Detections that policy routed to `manual_review` wait in the review queue with their attribution
+and decision attached and a `pending` authorization. `services/response.py` records the analyst's
+decision without rewriting the original policy decision:
+
+| | `POST /api/reviews/{detection_id}/approve` | `POST /api/reviews/{detection_id}/reject` |
+| --- | --- | --- |
+| precondition | review status `review`; the detection class maps to an action; attribution has an interface that is not protected or a trunk (otherwise 409) | review status `review` (otherwise 409) |
+| authorization | mode `analyst`, status `authorized`, reason `Analyst approval by <actor>: <note>`, `tier_before_guards` = the original disposition | mode `rejected`, status `rejected`, note |
+| execution | the same `ContainmentController` + `SimulatedCisco2960XAdapter` as the automatic path (apply 0.41 s, verify 0.13 s on the simulated clock), 120 s after the later of the twin clock and the review's `opened_at` | none |
+| records | new incident `INC-2026-<next>` (`disposition: analyst_approved`, status `contained` or `containment_failed`), containment action, timeline entries `authorization` / `containment` / `verification` / `evidence`, the eleven-artifact evidence bundle under `data/incidents/<id>/`, review → `approved` with `incident_id`, detection and alerts updated; the API route then runs a `post-containment-<incident>` assessment | review → `closed` with `closed_by` and note, timeline `resolution` entry `Containment declined by <actor>: <note>`, alerts closed |
+
+Approval writes the same evidence bundle the automatic path writes (`_write_evidence()` in
+`services/response.py`: timeline, alerts, binding, MAC table, port before/after, decision, action,
+related Zeek records and the rendered README), so `CTL-EVIDENCE-COMPLETE`, `CTL-RESPONSE-AUTHORIZED`
+and `CTL-QUARANTINE-VERIFIED` are all evaluated for the new incident. Rejection changes nothing on
+the twin. Both paths are exercised by `sentinelswitch demo2`, which rejects the
+`critical-asset-scan` review ([workflow-2.0.md](workflow-2.0.md#negative-path)).
+
+## Verification failure handling
+
+A failed read-back is a first-class state, not an exception:
+
+1. The controller marks the action `failed` (`verification.ok = false`, expected string and
+   transcript kept) and the incident `containment_failed`; the timeline records `Verification FAILED`.
+2. `CTL-QUARANTINE-VERIFIED` assesses every `contained` or `containment_failed` incident and fails
+   when the read-back failed **or** the twin no longer reports the containment state (access VLAN
+   and every learned MAC in the quarantine VLAN, or admin down with no MACs). The finding carries
+   the original commands as guidance but has no executable action: `POST /api/findings/{id}/remediate`
+   answers 409 `manual follow-up required`, and the analyst re-applies containment from the incident
+   page or releases it.
+3. `CTL-RESPONSE-AUTHORIZED` still assesses the failed action, so an unauthorized attempt is
+   reported even when it did not take effect.
+4. After a restore, `CTL-RECOVERY-VERIFIED` fails if the interface is not back in its intended VLAN,
+   administratively up, and free of quarantine/hold flags.
 
 ## Containment mechanics in the lab
 

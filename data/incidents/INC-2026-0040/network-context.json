@@ -98,21 +98,21 @@
       "name": "USERS",
       "subnet": "10.20.0.0/24",
       "gateway": "10.20.0.1",
-      "purpose": "Employee workstations and laptops (802.1X)"
+      "purpose": "Production workstations, tournament admin and player stations (802.1X)"
     },
     "30": {
       "id": 30,
       "name": "SERVERS",
       "subnet": "10.30.0.0/24",
       "gateway": "10.30.0.1",
-      "purpose": "Lab servers (directory, files, RADIUS, web, git, updates)"
+      "purpose": "Tournament services (directory, files, RADIUS, intranet, git/CI, updates)"
     },
     "40": {
       "id": 40,
       "name": "GUEST",
       "subnet": "10.40.0.0/24",
       "gateway": "10.40.0.1",
-      "purpose": "Guest / unauthenticated devices (internet only)"
+      "purpose": "Spectator, vendor and event-floor devices (internet only)"
     },
     "50": {
       "id": 50,
@@ -126,7 +126,7 @@
       "name": "MONITORING",
       "subnet": "10.99.0.0/24",
       "gateway": "10.99.0.1",
-      "purpose": "Security telemetry collectors and controller"
+      "purpose": "Broadcast/NOC monitoring: security telemetry collector and controller"
     },
     "999": {
       "id": 999,
@@ -147,7 +147,8 @@
     "source_vlans": [
       20,
       30,
-      40
+      40,
+      50
     ],
     "direction": "both",
     "destination": "Gi1/0/47"

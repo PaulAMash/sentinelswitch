@@ -1,0 +1,16 @@
+id: remediate-finding
+name: Remediate a control finding and verify it
+trigger: analyst.action == remediate and finding.status in [open, reopened, remediation_failed]
+steps:
+  - {id: authorize, action: rbac.require, inputs: {role: soc-analyst}}
+  - {id: request,   action: findings.request_remediation, inputs: {finding: finding.id, actor: analyst, note: analyst.note}}
+  - {id: execute,   action: switch.apply_baseline, inputs: {interface: finding.scope.interface, settings: finding.remediation.action, reason: finding.id}}
+  - {id: reassess,  action: assurance.run, inputs: {trigger: "remediation-{finding.id}", delay_seconds: 12}}
+  - {id: verify,    action: findings.verify, inputs: {finding: finding.id, expect: PASS}}
+  - {id: notify,    action: notify.dashboard}
+on_failure:
+  - action: findings.mark_remediation_failed
+    inputs: {finding: finding.id}
+notes: >
+  Every step is recorded as a finding event (remediation_requested, remediation_executed, verified or
+  verification_failed). The finding is never deleted; a later FAIL reopens it.

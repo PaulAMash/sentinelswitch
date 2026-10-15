@@ -136,3 +136,35 @@ table.matrix td.pf.fail { color: #ff8a80; }
 .media .chain.vertical .chain-node { padding: 14px 16px; }
 .media .chain.vertical .chain-node .v { font-size: 20px; }
 .media .step .detail .src { font-size: 12px; }
+
+/* ---------------------------------------------------------------- assurance (2.0) */
+.brand-ver { font-size: 0.6em; color: var(--muted); font-weight: 600; letter-spacing: 0.04em; vertical-align: 2px; }
+.chip.PASS { color: #7ee2a8; background: rgba(63, 185, 80, 0.12); border-color: rgba(63, 185, 80, 0.35); }
+.chip.FAIL { color: #ff8a80; background: rgba(248, 81, 73, 0.14); border-color: rgba(248, 81, 73, 0.35); }
+.chip.UNKNOWN { color: var(--text-2); background: var(--panel-3); border-color: var(--border-strong); }
+.chip.STALE { color: #f0c36b; background: rgba(210, 153, 34, 0.14); border-color: rgba(210, 153, 34, 0.35); }
+.chip.RETIRED { color: var(--text-3); background: transparent; border-color: var(--border-strong); border-style: dashed; }
+.chip.NOT_ASSESSED { color: var(--faint); background: transparent; border-color: var(--border); }
+.chip.reopened, .chip.remediation_failed { color: #ff8a80; background: rgba(248, 81, 73, 0.14); border-color: rgba(248, 81, 73, 0.35); }
+.chip.remediation_requested, .chip.remediated { color: #f0c36b; background: rgba(210, 153, 34, 0.14); border-color: rgba(210, 153, 34, 0.35); }
+.chip.authorized { color: #7ee2a8; background: rgba(63, 185, 80, 0.12); border-color: rgba(63, 185, 80, 0.35); }
+.chip.pending { color: #f0c36b; background: rgba(210, 153, 34, 0.14); border-color: rgba(210, 153, 34, 0.35); }
+.chip.rejected, .chip.analyst_approved { color: var(--text-2); background: var(--panel-3); border-color: var(--border-strong); }
+.status-bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--panel-3); gap: 2px; }
+.status-bar > span { display: block; height: 100%; }
+.status-bar .PASS { background: var(--chart-green); } .status-bar .FAIL { background: var(--chart-red); } .status-bar .UNKNOWN { background: #56657a; } .status-bar .STALE { background: var(--chart-amber); }
+.stat-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(38, 50, 65, 0.6); font-size: 12.5px; }
+.stat-row:last-child { border-bottom: none; }
+.stat-row .counts { display: flex; gap: 6px; font-family: var(--mono); font-size: 11.5px; }
+.stat-row .counts span { padding: 1px 6px; border-radius: 3px; background: var(--panel-3); }
+.posture-hero { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr); gap: 14px; }
+@media (max-width: 1100px) { .posture-hero { grid-template-columns: 1fr; } }
+.evidence-list { display: flex; flex-direction: column; gap: 6px; }
+.evidence-item { display: grid; grid-template-columns: 120px 1fr; gap: 10px; padding: 8px 10px; border-radius: var(--radius); background: var(--panel-2); border: 1px solid var(--border); font-size: 12px; }
+.evidence-item .src { font-family: var(--mono); color: var(--accent-2); font-size: 11px; }
+.evidence-item .ref { font-family: var(--mono); color: var(--text-2); font-size: 11px; }
+.evidence-item .det { color: var(--text); white-space: pre-wrap; word-break: break-word; }
+.evidence-item .at { color: var(--faint); font-family: var(--mono); font-size: 10.5px; }
+.sev-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+.sev-dot.high { background: var(--red); } .sev-dot.medium { background: var(--amber); } .sev-dot.low { background: var(--accent); }
+.wrap { white-space: normal; }

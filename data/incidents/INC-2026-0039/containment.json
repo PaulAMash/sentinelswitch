@@ -77,6 +77,17 @@
     "restore_transcript": null,
     "notes": [
       "Port was already err-disabled by the switch; hold prevents errdisable recovery from re-enabling it"
-    ]
+    ],
+    "authorization": {
+      "mode": "automatic",
+      "status": "authorized",
+      "authorized_by": "policy-engine",
+      "authorized_at": "2026-03-17T09:12:45.081Z",
+      "basis": "policy tier automatic_containment",
+      "reason": "Automatic containment approved (severity=high confidence=0.96); action=port_shutdown",
+      "guards": [],
+      "action": "port_shutdown",
+      "note": null
+    }
   }
 }

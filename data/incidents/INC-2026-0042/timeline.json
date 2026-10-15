@@ -167,6 +167,15 @@
     }
   },
   {
+    "ts": "2026-03-17T21:14:40.587Z",
+    "phase": "authorization",
+    "actor": "sentinel",
+    "message": "Containment authorized by policy-engine (policy tier automatic_containment); action quarantine_vlan",
+    "details": {
+      "mode": "automatic"
+    }
+  },
+  {
     "ts": "2026-03-17T21:14:40.589Z",
     "phase": "incident",
     "actor": "sentinel",

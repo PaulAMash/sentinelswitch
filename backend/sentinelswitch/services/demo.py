@@ -8,7 +8,7 @@ from typing import Any
 from sentinelswitch.app.config import Settings
 from sentinelswitch.containment.adapters import SimulatedCisco2960XAdapter
 from sentinelswitch.simulator.scenario import SECURITY_SYSLOG_PREFIXES, RunResult, ScenarioRunner
-from simulator.canonical import Environment, parse_ts, ts_iso
+from simulator.canonical import Environment, add_seconds, parse_ts, ts_iso
 
 from .store import Store
 from .telemetry import FileTelemetry
@@ -32,6 +32,12 @@ def run_flagship(
     result = runner.run(scenario, "day", write_evidence=True)
     _persist(store, result, on_event)
     store.save_twin(twin)
+    from sentinelswitch.assurance.engine import AssessmentEngine
+
+    assessment = AssessmentEngine(env, store, settings.incidents_dir).run(
+        "post-containment", at=parse_ts(result.metrics["evidence"]) if result.metrics.get("evidence") else None
+    )
+    result.metrics["assessment_run"] = assessment["run_id"]
     store.kv_set(
         "demo",
         {
@@ -145,7 +151,14 @@ def _persist(store: Store, result: RunResult, on_event: Callable[[dict[str, Any]
 
 
 def restore_incident(
-    store: Store, env: Environment, incident_id: str, *, actor: str, note: str, at: str | None = None
+    store: Store,
+    env: Environment,
+    incident_id: str,
+    *,
+    actor: str,
+    note: str,
+    at: str | None = None,
+    settings: Settings | None = None,
 ) -> dict[str, Any]:
     inc = store.incident(incident_id)
     if inc is None:
@@ -158,6 +171,7 @@ def restore_incident(
         raise RuntimeError("no verified containment action to restore")
     twin = store.load_twin()
     when = parse_ts(at) if at else _restore_time(twin, action)
+    twin.advance_to(when)
     adapter = SimulatedCisco2960XAdapter(twin)
     res = adapter.restore(action["interface"], actor=actor, reason=note, at=when)
     action.update(
@@ -200,7 +214,13 @@ def restore_incident(
     if demo.get("flagship_incident") == incident_id:
         demo["stage"] = "restored"
         store.kv_set("demo", demo)
-    return {"incident": inc, "action": action, "transcript": res.transcript}
+    from sentinelswitch.app.config import get_settings
+    from sentinelswitch.assurance.engine import AssessmentEngine
+
+    run = AssessmentEngine(
+        env, store, get_settings().incidents_dir if settings is None else settings.incidents_dir
+    ).run(f"recovery-{incident_id}", at=add_seconds(when, 5.0))
+    return {"incident": inc, "action": action, "transcript": res.transcript, "assessment_run": run}
 
 
 def _restore_time(twin, action: dict[str, Any]):

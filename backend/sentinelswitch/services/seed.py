@@ -46,6 +46,10 @@ def seed_database(
     if flagship_id and (incidents_dir / flagship_id).exists():
         shutil.rmtree(incidents_dir / flagship_id)
     summary = {"seeded_at": ts_iso(env.baseline_now), "counts": store.counts()}
+    # Baseline control assessment so the posture views are populated before any incident is replayed.
+    from sentinelswitch.assurance.engine import AssessmentEngine
+
+    summary["assessment"] = AssessmentEngine(env, store, incidents_dir).run("baseline-seed")
     if run_validation_suite:
         report = run_validation(env, SwitchTwin.from_dict(env, twin_data))
         for row in report.results:

@@ -9,7 +9,11 @@ def test_drift_findings(env, twin):
     assert ("Gi1/0/41", "admin_status") in found and found[("Gi1/0/41", "admin_status")]["severity"] == "medium"
     assert ("Gi1/0/35", "storm_control") in found and found[("Gi1/0/35", "storm_control")]["severity"] == "low"
     assert ("Gi1/0/22", "description") in found and found[("Gi1/0/22", "description")]["severity"] == "info"
-    assert report["open"] == 3 and report["approved"] == 0
+    # The fourth deviation is global: VLAN 50 is missing from the SPAN session the intent declares.
+    assert (None, "span_session") in found and found[(None, "span_session")]["severity"] == "high"
+    assert found[(None, "span_session")]["observed"]["source_vlans"] == [20, 30, 40]
+    assert found[(None, "span_session")]["expected"]["source_vlans"] == [20, 30, 40, 50]
+    assert report["open"] == 4 and report["approved"] == 0
     assert "shutdown" in found[("Gi1/0/41", "admin_status")]["recommendation"]
 
 
@@ -24,4 +28,4 @@ def test_quarantine_is_an_approved_deviation(env, twin):
     report = DriftEngine(env).evaluate(twin)
     f = next(f for f in report["findings"] if f["interface"] == "Gi1/0/23")
     assert f["status"] == "approved" and f["setting"] == "access_vlan" and f["observed"] == 50
-    assert report["approved"] == 1 and report["open"] == 3
+    assert report["approved"] == 1 and report["open"] == 4

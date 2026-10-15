@@ -22,21 +22,21 @@
       "name": "USERS",
       "subnet": "10.20.0.0/24",
       "gateway": "10.20.0.1",
-      "purpose": "Employee workstations and laptops (802.1X)"
+      "purpose": "Production workstations, tournament admin and player stations (802.1X)"
     },
     "30": {
       "id": 30,
       "name": "SERVERS",
       "subnet": "10.30.0.0/24",
       "gateway": "10.30.0.1",
-      "purpose": "Lab servers (directory, files, RADIUS, web, git, updates)"
+      "purpose": "Tournament services (directory, files, RADIUS, intranet, git/CI, updates)"
     },
     "40": {
       "id": 40,
       "name": "GUEST",
       "subnet": "10.40.0.0/24",
       "gateway": "10.40.0.1",
-      "purpose": "Guest / unauthenticated devices (internet only)"
+      "purpose": "Spectator, vendor and event-floor devices (internet only)"
     },
     "50": {
       "id": 50,
@@ -50,7 +50,7 @@
       "name": "MONITORING",
       "subnet": "10.99.0.0/24",
       "gateway": "10.99.0.1",
-      "purpose": "Security telemetry collectors and controller"
+      "purpose": "Broadcast/NOC monitoring: security telemetry collector and controller"
     },
     "999": {
       "id": 999,
@@ -5816,8 +5816,24 @@
       "message": "Authorization succeeded for client (a483.e72b.3748) on Interface Gi1/0/37 AuditSessionID 0A0A0A0200000025003A51FB"
     },
     {
-      "ts": "2026-03-17T12:31:22.452Z",
+      "ts": "2026-03-17T12:20:15.118Z",
       "seq": 2027,
+      "facility": "SEC_LOGIN",
+      "severity": 5,
+      "mnemonic": "LOGIN_SUCCESS",
+      "message": "Login Success [user: rahmed] [Source: 10.10.10.20] [localport: 22] at 12:20:15 UTC Tue Mar 17 2026"
+    },
+    {
+      "ts": "2026-03-17T12:20:33.418Z",
+      "seq": 2028,
+      "facility": "SYS",
+      "severity": 5,
+      "mnemonic": "CONFIG_I",
+      "message": "Configured from console by rahmed on vty0 (10.10.10.20)"
+    },
+    {
+      "ts": "2026-03-17T12:31:22.452Z",
+      "seq": 2029,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5825,7 +5841,7 @@
     },
     {
       "ts": "2026-03-17T12:31:22.479Z",
-      "seq": 2028,
+      "seq": 2030,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5833,7 +5849,7 @@
     },
     {
       "ts": "2026-03-17T12:36:10.318Z",
-      "seq": 2029,
+      "seq": 2031,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -5841,7 +5857,7 @@
     },
     {
       "ts": "2026-03-17T12:36:10.326Z",
-      "seq": 2030,
+      "seq": 2032,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -5849,7 +5865,7 @@
     },
     {
       "ts": "2026-03-17T12:36:50.018Z",
-      "seq": 2031,
+      "seq": 2033,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -5857,7 +5873,7 @@
     },
     {
       "ts": "2026-03-17T12:36:51.022Z",
-      "seq": 2032,
+      "seq": 2034,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -5865,7 +5881,7 @@
     },
     {
       "ts": "2026-03-17T12:36:52.318Z",
-      "seq": 2033,
+      "seq": 2035,
       "facility": "PORT_SECURITY",
       "severity": 2,
       "mnemonic": "PSECURE_VIOLATION",
@@ -5873,7 +5889,7 @@
     },
     {
       "ts": "2026-03-17T12:36:52.728Z",
-      "seq": 2034,
+      "seq": 2036,
       "facility": "MAB",
       "severity": 5,
       "mnemonic": "FAIL",
@@ -5881,7 +5897,7 @@
     },
     {
       "ts": "2026-03-17T12:37:55.666Z",
-      "seq": 2035,
+      "seq": 2037,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5889,7 +5905,7 @@
     },
     {
       "ts": "2026-03-17T12:37:55.693Z",
-      "seq": 2036,
+      "seq": 2038,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5897,7 +5913,7 @@
     },
     {
       "ts": "2026-03-17T13:10:08.619Z",
-      "seq": 2037,
+      "seq": 2039,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5905,7 +5921,7 @@
     },
     {
       "ts": "2026-03-17T13:10:08.646Z",
-      "seq": 2038,
+      "seq": 2040,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5913,7 +5929,7 @@
     },
     {
       "ts": "2026-03-17T13:15:45.833Z",
-      "seq": 2039,
+      "seq": 2041,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5921,7 +5937,7 @@
     },
     {
       "ts": "2026-03-17T13:15:45.860Z",
-      "seq": 2040,
+      "seq": 2042,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5929,7 +5945,7 @@
     },
     {
       "ts": "2026-03-17T13:42:49.471Z",
-      "seq": 2041,
+      "seq": 2043,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5937,7 +5953,7 @@
     },
     {
       "ts": "2026-03-17T13:42:49.498Z",
-      "seq": 2042,
+      "seq": 2044,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5945,7 +5961,7 @@
     },
     {
       "ts": "2026-03-17T14:00:07.200Z",
-      "seq": 2043,
+      "seq": 2045,
       "facility": "SEC_LOGIN",
       "severity": 5,
       "mnemonic": "LOGIN_SUCCESS",
@@ -5953,7 +5969,7 @@
     },
     {
       "ts": "2026-03-17T14:00:36.000Z",
-      "seq": 2044,
+      "seq": 2046,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -5961,7 +5977,7 @@
     },
     {
       "ts": "2026-03-17T14:00:36.008Z",
-      "seq": 2045,
+      "seq": 2047,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -5969,7 +5985,7 @@
     },
     {
       "ts": "2026-03-17T14:02:11.000Z",
-      "seq": 2046,
+      "seq": 2048,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -5977,7 +5993,7 @@
     },
     {
       "ts": "2026-03-17T14:02:12.004Z",
-      "seq": 2047,
+      "seq": 2049,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -5985,7 +6001,7 @@
     },
     {
       "ts": "2026-03-17T14:02:13.651Z",
-      "seq": 2048,
+      "seq": 2050,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -5993,7 +6009,7 @@
     },
     {
       "ts": "2026-03-17T14:02:13.678Z",
-      "seq": 2049,
+      "seq": 2051,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6001,7 +6017,7 @@
     },
     {
       "ts": "2026-03-17T14:04:09.905Z",
-      "seq": 2050,
+      "seq": 2052,
       "facility": "MAB",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6009,7 +6025,7 @@
     },
     {
       "ts": "2026-03-17T14:04:09.932Z",
-      "seq": 2051,
+      "seq": 2053,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6017,7 +6033,7 @@
     },
     {
       "ts": "2026-03-17T14:19:49.841Z",
-      "seq": 2052,
+      "seq": 2054,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6025,7 +6041,7 @@
     },
     {
       "ts": "2026-03-17T14:19:49.868Z",
-      "seq": 2053,
+      "seq": 2055,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6033,7 +6049,7 @@
     },
     {
       "ts": "2026-03-17T14:28:18.975Z",
-      "seq": 2054,
+      "seq": 2056,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6041,7 +6057,7 @@
     },
     {
       "ts": "2026-03-17T14:28:19.002Z",
-      "seq": 2055,
+      "seq": 2057,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6049,7 +6065,7 @@
     },
     {
       "ts": "2026-03-17T14:32:51.990Z",
-      "seq": 2056,
+      "seq": 2058,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6057,7 +6073,7 @@
     },
     {
       "ts": "2026-03-17T14:32:52.017Z",
-      "seq": 2057,
+      "seq": 2059,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6065,7 +6081,7 @@
     },
     {
       "ts": "2026-03-17T14:40:31.726Z",
-      "seq": 2058,
+      "seq": 2060,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6073,7 +6089,7 @@
     },
     {
       "ts": "2026-03-17T14:40:31.753Z",
-      "seq": 2059,
+      "seq": 2061,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6081,7 +6097,7 @@
     },
     {
       "ts": "2026-03-17T14:55:40.000Z",
-      "seq": 2060,
+      "seq": 2062,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -6089,7 +6105,7 @@
     },
     {
       "ts": "2026-03-17T14:55:40.008Z",
-      "seq": 2061,
+      "seq": 2063,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -6097,7 +6113,7 @@
     },
     {
       "ts": "2026-03-17T14:57:32.000Z",
-      "seq": 2062,
+      "seq": 2064,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -6105,7 +6121,7 @@
     },
     {
       "ts": "2026-03-17T14:57:33.004Z",
-      "seq": 2063,
+      "seq": 2065,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -6113,7 +6129,7 @@
     },
     {
       "ts": "2026-03-17T14:57:34.840Z",
-      "seq": 2064,
+      "seq": 2066,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6121,7 +6137,7 @@
     },
     {
       "ts": "2026-03-17T14:57:34.867Z",
-      "seq": 2065,
+      "seq": 2067,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6129,7 +6145,7 @@
     },
     {
       "ts": "2026-03-17T15:08:35.919Z",
-      "seq": 2066,
+      "seq": 2068,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6137,7 +6153,7 @@
     },
     {
       "ts": "2026-03-17T15:08:35.946Z",
-      "seq": 2067,
+      "seq": 2069,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6145,7 +6161,7 @@
     },
     {
       "ts": "2026-03-17T15:09:11.073Z",
-      "seq": 2068,
+      "seq": 2070,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6153,7 +6169,7 @@
     },
     {
       "ts": "2026-03-17T15:09:11.100Z",
-      "seq": 2069,
+      "seq": 2071,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6161,7 +6177,7 @@
     },
     {
       "ts": "2026-03-17T15:19:54.025Z",
-      "seq": 2070,
+      "seq": 2072,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6169,7 +6185,7 @@
     },
     {
       "ts": "2026-03-17T15:19:54.052Z",
-      "seq": 2071,
+      "seq": 2073,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6177,7 +6193,7 @@
     },
     {
       "ts": "2026-03-17T15:30:48.704Z",
-      "seq": 2072,
+      "seq": 2074,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6185,7 +6201,7 @@
     },
     {
       "ts": "2026-03-17T15:30:48.731Z",
-      "seq": 2073,
+      "seq": 2075,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6193,7 +6209,7 @@
     },
     {
       "ts": "2026-03-17T15:34:21.294Z",
-      "seq": 2074,
+      "seq": 2076,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6201,7 +6217,7 @@
     },
     {
       "ts": "2026-03-17T15:34:21.321Z",
-      "seq": 2075,
+      "seq": 2077,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6209,7 +6225,7 @@
     },
     {
       "ts": "2026-03-17T15:41:03.302Z",
-      "seq": 2076,
+      "seq": 2078,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6217,7 +6233,7 @@
     },
     {
       "ts": "2026-03-17T15:41:03.329Z",
-      "seq": 2077,
+      "seq": 2079,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6225,7 +6241,7 @@
     },
     {
       "ts": "2026-03-17T15:52:14.875Z",
-      "seq": 2078,
+      "seq": 2080,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6233,7 +6249,7 @@
     },
     {
       "ts": "2026-03-17T15:52:14.902Z",
-      "seq": 2079,
+      "seq": 2081,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6241,7 +6257,7 @@
     },
     {
       "ts": "2026-03-17T15:55:52.112Z",
-      "seq": 2080,
+      "seq": 2082,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6249,7 +6265,7 @@
     },
     {
       "ts": "2026-03-17T15:55:52.139Z",
-      "seq": 2081,
+      "seq": 2083,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6257,7 +6273,7 @@
     },
     {
       "ts": "2026-03-17T15:57:18.933Z",
-      "seq": 2082,
+      "seq": 2084,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6265,7 +6281,7 @@
     },
     {
       "ts": "2026-03-17T15:57:18.960Z",
-      "seq": 2083,
+      "seq": 2085,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6273,7 +6289,7 @@
     },
     {
       "ts": "2026-03-17T15:58:03.793Z",
-      "seq": 2084,
+      "seq": 2086,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6281,7 +6297,7 @@
     },
     {
       "ts": "2026-03-17T15:58:03.820Z",
-      "seq": 2085,
+      "seq": 2087,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6289,7 +6305,7 @@
     },
     {
       "ts": "2026-03-17T16:00:07.200Z",
-      "seq": 2086,
+      "seq": 2088,
       "facility": "SEC_LOGIN",
       "severity": 5,
       "mnemonic": "LOGIN_SUCCESS",
@@ -6297,7 +6313,7 @@
     },
     {
       "ts": "2026-03-17T16:02:03.139Z",
-      "seq": 2087,
+      "seq": 2089,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6305,7 +6321,7 @@
     },
     {
       "ts": "2026-03-17T16:02:03.166Z",
-      "seq": 2088,
+      "seq": 2090,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6313,7 +6329,7 @@
     },
     {
       "ts": "2026-03-17T16:15:04.313Z",
-      "seq": 2089,
+      "seq": 2091,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6321,7 +6337,7 @@
     },
     {
       "ts": "2026-03-17T16:15:04.340Z",
-      "seq": 2090,
+      "seq": 2092,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6329,7 +6345,7 @@
     },
     {
       "ts": "2026-03-17T16:20:03.744Z",
-      "seq": 2091,
+      "seq": 2093,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6337,7 +6353,7 @@
     },
     {
       "ts": "2026-03-17T16:20:03.771Z",
-      "seq": 2092,
+      "seq": 2094,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6345,7 +6361,7 @@
     },
     {
       "ts": "2026-03-17T16:31:22.452Z",
-      "seq": 2093,
+      "seq": 2095,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6353,7 +6369,7 @@
     },
     {
       "ts": "2026-03-17T16:31:22.479Z",
-      "seq": 2094,
+      "seq": 2096,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6361,7 +6377,7 @@
     },
     {
       "ts": "2026-03-17T16:34:54.471Z",
-      "seq": 2095,
+      "seq": 2097,
       "facility": "SEC_LOGIN",
       "severity": 5,
       "mnemonic": "LOGIN_SUCCESS",
@@ -6369,7 +6385,7 @@
     },
     {
       "ts": "2026-03-17T16:35:12.771Z",
-      "seq": 2096,
+      "seq": 2098,
       "facility": "SYS",
       "severity": 5,
       "mnemonic": "CONFIG_I",
@@ -6377,7 +6393,7 @@
     },
     {
       "ts": "2026-03-17T16:37:55.387Z",
-      "seq": 2097,
+      "seq": 2099,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6385,7 +6401,7 @@
     },
     {
       "ts": "2026-03-17T16:37:55.414Z",
-      "seq": 2098,
+      "seq": 2100,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6393,7 +6409,7 @@
     },
     {
       "ts": "2026-03-17T16:48:00.000Z",
-      "seq": 2099,
+      "seq": 2101,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -6401,7 +6417,7 @@
     },
     {
       "ts": "2026-03-17T16:48:00.008Z",
-      "seq": 2100,
+      "seq": 2102,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -6409,7 +6425,7 @@
     },
     {
       "ts": "2026-03-17T17:10:08.619Z",
-      "seq": 2101,
+      "seq": 2103,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6417,7 +6433,7 @@
     },
     {
       "ts": "2026-03-17T17:10:08.646Z",
-      "seq": 2102,
+      "seq": 2104,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6425,7 +6441,7 @@
     },
     {
       "ts": "2026-03-17T17:10:22.039Z",
-      "seq": 2103,
+      "seq": 2105,
       "facility": "SEC_LOGIN",
       "severity": 5,
       "mnemonic": "LOGIN_SUCCESS",
@@ -6433,7 +6449,7 @@
     },
     {
       "ts": "2026-03-17T17:10:40.339Z",
-      "seq": 2104,
+      "seq": 2106,
       "facility": "SYS",
       "severity": 5,
       "mnemonic": "CONFIG_I",
@@ -6441,7 +6457,7 @@
     },
     {
       "ts": "2026-03-17T17:15:45.833Z",
-      "seq": 2105,
+      "seq": 2107,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6449,7 +6465,7 @@
     },
     {
       "ts": "2026-03-17T17:15:45.860Z",
-      "seq": 2106,
+      "seq": 2108,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6457,7 +6473,7 @@
     },
     {
       "ts": "2026-03-17T17:42:49.471Z",
-      "seq": 2107,
+      "seq": 2109,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6465,7 +6481,7 @@
     },
     {
       "ts": "2026-03-17T17:42:49.498Z",
-      "seq": 2108,
+      "seq": 2110,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6473,7 +6489,7 @@
     },
     {
       "ts": "2026-03-17T17:52:00.000Z",
-      "seq": 2109,
+      "seq": 2111,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -6481,7 +6497,7 @@
     },
     {
       "ts": "2026-03-17T17:52:00.008Z",
-      "seq": 2110,
+      "seq": 2112,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -6489,7 +6505,7 @@
     },
     {
       "ts": "2026-03-17T18:00:07.200Z",
-      "seq": 2111,
+      "seq": 2113,
       "facility": "SEC_LOGIN",
       "severity": 5,
       "mnemonic": "LOGIN_SUCCESS",
@@ -6497,7 +6513,7 @@
     },
     {
       "ts": "2026-03-17T18:04:09.905Z",
-      "seq": 2112,
+      "seq": 2114,
       "facility": "MAB",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6505,7 +6521,7 @@
     },
     {
       "ts": "2026-03-17T18:04:09.932Z",
-      "seq": 2113,
+      "seq": 2115,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6513,7 +6529,7 @@
     },
     {
       "ts": "2026-03-17T18:05:00.000Z",
-      "seq": 2114,
+      "seq": 2116,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -6521,7 +6537,7 @@
     },
     {
       "ts": "2026-03-17T18:05:00.008Z",
-      "seq": 2115,
+      "seq": 2117,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -6529,7 +6545,7 @@
     },
     {
       "ts": "2026-03-17T18:19:49.841Z",
-      "seq": 2116,
+      "seq": 2118,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6537,7 +6553,7 @@
     },
     {
       "ts": "2026-03-17T18:19:49.868Z",
-      "seq": 2117,
+      "seq": 2119,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6545,7 +6561,7 @@
     },
     {
       "ts": "2026-03-17T18:28:18.975Z",
-      "seq": 2118,
+      "seq": 2120,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6553,7 +6569,7 @@
     },
     {
       "ts": "2026-03-17T18:28:19.002Z",
-      "seq": 2119,
+      "seq": 2121,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6561,7 +6577,7 @@
     },
     {
       "ts": "2026-03-17T18:32:51.990Z",
-      "seq": 2120,
+      "seq": 2122,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6569,7 +6585,7 @@
     },
     {
       "ts": "2026-03-17T18:32:52.017Z",
-      "seq": 2121,
+      "seq": 2123,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6577,7 +6593,7 @@
     },
     {
       "ts": "2026-03-17T18:40:31.726Z",
-      "seq": 2122,
+      "seq": 2124,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6585,7 +6601,7 @@
     },
     {
       "ts": "2026-03-17T18:40:31.753Z",
-      "seq": 2123,
+      "seq": 2125,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6593,7 +6609,7 @@
     },
     {
       "ts": "2026-03-17T19:08:35.919Z",
-      "seq": 2124,
+      "seq": 2126,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6601,7 +6617,7 @@
     },
     {
       "ts": "2026-03-17T19:08:35.946Z",
-      "seq": 2125,
+      "seq": 2127,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6609,7 +6625,7 @@
     },
     {
       "ts": "2026-03-17T19:09:11.073Z",
-      "seq": 2126,
+      "seq": 2128,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6617,7 +6633,7 @@
     },
     {
       "ts": "2026-03-17T19:09:11.100Z",
-      "seq": 2127,
+      "seq": 2129,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6625,7 +6641,7 @@
     },
     {
       "ts": "2026-03-17T19:10:00.000Z",
-      "seq": 2128,
+      "seq": 2130,
       "facility": "LINK",
       "severity": 3,
       "mnemonic": "UPDOWN",
@@ -6633,7 +6649,7 @@
     },
     {
       "ts": "2026-03-17T19:10:00.008Z",
-      "seq": 2129,
+      "seq": 2131,
       "facility": "LINEPROTO",
       "severity": 5,
       "mnemonic": "UPDOWN",
@@ -6641,7 +6657,7 @@
     },
     {
       "ts": "2026-03-17T19:19:54.025Z",
-      "seq": 2130,
+      "seq": 2132,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6649,7 +6665,7 @@
     },
     {
       "ts": "2026-03-17T19:19:54.052Z",
-      "seq": 2131,
+      "seq": 2133,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6657,7 +6673,7 @@
     },
     {
       "ts": "2026-03-17T19:30:48.704Z",
-      "seq": 2132,
+      "seq": 2134,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6665,7 +6681,7 @@
     },
     {
       "ts": "2026-03-17T19:30:48.731Z",
-      "seq": 2133,
+      "seq": 2135,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6673,7 +6689,7 @@
     },
     {
       "ts": "2026-03-17T19:34:21.294Z",
-      "seq": 2134,
+      "seq": 2136,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6681,7 +6697,7 @@
     },
     {
       "ts": "2026-03-17T19:34:21.321Z",
-      "seq": 2135,
+      "seq": 2137,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6689,7 +6705,7 @@
     },
     {
       "ts": "2026-03-17T19:52:14.879Z",
-      "seq": 2136,
+      "seq": 2138,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6697,7 +6713,7 @@
     },
     {
       "ts": "2026-03-17T19:52:14.906Z",
-      "seq": 2137,
+      "seq": 2139,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6705,7 +6721,7 @@
     },
     {
       "ts": "2026-03-17T19:55:52.112Z",
-      "seq": 2138,
+      "seq": 2140,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6713,7 +6729,7 @@
     },
     {
       "ts": "2026-03-17T19:55:52.139Z",
-      "seq": 2139,
+      "seq": 2141,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6721,7 +6737,7 @@
     },
     {
       "ts": "2026-03-17T19:57:18.933Z",
-      "seq": 2140,
+      "seq": 2142,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6729,7 +6745,7 @@
     },
     {
       "ts": "2026-03-17T19:57:18.960Z",
-      "seq": 2141,
+      "seq": 2143,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6737,7 +6753,7 @@
     },
     {
       "ts": "2026-03-17T20:00:07.200Z",
-      "seq": 2142,
+      "seq": 2144,
       "facility": "SEC_LOGIN",
       "severity": 5,
       "mnemonic": "LOGIN_SUCCESS",
@@ -6745,7 +6761,7 @@
     },
     {
       "ts": "2026-03-17T20:02:03.195Z",
-      "seq": 2143,
+      "seq": 2145,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6753,7 +6769,7 @@
     },
     {
       "ts": "2026-03-17T20:02:03.222Z",
-      "seq": 2144,
+      "seq": 2146,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6761,7 +6777,7 @@
     },
     {
       "ts": "2026-03-17T20:31:22.452Z",
-      "seq": 2145,
+      "seq": 2147,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6769,7 +6785,7 @@
     },
     {
       "ts": "2026-03-17T20:31:22.479Z",
-      "seq": 2146,
+      "seq": 2148,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6777,7 +6793,7 @@
     },
     {
       "ts": "2026-03-17T20:37:55.738Z",
-      "seq": 2147,
+      "seq": 2149,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6785,7 +6801,7 @@
     },
     {
       "ts": "2026-03-17T20:37:55.765Z",
-      "seq": 2148,
+      "seq": 2150,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6793,7 +6809,7 @@
     },
     {
       "ts": "2026-03-17T21:10:08.619Z",
-      "seq": 2149,
+      "seq": 2151,
       "facility": "DOT1X",
       "severity": 5,
       "mnemonic": "SUCCESS",
@@ -6801,12 +6817,12 @@
     },
     {
       "ts": "2026-03-17T21:10:08.646Z",
-      "seq": 2150,
+      "seq": 2152,
       "facility": "AUTHMGR",
       "severity": 5,
       "mnemonic": "SUCCESS",
       "message": "Authorization succeeded for client (d4be.d96f.2434) on Interface Gi1/0/24 AuditSessionID 0A0A0A020000001800783439"
     }
   ],
-  "log_seq": 2150
+  "log_seq": 2152
 }

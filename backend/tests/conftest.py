@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 from pathlib import Path
 
 import pytest
@@ -30,31 +31,52 @@ def seed_ready():
 
 
 @pytest.fixture(scope="session")
-def api_client(tmp_path_factory, seed_ready):
+def baseline_db(tmp_path_factory, seed_ready, env) -> Path:
+    """Seed the dataset baseline once (validation harness included) into a template database.
+
+    The template is seeded against an empty incidents directory, matching the per-test directories
+    below, so every copy starts from the same state the API would reach after `POST /api/demo/reset`.
+    """
+    from sentinelswitch.services.seed import seed_database
+    from sentinelswitch.services.store import Store
+
+    root = tmp_path_factory.mktemp("baseline")
+    (root / "incidents").mkdir()
+    store = Store(env, root / "baseline.db")
+    seed_database(store, env, seed_ready, root / "incidents")
+    store.conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # fold the WAL into the file before copying
+    store.conn.close()
+    return root / "baseline.db"
+
+
+@pytest.fixture()
+def api_client(tmp_path, baseline_db):
+    """A fresh application per test: its own copy of the baseline database and its own empty incidents
+    and artifacts directories, so no test can observe state (rows, evidence bundles, exported reports)
+    created by another test, whatever the execution order. Everything lives under pytest's tmp_path."""
     from fastapi.testclient import TestClient
 
     from sentinelswitch.app.config import Settings
     from sentinelswitch.app.main import create_app
 
-    db = tmp_path_factory.mktemp("db") / "test.db"
-    incidents = tmp_path_factory.mktemp("incidents")
-    settings = Settings(db_path=db, data_dir=ROOT / "data", frontend_dist=Path("/nonexistent"))
-    # Evidence for API-triggered demos goes to a temporary directory.
-    object.__setattr__(settings, "data_dir", ROOT / "data")
+    db = tmp_path / "test.db"
+    shutil.copyfile(baseline_db, db)
+    incidents = tmp_path / "incidents"
+    artifacts = tmp_path / "artifacts"
+    incidents.mkdir()
+    artifacts.mkdir()
+    settings = Settings(
+        db_path=db,
+        data_dir=ROOT / "data",
+        incidents_dir=incidents,
+        artifacts_dir=artifacts,
+        frontend_dist=Path("/nonexistent"),
+        auto_seed=False,
+        auto_demo=False,
+    )
     app = create_app(settings)
-    app.state.settings = _override_incidents(settings, incidents)
     with TestClient(app) as client:
         yield client
-
-
-def _override_incidents(settings, incidents_dir: Path):
-    class _S:
-        def __getattr__(self, name):
-            if name == "incidents_dir":
-                return incidents_dir
-            return getattr(settings, name)
-
-    return _S()
 
 
 os.environ.setdefault("SENTINEL_AUTO_DEMO", "0")

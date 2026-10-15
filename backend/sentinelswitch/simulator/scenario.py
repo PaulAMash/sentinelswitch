@@ -355,11 +355,38 @@ class ScenarioRunner:
         )
         metrics["decision"] = ts_iso(decision_at)
 
+        # ---- authorization ------------------------------------------------------------------
+        from sentinelswitch.containment.controller import authorization_record
+
+        authorization = authorization_record(decision, at=clock.now)
+        if authorization["status"] == "authorized":
+            tl(
+                ts_iso(add_seconds(decision_at, 0.002)),
+                "authorization",
+                f"Containment authorized by {authorization['authorized_by']} ({authorization['basis']}); action {authorization['action']}",
+                actor="sentinel",
+                mode=authorization["mode"],
+            )
+        elif decision.disposition == "manual_review":
+            tl(
+                ts_iso(add_seconds(decision_at, 0.002)),
+                "authorization",
+                "Automatic containment NOT authorized: "
+                + (
+                    f"guard(s) {', '.join(decision.guards_triggered)} require analyst approval"
+                    if decision.guards_triggered
+                    else "confidence below the automatic tier; analyst approval required"
+                ),
+                actor="sentinel",
+                mode="pending",
+                guards=decision.guards_triggered,
+            )
         # ---- incident / review --------------------------------------------------------------
         incident: dict[str, Any] | None = None
         if decision.disposition == "automatic_containment":
             incident_id = inst.incident_id or self._next_incident_id(instance_name)
             incident = self._incident_record(incident_id, scenario, primary, attribution, decision, instance_name)
+            incident["authorization"] = authorization
             tl(
                 ts_iso(add_seconds(decision_at, 0.004)),
                 "incident",
@@ -369,6 +396,7 @@ class ScenarioRunner:
             )
         else:
             result.review = {
+                "authorization": authorization,
                 "detection_id": primary.id,
                 "status": "review" if decision.disposition == "manual_review" else "monitor",
                 "opened_at": ts_iso(decision_at),
@@ -387,6 +415,7 @@ class ScenarioRunner:
             clock=clock,
             timing=scenario.timing,
             native_state=native_state,
+            authorization=authorization,
         )
         result.action = action
         if action.status in {"applied", "verified", "failed"}:
@@ -449,7 +478,10 @@ class ScenarioRunner:
                 and bool(action.verification.get("ok"))
             )
         else:
-            result.checks["contain"] = decision.disposition == exp_disp and action.status == "not_applicable"
+            guard_ok = not expected.get("guard") or expected["guard"] in decision.guards_triggered
+            result.checks["contain"] = (
+                decision.disposition == exp_disp and action.status == "not_applicable" and guard_ok
+            )
 
         if incident:
             incident["workflow_id"] = action.workflow_id
@@ -539,6 +571,14 @@ class ScenarioRunner:
             self.twin.advance_to(at)
             result.review.update(
                 {"closed_at": ts_iso(at), "closed_by": res["reviewed_by"], "note": res["note"], "status": "closed"}
+            )
+            result.review["authorization"] = dict(
+                result.review.get("authorization") or {},
+                status="rejected",
+                mode="analyst",
+                authorized_by=res["reviewed_by"],
+                authorized_at=ts_iso(at),
+                note=f"Containment declined after review: {res['note']}",
             )
             result.timeline.append(
                 {

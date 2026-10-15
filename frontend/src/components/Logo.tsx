@@ -17,9 +17,9 @@ export function Wordmark({ size = 28, sub = true }: { size?: number; sub?: boole
       <Mark size={size} />
       <div className="brand-text">
         <span className="brand-name" style={{ fontSize: size * 0.55 }}>
-          Sentinel<span style={{ color: 'var(--accent-2)' }}>Switch</span>
+          Sentinel<span style={{ color: 'var(--accent-2)' }}>Switch</span> <span className="brand-ver">2.0</span>
         </span>
-        {sub && <span className="brand-sub" style={{ fontSize: Math.max(9, size * 0.34) }}>Autonomous NDR Lab</span>}
+        {sub && <span className="brand-sub" style={{ fontSize: Math.max(9, size * 0.34) }}>Evidence-Driven NSR Lab</span>}
       </div>
     </div>
   )

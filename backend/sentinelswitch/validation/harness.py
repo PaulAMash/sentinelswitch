@@ -19,6 +19,7 @@ SCENARIO_ORDER = [
     "dns-anomaly",
     "lateral-reconnaissance",
     "bpdu-violation",
+    "critical-asset-scan",
 ]
 
 
@@ -52,12 +53,32 @@ def run_validation(env: Environment, baseline: SwitchTwin | None = None) -> Vali
                 "detect": result.checks["detect"],
                 "attribute": result.checks["attribute"],
                 "contain": result.checks["contain"],
+                # What the response check validated: an automatic containment applied and verified on the
+                # switch, or a safety decision that correctly withheld automation (switch untouched, guard
+                # fired, analyst decision required). A withheld scenario never counts as a containment.
+                "response": (
+                    "failed"
+                    if not result.checks["contain"]
+                    else "contained"
+                    if result.decision and result.decision.disposition == "automatic_containment"
+                    else "withheld"
+                ),
                 "passed": result.passed,
                 "severity": result.detection.severity if result.detection else None,
                 "confidence": result.detection.confidence if result.detection else None,
                 "expected": result.instance.expected,
                 "action": result.action.action if result.action else None,
-                "mechanism": result.action.mechanism if result.action else None,
+                "mechanism": (
+                    result.action.mechanism
+                    if result.action and result.action.status == "verified"
+                    else (
+                        "manual review — " + ", ".join(result.decision.guards_triggered) + " guard"
+                        if result.decision and result.decision.guards_triggered
+                        else "manual review"
+                    )
+                ),
+                "guards": result.decision.guards_triggered if result.decision else [],
+                "disposition": result.decision.disposition if result.decision else None,
                 "interface": iface,
                 "from_vlan": result.action.from_vlan if result.action else None,
                 "to_vlan": result.action.to_vlan if result.action else None,
@@ -90,6 +111,8 @@ def run_validation(env: Environment, baseline: SwitchTwin | None = None) -> Vali
     metrics = {
         "scenarios": len(rows),
         "passed": sum(1 for r in rows if r["passed"]),
+        "contained": sum(1 for r in rows if r["response"] == "contained"),
+        "withheld": sum(1 for r in rows if r["response"] == "withheld"),
         "mttd": round(mean(ttd), 3) if ttd else None,
         "mtta": round(mean(tta), 3) if tta else None,
         "mttc": round(mean(ttc), 3) if ttc else None,

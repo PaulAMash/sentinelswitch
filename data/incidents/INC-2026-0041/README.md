@@ -73,6 +73,7 @@ Building configuration...
 | 11:23:47.618 | correlation | interface [resolved] Gi1/0/31 'VENDOR DROP (guest fallback)' mode=access access_vlan=20 oper_vlan=40 class=conference status=connected |
 | 11:23:47.699 | correlation | identity [resolved] VENDOR-LT-01 (guest-laptop, HP, Windows 11 Home) criticality=low |
 | 11:23:47.848 | policy | Disposition automatic_containment: Automatic containment approved (severity=high confidence=0.95); action=port_shutdown |
+| 11:23:47.850 | authorization | Containment authorized by policy-engine (policy tier automatic_containment); action port_shutdown |
 | 11:23:47.852 | incident | Incident INC-2026-0041 opened |
 | 11:23:48.244 | containment | SW01 Gi1/0/31: administrative shutdown (workflow WF-2026-0041-04) — SentinelSwitch administrative shutdown |
 | 11:23:48.366 | verification | Verification succeeded: admin down, no MAC addresses learned |

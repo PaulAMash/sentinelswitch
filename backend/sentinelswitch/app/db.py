@@ -23,6 +23,14 @@ CREATE TABLE IF NOT EXISTS auth_events (event_id TEXT PRIMARY KEY, ts TEXT, user
 CREATE TABLE IF NOT EXISTS traffic_buckets (ts TEXT PRIMARY KEY, doc TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS validation_results (scenario_id TEXT PRIMARY KEY, doc TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS scenarios (id TEXT PRIMARY KEY, doc TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS assessment_runs (run_id TEXT PRIMARY KEY, assessed_at TEXT, trigger TEXT, doc TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS assessments (id TEXT PRIMARY KEY, control_id TEXT, scope_id TEXT, status TEXT, severity TEXT, assessed_at TEXT, finding_id TEXT, doc TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS assessment_history (seq INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT, assessment_id TEXT, status TEXT, assessed_at TEXT, doc TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS findings (id TEXT PRIMARY KEY, control_id TEXT, scope_id TEXT, status TEXT, severity TEXT, opened_at TEXT, updated_at TEXT, doc TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS finding_events (seq INTEGER PRIMARY KEY AUTOINCREMENT, finding_id TEXT, ts TEXT, event TEXT, actor TEXT, doc TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_assessments_control ON assessments(control_id);
+CREATE INDEX IF NOT EXISTS idx_history_run ON assessment_history(run_id);
+CREATE INDEX IF NOT EXISTS idx_finding_events ON finding_events(finding_id);
 CREATE INDEX IF NOT EXISTS idx_alerts_ts ON alerts(ts);
 CREATE INDEX IF NOT EXISTS idx_auth_ts ON auth_events(ts);
 """
@@ -30,7 +38,7 @@ CREATE INDEX IF NOT EXISTS idx_auth_ts ON auth_events(ts);
 
 def connect(path: Path) -> sqlite3.Connection:
     path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(path), check_same_thread=False)
+    conn = sqlite3.connect(str(path), check_same_thread=False, timeout=30.0)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
@@ -39,9 +47,20 @@ def connect(path: Path) -> sqlite3.Connection:
 
 
 def reset_schema(conn: sqlite3.Connection) -> None:
+    """Empty every table inside one write transaction.
+
+    Tables are emptied rather than dropped so that readers on other connections (the dashboard refreshing
+    over SSE while a reset runs) never observe a missing table; with WAL they see the old rows until the
+    transaction commits and the empty tables afterwards.
+    """
+    conn.executescript(SCHEMA)  # CREATE ... IF NOT EXISTS: make sure every table of this version exists
+    conn.execute("BEGIN IMMEDIATE")
     for (name,) in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall():
-        conn.execute(f"DROP TABLE IF EXISTS {name}")
-    conn.executescript(SCHEMA)
+        if name.startswith("sqlite_"):
+            continue
+        conn.execute(f"DELETE FROM {name}")
+    if conn.execute("SELECT name FROM sqlite_master WHERE name='sqlite_sequence'").fetchone():
+        conn.execute("DELETE FROM sqlite_sequence")
     conn.commit()
 
 

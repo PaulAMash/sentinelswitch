@@ -15,18 +15,28 @@ import { Drift } from './pages/Drift'
 import { Evidence } from './pages/Evidence'
 import { About } from './pages/About'
 import { Media } from './pages/Media'
+import { Posture } from './pages/Posture'
+import { Controls } from './pages/Controls'
+import { Findings } from './pages/Findings'
+import { Reports } from './pages/Reports'
 
 const NAV = [
-  { to: '/', label: 'Overview', icon: Icon.overview, end: true },
-  { to: '/alerts', label: 'Alerts', icon: Icon.alerts },
-  { to: '/incidents', label: 'Incidents', icon: Icon.incidents },
-  { to: '/devices', label: 'Devices', icon: Icon.devices },
-  { to: '/switch', label: 'Network / Switch', icon: Icon.switch },
-  { to: '/authentication', label: 'Authentication', icon: Icon.auth },
-  { to: '/coverage', label: 'Detection Coverage', icon: Icon.coverage },
-  { to: '/drift', label: 'Configuration Drift', icon: Icon.drift },
-  { to: '/evidence', label: 'Evidence', icon: Icon.evidence },
-  { to: '/about', label: 'Architecture', icon: Icon.about },
+  // Assurance (SentinelSwitch 2.0)
+  { to: '/', label: 'Posture', icon: Icon.posture, end: true, group: 'assurance' },
+  { to: '/controls', label: 'Controls', icon: Icon.coverage, group: 'assurance' },
+  { to: '/findings', label: 'Findings & Remediation', icon: Icon.findings, group: 'assurance' },
+  { to: '/incidents', label: 'Incidents', icon: Icon.incidents, group: 'assurance' },
+  { to: '/reports', label: 'Evidence & Reports', icon: Icon.evidence, group: 'assurance' },
+  // Operations (original SOC views)
+  { to: '/operations', label: 'SOC Overview', icon: Icon.overview, group: 'operations' },
+  { to: '/alerts', label: 'Alerts', icon: Icon.alerts, group: 'operations' },
+  { to: '/devices', label: 'Assets', icon: Icon.devices, group: 'operations' },
+  { to: '/switch', label: 'Network / Switch', icon: Icon.switch, group: 'operations' },
+  { to: '/authentication', label: 'Authentication', icon: Icon.auth, group: 'operations' },
+  { to: '/coverage', label: 'Detection Coverage', icon: Icon.coverage, group: 'operations' },
+  { to: '/drift', label: 'Configuration Drift', icon: Icon.drift, group: 'operations' },
+  { to: '/evidence', label: 'Evidence Bundles', icon: Icon.evidence, group: 'operations' },
+  { to: '/about', label: 'Architecture', icon: Icon.about, group: 'operations' },
 ]
 
 function Shell() {
@@ -39,16 +49,17 @@ function Shell() {
       <aside className="sidebar">
         <Wordmark />
         <nav className="nav">
-          <div className="nav-section">Operations</div>
-          {NAV.slice(0, 6).map((n) => (
+          <div className="nav-section">Assurance</div>
+          {NAV.filter((n) => n.group === 'assurance').map((n) => (
             <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => (isActive ? 'active' : '')}>
               <n.icon />
               {n.label}
               {n.to === '/incidents' && meta && <span className="nav-badge">{meta.counts.incidents}</span>}
+              {n.to === '/findings' && meta && meta.counts.findings_open !== undefined && <span className="nav-badge">{meta.counts.findings_open}</span>}
             </NavLink>
           ))}
-          <div className="nav-section">Assurance</div>
-          {NAV.slice(6).map((n) => (
+          <div className="nav-section">Operations</div>
+          {NAV.filter((n) => n.group === 'operations').map((n) => (
             <NavLink key={n.to} to={n.to} className={({ isActive }) => (isActive ? 'active' : '')}>
               <n.icon />
               {n.label}
@@ -63,7 +74,7 @@ function Shell() {
               </div>
               <div>IOS {meta.switch.ios_version} · {meta.switch.management_ip}</div>
               <div style={{ marginTop: 6 }}>Dataset day {meta.dataset.day} (UTC)</div>
-              <div>SentinelSwitch v{meta.version}</div>
+              <div>SentinelSwitch {meta.version}</div>
             </>
           ) : (
             <div>connecting…</div>
@@ -73,26 +84,36 @@ function Shell() {
       <div className="main">
         <header className="topbar">
           <div className="crumbs">
-            {current?.label ?? 'SentinelSwitch'} {loc.pathname.startsWith('/incidents/') && <span>/ {loc.pathname.split('/')[2]}</span>}
+            {current?.label ?? 'SentinelSwitch'} {/^\/(incidents|findings|controls)\/.+/.test(loc.pathname) && <span>/ {decodeURIComponent(loc.pathname.split('/').slice(2).join('/'))}</span>}
           </div>
           <span className="chip sim">Simulation · synthetic telemetry</span>
           <div className="spacer" />
           <div className="meta">
             {stage && (
               <span className={`chip ${stage === 'contained' ? 'contained' : stage === 'restored' ? 'resolved' : 'neutral'}`}>
-                {stage === 'contained' ? 'INC-2026-0042 contained' : stage === 'restored' ? 'INC-2026-0042 resolved' : 'baseline · flagship not replayed'}
+                {stage === 'contained' ? `${meta?.flagship_incident} contained` : stage === 'restored' ? `${meta?.flagship_incident} resolved` : 'baseline · flagship not replayed'}
               </span>
             )}
-            <span>
-              <span className="dot" />
-              {meta?.switch.hostname ?? 'SW01'} reachable
-            </span>
+            {meta ? (
+              <span>
+                <span className="dot" />
+                {meta.switch.hostname} reachable
+              </span>
+            ) : (
+              <span className="dim">connecting to API…</span>
+            )}
             <span className="mono">{meta?.switch.now?.replace('T', ' ').slice(0, 19)} UTC</span>
           </div>
         </header>
         <main className="content">
           <Routes>
-            <Route path="/" element={<Overview />} />
+            <Route path="/" element={<Posture />} />
+            <Route path="/controls" element={<Controls />} />
+            <Route path="/controls/:id" element={<Controls />} />
+            <Route path="/findings" element={<Findings />} />
+            <Route path="/findings/:id" element={<Findings />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/operations" element={<Overview />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/incidents" element={<Incidents />} />
             <Route path="/incidents/:id" element={<IncidentDetail />} />
