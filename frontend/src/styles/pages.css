@@ -1,0 +1,83 @@
+/* Page-level layout classes. Everything else is a shared component in components.css. */
+
+/* overview */
+.ov-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); gap: var(--sp-4); }
+.ov-grid > * { min-width: 0; }
+.ov-stream { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.ov-rail { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.ctl-mini { display: flex; flex-direction: column; gap: 10px; }
+.ctl-mini .ratios { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-1); border: 1px solid var(--line-1); border-radius: var(--r-ctl); overflow: hidden; }
+.ctl-mini .ratios > div { background: var(--surface-2); padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+.ctl-mini .ratios .n { font-family: var(--font-mono); font-size: var(--fs-2xl); font-weight: 600; }
+.ctl-mini .ratios .n small { font-size: var(--fs-xs); color: var(--text-3); font-weight: 500; margin-left: 4px; }
+.src-row { display: grid; grid-template-columns: 90px auto minmax(0, 1fr); gap: 10px; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--line-1); font-size: var(--fs-sm); }
+.src-row:last-child { border-bottom: none; }
+.src-row .src { font-family: var(--font-mono); color: var(--text-2); }
+.src-row .why { color: var(--text-3); font-size: var(--fs-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* posture */
+.posture-hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); gap: var(--sp-4); }
+.posture-hero > * { min-width: 0; }
+.ratio-band { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-1); border: 1px solid var(--line-1); border-radius: var(--r-panel); overflow: hidden; }
+.ratio-band > * { background: var(--surface-1); }
+.outcome-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.outcome-row .n { font-size: var(--fs-2xl); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 6px; }
+.outcome-row .n small { font-size: var(--fs-xs); color: var(--text-3); font-weight: 500; }
+.outcome-row .PASS { color: var(--ok-ink); } .outcome-row .FAIL { color: var(--danger-ink); } .outcome-row .UNKNOWN { color: var(--text-2); } .outcome-row .STALE { color: var(--warn-ink); } .outcome-row .zero { color: var(--text-4); }
+.by-category { display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; }
+.ctl-status { display: flex; flex-direction: column; }
+.ctl-status .stat-row { padding: 5px 0; }
+.ctl-status .name { font-size: var(--fs-md); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctl-status .cat { font-size: var(--fs-xs); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctl-status .cat .open { color: var(--danger-ink); text-transform: none; letter-spacing: 0; }
+
+/* incident */
+.inc-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 340px); gap: var(--sp-4); align-items: start; }
+.inc-workspace > * { min-width: 0; }
+.inc-rail { display: flex; flex-direction: column; gap: var(--sp-3); position: sticky; top: calc(var(--topbar-h) + 16px); }
+.measure { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line-1); border: 1px solid var(--line-1); border-radius: var(--r-ctl); overflow: hidden; margin-bottom: 12px; }
+.measure > div { background: var(--surface-2); padding: 8px 10px; }
+.measure .k { font-size: var(--fs-xs); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.measure .v { font-family: var(--font-mono); font-size: var(--fs-md); color: var(--text-1); }
+
+/* review queue */
+.queue-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* switch */
+.switch-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 380px); gap: var(--sp-4); }
+.switch-grid > * { min-width: 0; }
+
+/* evidence */
+.ev-layout { display: grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: var(--sp-4); align-items: start; }
+.ev-layout > * { min-width: 0; }
+.ev-list { display: flex; flex-direction: column; }
+.ev-item { display: flex; flex-direction: column; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--line-1); color: inherit; border-left: 2px solid transparent; }
+.ev-item:hover { background: var(--surface-2); text-decoration: none; }
+.ev-item.active { background: var(--surface-2); border-left-color: var(--accent); }
+.ev-item .t { font-size: var(--fs-md); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev-item:last-child { border-bottom: none; }
+
+/* reports */
+.artifact-rows { display: flex; flex-direction: column; }
+.artifact-row { display: grid; grid-template-columns: 56px auto minmax(0, 1fr); gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line-1); font-size: var(--fs-md); }
+.artifact-row:last-child { border-bottom: none; }
+.artifact-row .fmt { font-family: var(--font-mono); font-weight: 600; }
+.artifact-row .path { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-3); overflow-wrap: anywhere; }
+
+/* about */
+.diagram { background: var(--bg-0); border: 1px solid var(--line-1); border-radius: var(--r-panel); padding: 8px; }
+.diagram img { width: 100%; display: block; }
+
+@media (max-width: 1199px) {
+  .ov-grid, .posture-hero, .inc-workspace, .switch-grid, .ev-layout { grid-template-columns: minmax(0, 1fr); }
+  .inc-rail { position: static; }
+  .attention { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 599px) {
+  .attention { grid-template-columns: minmax(0, 1fr); }
+  .outcome-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .by-category { grid-template-columns: minmax(0, 1fr); }
+  .ratio-band { grid-template-columns: minmax(0, 1fr); }
+  .artifact-row { grid-template-columns: 48px minmax(0, 1fr); }
+  .artifact-row .path { grid-column: 1 / -1; }
+}

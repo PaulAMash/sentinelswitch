@@ -30,7 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 PAGES = [
-    ("overview", "/operations", "01-overview"),
+    ("overview", "/", "01-overview"),
     ("alerts", "/alerts", "02-alerts"),
     ("incidents", "/incidents", "03-incidents"),
     ("incident-detail", "/incidents/INC-2026-0042", "04-incident-detail"),
@@ -131,12 +131,12 @@ def capture(base: str) -> None:
             page.wait_for_timeout(700)
             page.screenshot(
                 path=str(ASSETS / "screenshots" / f"{fname}.png"),
-                full_page=path in {"/operations", "/incidents/INC-2026-0042", "/switch"},
+                full_page=path in {"/", "/incidents/INC-2026-0042", "/switch"},
             )
             print("screenshot", fname)
         # GitHub images (viewport-sized crops for the README)
         for path, fname in [
-            ("/operations", "dashboard-overview"),
+            ("/", "dashboard-overview"),
             ("/incidents/INC-2026-0042", "incident-detail"),
             ("/coverage", "validation-results"),
             ("/switch", "switch-panel"),
@@ -226,7 +226,8 @@ def capture_2(base: str) -> None:
     out = ARTIFACTS / "screenshots"
     out.mkdir(parents=True, exist_ok=True)
     stage1 = [
-        ("/", "sentinelswitch-2.0-dashboard"),
+        ("/", "sentinelswitch-2.0-overview"),
+        ("/posture", "sentinelswitch-2.0-dashboard"),
         ("/incidents/INC-2026-0042", "sentinelswitch-2.0-incident"),
         ("/findings", "sentinelswitch-2.0-findings-open"),
         ("/controls", "sentinelswitch-2.0-controls"),
@@ -243,6 +244,17 @@ def capture_2(base: str) -> None:
             page.screenshot(path=str(out / f"{fname}.png"), full_page=False)
             page.screenshot(path=str(out / f"{fname}-full.png"), full_page=True)
             print("artifact", fname)
+        # the analyst authorization dialog for the detection policy routed to manual review
+        page.goto(f"{base}/incidents", wait_until="networkidle")
+        page.wait_for_selector(".content", timeout=15000)
+        approve = page.get_by_role("button", name="Approve containment")
+        if approve.count():
+            approve.first.click()
+            page.wait_for_selector("dialog.confirm[open]", timeout=5000)
+            page.wait_for_timeout(400)
+            page.screenshot(path=str(out / "sentinelswitch-2.0-review-dialog.png"), full_page=False)
+            page.keyboard.press("Escape")
+            print("artifact review-dialog")
         # stage 2: drive the rest of the workflow through the API
         reviews = _get(base, "/api/reviews")
         for r in reviews:
@@ -278,7 +290,7 @@ def capture_2(base: str) -> None:
             ("/findings?view=all", "sentinelswitch-2.0-findings-verified"),
             ("/findings/FND-SENSOR-COVERAGE-vlan-50", "sentinelswitch-2.0-finding-detail"),
             ("/reports", "sentinelswitch-2.0-reports"),
-            ("/", "sentinelswitch-2.0-dashboard-after-remediation"),
+            ("/posture", "sentinelswitch-2.0-dashboard-after-remediation"),
         ]:
             page.goto(f"{base}{path}", wait_until="networkidle")
             page.wait_for_selector(".content", timeout=15000)

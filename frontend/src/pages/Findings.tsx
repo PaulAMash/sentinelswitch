@@ -3,15 +3,23 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { kv } from '../lib/kv'
 import { endpoints, type Finding, type FindingEvent } from '../lib/api'
 import { useApi } from '../lib/hooks'
-import { Card, Chip, Empty, KV, Loading, Sev, Term, Ts } from '../components/ui'
+import { Empty, ErrorState, KV, Loading, Panel, Segmented, Ts } from '../components/ui'
+import { PageHeader } from '../components/layout'
+import { AssessChip, Chip, Id, SeverityChip, StatusChip } from '../components/status'
+import { DataTable, Cell2 } from '../components/table'
+import { Terminal } from '../components/terminal'
+import { ConfirmDialog } from '../components/dialog'
+import { useToast } from '../components/toast'
 import { fmtTime, sevRank, title, vlanName } from '../lib/format'
-import { EvidenceList, Freshness, ValueBlock } from './Controls'
+import { EvidenceList, Freshness, ValueBlock, fmtInline } from './Controls'
 
 type RemediateResult = Awaited<ReturnType<typeof endpoints.remediate>>
 
+const ANALYST = 'tlee'
+const REMEDIATE_NOTE = 'remediated from the dashboard'
 /** Finding states in which an analyst may request remediation (mirrors RemediationService). */
 const REMEDIABLE = new Set<string>(['open', 'reopened', 'remediation_failed'])
-const REM_CHIP: Record<string, string> = { not_started: 'neutral', requested: 'pending', executed: 'ok', refused: 'fail' }
+const REM_CHIP: Record<string, string> = { not_started: 'neutral', requested: 'pending', executed: 'ok', refused: 'refused' }
 const EVENT_PHASE: Record<string, string> = {
   opened: 'detection',
   reopened: 'detection',
@@ -32,8 +40,8 @@ export function Findings() {
 
 // ---- list ---------------------------------------------------------------------------------------
 function FindingList({ onOpen }: { onOpen: (id: string) => void }) {
-  const [params] = useSearchParams()
-  const [openOnly, setOpenOnly] = useState(params.get('view') !== 'all')  // /findings?view=all opens the full history
+  const [params, setParams] = useSearchParams()
+  const openOnly = params.get('view') !== 'all' // /findings?view=all opens the full history
   const [sev, setSev] = useState('all')
   const [status, setStatus] = useState('all')
   const { data, fresh, error } = useApi(() => endpoints.findings(openOnly ? '?open_only=true' : ''), [openOnly])
@@ -48,91 +56,64 @@ function FindingList({ onOpen }: { onOpen: (id: string) => void }) {
         .sort((a, b) => sevRank(b.severity) - sevRank(a.severity) || a.opened_at.localeCompare(b.opened_at) || a.id.localeCompare(b.id)),
     [current, sev, status],
   )
-  if (!data) return <Loading error={error} />
+  if (error && !data) return <ErrorState error={error} />
+  if (!data) return <Loading rows={5} />
   const statuses = Array.from(new Set((current ?? data).map((f) => f.status)))
   const bySev = { high: 0, medium: 0, low: 0 }
   for (const f of rows) bySev[f.severity] += 1
   return (
     <>
-      <div className="page-head">
-        <div>
-          <h1>Findings &amp; remediation</h1>
-          <p>Every FAIL or STALE assessment opens a finding with a stable identifier that is never deleted. Remediation is requested by an analyst, executed on the switch twin with an IOS transcript, re-assessed and verified; each step is recorded as an event.</p>
-        </div>
-        <div className="toolbar">
-          <span className="chip neutral">{current ? rows.length : '…'} shown</span>
-          <span className="chip high">{current ? bySev.high : '…'} high</span>
-          <span className="chip medium">{current ? bySev.medium : '…'} medium</span>
-          <span className="chip low">{current ? bySev.low : '…'} low</span>
-        </div>
-      </div>
-
-      <Card
-        title={openOnly ? 'Open findings' : 'All findings'}
-        sub="click a row for evidence and remediation"
-        bodyClass="tight"
-        right={
-          <div className="toolbar">
-            <div className="seg">
-              <button className={openOnly ? 'active' : ''} onClick={() => setOpenOnly(true)}>open only</button>
-              <button className={openOnly ? '' : 'active'} onClick={() => setOpenOnly(false)}>all</button>
-            </div>
-            <select value={sev} onChange={(e) => setSev(e.target.value)}>
-              <option value="all">all severities</option>
-              <option value="high">high</option>
-              <option value="medium">medium</option>
-              <option value="low">low</option>
-            </select>
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="all">all statuses</option>
-              {statuses.map((s) => (
-                <option key={s} value={s}>{title(s).toLowerCase()}</option>
-              ))}
-            </select>
-          </div>
-        }
+      <PageHeader
+        title="Findings"
+        sub={current ? `${rows.length} shown · ${bySev.high} high · ${bySev.medium} medium · ${bySev.low} low` : 'loading…'}
+        info={<>Every FAIL or STALE assessment opens a finding with a stable identifier that is never deleted. Remediation is requested by an analyst, executed on the switch twin with an IOS transcript, re-assessed and verified; each step is recorded as an event.</>}
       >
-        <div className="table-wrap">
-          <table className="data">
-            <thead>
-              <tr><th>severity</th><th>finding</th><th>control</th><th>asset / scope</th><th>result</th><th>status</th><th>opened</th><th>occurrences</th><th>explanation</th></tr>
-            </thead>
-            <tbody>
-              {!current && (
-                <tr>
-                  <td colSpan={9}><Loading error={error} /></td>
-                </tr>
-              )}
-              {current && rows.map((f) => (
-                <tr key={f.id} className="clickable" onClick={() => onOpen(f.id)}>
-                  <td><span className={`sev-dot ${f.severity}`} /><Sev s={f.severity} /></td>
-                  <td className="mono">{f.id}</td>
-                  <td className="wrap" style={{ minWidth: 200 }}>
-                    <div>{f.control_name}</div>
-                    <div className="mono dim small">{f.control_id}</div>
-                  </td>
-                  <td className="mono">
-                    {f.asset ?? f.scope.id}
-                    {f.scope.interface && f.scope.interface !== f.asset && <span className="dim"> · {f.scope.interface}</span>}
-                  </td>
-                  <td><Chip kind={f.result}>{f.result}</Chip></td>
-                  <td><Chip kind={f.status} /></td>
-                  <td><Ts ts={f.opened_at} date /></td>
-                  <td className="num">{f.occurrences}</td>
-                  <td className="wrap small dim" style={{ minWidth: 300, maxWidth: 520 }}>{short(f.explanation)}</td>
-                </tr>
-              ))}
-              {current && rows.length === 0 && (
-                <tr>
-                  <td colSpan={9}>
-                    <Empty>{current.length === 0 ? (openOnly ? 'No open findings — every assessed control passes or is awaiting evidence' : 'No findings have been recorded yet') : 'No findings match the current filters'}</Empty>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+        <Segmented
+          label="Finding scope"
+          options={[
+            { id: 'open', label: 'open only' },
+            { id: 'all', label: 'all' },
+          ]}
+          value={openOnly ? 'open' : 'all'}
+          onChange={(v) => setParams(v === 'all' ? { view: 'all' } : {})}
+        />
+        <select value={sev} onChange={(e) => setSev(e.target.value)} aria-label="Severity">
+          <option value="all">all severities</option>
+          <option value="high">high</option>
+          <option value="medium">medium</option>
+          <option value="low">low</option>
+        </select>
+        <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status">
+          <option value="all">all statuses</option>
+          {statuses.map((s) => (
+            <option key={s} value={s}>
+              {title(s).toLowerCase()}
+            </option>
+          ))}
+        </select>
+      </PageHeader>
+
+      <Panel title={openOnly ? 'Open findings' : 'All findings'} sub="open a row for evidence and remediation" bodyClass="none">
+        <DataTable
+          rows={current ? rows : null}
+          loading={!current}
+          error={!current ? error : null}
+          rowKey={(f) => f.id}
+          onRowActivate={(f) => onOpen(f.id)}
+          empty={current && current.length === 0 ? (openOnly ? 'No open findings — every assessed control passes or is awaiting evidence' : 'No findings have been recorded yet') : 'No findings match the current filters'}
+          columns={[
+            { key: 'sev', header: 'severity', render: (f) => <SeverityChip value={f.severity} /> },
+            { key: 'id', header: 'finding', render: (f) => <Id>{f.id}</Id> },
+            { key: 'control', header: 'control', wrap: true, render: (f) => <Cell2 primary={f.control_name} secondary={<Id dim>{f.control_id}</Id>} /> },
+            { key: 'scope', header: 'asset / scope', className: 'mono', priority: 2, render: (f) => <>{f.asset ?? f.scope.id}{f.scope.interface && f.scope.interface !== f.asset && <span className="dim"> · {f.scope.interface}</span>}</> },
+            { key: 'result', header: 'result', render: (f) => <AssessChip value={f.result} /> },
+            { key: 'status', header: 'status', render: (f) => <StatusChip value={f.status} /> },
+            { key: 'opened', header: 'opened', priority: 3, render: (f) => <Ts ts={f.opened_at} date ms={false} /> },
+            { key: 'occ', header: 'occurrences', align: 'right', priority: 3, render: (f) => f.occurrences },
+            { key: 'why', header: 'explanation', wrap: true, priority: 2, render: (f) => <span className="clamp-2 small dim" title={f.explanation}>{f.explanation}</span> },
+          ]}
+        />
+      </Panel>
     </>
   )
 }
@@ -140,10 +121,14 @@ function FindingList({ onOpen }: { onOpen: (id: string) => void }) {
 // ---- detail -------------------------------------------------------------------------------------
 function FindingDetail({ id, onBack }: { id: string; onBack: () => void }) {
   const { data, error, reload } = useApi(() => endpoints.finding(id), [id])
+  const toast = useToast()
+  const [dialog, setDialog] = useState(false)
+  const [note, setNote] = useState(REMEDIATE_NOTE)
   const [busy, setBusy] = useState(false)
   const [result, setResult] = useState<RemediateResult | null>(null)
-  const [err, setErr] = useState<string | null>(null)
-  if (!data) return <Loading error={error} />
+  const [dlgError, setDlgError] = useState<string | null>(null)
+  if (error && !data) return <ErrorState error={error} retry={reload} />
+  if (!data) return <Loading rows={6} />
   const f: Finding = data.finding
   const a = data.assessment
   const rem = f.remediation
@@ -154,182 +139,204 @@ function FindingDetail({ id, onBack }: { id: string; onBack: () => void }) {
   const history = [...data.history].reverse()
   const remediate = async () => {
     setBusy(true)
-    setErr(null)
+    setDlgError(null)
     try {
-      const r = await endpoints.remediate(f.id, { actor: 'tlee', note: 'remediated from the dashboard' })
+      const r = await endpoints.remediate(f.id, { actor: ANALYST, note })
       setResult(r)
+      toast.push({ title: r.executed ? 'Remediation executed on the twin' : 'Remediation refused by the adapter', detail: r.run ? `re-assessed by ${r.run.run_id} · finding ${r.finding.status}` : r.refused ?? undefined, tone: r.executed ? 'ok' : 'warn' })
+      setDialog(false)
       reload()
     } catch (e) {
-      setErr((e as Error).message)
+      setDlgError((e as Error).message)
     } finally {
       setBusy(false)
     }
   }
   return (
     <>
-      <div className="page-head">
-        <div>
-          <div className="row" style={{ marginBottom: 6 }}>
-            <span className="mono strong" style={{ fontSize: 15 }}>{f.id}</span>
-            <span><span className={`sev-dot ${f.severity}`} /><Sev s={f.severity} /></span>
-            <Chip kind={f.status} />
-            <Chip kind={f.result}>{f.result}</Chip>
+      <PageHeader
+        eyebrow={
+          <span className="row">
+            <Id>{f.id}</Id>
+            <SeverityChip value={f.severity} />
+            <StatusChip value={f.status} />
+            <AssessChip value={f.result} />
+            {ver.outcome && (
+              <span className="row nowrap small dim">
+                verified <AssessChip value={ver.outcome} />
+              </span>
+            )}
             <Chip kind="neutral">{f.category}</Chip>
-          </div>
-          <h1>{f.control_name}</h1>
-          <p>{f.explanation}</p>
-        </div>
-        <div className="toolbar">
-          <button className="btn" onClick={onBack}>← All findings</button>
-          <Link className="btn" to={`/controls/${f.control_id}`}>Control {f.control_id}</Link>
-        </div>
-      </div>
+          </span>
+        }
+        title={f.control_name}
+        sub={f.explanation}
+      >
+        <button className="btn" type="button" onClick={onBack}>
+          ← All findings
+        </button>
+        <Link className="btn" to={`/controls/${f.control_id}`}>
+          Control {f.control_id}
+        </Link>
+      </PageHeader>
 
-      <div className="grid two">
-        <div className="stack" style={{ minWidth: 0 }}>
-          <Card title="Finding">
-            <KV rows={[
-              kv('control', <><Link to={`/controls/${f.control_id}`}>{f.control_name}</Link> <span className="mono dim small">{f.control_id}</span></>),
-              kv('scope', `${f.scope.type} · ${f.scope.id}`),
-              kv('asset', f.asset ?? '—'),
-              kv(f.scope.interface ? 'interface' : 'switch', f.scope.interface ? `${f.scope.switch} ${f.scope.interface}` : f.scope.switch),
-              kv('vlan', vlanName(f.scope.vlan)),
-              ...(f.scope.description ? [kv('description', f.scope.description)] : []),
-              kv('opened', <Ts ts={f.opened_at} date />),
-              kv('updated', <Ts ts={f.updated_at} date />),
-              kv('first run', <span className="mono">{f.first_run_id}</span>),
-              kv('last run', <span className="mono">{f.last_run_id}</span>),
-              kv('occurrences', `${f.occurrences} run${f.occurrences === 1 ? '' : 's'} with this result`),
-              kv('assessment', <span className="mono">{f.assessment_id}</span>),
-              ...(f.resolved_at ? [kv('resolved', <Ts ts={f.resolved_at} date />)] : [])]} />
-          </Card>
-
-          <Card title="Expected vs observed" sub="from the run that last produced this result">
+      <div className="grid grid-main-rail">
+        <div className="stack">
+          <Panel title="Remediation" right={<Chip kind={REM_CHIP[rem.status] ?? 'neutral'}>{title(rem.status)}</Chip>}>
             <div className="stack">
-              <div>
-                <h3 style={{ marginBottom: 6 }}>Expected</h3>
-                <ValueBlock v={f.expected} />
+              <p>{rem.guidance}</p>
+              <div className="eyebrow">Proposed commands</div>
+              {rem.commands.length ? <Terminal text={rem.commands.join('\n')} hl={HL} /> : <div className="dim small">No executable commands were produced for this finding; manual follow-up is required.</div>}
+              <KV
+                rows={[
+                  kv('executable action', rem.action ? <span className="mono wrap">{fmtInline(rem.action)}</span> : <span className="dim">none — manual follow-up</span>),
+                  kv('requested', rem.requested_at ? <><Ts ts={rem.requested_at} date /> <span className="dim">by {rem.requested_by ?? '—'}</span></> : '—'),
+                  kv('executed', rem.executed_at ? <><Ts ts={rem.executed_at} date /> <span className="dim">by {rem.executed_by ?? '—'}</span></> : '—'),
+                  kv('verified', ver.at ? <><Ts ts={ver.at} date /> <span className="dim">run {ver.run_id}</span></> : '—'),
+                  ...(rem.note ? [kv('note', rem.note)] : []),
+                ]}
+              />
+              {rem.transcript && (
+                <>
+                  <div className="eyebrow">{rem.status === 'refused' ? 'Adapter response' : 'Switch transcript'}</div>
+                  <Terminal text={rem.transcript} hl={HL} />
+                </>
+              )}
+              <div className="row">
+                <button className="btn consequential" type="button" onClick={() => setDialog(true)} disabled={!canRemediate || busy}>
+                  {busy ? 'Remediating…' : 'Remediate'}
+                </button>
+                <span className="dim small">{canRemediate ? 'requests, executes on the twin, then re-assesses to verify (it may fail)' : why}</span>
               </div>
-              <div>
-                <h3 style={{ marginBottom: 6 }}>Observed</h3>
-                <ValueBlock v={f.observed} />
-              </div>
+              {result && <RemediationResult r={result} />}
             </div>
-          </Card>
+          </Panel>
 
-          <Card
-            title="Evidence"
-            sub={a ? `latest assessment ${a.id} · ${a.status} · collected ${fmtTime(a.evidence_collected_at, { date: true, ms: false })}` : 'latest assessment'}
-            right={a ? <Chip kind={a.status}>{a.status}</Chip> : undefined}
-          >
+          <Panel title="Verification" right={ver.outcome ? <AssessChip value={ver.outcome} /> : <Chip kind="outline">not verified</Chip>}>
+            <KV
+              rows={[
+                kv('outcome', ver.outcome ? <AssessChip value={ver.outcome} /> : <span className="dim">no verification run has re-assessed this scope yet</span>),
+                kv('at', <Ts ts={ver.at} date />),
+                kv('run', ver.run_id ? <Id dim>{ver.run_id}</Id> : '—'),
+                ...(ver.after_remediation !== undefined ? [kv('after remediation', ver.after_remediation ? 'yes — verified after an executed remediation' : 'no — condition cleared without remediation')] : []),
+              ]}
+            />
+          </Panel>
+
+          <Panel title="Events" sub="finding history, newest last" right={<span className="count mono dim small">{data.events.length}</span>}>
+            <EventsTimeline events={data.events} />
+          </Panel>
+
+          <Panel title="Assessment history" sub="every run that assessed this scope" right={<span className="mono dim small">{history.length} run{history.length === 1 ? '' : 's'}</span>} bodyClass="none">
+            <DataTable
+              compact
+              rows={history}
+              rowKey={(h) => `${h.run_id}-${h.assessed_at}`}
+              empty="No assessment history recorded"
+              columns={[
+                { key: 'run', header: 'run', className: 'mono small', render: (h) => h.run_id },
+                { key: 'status', header: 'status', render: (h) => <AssessChip value={h.status} /> },
+                { key: 'at', header: 'assessed', render: (h) => <Ts ts={h.assessed_at} date ms={false} /> },
+                { key: 'obs', header: 'observed', wrap: true, className: 'mono small', priority: 2, render: (h) => fmtInline(h.observed) },
+              ]}
+            />
+          </Panel>
+        </div>
+
+        <div className="stack">
+          <Panel title="Finding" bodyClass="flush">
+            <KV
+              rows={[
+                kv('control', <><Link to={`/controls/${f.control_id}`}>{f.control_name}</Link> <Id dim>{f.control_id}</Id></>),
+                kv('scope', `${f.scope.type} · ${f.scope.id}`),
+                kv('asset', f.asset ?? '—'),
+                kv(f.scope.interface ? 'interface' : 'switch', f.scope.interface ? `${f.scope.switch} ${f.scope.interface}` : f.scope.switch),
+                kv('vlan', vlanName(f.scope.vlan)),
+                ...(f.scope.description ? [kv('description', f.scope.description)] : []),
+                kv('opened', <Ts ts={f.opened_at} date />),
+                kv('updated', <Ts ts={f.updated_at} date />),
+                kv('first run', <Id dim>{f.first_run_id}</Id>),
+                kv('last run', <Id dim>{f.last_run_id}</Id>),
+                kv('occurrences', `${f.occurrences} run${f.occurrences === 1 ? '' : 's'} with this result`),
+                kv('assessment', <Id dim>{f.assessment_id}</Id>),
+                ...(f.resolved_at ? [kv('resolved', <Ts ts={f.resolved_at} date />)] : []),
+              ]}
+            />
+          </Panel>
+          <Panel title="Expected vs observed" sub="from the run that last produced this result" bodyClass="flush">
+            <div className="stack tight">
+              <div className="eyebrow">Expected</div>
+              <ValueBlock v={f.expected} />
+              <div className="eyebrow">Observed</div>
+              <ValueBlock v={f.observed} />
+            </div>
+          </Panel>
+          <Panel title="Evidence" sub={a ? `assessment ${a.id} · collected ${fmtTime(a.evidence_collected_at, { date: true, ms: false })}` : 'latest assessment'} right={a ? <AssessChip value={a.status} /> : undefined} bodyClass="flush">
             {a ? (
               <div className="stack">
                 {a.explanation !== f.explanation && <div className="notice">{a.explanation}</div>}
                 <EvidenceList items={a.evidence} />
-                <div>
-                  <h3 style={{ marginBottom: 6 }}>Freshness</h3>
-                  <Freshness f={a.freshness} />
-                </div>
+                <div className="eyebrow">Freshness</div>
+                <Freshness f={a.freshness} />
                 <div className="dim small">
-                  source of truth: <span className="mono" style={{ wordBreak: 'break-word' }}>{a.source_of_truth}</span>
-                  {a.limitations && <div style={{ marginTop: 4 }}>Limitation: {a.limitations}</div>}
+                  source of truth: <span className="mono wrap">{a.source_of_truth}</span>
+                  {a.limitations && <div>Limitation: {a.limitations}</div>}
                 </div>
               </div>
             ) : (
               <Empty>No assessment record is linked to this finding</Empty>
             )}
-          </Card>
-
-          <Card title="Related incidents">
+          </Panel>
+          <Panel title="Related incidents" bodyClass="flush">
             {f.related_incidents.length ? (
               <div className="row">
                 {f.related_incidents.map((i) => (
-                  <Link key={i} className="mono" to={`/incidents/${i}`}>{i}</Link>
+                  <Link key={i} className="id" to={`/incidents/${i}`}>
+                    {i}
+                  </Link>
                 ))}
               </div>
             ) : (
-              <Empty>No related incidents</Empty>
+              <span className="dim small">No related incidents</span>
             )}
-          </Card>
-
-          <Card title="Framework mapping" sub="NIST CSF 2.0 · documentation aid for simulated checks, not a framework assessment">
+          </Panel>
+          <Panel title="Framework mapping" sub="NIST CSF 2.0 · documentation aid, not a framework assessment" bodyClass="flush">
             {csf.length ? (
-              <div className="stack" style={{ gap: 6 }}>
+              <div className="stack tight">
                 {csf.map((r) => (
-                  <div key={r.id} className="wrap"><span className="chip neutral mono">{r.id}</span> <span className="dim">{r.text}</span></div>
+                  <div key={r.id} className="wrap">
+                    <Chip kind="neutral" mono>
+                      {r.id}
+                    </Chip>{' '}
+                    <span className="dim">{r.text}</span>
+                  </div>
                 ))}
               </div>
             ) : (
-              <Empty>No framework references for this control</Empty>
+              <span className="dim small">No framework references for this control</span>
             )}
-          </Card>
-        </div>
-
-        <div className="stack" style={{ minWidth: 0 }}>
-          <Card title="Remediation" right={<Chip kind={REM_CHIP[rem.status] ?? 'neutral'}>{title(rem.status)}</Chip>}>
-            <div className="stack">
-              <p>{rem.guidance}</p>
-              <div>
-                <h3 style={{ marginBottom: 6 }}>Proposed commands</h3>
-                {rem.commands.length ? <Term text={rem.commands.join('\n')} hl={HL} /> : <div className="dim small">No executable commands were produced for this finding; manual follow-up is required.</div>}
-              </div>
-              <KV rows={[
-                kv('executable action', rem.action ? <span className="mono wrap" style={{ wordBreak: 'break-word' }}>{fmtInline(rem.action)}</span> : <span className="dim">none — manual follow-up</span>),
-                kv('requested', rem.requested_at ? <><Ts ts={rem.requested_at} date /> <span className="dim">by {rem.requested_by ?? '—'}</span></> : '—'),
-                kv('executed', rem.executed_at ? <><Ts ts={rem.executed_at} date /> <span className="dim">by {rem.executed_by ?? '—'}</span></> : '—'),
-                kv('verified', ver.at ? <><Ts ts={ver.at} date /> <span className="dim">run {ver.run_id}</span></> : '—'),
-                ...(rem.note ? [kv('note', rem.note)] : [])]} />
-              {rem.transcript && (
-                <div>
-                  <h3 style={{ marginBottom: 6 }}>{rem.status === 'refused' ? 'Adapter response' : 'Switch transcript'}</h3>
-                  <Term text={rem.transcript} hl={HL} />
-                </div>
-              )}
-              <div className="row">
-                <button className="btn primary" onClick={remediate} disabled={!canRemediate || busy}>{busy ? 'Remediating…' : 'Remediate'}</button>
-                {canRemediate ? (
-                  <span className="dim small">requests, executes on the twin as tlee, then re-assesses to verify (it may fail)</span>
-                ) : (
-                  <span className="dim small">{why}</span>
-                )}
-              </div>
-              {err && <div className="error">Remediation request failed: {err}</div>}
-              {result && <RemediationResult r={result} />}
-            </div>
-          </Card>
-
-          <Card title="Verification" right={ver.outcome ? <Chip kind={ver.outcome}>{ver.outcome}</Chip> : <Chip kind="neutral">not verified</Chip>}>
-            <KV rows={[
-              kv('outcome', ver.outcome ? <Chip kind={ver.outcome}>{ver.outcome}</Chip> : <span className="dim">no verification run has re-assessed this scope yet</span>),
-              kv('at', <Ts ts={ver.at} date />),
-              kv('run', ver.run_id ? <span className="mono">{ver.run_id}</span> : '—'),
-              ...(ver.after_remediation !== undefined ? [kv('after remediation', ver.after_remediation ? 'yes — verified after an executed remediation' : 'no — condition cleared without remediation')] : [])]} />
-          </Card>
-
-          <Card title={`Events (${data.events.length})`} sub="finding history, newest last">
-            <EventsTimeline events={data.events} />
-          </Card>
-
-          <Card title={`Assessment history (${history.length} run${history.length === 1 ? '' : 's'})`} sub="every run that assessed this scope" bodyClass="tight">
-            <div className="table-wrap" style={{ maxHeight: 300 }}>
-              <table className="data">
-                <thead><tr><th>run</th><th>status</th><th>assessed</th><th>observed</th></tr></thead>
-                <tbody>
-                  {history.map((h) => (
-                    <tr key={`${h.run_id}-${h.assessed_at}`}>
-                      <td className="mono small">{h.run_id}</td>
-                      <td><Chip kind={h.status}>{h.status}</Chip></td>
-                      <td><Ts ts={h.assessed_at} date /></td>
-                      <td className="mono wrap small" style={{ minWidth: 160, wordBreak: 'break-word' }}>{fmtInline(h.observed)}</td>
-                    </tr>
-                  ))}
-                  {history.length === 0 && <tr><td colSpan={4}><Empty>No assessment history recorded</Empty></td></tr>}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+          </Panel>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={dialog}
+        tone="consequential"
+        title="Remediate finding"
+        summary={
+          <div className="stack tight">
+            <span>These IOS commands will be applied to {f.scope.switch} through the adapter, then the scope is re-assessed. The adapter refuses protected interfaces; the result may still fail verification.</span>
+            {rem.commands.length > 0 && <Terminal text={rem.commands.join('\n')} copy={false} maxHeight={160} />}
+          </div>
+        }
+        note={{ label: 'Note (recorded with the request)', value: note, onChange: setNote }}
+        actor={ANALYST}
+        confirmLabel="Request and execute"
+        busy={busy}
+        error={dlgError}
+        onCancel={() => setDialog(false)}
+        onConfirm={remediate}
+      />
     </>
   )
 }
@@ -337,22 +344,24 @@ function FindingDetail({ id, onBack }: { id: string; onBack: () => void }) {
 function RemediationResult({ r }: { r: RemediateResult }) {
   const counts = r.run ? Object.entries(r.run.counts).map(([k, v]) => `${v} ${k}`).join(' · ') : null
   return (
-    <div className={r.executed ? 'notice' : 'error'}>
-      <div className="row">
-        <b>{r.executed ? 'Remediation executed on the twin' : 'Remediation refused by the switch adapter'}</b>
-        <span className="dim small">resulting status</span>
-        <Chip kind={r.finding.status} />
-        {r.finding.verification.outcome && <Chip kind={r.finding.verification.outcome}>{r.finding.verification.outcome}</Chip>}
-      </div>
-      {r.refused && <div style={{ marginTop: 6 }}>{r.refused}</div>}
-      {r.run ? (
-        <div className="small" style={{ marginTop: 6 }}>
-          re-assessed by run <span className="mono">{r.run.run_id}</span> at {fmtTime(r.run.assessed_at, { date: true, ms: false })} · {counts} · {r.run.findings_open} finding{r.run.findings_open === 1 ? '' : 's'} open
+    <div className={r.executed ? 'notice ok' : 'error'}>
+      <div className="stack tight">
+        <div className="row">
+          <b>{r.executed ? 'Remediation executed on the twin' : 'Remediation refused by the switch adapter'}</b>
+          <span className="dim small">resulting status</span>
+          <StatusChip value={r.finding.status} />
+          {r.finding.verification.outcome && <AssessChip value={r.finding.verification.outcome} />}
         </div>
-      ) : (
-        r.executed && <div className="small dim" style={{ marginTop: 6 }}>No re-assessment run was returned; the next assessment run will verify the change.</div>
-      )}
-      {r.commands && r.commands.length > 0 && <div className="small dim" style={{ marginTop: 4 }}>{r.commands.length} command{r.commands.length === 1 ? '' : 's'} applied — transcript recorded in the remediation card and the event history.</div>}
+        {r.refused && <div>{r.refused}</div>}
+        {r.run ? (
+          <div className="small">
+            re-assessed by run <Id dim>{r.run.run_id}</Id> at {fmtTime(r.run.assessed_at, { date: true, ms: false })} · {counts} · {r.run.findings_open} finding{r.run.findings_open === 1 ? '' : 's'} open
+          </div>
+        ) : (
+          r.executed && <div className="small dim">No re-assessment run was returned; the next assessment run will verify the change.</div>
+        )}
+        {r.commands && r.commands.length > 0 && <div className="small dim">{r.commands.length} command{r.commands.length === 1 ? '' : 's'} applied — transcript recorded in the remediation panel and the event history.</div>}
+      </div>
     </div>
   )
 }
@@ -365,7 +374,9 @@ function EventsTimeline({ events }: { events: FindingEvent[] }) {
         const phase = EVENT_PHASE[e.event] ?? 'evidence'
         return (
           <div key={i} className={`tl-item ${phase}`}>
-            <span className="tl-ts" title={e.ts}>{e.ts.slice(11, 23)}</span>
+            <span className="tl-ts" title={e.ts}>
+              {e.ts.slice(11, 23)}
+            </span>
             <span className="tl-dot" />
             <div className="tl-body">
               <span className={`tl-phase ${phase}`}>{title(e.event)}</span>
@@ -375,9 +386,9 @@ function EventsTimeline({ events }: { events: FindingEvent[] }) {
               </span>
               <div className="faint small mono">{e.ts.slice(0, 10)}</div>
               {e.transcript && (
-                <details style={{ marginTop: 6 }}>
-                  <summary className="dim small" style={{ cursor: 'pointer' }}>transcript ({e.transcript.split('\n').length} lines)</summary>
-                  <div style={{ marginTop: 6 }}><Term text={e.transcript} hl={HL} /></div>
+                <details>
+                  <summary className="dim small">transcript ({e.transcript.split('\n').length} lines)</summary>
+                  <Terminal text={e.transcript} hl={HL} />
                 </details>
               )}
             </div>
@@ -394,14 +405,4 @@ function reason(f: Finding): string {
   if (f.status === 'remediated') return 'remediation executed; awaiting verification by the next assessment run'
   if (!f.remediation.action) return 'no executable remediation for this control; manual follow-up is required'
   return 'remediation is not available in the current state'
-}
-
-function short(s: string, n = 140): string {
-  return s.length > n ? s.slice(0, n - 1) + '…' : s
-}
-
-function fmtInline(v: unknown): string {
-  if (v === null || v === undefined) return '(absent)'
-  if (typeof v === 'object') return JSON.stringify(v)
-  return String(v)
 }

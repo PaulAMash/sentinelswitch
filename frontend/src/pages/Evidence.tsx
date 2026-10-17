@@ -2,63 +2,121 @@ import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../lib/api'
 import { useApi } from '../lib/hooks'
-import { Card, Chip, Loading, Sev, Term, Ts } from '../components/ui'
+import { ErrorState, Loading, Panel, Ts } from '../components/ui'
+import { PageHeader } from '../components/layout'
+import { Chip, Id, SeverityChip, StatusChip } from '../components/status'
+import { Terminal } from '../components/terminal'
+import { renderMarkdown } from '../lib/markdown'
 import { fmtBytes } from '../lib/format'
 
+const HL = ['Access Mode VLAN', '"status": "verified"', 'VLAN 50']
+
 export function Evidence() {
-  const { data, error } = useApi(endpoints.evidence)
+  const { data, error, reload } = useApi(endpoints.evidence)
   const { id } = useParams()
   const [params, setParams] = useSearchParams()
   const file = params.get('file') ?? 'README.md'
-  const [content, setContent] = useState<string>('')
+  // content is tagged with the bundle/file it belongs to, so a stale response is never shown for the current file
+  const [loaded, setLoaded] = useState<{ key: string; text: string; error: boolean } | null>(null)
+  const [wrap, setWrap] = useState(false)
   const current = data?.find((e) => e.incident.id === id) ?? data?.[0]
+  const currentId = current?.incident.id
+  const key = `${currentId ?? ''}/${file}`
   useEffect(() => {
-    if (!current) return
-    endpoints.evidenceFile(current.incident.id, file).then((c) => setContent(typeof c === 'string' ? c : JSON.stringify(c, null, 2))).catch((e: Error) => setContent(`error: ${e.message}`))
-  }, [current, file])
-  if (!data) return <Loading error={error} />
+    if (!currentId) return
+    let live = true
+    endpoints
+      .evidenceFile(currentId, file)
+      .then((c) => live && setLoaded({ key, text: typeof c === 'string' ? c : JSON.stringify(c, null, 2), error: false }))
+      .catch((e: Error) => live && setLoaded({ key, text: `error: ${e.message}`, error: true }))
+    return () => {
+      live = false
+    }
+  }, [currentId, file, key])
+  if (error && !data) return <ErrorState error={error} retry={reload} />
+  if (!data) return <Loading rows={4} />
+  const content = loaded && loaded.key === key ? loaded : null
+  const isMd = file.toLowerCase().endsWith('.md') && content && !content.error
   return (
     <>
-      <div className="page-head">
-        <div>
-          <h1>Evidence</h1>
-          <p>Every contained incident writes a self-contained bundle to <code>data/incidents/&lt;id&gt;/</code>: JSON artifacts for the attribution chain, switch state, related telemetry, and a generated report.</p>
-        </div>
-      </div>
-      <div className="grid side-main">
-        <div className="stack">
-          {data.map((e) => (
-            <Link key={e.incident.id} to={`/evidence/${e.incident.id}`} style={{ textDecoration: 'none' }}>
-              <div className={`card`} style={{ padding: 12, borderColor: current?.incident.id === e.incident.id ? 'var(--accent-2)' : undefined }}>
-                <div className="row">
-                  <span className="mono strong">{e.incident.id}</span>
-                  <Sev s={e.incident.severity} />
-                  <Chip kind={e.incident.status} />
-                  {e.complete ? <Chip kind="ok">{e.files.length} artifacts</Chip> : <Chip kind="medium">{e.files.length} artifacts</Chip>}
-                </div>
-                <div style={{ marginTop: 6 }}>{e.incident.title}</div>
-                <div className="dim small"><Ts ts={e.incident.opened_at} date /> · {e.incident.interface} · {e.path}</div>
-              </div>
-            </Link>
-          ))}
-          {data.length === 0 && <div className="empty">No incidents yet</div>}
-        </div>
-        {current && (
-          <Card title={`${current.incident.id} / ${file}`} sub={`${current.path}`} right={<Link to={`/incidents/${current.incident.id}`}>open incident</Link>} bodyClass="tight">
-            <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr' }}>
-              <div style={{ borderRight: '1px solid var(--border)', padding: 8 }}>
-                {current.files.map((f) => (
-                  <button key={f.name} className="btn sm" style={{ width: '100%', justifyContent: 'space-between', marginBottom: 4, background: f.name === file ? 'var(--panel-3)' : undefined }} onClick={() => setParams({ file: f.name })}>
-                    <span className="mono">{f.name}</span>
-                    <span className="dim">{fmtBytes(f.bytes)}</span>
+      <PageHeader
+        title="Evidence"
+        sub="Original evidence bundles written by the pipeline when an incident is contained"
+        info={
+          <>
+            Every contained incident writes a self-contained bundle to <code>data/incidents/&lt;id&gt;/</code>: JSON artifacts for the attribution chain, switch state, related telemetry, and a generated report. Analyst actions (authorization and resolution) live in the incident timeline; remediation evidence lives with each finding; exported reports are on the Reports page.
+          </>
+        }
+      />
+      <div className="ev-layout">
+        <Panel title="Bundles" sub={`${data.length} incident${data.length === 1 ? '' : 's'}`} bodyClass="none">
+          <div className="ev-list">
+            {data.map((e) => (
+              <Link key={e.incident.id} to={`/evidence/${e.incident.id}`} className={`ev-item ${current?.incident.id === e.incident.id ? 'active' : ''}`} aria-current={current?.incident.id === e.incident.id ? 'true' : undefined}>
+                <span className="row nowrap">
+                  <Id>{e.incident.id}</Id>
+                  <SeverityChip value={e.incident.severity} />
+                  <StatusChip value={e.incident.status} />
+                </span>
+                <span className="t" title={e.incident.title}>
+                  {e.incident.title}
+                </span>
+                <span className="row nowrap small dim">
+                  <Ts ts={e.incident.opened_at} date ms={false} />
+                  <span className="mono">{e.incident.interface}</span>
+                  <Chip kind={e.complete ? 'ok' : 'warn'}>
+                    {e.files.length} artifacts · {fmtBytes(e.files.reduce((n, f) => n + f.bytes, 0))}
+                  </Chip>
+                </span>
+              </Link>
+            ))}
+            {data.length === 0 && <div className="empty">No incidents yet</div>}
+          </div>
+        </Panel>
+        {current ? (
+          <Panel
+            title={
+              <>
+                <Id>{current.incident.id}</Id> <span className="dim">/</span> <span className="mono">{file}</span>
+              </>
+            }
+            sub={`ORIGINAL EVIDENCE · ${current.path}`}
+            right={
+              <>
+                {!isMd && (
+                  <button className="btn sm ghost" type="button" aria-pressed={wrap} onClick={() => setWrap((w) => !w)}>
+                    {wrap ? 'no wrap' : 'wrap'}
                   </button>
-                ))}
-              </div>
-              <div style={{ padding: 12, minWidth: 0 }}>
-                <Term text={content} hl={['Access Mode VLAN', '"status": "verified"', 'VLAN 50']} />
-              </div>
+                )}
+                <Link className="btn sm" to={`/incidents/${current.incident.id}`}>
+                  open incident
+                </Link>
+              </>
+            }
+            bodyClass="none"
+          >
+            <div className="file-tabs" role="tablist" aria-label="Bundle files">
+              {current.files.map((f) => (
+                <button key={f.name} role="tab" type="button" aria-selected={f.name === file} className={f.name === file ? 'active' : ''} onClick={() => setParams({ file: f.name })}>
+                  {f.name}
+                  <span className="sz">{fmtBytes(f.bytes)}</span>
+                </button>
+              ))}
             </div>
-          </Card>
+            {content === null ? (
+              <Loading rows={4} />
+            ) : isMd ? (
+              <div className="md">{renderMarkdown(content.text)}</div>
+            ) : (
+              <div className="panel-body">
+                <Terminal text={content.text} hl={HL} maxHeight={720} className={wrap ? 'wrap-lines' : ''} />
+              </div>
+            )}
+          </Panel>
+        ) : (
+          <Panel>
+            <div className="empty">No evidence bundles yet. Bundles are written when an incident is contained.</div>
+          </Panel>
         )}
       </div>
     </>

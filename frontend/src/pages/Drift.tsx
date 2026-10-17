@@ -1,46 +1,42 @@
 import { endpoints } from '../lib/api'
 import { useApi } from '../lib/hooks'
-import { Card, Chip, Kpi, Loading, Sev, Term } from '../components/ui'
+import { ErrorState, Loading, Panel } from '../components/ui'
+import { PageHeader } from '../components/layout'
+import { Metric, MetricBand } from '../components/metric'
+import { Chip, SeverityChip } from '../components/status'
+import { DataTable, Cell2 } from '../components/table'
+import { Terminal } from '../components/terminal'
 
 export function Drift() {
-  const { data, error } = useApi(endpoints.drift)
-  if (!data) return <Loading error={error} />
+  const { data, error, reload } = useApi(endpoints.drift)
+  if (error && !data) return <ErrorState error={error} retry={reload} />
+  if (!data) return <Loading rows={4} />
   return (
     <>
-      <div className="page-head">
-        <div>
-          <h1>Configuration drift</h1>
-          <p>Desired state comes from <code>{data.desired_source}</code>; observed state is the twin's running configuration. Containment changes made by SentinelSwitch are reported as approved deviations, not drift.</p>
-        </div>
-      </div>
-      <div className="grid kpis">
-        <Kpi label="Interfaces checked" value={data.checked_interfaces} hint={`${data.checks} settings compared`} />
-        <Kpi label="Compliant" value={data.compliant_interfaces} tone="good" />
-        <Kpi label="Open findings" value={data.open} tone={data.open ? 'warn' : 'good'} hint={`${data.by_severity.high} high · ${data.by_severity.medium} medium · ${data.by_severity.low} low · ${data.by_severity.info} info`} />
-        <Kpi label="Approved deviations" value={data.approved} hint="SentinelSwitch containment" />
-      </div>
-      <Card title="Findings" bodyClass="tight">
-        <div className="table-wrap">
-          <table className="data">
-            <thead><tr><th>id</th><th>interface</th><th>setting</th><th>expected</th><th>observed</th><th>severity</th><th>status</th><th>recommended action</th></tr></thead>
-            <tbody>
-              {data.findings.map((f) => (
-                <tr key={f.id}>
-                  <td className="mono">{f.id}</td>
-                  <td className="mono">{f.interface ?? 'global'}</td>
-                  <td className="mono">{f.setting}</td>
-                  <td className="mono wrap">{fmt(f.expected)}</td>
-                  <td className="mono wrap">{fmt(f.observed)}</td>
-                  <td><Sev s={f.severity} /></td>
-                  <td><Chip kind={f.status === 'approved' ? 'ok' : 'review'}>{f.status}</Chip>{f.note && <div className="dim small" style={{ whiteSpace: 'normal', maxWidth: 260 }}>{f.note}</div>}</td>
-                  <td><Term text={f.recommendation} /></td>
-                </tr>
-              ))}
-              {data.findings.length === 0 && <tr><td colSpan={8} className="dim">No drift detected</td></tr>}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+      <PageHeader title="Configuration drift" sub={`desired state from ${data.desired_source} · observed state from the twin's running configuration`} info={<>Containment changes made by SentinelSwitch are reported as approved deviations, not drift.</>} />
+      <MetricBand>
+        <Metric label="Interfaces checked" value={data.checked_interfaces} hint={`${data.checks} settings compared`} />
+        <Metric label="Compliant" value={data.compliant_interfaces} tone="good" />
+        <Metric label="Open findings" value={data.open} tone={data.open ? 'warn' : 'good'} hint={`${data.by_severity.high} high · ${data.by_severity.medium} medium · ${data.by_severity.low} low · ${data.by_severity.info} info`} />
+        <Metric label="Approved deviations" value={data.approved} hint="SentinelSwitch containment" />
+      </MetricBand>
+      <Panel title="Findings" bodyClass="none">
+        <DataTable
+          rows={data.findings}
+          rowKey={(f) => f.id}
+          empty="No drift detected"
+          columns={[
+            { key: 'id', header: 'id', className: 'mono', render: (f) => f.id },
+            { key: 'if', header: 'interface', className: 'mono', render: (f) => f.interface ?? 'global' },
+            { key: 'setting', header: 'setting', className: 'mono', render: (f) => f.setting },
+            { key: 'exp', header: 'expected', className: 'mono', wrap: true, priority: 2, render: (f) => fmt(f.expected) },
+            { key: 'obs', header: 'observed', className: 'mono', wrap: true, priority: 2, render: (f) => fmt(f.observed) },
+            { key: 'sev', header: 'severity', render: (f) => <SeverityChip value={f.severity} /> },
+            { key: 'status', header: 'status', render: (f) => <Cell2 primary={<Chip kind={f.status === 'approved' ? 'outline-ok' : 'review'}>{f.status}</Chip>} secondary={f.note ? <span className="wrap">{f.note}</span> : undefined} /> },
+            { key: 'rec', header: 'recommended action', wrap: true, render: (f) => <Terminal text={f.recommendation} maxHeight={120} /> },
+          ]}
+        />
+      </Panel>
     </>
   )
 }

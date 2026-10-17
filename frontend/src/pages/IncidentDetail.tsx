@@ -3,243 +3,362 @@ import { kv, type KVRow } from '../lib/kv'
 import { Link, useParams } from 'react-router-dom'
 import { endpoints, type Authorization } from '../lib/api'
 import { useApi } from '../lib/hooks'
-import { Card, Chip, KV, Loading, Sev, Tabs, Term, Ts } from '../components/ui'
-import { Chain, Steps } from '../components/Chain'
-import { chainFromAttribution } from '../lib/chain'
+import { ErrorState, KV, Loading, Panel, Tabs, Ts } from '../components/ui'
+import { PageHeader, Section } from '../components/layout'
+import { Chip, Id, ResponseChip, SeverityChip, StatusChip, responseStateOf } from '../components/status'
+import { ResponseLedger } from '../components/ledger'
+import { Trace, TraceLegend } from '../components/trace'
+import { Steps } from '../components/Chain'
+import { Terminal } from '../components/terminal'
+import { DataTable } from '../components/table'
+import { ConfirmDialog } from '../components/dialog'
+import { useToast } from '../components/toast'
 import { Timeline } from '../components/Timeline'
 import { Confidence, Features } from '../components/Features'
 import { fmtBytes, fmtSeconds, vlanName } from '../lib/format'
 
 type Tab = 'timeline' | 'detections' | 'decision' | 'evidence' | 'verify'
+const ANALYST = 'tlee'
+const RESTORE_NOTE = 'Endpoint re-imaged and cleared by IT; returning to production VLAN.'
 
 export function IncidentDetail() {
   const { id = '' } = useParams()
   const { data, error, reload } = useApi(() => endpoints.incident(id), [id])
+  const toast = useToast()
   const [tab, setTab] = useState<Tab>('timeline')
+  const [dialog, setDialog] = useState(false)
+  const [note, setNote] = useState(RESTORE_NOTE)
   const [busy, setBusy] = useState(false)
-  const [restoreError, setRestoreError] = useState<string | null>(null)
-  if (!data) return <Loading error={error} />
+  const [dlgError, setDlgError] = useState<string | null>(null)
+  const [more, setMore] = useState(false)
+  if (error && !data) return <ErrorState error={error} retry={reload} />
+  if (!data) return <Loading rows={6} />
   const inc = data.incident
   const det = data.detection
   const att = data.attribution
-  const action = data.actions.find((a) => ['verified', 'restored', 'failed'].includes(a.status)) ?? data.actions[0]
+  const action = data.actions.find((a) => ['verified', 'restored', 'containment_failed', 'applied', 'failed'].includes(a.status)) ?? data.actions[0] ?? null
   const auth: Authorization | undefined = inc.authorization ?? action?.authorization
-  const metrics = (det && att && action) ? { ttd: null as number | null } : null
-  void metrics
+  const state = responseStateOf(inc, action, null, busy)
   const restore = async () => {
     setBusy(true)
-    setRestoreError(null)
+    setDlgError(null)
     try {
-      await endpoints.restore(inc.id, { actor: 'tlee', note: 'Endpoint re-imaged and cleared by IT; returning to production VLAN.' })
+      const r = await endpoints.restore(inc.id, { actor: ANALYST, note })
+      toast.push({ title: `${inc.id} restored`, detail: `${r.action.interface} · action ${r.action.status}`, tone: 'ok' })
+      setDialog(false)
       reload()
     } catch (e) {
-      setRestoreError((e as Error).message)
+      setDlgError((e as Error).message)
     } finally {
       setBusy(false)
     }
   }
+  const toNote = auth?.mode === 'analyst' ? `authorized by ${auth.authorized_by}` : auth?.mode === 'automatic' ? 'automatic · policy' : undefined
   return (
     <>
-      <div className="page-head">
-        <div>
-          <div className="row" style={{ marginBottom: 6 }}>
-            <span className="mono strong" style={{ fontSize: 15 }}>{inc.id}</span>
-            <Sev s={inc.severity} />
-            <Chip kind={inc.status} />
-            <Chip kind={inc.disposition} />
+      <PageHeader
+        eyebrow={
+          <span className="row">
+            <Id>{inc.id}</Id>
+            <SeverityChip value={inc.severity} />
+            <ResponseChip state={state} />
+            <StatusChip value={inc.disposition} />
             {inc.mitre.map((m) => (
-              <span key={m} className="chip neutral mono">{m}</span>
+              <Chip key={m} kind="info" mono>
+                {m}
+              </Chip>
             ))}
-          </div>
-          <h1>{inc.title}</h1>
-          <p>{inc.summary}</p>
-        </div>
-        <div className="toolbar">
-          {inc.status === 'contained' && (
-            <button className="btn" onClick={restore} disabled={busy}>
-              Release containment (restore VLAN {inc.original_vlan})
-            </button>
-          )}
-          <Link className="btn" to={`/evidence/${inc.id}`}>Evidence bundle</Link>
-          {restoreError && <div className="error">Restore failed: {restoreError}</div>}
-        </div>
-      </div>
-
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
-        <Card><KV rows={[kv('endpoint', inc.device ? <Link to={`/devices/${inc.device}`}>{inc.device}</Link> : inc.impersonated_device ? `unknown (impersonating ${inc.impersonated_device})` : 'unknown device'), kv('user', inc.user ? `${inc.user} (${inc.department})` : '—'), kv('vendor', inc.vendor ?? '—')]} /></Card>
-        <Card><KV rows={[kv('ip', inc.ip ?? '—'), kv('mac', inc.mac ?? '—'), kv('attribution', `${((inc.attribution_confidence ?? 1) * 100).toFixed(0)}% · ${inc.flags.length ? inc.flags.join(', ') : 'clean'}`)]} /></Card>
-        <Card><KV rows={[kv('switch', inc.switch), kv('interface', inc.interface ?? '—'), kv('port class', inc.port_class ?? '—')]} /></Card>
-        <Card><KV rows={[kv('original vlan', vlanName(inc.original_vlan)), kv('current vlan', vlanName(inc.current_vlan)), kv('mechanism', inc.action === 'quarantine_vlan' ? 'quarantine VLAN' : inc.action === 'port_shutdown' ? 'administrative shutdown' : inc.mechanism ?? '—')]} /></Card>
-        <Card><KV rows={[kv('opened', <Ts ts={inc.opened_at} date />), kv('contained', <Ts ts={inc.contained_at} date />), kv('closed', inc.closed_at ? <><Ts ts={inc.closed_at} date /> <span className="dim">by {inc.closed_by}</span></> : '—')]} /></Card>
-        <Card><KV rows={authRows(auth)} /></Card>
-      </div>
-
-      <Card title="Correlation chain" sub="IP → DHCP binding → MAC → MAC table → port → VLAN → containment">
-        <Chain nodes={chainFromAttribution(att, action?.to_vlan, inc.action)} />
-        {att && (
-          <div style={{ marginTop: 14 }}>
-            <Steps steps={att.steps} />
-          </div>
+          </span>
+        }
+        title={inc.title}
+        sub={
+          <span className={more ? '' : 'clamp-2'}>
+            {inc.summary}{' '}
+            {inc.summary.length > 180 && (
+              <button className="btn sm ghost" type="button" onClick={() => setMore((m) => !m)}>
+                {more ? 'less' : 'more'}
+              </button>
+            )}
+          </span>
+        }
+      >
+        {inc.status === 'contained' && (
+          <button className="btn consequential" type="button" onClick={() => setDialog(true)} disabled={busy}>
+            Release containment
+          </button>
         )}
-      </Card>
+        <Link className="btn" to={`/evidence/${inc.id}`}>
+          Evidence bundle
+        </Link>
+      </PageHeader>
 
-      <div className="card">
-        <Tabs<Tab>
-          tabs={[
-            { id: 'timeline', label: 'Timeline' },
-            { id: 'detections', label: `Source detections (${data.alerts.length})` },
-            { id: 'decision', label: 'Containment decision' },
-            { id: 'verify', label: 'Switch verification' },
-            { id: 'evidence', label: `Evidence (${data.evidence.files.length})` },
-          ]}
-          value={tab}
-          onChange={setTab}
-        />
-        <div className="card-body">
-          {tab === 'timeline' && (
-            <div className="grid side-main">
-              <div>
-                <h3 style={{ marginBottom: 8 }}>Measured on the simulated clock</h3>
-                {det && action && (
-                  <KV rows={[
-                    kv('first anomalous event', <Ts ts={data.timeline[0]?.ts} />),
-                    kv('incident detection', <Ts ts={det.ts} />),
-                    kv('attribution complete', <Ts ts={att?.completed_at} />),
-                    kv('containment applied', <Ts ts={action.applied_at} />),
-                    kv('verified', <Ts ts={action.verified_at} />),
-                    kv('evidence finalized', <Ts ts={inc.evidence_finalized_at} />),
-                    kv('time to detect', fmtSeconds(diff(data.timeline[0]?.ts, det.ts))),
-                    kv('time to attribute', fmtSeconds(diff(det.ts, att?.completed_at))),
-                    kv('time to contain', fmtSeconds(diff(det.ts, action.verified_at)))]} />
-                )}
-                {inc.resolution_note && <div className="notice" style={{ marginTop: 12 }}>{inc.resolution_note}</div>}
-              </div>
-              <Timeline entries={data.timeline} />
-            </div>
-          )}
-          {tab === 'detections' && (
-            <div className="grid side-main">
-              <div>
+      <Panel title="Response ledger" sub="each stage from its own record · simulated clock" bodyClass="flush">
+        <ResponseLedger incident={inc} detection={det} attribution={att} action={action} />
+      </Panel>
+
+      {att && (
+        <Panel title="Attribution trace" sub="IP → DHCP binding → MAC → MAC table → port → VLAN → containment" right={<TraceLegend />}>
+          <Trace attribution={att} toVlan={action?.to_vlan} action={inc.action} toNote={toNote} />
+        </Panel>
+      )}
+
+      <div className="inc-workspace">
+        <div className="panel">
+          <Tabs<Tab>
+            label="Investigation"
+            tabs={[
+              { id: 'timeline', label: 'Timeline' },
+              { id: 'detections', label: 'Detections', count: data.alerts.length },
+              { id: 'decision', label: 'Decision & authorization' },
+              { id: 'verify', label: 'Switch verification' },
+              { id: 'evidence', label: 'Evidence', count: data.evidence.files.length },
+            ]}
+            value={tab}
+            onChange={setTab}
+          />
+          <div className="panel-body">
+            {tab === 'timeline' && (
+              <>
                 {det && (
-                  <>
-                    <h3 style={{ marginBottom: 8 }}>{det.rule_name} · {det.rule}</h3>
-                    <Confidence value={det.confidence} base={det.base_confidence} />
-                    <div style={{ marginTop: 10 }}><Features features={det.features} /></div>
-                    <div className="dim small" style={{ marginTop: 8 }}>trigger {det.trigger_ts.slice(11, 23)} · scored {det.ts.slice(11, 23)} · {det.event_refs.length} contributing events</div>
-                  </>
-                )}
-              </div>
-              <div className="table-wrap">
-                <table className="data">
-                  <thead><tr><th>time</th><th>severity</th><th>source</th><th>signature</th><th>src → dst</th></tr></thead>
-                  <tbody>
-                    {data.alerts.map((a) => (
-                      <tr key={a.id}>
-                        <td><Ts ts={a.ts} /></td>
-                        <td><Sev s={a.severity} /></td>
-                        <td><Chip kind="source">{a.source}</Chip></td>
-                        <td className="wrap" style={{ minWidth: 260 }}>{a.signature}</td>
-                        <td className="mono">{a.src_ip ?? a.mac ?? a.interface} {a.dest_ip ? `→ ${a.dest_ip}:${a.dest_port ?? ''}` : ''}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-          {tab === 'decision' && action && (
-            <div className="grid two">
-              <div className="stack">
-                <h3>Policy evaluation</h3>
-                <DecisionView incidentId={inc.id} />
-                <h3 style={{ marginTop: 6 }}>Authorization</h3>
-                {auth ? (
-                  <>
-                    <div className="row">
-                      <Chip kind={auth.status} />
-                      <span className="mono">{auth.mode}</span>
-                      <span className="dim">{auth.action}</span>
+                  <div className="measure" role="group" aria-label="Measured on the simulated clock">
+                    <div>
+                      <div className="k">time to detect</div>
+                      <div className="v">{fmtSeconds(diff(data.timeline[0]?.ts, det.ts))}</div>
                     </div>
-                    <KV rows={[
-                      kv('authorized by', auth.authorized_by),
-                      kv('authorized at', <Ts ts={auth.authorized_at} date />),
-                      kv('basis', auth.basis),
-                      kv('reason', <span className="wrap">{auth.reason}</span>),
-                      kv('guards', auth.guards.length ? <span className="mono">{auth.guards.join(', ')}</span> : 'none'),
-                      kv('note', auth.note ?? '—')]} />
-                    <div className="small dim">The authorization record is written separately from the policy decision and from execution: the policy tier says what the engine would do, the authorization says who allowed it and on what basis.</div>
-                  </>
-                ) : (
-                  <div className="dim">No authorization record is attached to this incident.</div>
+                    <div>
+                      <div className="k">time to attribute</div>
+                      <div className="v">{fmtSeconds(diff(det.ts, att?.completed_at))}</div>
+                    </div>
+                    <div>
+                      <div className="k">time to contain</div>
+                      <div className="v">{action?.verification?.ok === true ? fmtSeconds(diff(det.ts, action.verified_at)) : '—'}</div>
+                    </div>
+                    <div>
+                      <div className="k">evidence finalized</div>
+                      <div className="v">
+                        <Ts ts={inc.evidence_finalized_at} />
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </div>
+                {inc.resolution_note && <div className="notice ok">{inc.resolution_note}</div>}
+                <Timeline entries={data.timeline} />
+              </>
+            )}
+            {tab === 'detections' && (
               <div className="stack">
-                <h3>Containment action</h3>
-                <KV rows={[
-                  kv('workflow', action.workflow_id),
-                  kv('action', action.action),
-                  kv('mechanism', action.mechanism),
-                  kv('interface', `${action.switch} ${action.interface}`),
-                  kv('vlan', action.to_vlan ? `${action.from_vlan} → ${action.to_vlan}` : '—'),
-                  kv('requested', <Ts ts={action.requested_at} />),
-                  kv('applied', <Ts ts={action.applied_at} />),
-                  kv('verified', <><Ts ts={action.verified_at} /> {action.verification?.ok ? <Chip kind="ok">ok</Chip> : <Chip kind="fail">failed</Chip>}</>),
-                  kv('actor', action.actor),
-                  kv('status', <Chip kind={action.status} />),
-                  ...(action.restored_at ? [kv('restored', <><Ts ts={action.restored_at} date /> by {action.restored_by} — {action.restore_note}</>)] : [])]} />
-                <Term text={action.transcript} hl={['switchport access vlan', 'shutdown']} />
+                {det && (
+                  <div className="stack tight">
+                    <Section title={`${det.rule_name} · ${det.rule}`}>
+                      <span />
+                    </Section>
+                    <Confidence value={det.confidence} base={det.base_confidence} />
+                    <Features features={det.features} />
+                    <div className="dim small">
+                      trigger {det.trigger_ts.slice(11, 23)} · scored {det.ts.slice(11, 23)} · {det.event_refs.length} contributing events
+                    </div>
+                  </div>
+                )}
+                <DataTable
+                  compact
+                  rows={data.alerts}
+                  rowKey={(a) => a.id}
+                  columns={[
+                    { key: 'time', header: 'time', render: (a) => <Ts ts={a.ts} /> },
+                    { key: 'sev', header: 'severity', render: (a) => <SeverityChip value={a.severity} /> },
+                    { key: 'src', header: 'source', render: (a) => <Chip kind="source">{a.source}</Chip> },
+                    { key: 'sig', header: 'signature', wrap: true, render: (a) => a.signature },
+                    { key: 'flow', header: 'src → dst', className: 'mono', priority: 2, render: (a) => `${a.src_ip ?? a.mac ?? a.interface ?? ''} ${a.dest_ip ? `→ ${a.dest_ip}:${a.dest_port ?? ''}` : ''}` },
+                  ]}
+                />
               </div>
-            </div>
-          )}
-          {tab === 'verify' && (
-            <div className="grid two">
+            )}
+            {tab === 'decision' && (
+              <div className="grid grid-2">
+                <div className="stack">
+                  <Section title="Policy evaluation">
+                    <span />
+                  </Section>
+                  <DecisionView incidentId={inc.id} />
+                  <Section title="Authorization">
+                    <span />
+                  </Section>
+                  {auth ? (
+                    <>
+                      <div className="row">
+                        <StatusChip value={auth.status} />
+                        <span className="mono">{auth.mode}</span>
+                        <span className="dim">{auth.action}</span>
+                      </div>
+                      <KV
+                        rows={[
+                          kv('authorized by', auth.authorized_by),
+                          kv('authorized at', <Ts ts={auth.authorized_at} date />),
+                          kv('basis', auth.basis),
+                          kv('reason', <span className="wrap">{auth.reason}</span>),
+                          kv('guards', auth.guards.length ? <span className="mono">{auth.guards.join(', ')}</span> : 'none'),
+                          kv('note', auth.note ?? '—'),
+                        ]}
+                      />
+                      <div className="small dim">The authorization record is written separately from the policy decision and from execution: the policy tier says what the engine would do, the authorization says who allowed it and on what basis.</div>
+                    </>
+                  ) : (
+                    <div className="dim">No authorization record is attached to this incident.</div>
+                  )}
+                </div>
+                <div className="stack">
+                  <Section title="Containment action">
+                    <span />
+                  </Section>
+                  {action ? (
+                    <>
+                      <KV
+                        rows={[
+                          kv('workflow', <Id dim>{action.workflow_id}</Id>),
+                          kv('action', action.action),
+                          kv('mechanism', action.mechanism),
+                          kv('interface', `${action.switch} ${action.interface ?? ''}`),
+                          kv('vlan', action.to_vlan ? `${action.from_vlan} → ${action.to_vlan}` : '—'),
+                          kv('requested', <Ts ts={action.requested_at} />),
+                          kv('applied', <Ts ts={action.applied_at} />),
+                          kv(
+                            'verified',
+                            <>
+                              <Ts ts={action.verified_at} /> {action.verification?.ok === true ? <Chip kind="ok">read-back ok</Chip> : action.verification?.ok === false ? <Chip kind="danger">read-back failed</Chip> : <Chip kind="outline">not verified</Chip>}
+                            </>,
+                          ),
+                          kv('actor', action.actor),
+                          kv('status', <StatusChip value={action.status} />),
+                          ...(action.restored_at
+                            ? [
+                                kv(
+                                  'restored',
+                                  <>
+                                    <Ts ts={action.restored_at} date /> by {action.restored_by} — {action.restore_note}
+                                  </>,
+                                ),
+                              ]
+                            : []),
+                          ...(action.notes.length ? [kv('notes', <span className="wrap">{action.notes.join(' · ')}</span>)] : []),
+                        ]}
+                      />
+                      {action.transcript && <Terminal text={action.transcript} hl={['switchport access vlan', 'shutdown']} />}
+                    </>
+                  ) : (
+                    <div className="dim">No containment action is recorded for this incident.</div>
+                  )}
+                </div>
+              </div>
+            )}
+            {tab === 'verify' && (
+              <div className="grid grid-2">
+                <div className="stack">
+                  <div className="eyebrow">show interfaces {inc.interface} switchport</div>
+                  <Terminal text={data.verification.switchport ?? ''} hl={['Access Mode VLAN']} />
+                  <div className="eyebrow">show interfaces {inc.interface} status</div>
+                  <Terminal text={data.verification.status ?? ''} />
+                </div>
+                <div className="stack">
+                  <div className="eyebrow">show mac address-table interface {inc.interface}</div>
+                  <Terminal text={data.verification.mac_table ?? ''} />
+                  <div className="eyebrow">show running-config interface {inc.interface}</div>
+                  <Terminal text={data.verification.running_config ?? ''} hl={['switchport access vlan']} />
+                </div>
+              </div>
+            )}
+            {tab === 'evidence' && (
               <div className="stack">
-                <h3>show interfaces {inc.interface} switchport</h3>
-                <Term text={data.verification.switchport ?? ''} hl={['Access Mode VLAN']} />
-                <h3>show interfaces {inc.interface} status</h3>
-                <Term text={data.verification.status ?? ''} />
+                <p className="dim small">
+                  Original evidence written to <code>{data.evidence.path}/</code> on the simulated clock; every artifact is plain JSON or Markdown.
+                </p>
+                <DataTable
+                  compact
+                  rows={data.evidence.files}
+                  rowKey={(f) => f.name}
+                  columns={[
+                    { key: 'name', header: 'artifact', className: 'mono', render: (f) => <Link to={`/evidence/${inc.id}?file=${f.name}`}>{f.name}</Link> },
+                    { key: 'size', header: 'size', align: 'right', render: (f) => fmtBytes(f.bytes) },
+                    { key: 'desc', header: 'contents', wrap: true, priority: 2, render: (f) => <span className="dim">{describe(f.name)}</span> },
+                  ]}
+                />
               </div>
-              <div className="stack">
-                <h3>show mac address-table interface {inc.interface}</h3>
-                <Term text={data.verification.mac_table ?? ''} />
-                <h3>show running-config interface {inc.interface}</h3>
-                <Term text={data.verification.running_config ?? ''} hl={['switchport access vlan']} />
-              </div>
-            </div>
-          )}
-          {tab === 'evidence' && (
-            <div>
-              <p className="dim" style={{ marginBottom: 10 }}>Bundle written to <code>{data.evidence.path}/</code> on the simulated clock; every artifact is plain JSON or Markdown.</p>
-              <div className="table-wrap">
-                <table className="data">
-                  <thead><tr><th>artifact</th><th>size</th><th>contents</th></tr></thead>
-                  <tbody>
-                    {data.evidence.files.map((f) => (
-                      <tr key={f.name}>
-                        <td className="mono"><Link to={`/evidence/${inc.id}?file=${f.name}`}>{f.name}</Link></td>
-                        <td className="num">{fmtBytes(f.bytes)}</td>
-                        <td className="dim">{describe(f.name)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
+
+        <aside className="inc-rail" aria-label="Incident context">
+          <Panel title="Endpoint" bodyClass="flush">
+            <KV
+              rows={[
+                kv('device', inc.device ? <Link to={`/devices/${inc.device}`}>{inc.device}</Link> : inc.impersonated_device ? `unknown (impersonating ${inc.impersonated_device})` : 'unknown device'),
+                kv('user', inc.user ? `${inc.user}${inc.department ? ` (${inc.department})` : ''}` : '—'),
+                kv('vendor', inc.vendor ?? '—'),
+              ]}
+            />
+          </Panel>
+          <Panel title="Network location" bodyClass="flush">
+            <KV
+              rows={[
+                kv('switch', inc.switch),
+                kv('interface', <span className="mono">{inc.interface ?? '—'}</span>),
+                kv('port class', inc.port_class ?? '—'),
+                kv('vlan', inc.current_vlan !== inc.original_vlan ? `${vlanName(inc.original_vlan)} → ${vlanName(inc.current_vlan)}` : vlanName(inc.original_vlan)),
+                kv('mechanism', inc.action === 'quarantine_vlan' ? 'quarantine VLAN' : inc.action === 'port_shutdown' ? 'administrative shutdown' : inc.mechanism ?? '—'),
+              ]}
+            />
+          </Panel>
+          <Panel title="Authorization" bodyClass="flush">
+            <KV rows={authRows(auth)} />
+          </Panel>
+          <Panel title="Addresses" bodyClass="flush">
+            <KV
+              rows={[
+                kv('ip', <span className="mono">{inc.ip ?? '—'}</span>),
+                kv('mac', <span className="mono">{inc.mac ?? '—'}</span>),
+                kv('attribution', `${((inc.attribution_confidence ?? 1) * 100).toFixed(0)}% · ${inc.flags.length ? inc.flags.join(', ') : 'clean'}`),
+                kv('opened', <Ts ts={inc.opened_at} date />),
+                kv('closed', inc.closed_at ? <><Ts ts={inc.closed_at} date /> <span className="dim">by {inc.closed_by}</span></> : '—'),
+              ]}
+            />
+          </Panel>
+          {att && (
+            <Panel title="Correlation steps" bodyClass="flush">
+              <Steps steps={att.steps} />
+            </Panel>
+          )}
+        </aside>
       </div>
+
+      <ConfirmDialog
+        open={dialog}
+        tone="consequential"
+        title="Release containment"
+        summary={
+          <>
+            <span className="mono">{inc.interface}</span> returns to VLAN {inc.original_vlan} ({vlanName(inc.original_vlan)}); the restore is read back from the switch and a recovery assessment runs. The incident becomes resolved only if the backend verifies the restore.
+          </>
+        }
+        note={{ label: 'Resolution note', value: note, onChange: setNote }}
+        actor={ANALYST}
+        confirmLabel="Release containment"
+        busy={busy}
+        error={dlgError}
+        onCancel={() => setDialog(false)}
+        onConfirm={restore}
+      />
     </>
   )
 }
 
 function DecisionView({ incidentId }: { incidentId: string }) {
-  const { data } = useApi(() => endpoints.evidenceFile(incidentId, 'containment.json') as Promise<{ decision: { disposition: string; action: string; reason: string; factors: { factor: string; value: unknown }[]; guards_triggered: string[]; tier_before_guards: string | null } }>, [incidentId])
-  if (!data) return <div className="loading">…</div>
+  const { data, error } = useApi(() => endpoints.evidenceFile(incidentId, 'containment.json') as Promise<{ decision: { disposition: string; action: string; reason: string; factors: { factor: string; value: unknown }[]; guards_triggered: string[]; tier_before_guards: string | null } }>, [incidentId])
+  if (error) return <div className="dim small">Policy evaluation unavailable: {error}</div>
+  if (!data) return <Loading rows={2} />
   const d = data.decision
   return (
     <>
       <div className="row">
-        <Chip kind={d.disposition} />
+        <StatusChip value={d.disposition} />
         <span className="mono">{d.action}</span>
       </div>
       <div className="dim">{d.reason}</div>
@@ -250,14 +369,14 @@ function DecisionView({ incidentId }: { incidentId: string }) {
 }
 
 function authRows(a: Authorization | undefined): KVRow[] {
-  if (!a) return [kv('authorization', <span className="dim">not recorded</span>)]
+  if (!a) return [kv('record', <span className="dim">not recorded</span>)]
   return [
-    kv('authorization', <><Chip kind={a.status} /> <span className="dim">{a.mode}</span></>),
-    kv('authorized by', a.authorized_by),
-    kv('authorized at', <Ts ts={a.authorized_at} date />),
+    kv('status', <><StatusChip value={a.status} /> <span className="dim">{a.mode}</span></>),
+    kv('by', a.authorized_by),
+    kv('at', <Ts ts={a.authorized_at} date />),
     // a zero-width space after each underscore lets long policy-tier names wrap inside the narrow card
-    kv('basis', <span className="wrap">{a.basis.replaceAll('_', '_\u200b')}</span>),
-    kv('guards', a.guards.length ? <span className="mono">{a.guards.join(', ')}</span> : 'none'),
+    kv('basis', <span className="wrap">{a.basis.replaceAll('_', '_​')}</span>),
+    kv('guards', a.guards.length ? <span className="mono wrap">{a.guards.join(', ')}</span> : 'none'),
     kv('note', a.note ?? '—'),
   ]
 }

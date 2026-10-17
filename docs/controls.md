@@ -213,5 +213,5 @@ and the CSF `function` prefix).
 | --- | --- |
 | API | `GET /api/controls`, `GET /api/controls/{id}`, `GET /api/assessments`, `GET /api/findings`, `POST /api/assessments/run`, `POST /api/findings/{id}/remediate` — see [workflow-2.0.md](workflow-2.0.md) |
 | CLI | `sentinelswitch assess`, `findings`, `remediate` |
-| Dashboard | *Posture* (`/`), *Controls* (`/controls`, `/controls/:id`), *Findings & Remediation* (`/findings`, `/findings/:id`) |
+| Dashboard | *Overview* (`/`), *Posture* (`/posture`), *Controls* (`/controls`, `/controls/:id`), *Findings* (`/findings`, `/findings/:id`) |
 | Export | `controls`, `assessments`, `findings`, `framework_mapping` in the JSON report; sections 2, 3 and 9 of the HTML report |

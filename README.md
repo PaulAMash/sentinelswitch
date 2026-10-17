@@ -267,10 +267,18 @@ assessment ids, finding ids and counts. See [docs/workflow-2.0.md](docs/workflow
 
 ## The dashboard
 
-The navigation is split into **Assurance** (Posture, Controls, Findings, Incidents, Reports) and
-**Operations** (SOC Overview, Alerts, Assets, Switch, Authentication, Coverage, Drift, Evidence,
-About). Every number is derived from the seeded dataset and the live twin; views refresh over
-Server-Sent Events when the demo runs, a finding is remediated or containment is released.
+The dashboard opens on the **Overview** (`/`): an attention strip (detections awaiting
+authorization, contained hosts, open findings, unverified assessments), the alert stream, the
+response ledger of recent containment actions, control status and telemetry freshness as of the last
+assessment run. The navigation is split into **Assurance** (Overview, Posture at `/posture`,
+Controls, Findings, Incidents, Reports) and **Operations** (Alerts, Assets, Switch, Authentication,
+Coverage, Drift, Evidence, Architecture); `/operations` redirects to `/`. Every number is derived from
+the seeded dataset and the live twin; views refresh over Server-Sent Events when the demo runs, a
+finding is remediated or containment is released. Consequential actions (authorize or decline
+containment, release containment, remediate, replay or reset the demo) confirm in a dialog that
+states what will change; the backend authorization and guard checks are unchanged.
+
+![Overview](artifacts/sentinelswitch-2.0/screenshots/sentinelswitch-2.0-overview.png)
 
 ![Controls](artifacts/sentinelswitch-2.0/screenshots/sentinelswitch-2.0-controls.png)
 

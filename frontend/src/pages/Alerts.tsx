@@ -3,12 +3,16 @@ import { kv } from '../lib/kv'
 import { Link } from 'react-router-dom'
 import { endpoints, type Alert } from '../lib/api'
 import { useApi } from '../lib/hooks'
-import { Card, Chip, Drawer, KV, Loading, Sev, Term, Ts } from '../components/ui'
+import { Drawer, ErrorState, KV, Loading, Panel, Ts } from '../components/ui'
+import { PageHeader, Section } from '../components/layout'
+import { Chip, SeverityChip, StatusChip } from '../components/status'
+import { DataTable } from '../components/table'
+import { Terminal } from '../components/terminal'
 import { Features as FeatureList, Confidence } from '../components/Features'
 import { sevRank } from '../lib/format'
 
 export function Alerts() {
-  const { data, error } = useApi(() => endpoints.alerts('?limit=1000'))
+  const { data, error, reload } = useApi(() => endpoints.alerts('?limit=1000'))
   const [sev, setSev] = useState('all')
   const [src, setSrc] = useState('all')
   const [status, setStatus] = useState('all')
@@ -23,111 +27,122 @@ export function Alerts() {
       .filter((a) => !q || `${a.signature} ${a.src_ip} ${a.dest_ip} ${a.device} ${a.mac} ${a.interface}`.toLowerCase().includes(q.toLowerCase()))
       .sort((a, b) => (a.ts < b.ts ? 1 : -1))
   }, [data, sev, src, status, q])
-  if (!data) return <Loading error={error} />
+  if (error && !data) return <ErrorState error={error} retry={reload} />
+  if (!data) return <Loading rows={6} />
   const counts = { high: data.filter((a) => a.severity === 'high').length, medium: data.filter((a) => a.severity === 'medium').length, low: data.filter((a) => sevRank(a.severity) <= 1).length }
   return (
     <>
-      <div className="page-head">
-        <div>
-          <h1>Alerts</h1>
-          <p>Raw detections from every telemetry source, linked to the correlation detection and incident that consumed them.</p>
-        </div>
-        <div className="toolbar">
-          <span className="chip high">{counts.high} high</span>
-          <span className="chip medium">{counts.medium} medium</span>
-          <span className="chip low">{counts.low} low</span>
-        </div>
-      </div>
-      <Card
-        bodyClass="tight"
-        title={`${rows.length} of ${data.length} alerts`}
-        right={
-          <div className="toolbar">
-            <input type="search" placeholder="search signature, host, MAC…" value={q} onChange={(e) => setQ(e.target.value)} />
-            <select value={sev} onChange={(e) => setSev(e.target.value)}>
-              <option value="all">all severities</option>
-              <option value="high">high</option>
-              <option value="medium">medium</option>
-              <option value="low">low</option>
-            </select>
-            <select value={src} onChange={(e) => setSrc(e.target.value)}>
-              <option value="all">all sources</option>
-              <option value="suricata">suricata</option>
-              <option value="zeek">zeek</option>
-              <option value="radius">radius</option>
-              <option value="syslog">syslog</option>
-            </select>
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="all">all statuses</option>
-              {['contained', 'resolved', 'review', 'monitor', 'closed', 'informational'].map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-        }
-      >
-        <div className="table-wrap" style={{ maxHeight: 'calc(100vh - 230px)' }}>
-          <table className="data">
-            <thead>
-              <tr>
-                <th>time</th><th>severity</th><th>signature</th><th>source</th><th>src</th><th>dst</th><th>device / port</th><th>status</th><th>incident</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((a) => (
-                <tr key={a.id} className={`clickable ${sel?.id === a.id ? 'selected' : ''}`} onClick={() => setSel(a)}>
-                  <td><Ts ts={a.ts} /></td>
-                  <td><Sev s={a.severity} /></td>
-                  <td className="wrap" style={{ minWidth: 300 }}>{a.signature}</td>
-                  <td><Chip kind="source">{a.source}</Chip></td>
-                  <td className="mono">{a.src_ip ? `${a.src_ip}${a.src_port ? ':' + a.src_port : ''}` : a.mac ?? '—'}</td>
-                  <td className="mono">{a.dest_ip ? `${a.dest_ip}${a.dest_port ? ':' + a.dest_port : ''}` : '—'}</td>
-                  <td>
-                    {a.device ? <Link to={`/devices/${a.device}`}>{a.device}</Link> : <span className="dim">unknown</span>}
+      <PageHeader title="Alerts" sub={`${data.length} alerts · ${counts.high} high · ${counts.medium} medium · ${counts.low} low`} info={<>Raw detections from every telemetry source, linked to the correlation detection and incident that consumed them.</>}>
+        <input type="search" placeholder="search signature, host, MAC…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search alerts" />
+        <select value={sev} onChange={(e) => setSev(e.target.value)} aria-label="Severity">
+          <option value="all">all severities</option>
+          <option value="high">high</option>
+          <option value="medium">medium</option>
+          <option value="low">low</option>
+        </select>
+        <select value={src} onChange={(e) => setSrc(e.target.value)} aria-label="Source">
+          <option value="all">all sources</option>
+          <option value="suricata">suricata</option>
+          <option value="zeek">zeek</option>
+          <option value="radius">radius</option>
+          <option value="syslog">syslog</option>
+        </select>
+        <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status">
+          <option value="all">all statuses</option>
+          {['contained', 'resolved', 'review', 'monitor', 'closed', 'informational'].map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      </PageHeader>
+      <Panel title={`${rows.length} of ${data.length} alerts`} sub="open a row for the correlation detection and the raw record" bodyClass="none">
+        <div className="scroll-page">
+          <DataTable
+            rows={rows}
+            rowKey={(a) => a.id}
+            onRowActivate={setSel}
+            selectedKey={sel?.id ?? null}
+            empty="No alerts match the current filters"
+            label="Alerts"
+            columns={[
+              { key: 'time', header: 'time', render: (a) => <Ts ts={a.ts} /> },
+              { key: 'sev', header: 'severity', render: (a) => <SeverityChip value={a.severity} /> },
+              { key: 'sig', header: 'signature', wrap: true, render: (a) => a.signature },
+              { key: 'src', header: 'source', render: (a) => <Chip kind="source">{a.source}</Chip> },
+              { key: 'from', header: 'src', className: 'mono', priority: 2, render: (a) => (a.src_ip ? `${a.src_ip}${a.src_port ? ':' + a.src_port : ''}` : a.mac ?? '—') },
+              { key: 'to', header: 'dst', className: 'mono', priority: 2, render: (a) => (a.dest_ip ? `${a.dest_ip}${a.dest_port ? ':' + a.dest_port : ''}` : '—') },
+              {
+                key: 'dev',
+                header: 'device / port',
+                priority: 2,
+                render: (a) => (
+                  <>
+                    {a.device ? <Link to={`/devices/${a.device}`} onClick={(e) => e.stopPropagation()}>{a.device}</Link> : <span className="dim">unknown</span>}
                     {a.interface && <span className="mono dim"> · {a.interface}</span>}
-                  </td>
-                  <td><Chip kind={a.status} /></td>
-                  <td>{a.incident_id ? <Link to={`/incidents/${a.incident_id}`}>{a.incident_id}</Link> : <span className="faint">—</span>}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </>
+                ),
+              },
+              { key: 'status', header: 'status', render: (a) => <StatusChip value={a.status} /> },
+              { key: 'inc', header: 'incident', priority: 3, render: (a) => (a.incident_id ? <Link className="id" to={`/incidents/${a.incident_id}`} onClick={(e) => e.stopPropagation()}>{a.incident_id}</Link> : <span className="faint">—</span>) },
+            ]}
+          />
         </div>
-      </Card>
+      </Panel>
       {sel && <AlertDrawer alert={sel} onClose={() => setSel(null)} />}
     </>
   )
 }
 
 function AlertDrawer({ alert, onClose }: { alert: Alert; onClose: () => void }) {
-  const { data } = useApi(() => endpoints.alert(alert.id), [alert.id])
+  const { data, error } = useApi(() => endpoints.alert(alert.id), [alert.id])
   const det = data?.detection
   const raw = data?.alert.raw
   return (
-    <Drawer title={<span><Sev s={alert.severity} /> {alert.id}</span>} onClose={onClose}>
-      <div style={{ fontSize: 14, fontWeight: 600 }}>{alert.signature}</div>
-      <KV rows={[
-        kv('time', <Ts ts={alert.ts} date />),
-        kv('source', <Chip kind="source">{alert.source}</Chip>),
-        kv('category', alert.category),
-        kv('source address', alert.src_ip ?? alert.mac ?? '—'),
-        kv('destination', alert.dest_ip ? `${alert.dest_ip}:${alert.dest_port ?? ''}` : '—'),
-        kv('device', alert.device ? <Link to={`/devices/${alert.device}`}>{alert.device}</Link> : 'unknown'),
-        kv('interface', alert.interface ?? '—'),
-        kv('status', <Chip kind={alert.status} />),
-        kv('incident', alert.incident_id ? <Link to={`/incidents/${alert.incident_id}`}>{alert.incident_id}</Link> : '—')]} />
+    <Drawer
+      title={
+        <>
+          <SeverityChip value={alert.severity} /> <span className="mono">{alert.id}</span>
+        </>
+      }
+      onClose={onClose}
+    >
+      <div className="strong">{alert.signature}</div>
+      <KV
+        rows={[
+          kv('time', <Ts ts={alert.ts} date />),
+          kv('source', <Chip kind="source">{alert.source}</Chip>),
+          kv('category', alert.category),
+          kv('source address', <span className="mono">{alert.src_ip ?? alert.mac ?? '—'}</span>),
+          kv('destination', <span className="mono">{alert.dest_ip ? `${alert.dest_ip}:${alert.dest_port ?? ''}` : '—'}</span>),
+          kv('device', alert.device ? <Link to={`/devices/${alert.device}`}>{alert.device}</Link> : 'unknown'),
+          kv('interface', <span className="mono">{alert.interface ?? '—'}</span>),
+          kv('status', <StatusChip value={alert.status} />),
+          kv('incident', alert.incident_id ? <Link className="id" to={`/incidents/${alert.incident_id}`}>{alert.incident_id}</Link> : '—'),
+        ]}
+      />
+      {error && <div className="error">Could not load the detection: {error}</div>}
+      {!data && !error && <Loading rows={3} />}
       {det && (
-        <Card title="Correlation detection" sub={det.rule}>
+        <>
+          <Section title="Correlation detection" right={<span className="mono dim small">{det.rule}</span>}>
+            <span />
+          </Section>
           <Confidence value={det.confidence} base={det.base_confidence} />
-          <div style={{ marginTop: 10 }}>
-            <FeatureList features={det.features} />
+          <FeatureList features={det.features} />
+          <div className="dim small row">
+            disposition <StatusChip value={det.disposition ?? 'monitor'} /> · {det.event_refs.length} contributing events
           </div>
-          <div className="dim small" style={{ marginTop: 8 }}>
-            disposition: <Chip kind={det.disposition ?? 'monitor'} /> · {det.event_refs.length} contributing events
-          </div>
-        </Card>
+        </>
       )}
-      {raw && <Term text={JSON.stringify(raw, null, 2)} />}
+      {raw && (
+        <>
+          <Section title="Raw record">
+            <span />
+          </Section>
+          <Terminal text={JSON.stringify(raw, null, 2)} maxHeight={480} />
+        </>
+      )}
     </Drawer>
   )
 }

@@ -1,5 +1,6 @@
 const P = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
 
+/** Inline SVG icons (16 px grid). No icon font, no emoji. */
 export const Icon = {
   overview: () => (
     <svg viewBox="0 0 24 24" {...P}><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></svg>
@@ -51,5 +52,53 @@ export const Icon = {
   ),
   close: () => (
     <svg viewBox="0 0 24 24" {...P}><path d="M6 6l12 12M18 6L6 18" /></svg>
+  ),
+  menu: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+  ),
+  chevron: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M9 6l6 6-6 6" /></svg>
+  ),
+  chevronDown: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M6 9l6 6 6-6" /></svg>
+  ),
+  info: () => (
+    <svg viewBox="0 0 24 24" {...P}><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>
+  ),
+  check: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M5 12.5l4.5 4.5L19 7" /></svg>
+  ),
+  pending: () => (
+    <svg viewBox="0 0 24 24" {...P}><circle cx="12" cy="12" r="8" strokeDasharray="3 3" /></svg>
+  ),
+  withheld: () => (
+    <svg viewBox="0 0 24 24" {...P}><circle cx="12" cy="12" r="8" /><path d="M6.5 6.5l11 11" /></svg>
+  ),
+  fail: () => (
+    <svg viewBox="0 0 24 24" {...P}><circle cx="12" cy="12" r="8" /><path d="M9 9l6 6M15 9l-6 6" /></svg>
+  ),
+  dot: () => (
+    <svg viewBox="0 0 24 24" {...P}><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" /></svg>
+  ),
+  copy: () => (
+    <svg viewBox="0 0 24 24" {...P}><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 012-2h9" /></svg>
+  ),
+  external: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M14 4h6v6M20 4l-9 9" /><path d="M19 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h5" /></svg>
+  ),
+  terminal: () => (
+    <svg viewBox="0 0 24 24" {...P}><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M7 9l3 3-3 3M12 15h5" /></svg>
+  ),
+  clock: () => (
+    <svg viewBox="0 0 24 24" {...P}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+  ),
+  report: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4M9 13h6M9 17h4" /></svg>
+  ),
+  warn: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M12 3l9 16H3z" /><path d="M12 10v4M12 17h.01" /></svg>
+  ),
+  bolt: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M13 2L4 14h7l-1 8 9-12h-7z" /></svg>
   ),
 }

@@ -6,14 +6,71 @@ const BASE = import.meta.env.VITE_API_BASE ?? ''
 const listeners = new Set<() => void>()
 let stream: EventSource | null = null
 
+/* ---------------------------------------------------------------- connection health
+   Derived only from facts the client can observe: the EventSource ready state and the time and
+   outcome of the last API fetch. Nothing here polls the switch or claims liveness of telemetry. */
+export type ConnectionStatus = 'connected' | 'stale' | 'unavailable'
+interface Health {
+  streamOpen: boolean
+  lastFetchAt: number | null
+  lastFetchOk: boolean | null
+  lastEventAt: number | null
+}
+const health: Health = { streamOpen: false, lastFetchAt: null, lastFetchOk: null, lastEventAt: null }
+const healthListeners = new Set<() => void>()
+function notifyHealth() {
+  healthListeners.forEach((l) => l())
+}
+function recordFetch(ok: boolean) {
+  health.lastFetchAt = Date.now()
+  health.lastFetchOk = ok
+  notifyHealth()
+}
+const STALE_AFTER_MS = 60_000
+
+export function connectionStatus(now = Date.now()): ConnectionStatus {
+  if (health.lastFetchOk === false) return 'unavailable'
+  if (health.lastFetchOk === null) return 'stale'
+  const fresh = health.lastFetchAt !== null && now - health.lastFetchAt < STALE_AFTER_MS
+  if (health.streamOpen && fresh) return 'connected'
+  return 'stale'
+}
+
+export function useConnection(): { status: ConnectionStatus; lastFetchAt: number | null; lastEventAt: number | null; sinceFetchS: number | null } {
+  const snapshot = () => {
+    const now = Date.now()
+    return { status: connectionStatus(now), lastFetchAt: health.lastFetchAt, lastEventAt: health.lastEventAt, sinceFetchS: health.lastFetchAt ? Math.round((now - health.lastFetchAt) / 1000) : null }
+  }
+  const [state, setState] = useState(snapshot)
+  useEffect(() => {
+    const bump = () => setState(snapshot())
+    healthListeners.add(bump)
+    const timer = setInterval(bump, 10_000)
+    return () => {
+      healthListeners.delete(bump)
+      clearInterval(timer)
+    }
+  }, [])
+  return state
+}
+
 export function ensureStream() {
   if (stream || typeof EventSource === 'undefined') return
   try {
     stream = new EventSource(`${BASE}/api/events/stream`)
-    const bump = () => listeners.forEach((l) => l())
+    const bump = () => {
+      health.lastEventAt = Date.now()
+      listeners.forEach((l) => l())
+    }
     for (const kind of ['state', 'incident', 'alert', 'validation', 'assessment', 'finding']) stream.addEventListener(kind, bump)
+    stream.onopen = () => {
+      health.streamOpen = true
+      notifyHealth()
+    }
     stream.onerror = () => {
-      /* browser retries automatically */
+      /* the browser retries automatically; report the gap honestly meanwhile */
+      health.streamOpen = false
+      notifyHealth()
     }
   } catch {
     stream = null
@@ -42,12 +99,14 @@ export function useApi<T>(loader: () => Promise<T>, deps: unknown[] = []) {
     const requestedFor = key
     loader()
       .then((d) => {
+        recordFetch(true)
         if (!alive.current || mine !== seq.current) return
         setState({ data: d, key: requestedFor })
         setError(null)
         setLoading(false)
       })
       .catch((e: Error) => {
+        recordFetch(false)
         if (!alive.current || mine !== seq.current) return
         setError(e.message)
         setLoading(false)
@@ -87,4 +146,17 @@ export function useLocalState<T>(key: string, initial: T): [T, (v: T) => void] {
     }
   }
   return [v, set]
+}
+
+/** Matches a CSS media query and re-renders when it changes. */
+export function useMedia(query: string): boolean {
+  const get = () => (typeof window !== 'undefined' && 'matchMedia' in window ? window.matchMedia(query).matches : false)
+  const [m, setM] = useState(get)
+  useEffect(() => {
+    const mq = window.matchMedia(query)
+    const on = () => setM(mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [query])
+  return m
 }

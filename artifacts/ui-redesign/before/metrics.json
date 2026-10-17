@@ -1,0 +1,3046 @@
+{
+ "desktop /": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 88,
+   "12": 36,
+   "13": 26,
+   "14": 1,
+   "20": 1,
+   "22": 4,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 26,
+   "12.5": 22,
+   "11.5": 250
+  },
+  "tiny": 33,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 15,
+   "4px": 45,
+   "50%": 6,
+   "5px": 1,
+   "2px": 4,
+   "3px": 144
+  },
+  "inlineStyled": 416,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2159,
+  "console": [],
+  "failed": []
+ },
+ "desktop /operations": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 119,
+   "12": 9,
+   "13": 25,
+   "14": 1,
+   "20": 1,
+   "22": 9,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 13,
+   "11.5": 51
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 18,
+   "4px": 22,
+   "50%": 1,
+   "2px": 3
+  },
+  "inlineStyled": 38,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1560,
+  "console": [],
+  "failed": []
+ },
+ "desktop /controls": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 65,
+   "12": 5,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 130,
+   "12.5": 27
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 9,
+   "4px": 64,
+   "50%": 1,
+   "5px": 13
+  },
+  "inlineStyled": 98,
+  "rowsNotFocusable": 13,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1092,
+  "console": [],
+  "failed": []
+ },
+ "desktop /controls/CTL-ENDPOINT-IDENTITY": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 64,
+   "12": 7,
+   "13": 21,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 97,
+   "11.5": 146
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 6,
+   "4px": 47,
+   "50%": 1,
+   "5px": 1
+  },
+  "inlineStyled": 80,
+  "rowsNotFocusable": 28,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2177,
+  "console": [],
+  "failed": []
+ },
+ "desktop /findings": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 29,
+   "12": 5,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 34,
+   "12.5": 10
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 17,
+   "10px": 3,
+   "4px": 21,
+   "50%": 6
+  },
+  "inlineStyled": 16,
+  "rowsNotFocusable": 5,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1080,
+  "console": [],
+  "failed": []
+ },
+ "desktop /findings/FND-SENSOR-COVERAGE-vlan-50": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 6,
+   "11": 22,
+   "12": 15,
+   "13": 30,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 6,
+   "12.5": 32,
+   "11.5": 21
+  },
+  "tiny": 14,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 11,
+   "4px": 13,
+   "50%": 3
+  },
+  "inlineStyled": 43,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1292,
+  "console": [],
+  "failed": []
+ },
+ "desktop /incidents": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 44,
+   "12": 3,
+   "13": 17,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 64,
+   "12.5": 27
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 4,
+   "4px": 26,
+   "50%": 1
+  },
+  "inlineStyled": 31,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1080,
+  "console": [],
+  "failed": []
+ },
+ "desktop /incidents/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 35,
+   "11": 23,
+   "12": 3,
+   "13": 46,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 62,
+   "11.5": 40
+  },
+  "tiny": 42,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 22,
+   "10px": 10,
+   "4px": 13,
+   "50%": 29
+  },
+  "inlineStyled": 51,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1776,
+  "console": [],
+  "failed": []
+ },
+ "desktop /reports": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 41,
+   "12": 9,
+   "13": 28,
+   "14": 1,
+   "20": 1,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 19,
+   "11.5": 85
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 22,
+   "10px": 14,
+   "4px": 17,
+   "50%": 1
+  },
+  "inlineStyled": 34,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 2585,
+  "console": [],
+  "failed": []
+ },
+ "desktop /alerts": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 166,
+   "12": 2,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 204,
+   "12.5": 153
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 18,
+   "10px": 3,
+   "4px": 158,
+   "50%": 1
+  },
+  "inlineStyled": 58,
+  "rowsNotFocusable": 51,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1087,
+  "console": [],
+  "failed": []
+ },
+ "desktop /devices": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 93,
+   "12": 3,
+   "13": 17,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 153,
+   "11.5": 154
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 4,
+   "4px": 78,
+   "50%": 1
+  },
+  "inlineStyled": 6,
+  "rowsNotFocusable": 36,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1894,
+  "console": [],
+  "failed": []
+ },
+ "desktop /devices/ENG-LT-047": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 115,
+   "12": 5,
+   "13": 22,
+   "14": 1,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 196,
+   "11.5": 174
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 17,
+   "10px": 8,
+   "4px": 93,
+   "50%": 1
+  },
+  "inlineStyled": 25,
+  "rowsNotFocusable": 36,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1894,
+  "console": [],
+  "failed": []
+ },
+ "desktop /switch": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "7": 9,
+   "10": 5,
+   "11": 26,
+   "12": 7,
+   "13": 23,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 410,
+   "8.5": 1,
+   "6.5": 50,
+   "12.5": 95
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 10,
+   "4px": 8,
+   "50%": 1,
+   "2px": 7
+  },
+  "inlineStyled": 35,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2746,
+  "console": [],
+  "failed": []
+ },
+ "desktop /authentication": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 205,
+   "12": 3,
+   "13": 20,
+   "14": 1,
+   "20": 1,
+   "26": 5,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 686,
+   "12.5": 272
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 14,
+   "10px": 12,
+   "4px": 138,
+   "50%": 1,
+   "2px": 3
+  },
+  "inlineStyled": 167,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1139,
+  "console": [],
+  "failed": []
+ },
+ "desktop /coverage": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 55,
+   "12": 5,
+   "13": 18,
+   "14": 1,
+   "20": 1,
+   "26": 5,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 92,
+   "11.5": 131
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 10,
+   "4px": 23,
+   "50%": 1
+  },
+  "inlineStyled": 27,
+  "rowsNotFocusable": 9,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1462,
+  "console": [],
+  "failed": []
+ },
+ "desktop /drift": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 26,
+   "12": 3,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "26": 4,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 37
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 7,
+   "4px": 12,
+   "50%": 1
+  },
+  "inlineStyled": 7,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1080,
+  "console": [],
+  "failed": []
+ },
+ "desktop /evidence": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 13,
+   "12": 19,
+   "13": 21,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 135
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 26,
+   "10px": 7,
+   "4px": 14,
+   "50%": 1
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 9,
+  "docHeight": 2588,
+  "console": [],
+  "failed": []
+ },
+ "desktop /evidence/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 13,
+   "12": 19,
+   "13": 21,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 135
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 26,
+   "10px": 7,
+   "4px": 14,
+   "50%": 1
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 9,
+  "docHeight": 2588,
+  "console": [],
+  "failed": []
+ },
+ "desktop /about": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 19,
+   "12": 7,
+   "13": 23,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 45,
+   "11.5": 12
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 20,
+   "10px": 10,
+   "4px": 13,
+   "50%": 1
+  },
+  "inlineStyled": 21,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2901,
+  "console": [],
+  "failed": []
+ },
+ "laptop /": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 88,
+   "12": 36,
+   "13": 26,
+   "14": 1,
+   "20": 1,
+   "22": 4,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 26,
+   "12.5": 22,
+   "11.5": 250
+  },
+  "tiny": 33,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 15,
+   "4px": 45,
+   "50%": 6,
+   "5px": 1,
+   "2px": 4,
+   "3px": 144
+  },
+  "inlineStyled": 416,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2219,
+  "console": [],
+  "failed": []
+ },
+ "laptop /operations": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 119,
+   "12": 9,
+   "13": 25,
+   "14": 1,
+   "20": 1,
+   "22": 9,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 13,
+   "11.5": 51
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 18,
+   "4px": 22,
+   "50%": 1,
+   "2px": 3
+  },
+  "inlineStyled": 38,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1700,
+  "console": [],
+  "failed": []
+ },
+ "laptop /controls": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 65,
+   "12": 5,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 130,
+   "12.5": 27
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 9,
+   "4px": 64,
+   "50%": 1,
+   "5px": 13
+  },
+  "inlineStyled": 98,
+  "rowsNotFocusable": 13,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1363,
+  "console": [],
+  "failed": []
+ },
+ "laptop /controls/CTL-ENDPOINT-IDENTITY": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 64,
+   "12": 7,
+   "13": 21,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 97,
+   "11.5": 146
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 6,
+   "4px": 47,
+   "50%": 1,
+   "5px": 1
+  },
+  "inlineStyled": 80,
+  "rowsNotFocusable": 28,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 3106,
+  "console": [],
+  "failed": []
+ },
+ "laptop /findings": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 29,
+   "12": 5,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 34,
+   "12.5": 10
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 17,
+   "10px": 3,
+   "4px": 21,
+   "50%": 6
+  },
+  "inlineStyled": 16,
+  "rowsNotFocusable": 5,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 900,
+  "console": [],
+  "failed": []
+ },
+ "laptop /findings/FND-SENSOR-COVERAGE-vlan-50": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 6,
+   "11": 22,
+   "12": 15,
+   "13": 30,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 6,
+   "12.5": 32,
+   "11.5": 21
+  },
+  "tiny": 14,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 11,
+   "4px": 13,
+   "50%": 3
+  },
+  "inlineStyled": 43,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1361,
+  "console": [],
+  "failed": []
+ },
+ "laptop /incidents": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 44,
+   "12": 3,
+   "13": 17,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 64,
+   "12.5": 27
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 4,
+   "4px": 26,
+   "50%": 1
+  },
+  "inlineStyled": 31,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 951,
+  "console": [],
+  "failed": []
+ },
+ "laptop /incidents/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 35,
+   "11": 23,
+   "12": 3,
+   "13": 46,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 62,
+   "11.5": 40
+  },
+  "tiny": 42,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 22,
+   "10px": 10,
+   "4px": 13,
+   "50%": 29
+  },
+  "inlineStyled": 51,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2058,
+  "console": [],
+  "failed": []
+ },
+ "laptop /reports": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 41,
+   "12": 9,
+   "13": 28,
+   "14": 1,
+   "20": 1,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 19,
+   "11.5": 85
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 22,
+   "10px": 14,
+   "4px": 17,
+   "50%": 1
+  },
+  "inlineStyled": 34,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 3133,
+  "console": [],
+  "failed": []
+ },
+ "laptop /alerts": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 166,
+   "12": 2,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 204,
+   "12.5": 153
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 18,
+   "10px": 3,
+   "4px": 158,
+   "50%": 1
+  },
+  "inlineStyled": 58,
+  "rowsNotFocusable": 51,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 907,
+  "console": [],
+  "failed": []
+ },
+ "laptop /devices": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 93,
+   "12": 3,
+   "13": 17,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 153,
+   "11.5": 154
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 4,
+   "4px": 78,
+   "50%": 1
+  },
+  "inlineStyled": 6,
+  "rowsNotFocusable": 36,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1930,
+  "console": [],
+  "failed": []
+ },
+ "laptop /devices/ENG-LT-047": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 115,
+   "12": 5,
+   "13": 22,
+   "14": 1,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 196,
+   "11.5": 174
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 17,
+   "10px": 8,
+   "4px": 93,
+   "50%": 1
+  },
+  "inlineStyled": 25,
+  "rowsNotFocusable": 36,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1930,
+  "console": [],
+  "failed": []
+ },
+ "laptop /switch": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "7": 9,
+   "10": 5,
+   "11": 26,
+   "12": 7,
+   "13": 23,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 410,
+   "8.5": 1,
+   "6.5": 50,
+   "12.5": 95
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 10,
+   "4px": 8,
+   "50%": 1,
+   "2px": 7
+  },
+  "inlineStyled": 35,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2683,
+  "console": [],
+  "failed": []
+ },
+ "laptop /authentication": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 205,
+   "12": 3,
+   "13": 20,
+   "14": 1,
+   "20": 1,
+   "26": 5,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 686,
+   "12.5": 272
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 14,
+   "10px": 12,
+   "4px": 138,
+   "50%": 1,
+   "2px": 3
+  },
+  "inlineStyled": 167,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1139,
+  "console": [],
+  "failed": []
+ },
+ "laptop /coverage": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 55,
+   "12": 5,
+   "13": 18,
+   "14": 1,
+   "20": 1,
+   "26": 5,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 92,
+   "11.5": 131
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 10,
+   "4px": 23,
+   "50%": 1
+  },
+  "inlineStyled": 27,
+  "rowsNotFocusable": 9,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1576,
+  "console": [],
+  "failed": []
+ },
+ "laptop /drift": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 26,
+   "12": 3,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "26": 4,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 37
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 7,
+   "4px": 12,
+   "50%": 1
+  },
+  "inlineStyled": 7,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 900,
+  "console": [],
+  "failed": []
+ },
+ "laptop /evidence": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 13,
+   "12": 19,
+   "13": 21,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 135
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 26,
+   "10px": 7,
+   "4px": 14,
+   "50%": 1
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 9,
+  "docHeight": 2588,
+  "console": [],
+  "failed": []
+ },
+ "laptop /evidence/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 13,
+   "12": 19,
+   "13": 21,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 135
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 26,
+   "10px": 7,
+   "4px": 14,
+   "50%": 1
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 9,
+  "docHeight": 2588,
+  "console": [],
+  "failed": []
+ },
+ "laptop /about": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 19,
+   "12": 7,
+   "13": 23,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 45,
+   "11.5": 12
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 20,
+   "10px": 10,
+   "4px": 13,
+   "50%": 1
+  },
+  "inlineStyled": 21,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2553,
+  "console": [],
+  "failed": []
+ },
+ "tablet /": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 88,
+   "12": 36,
+   "13": 26,
+   "14": 1,
+   "20": 1,
+   "22": 4,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 26,
+   "12.5": 22,
+   "11.5": 250
+  },
+  "tiny": 33,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 15,
+   "4px": 45,
+   "50%": 6,
+   "5px": 1,
+   "2px": 4,
+   "3px": 144
+  },
+  "inlineStyled": 416,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 3037,
+  "console": [],
+  "failed": []
+ },
+ "tablet /operations": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 119,
+   "12": 9,
+   "13": 25,
+   "14": 1,
+   "20": 1,
+   "26": 9,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 13,
+   "11.5": 51
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 18,
+   "4px": 22,
+   "50%": 1,
+   "2px": 3
+  },
+  "inlineStyled": 38,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 2915,
+  "console": [],
+  "failed": []
+ },
+ "tablet /controls": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 65,
+   "12": 5,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 130,
+   "12.5": 27
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 9,
+   "4px": 64,
+   "50%": 1,
+   "5px": 13
+  },
+  "inlineStyled": 98,
+  "rowsNotFocusable": 13,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1540,
+  "console": [],
+  "failed": []
+ },
+ "tablet /controls/CTL-ENDPOINT-IDENTITY": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 64,
+   "12": 7,
+   "13": 21,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 97,
+   "11.5": 146
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 6,
+   "4px": 47,
+   "50%": 1,
+   "5px": 1
+  },
+  "inlineStyled": 80,
+  "rowsNotFocusable": 28,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 3373,
+  "console": [],
+  "failed": []
+ },
+ "tablet /findings": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 29,
+   "12": 5,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 34,
+   "12.5": 10
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 17,
+   "10px": 3,
+   "4px": 21,
+   "50%": 6
+  },
+  "inlineStyled": 16,
+  "rowsNotFocusable": 5,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 768,
+  "console": [],
+  "failed": []
+ },
+ "tablet /findings/FND-SENSOR-COVERAGE-vlan-50": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 6,
+   "11": 22,
+   "12": 15,
+   "13": 30,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 6,
+   "12.5": 32,
+   "11.5": 21
+  },
+  "tiny": 14,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 11,
+   "4px": 13,
+   "50%": 3
+  },
+  "inlineStyled": 43,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 2172,
+  "console": [],
+  "failed": []
+ },
+ "tablet /incidents": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 44,
+   "12": 3,
+   "13": 17,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 64,
+   "12.5": 27
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 4,
+   "4px": 26,
+   "50%": 1
+  },
+  "inlineStyled": 31,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 951,
+  "console": [],
+  "failed": []
+ },
+ "tablet /incidents/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 35,
+   "11": 23,
+   "12": 3,
+   "13": 46,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 62,
+   "11.5": 40
+  },
+  "tiny": 42,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 22,
+   "10px": 10,
+   "4px": 13,
+   "50%": 29
+  },
+  "inlineStyled": 51,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2693,
+  "console": [],
+  "failed": []
+ },
+ "tablet /reports": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 41,
+   "12": 9,
+   "13": 28,
+   "14": 1,
+   "20": 1,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 19,
+   "11.5": 85
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 22,
+   "10px": 14,
+   "4px": 17,
+   "50%": 1
+  },
+  "inlineStyled": 34,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 3593,
+  "console": [],
+  "failed": []
+ },
+ "tablet /alerts": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 166,
+   "12": 2,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 204,
+   "12.5": 153
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 18,
+   "10px": 3,
+   "4px": 158,
+   "50%": 1
+  },
+  "inlineStyled": 58,
+  "rowsNotFocusable": 51,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 794,
+  "console": [],
+  "failed": []
+ },
+ "tablet /devices": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 93,
+   "12": 3,
+   "13": 17,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 153,
+   "11.5": 154
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 4,
+   "4px": 78,
+   "50%": 1
+  },
+  "inlineStyled": 6,
+  "rowsNotFocusable": 36,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2003,
+  "console": [],
+  "failed": []
+ },
+ "tablet /devices/ENG-LT-047": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 115,
+   "12": 5,
+   "13": 22,
+   "14": 1,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 196,
+   "11.5": 174
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 17,
+   "10px": 8,
+   "4px": 93,
+   "50%": 1
+  },
+  "inlineStyled": 25,
+  "rowsNotFocusable": 36,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2003,
+  "console": [],
+  "failed": []
+ },
+ "tablet /switch": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "7": 9,
+   "10": 5,
+   "11": 26,
+   "12": 7,
+   "13": 23,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 410,
+   "8.5": 1,
+   "6.5": 50,
+   "12.5": 95
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 10,
+   "4px": 8,
+   "50%": 1,
+   "2px": 7
+  },
+  "inlineStyled": 35,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 4412,
+  "console": [],
+  "failed": []
+ },
+ "tablet /authentication": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 205,
+   "12": 3,
+   "13": 20,
+   "14": 1,
+   "20": 1,
+   "26": 5,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 686,
+   "12.5": 272
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 14,
+   "10px": 12,
+   "4px": 138,
+   "50%": 1,
+   "2px": 3
+  },
+  "inlineStyled": 167,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1958,
+  "console": [],
+  "failed": []
+ },
+ "tablet /coverage": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 55,
+   "12": 5,
+   "13": 18,
+   "14": 1,
+   "20": 1,
+   "26": 5,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 92,
+   "11.5": 131
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 10,
+   "4px": 23,
+   "50%": 1
+  },
+  "inlineStyled": 27,
+  "rowsNotFocusable": 9,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2299,
+  "console": [],
+  "failed": []
+ },
+ "tablet /drift": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 26,
+   "12": 3,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "26": 4,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 37
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 7,
+   "4px": 12,
+   "50%": 1
+  },
+  "inlineStyled": 7,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 903,
+  "console": [],
+  "failed": []
+ },
+ "tablet /evidence": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 13,
+   "12": 19,
+   "13": 21,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 135
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 26,
+   "10px": 7,
+   "4px": 14,
+   "50%": 1
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 9,
+  "docHeight": 2992,
+  "console": [],
+  "failed": []
+ },
+ "tablet /evidence/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 13,
+   "12": 19,
+   "13": 21,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 135
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 26,
+   "10px": 7,
+   "4px": 14,
+   "50%": 1
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 9,
+  "docHeight": 2992,
+  "console": [],
+  "failed": []
+ },
+ "tablet /about": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "10": 5,
+   "11": 19,
+   "12": 7,
+   "13": 23,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 45,
+   "11.5": 12
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 20,
+   "10px": 10,
+   "4px": 13,
+   "50%": 1
+  },
+  "inlineStyled": 21,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 4000,
+  "console": [],
+  "failed": []
+ },
+ "mobile /": {
+  "hOverflow": 272,
+  "wide": 10,
+  "fonts": {
+   "10": 5,
+   "11": 88,
+   "12": 36,
+   "13": 26,
+   "14": 1,
+   "20": 1,
+   "22": 4,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 26,
+   "12.5": 22,
+   "11.5": 250
+  },
+  "tiny": 33,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 15,
+   "4px": 45,
+   "50%": 6,
+   "5px": 1,
+   "2px": 4,
+   "3px": 144
+  },
+  "inlineStyled": 416,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 4465,
+  "console": [],
+  "failed": []
+ },
+ "mobile /operations": {
+  "hOverflow": 283,
+  "wide": 6,
+  "fonts": {
+   "10": 5,
+   "11": 119,
+   "12": 9,
+   "13": 25,
+   "14": 1,
+   "20": 1,
+   "26": 9,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 13,
+   "11.5": 51
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 18,
+   "4px": 22,
+   "50%": 1,
+   "2px": 3
+  },
+  "inlineStyled": 38,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 4139,
+  "console": [],
+  "failed": []
+ },
+ "mobile /controls": {
+  "hOverflow": 278,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 65,
+   "12": 5,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 130,
+   "12.5": 27
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 9,
+   "4px": 64,
+   "50%": 1,
+   "5px": 13
+  },
+  "inlineStyled": 98,
+  "rowsNotFocusable": 13,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2447,
+  "console": [],
+  "failed": []
+ },
+ "mobile /controls/CTL-ENDPOINT-IDENTITY": {
+  "hOverflow": 296,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 64,
+   "12": 7,
+   "13": 21,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 97,
+   "11.5": 146
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 6,
+   "4px": 47,
+   "50%": 1,
+   "5px": 1
+  },
+  "inlineStyled": 80,
+  "rowsNotFocusable": 28,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 4375,
+  "console": [],
+  "failed": []
+ },
+ "mobile /findings": {
+  "hOverflow": 304,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 29,
+   "12": 5,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 34,
+   "12.5": 10
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 17,
+   "10px": 3,
+   "4px": 21,
+   "50%": 6
+  },
+  "inlineStyled": 16,
+  "rowsNotFocusable": 5,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1459,
+  "console": [],
+  "failed": []
+ },
+ "mobile /findings/FND-SENSOR-COVERAGE-vlan-50": {
+  "hOverflow": 304,
+  "wide": 5,
+  "fonts": {
+   "10": 6,
+   "11": 22,
+   "12": 15,
+   "13": 30,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 6,
+   "12.5": 32,
+   "11.5": 21
+  },
+  "tiny": 14,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 11,
+   "4px": 13,
+   "50%": 3
+  },
+  "inlineStyled": 43,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 3286,
+  "console": [],
+  "failed": []
+ },
+ "mobile /incidents": {
+  "hOverflow": 283,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 44,
+   "12": 3,
+   "13": 17,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 64,
+   "12.5": 27
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 4,
+   "4px": 26,
+   "50%": 1
+  },
+  "inlineStyled": 31,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1645,
+  "console": [],
+  "failed": []
+ },
+ "mobile /incidents/INC-2026-0042": {
+  "hOverflow": 283,
+  "wide": 18,
+  "fonts": {
+   "10": 35,
+   "11": 23,
+   "12": 3,
+   "13": 46,
+   "14": 2,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 62,
+   "11.5": 40
+  },
+  "tiny": 42,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 22,
+   "10px": 10,
+   "4px": 13,
+   "50%": 29
+  },
+  "inlineStyled": 51,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 5097,
+  "console": [],
+  "failed": []
+ },
+ "mobile /reports": {
+  "hOverflow": 282,
+  "wide": 21,
+  "fonts": {
+   "10": 5,
+   "11": 41,
+   "12": 9,
+   "13": 28,
+   "14": 1,
+   "20": 1,
+   "26": 6,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 19,
+   "11.5": 85
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 22,
+   "10px": 14,
+   "4px": 17,
+   "50%": 1
+  },
+  "inlineStyled": 34,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 4761,
+  "console": [],
+  "failed": []
+ },
+ "mobile /alerts": {
+  "hOverflow": 261,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 166,
+   "12": 2,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 204,
+   "12.5": 153
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 18,
+   "10px": 3,
+   "4px": 158,
+   "50%": 1
+  },
+  "inlineStyled": 58,
+  "rowsNotFocusable": 51,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1603,
+  "console": [],
+  "failed": []
+ },
+ "mobile /devices": {
+  "hOverflow": 266,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 93,
+   "12": 3,
+   "13": 17,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 153,
+   "11.5": 154
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 16,
+   "10px": 4,
+   "4px": 78,
+   "50%": 1
+  },
+  "inlineStyled": 6,
+  "rowsNotFocusable": 36,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2735,
+  "console": [],
+  "failed": []
+ },
+ "mobile /devices/ENG-LT-047": {
+  "hOverflow": 266,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 115,
+   "12": 5,
+   "13": 22,
+   "14": 1,
+   "15": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 196,
+   "11.5": 174
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 17,
+   "10px": 8,
+   "4px": 93,
+   "50%": 1
+  },
+  "inlineStyled": 25,
+  "rowsNotFocusable": 36,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2735,
+  "console": [],
+  "failed": []
+ },
+ "mobile /switch": {
+  "hOverflow": 277,
+  "wide": 7,
+  "fonts": {
+   "7": 9,
+   "10": 5,
+   "11": 26,
+   "12": 7,
+   "13": 23,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 410,
+   "8.5": 1,
+   "6.5": 50,
+   "12.5": 95
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 10,
+   "4px": 8,
+   "50%": 1,
+   "2px": 7
+  },
+  "inlineStyled": 35,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 5282,
+  "console": [],
+  "failed": []
+ },
+ "mobile /authentication": {
+  "hOverflow": 319,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 205,
+   "12": 3,
+   "13": 20,
+   "14": 1,
+   "20": 1,
+   "26": 5,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 686,
+   "12.5": 272
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 14,
+   "10px": 12,
+   "4px": 138,
+   "50%": 1,
+   "2px": 3
+  },
+  "inlineStyled": 167,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2802,
+  "console": [],
+  "failed": []
+ },
+ "mobile /coverage": {
+  "hOverflow": 286,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 55,
+   "12": 5,
+   "13": 18,
+   "14": 1,
+   "20": 1,
+   "26": 5,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 92,
+   "11.5": 131
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 15,
+   "10px": 10,
+   "4px": 23,
+   "50%": 1
+  },
+  "inlineStyled": 27,
+  "rowsNotFocusable": 9,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 3319,
+  "console": [],
+  "failed": []
+ },
+ "mobile /drift": {
+  "hOverflow": 313,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 26,
+   "12": 3,
+   "13": 16,
+   "14": 1,
+   "20": 1,
+   "26": 4,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 37
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 19,
+   "10px": 7,
+   "4px": 12,
+   "50%": 1
+  },
+  "inlineStyled": 7,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1737,
+  "console": [],
+  "failed": []
+ },
+ "mobile /evidence": {
+  "hOverflow": 282,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 13,
+   "12": 19,
+   "13": 21,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 135
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 26,
+   "10px": 7,
+   "4px": 14,
+   "50%": 1
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 11,
+  "docHeight": 3773,
+  "console": [],
+  "failed": []
+ },
+ "mobile /evidence/INC-2026-0042": {
+  "hOverflow": 282,
+  "wide": 5,
+  "fonts": {
+   "10": 5,
+   "11": 13,
+   "12": 19,
+   "13": 21,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "11.5": 135
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 26,
+   "10px": 7,
+   "4px": 14,
+   "50%": 1
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 11,
+  "docHeight": 3773,
+  "console": [],
+  "failed": []
+ },
+ "mobile /about": {
+  "hOverflow": 305,
+  "wide": 22,
+  "fonts": {
+   "10": 5,
+   "11": 19,
+   "12": 7,
+   "13": 23,
+   "14": 1,
+   "20": 1,
+   "15.4": 2,
+   "9.24": 1,
+   "9.52": 1,
+   "10.5": 5,
+   "12.5": 45,
+   "11.5": 12
+  },
+  "tiny": 12,
+  "tinyEls": [
+   "brand-ver:2.0",
+   "brand-sub:Evidence-Driven NSR Lab",
+   "nav-section:Assurance",
+   "nav-badge:5",
+   "nav-badge:4"
+  ],
+  "radii": {
+   "6px": 20,
+   "10px": 10,
+   "4px": 13,
+   "50%": 1
+  },
+  "inlineStyled": 21,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 3923,
+  "console": [],
+  "failed": []
+ }
+}

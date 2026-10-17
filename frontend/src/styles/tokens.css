@@ -1,32 +1,106 @@
+/* SentinelSwitch design tokens (docs/ui-redesign-plan.md, section C). Every colour, size and
+   duration used by the dashboard is declared here; components and pages reference these names only. */
 :root {
   color-scheme: dark;
-  --bg: #0e1218;
-  --bg-elev: #121820;
-  --panel: #161d26;
-  --panel-2: #1b242f;
-  --panel-3: #202b38;
-  --border: #263241;
-  --border-strong: #34445a;
-  --text: #e6edf3;
+
+  /* surfaces */
+  --bg-0: #0a0d12;
+  --bg-1: #0e1218;
+  --surface-1: #121820;
+  --surface-2: #171f29;
+  --surface-3: #1d2733;
+  --line-1: #1f2a36;
+  --line-2: #2e3b4b;
+
+  /* text */
+  --text-1: #e6edf3;
   --text-2: #b3c0cf;
-  --muted: #7d8b9c;
-  --faint: #56657a;
-  --accent: #58a6ff;
-  --accent-2: #39c5d6;
-  --green: #3fb950;
-  --amber: #d29922;
-  --red: #f85149;
-  --purple: #a371f7;
-  --chart-blue: #3987e5;
-  --chart-green: #2f9e4f;
-  --chart-red: #e05a5a;
-  --chart-amber: #c99420;
-  --chart-cyan: #31a0b0;
-  --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  --radius: 6px;
-  --radius-lg: 10px;
-  --shadow: 0 1px 0 rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.28);
-  --sidebar-w: 224px;
-  --topbar-h: 52px;
+  --text-3: #8391a3;
+  --text-4: #56657a;
+
+  /* accent (signal cyan, shared with the brand mark) */
+  --accent: #39c5d6;
+  --accent-strong: #5fd8e6;
+  --accent-dim: rgba(57, 197, 214, 0.12);
+  --accent-line: rgba(57, 197, 214, 0.45);
+
+  /* semantic */
+  --ok: #3fb950;
+  --ok-ink: #7ee2a8;
+  --ok-dim: rgba(63, 185, 80, 0.12);
+  --ok-line: rgba(63, 185, 80, 0.4);
+  --warn: #d29922;
+  --warn-ink: #f0c36b;
+  --warn-dim: rgba(210, 153, 34, 0.14);
+  --warn-line: rgba(210, 153, 34, 0.42);
+  --danger: #f85149;
+  --danger-ink: #ff8a80;
+  --danger-dim: rgba(248, 81, 73, 0.14);
+  --danger-line: rgba(248, 81, 73, 0.42);
+  --info: #58a6ff;
+  --info-ink: #8ec3ff;
+  --info-dim: rgba(88, 166, 255, 0.12);
+  --info-line: rgba(88, 166, 255, 0.38);
+  --withheld: #a371f7;
+  --withheld-ink: #c9a8ff;
+  --withheld-dim: rgba(163, 113, 247, 0.14);
+  --withheld-line: rgba(163, 113, 247, 0.42);
+
+  /* charts */
+  --chart-1: #3987e5;
+  --chart-2: #2f9e4f;
+  --chart-3: #e05a5a;
+  --chart-4: #c99420;
+  --chart-5: #31a0b0;
+  --chart-grid: #263241;
+  --chart-axis: #7d8b9c;
+  --chart-label: #b3c0cf;
+
+  /* typography */
+  --font-ui: "Inter Variable", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-lg: 14px;
+  --fs-xl: 16px;
+  --fs-2xl: 20px;
+  --fs-3xl: 28px;
+  --fs-4xl: 36px;
+
+  /* spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 32px;
+  --sp-8: 40px;
+
+  /* shape and elevation */
+  --r-ctl: 4px;
+  --r-panel: 6px;
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.55);
+
+  /* layout */
+  --sidebar-w: 232px;
+  --rail-w: 56px;
+  --topbar-h: 48px;
+  --gutter: 24px;
+  --content-max: 1760px;
+
+  /* motion */
+  --t-fast: 120ms;
+  --t-base: 180ms;
+  --t-slow: 240ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* z-index */
+  --z-topbar: 20;
+  --z-sidebar: 30;
+  --z-drawer: 40;
+  --z-dialog: 50;
+  --z-toast: 60;
+
 }

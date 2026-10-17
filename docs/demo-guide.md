@@ -60,8 +60,9 @@ make dev          # builds the React app and serves http://127.0.0.1:8000
 
 Suggested walk-through:
 
-1. **SOC Overview** (`/operations`; the dashboard opens on the 2.0 *Posture* page) — KPIs, alert timeline, network activity. Use *Replay flagship incident* / *Reset to
-   baseline* to run the incident from the UI; every view refreshes over Server-Sent Events.
+1. **Overview** (`/`, the home page; `/operations` redirects here) — attention strip, alert timeline, response
+   ledger, control status, telemetry freshness, network activity. Use *Replay flagship incident* / *Reset to
+   baseline* (each confirms in a dialog) to run the incident from the UI; every view refreshes over Server-Sent Events.
 2. **Incidents → INC-2026-0042** — correlation chain, resolution steps, timeline, source detections,
    containment decision (factors and guards), *Switch verification* tab, evidence artifacts.
 3. **Network / Switch** — the 48-port front panel with `Gi1/0/23` in red; click ports for intent and
@@ -140,10 +141,11 @@ make report       # export JSON + HTML (+ PDF when Chromium is installed)
 .venv/bin/python -m sentinelswitch remediate FND-SENSOR-COVERAGE-vlan-50 --actor tlee --note "mirror the quarantine VLAN"
 ```
 
-In the dashboard (`make dev`), the 2.0 pages are the first group in the navigation: **Posture**
-(`/`), **Controls**, **Findings & Remediation** (with a *Remediate* action per finding), **Incidents**
-(authorization record, approve/reject for reviewed detections) and **Evidence & Reports** (generate
-and open the reports). `make screenshots-2` captures them into `artifacts/sentinelswitch-2.0/screenshots/`.
+In the dashboard (`make dev`), the 2.0 pages are the first group in the navigation: **Overview**
+(`/`), **Posture** (`/posture`), **Controls**, **Findings** (with a *Remediate* action per finding),
+**Incidents** (authorization record, approve/reject for reviewed detections, each confirmed in a
+dialog) and **Reports** (generate and open the reports). `make screenshots-2` captures them into
+`artifacts/sentinelswitch-2.0/screenshots/`.
 
 The validation harness now replays nine scenarios: the ninth, `critical-asset-scan`, is the negative
 path in which the `critical_assets` guard withholds automatic containment.

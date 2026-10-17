@@ -1,6 +1,8 @@
-import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
-import { Wordmark } from './components/Logo'
+import { useEffect, useState } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Icon } from './components/Icons'
+import { Sidebar, Topbar, type NavItem } from './components/layout'
+import { ToastProvider } from './components/toast'
 import { useApi } from './lib/hooks'
 import { endpoints } from './lib/api'
 import { Overview } from './pages/Overview'
@@ -20,100 +22,63 @@ import { Controls } from './pages/Controls'
 import { Findings } from './pages/Findings'
 import { Reports } from './pages/Reports'
 
-const NAV = [
-  // Assurance (SentinelSwitch 2.0)
-  { to: '/', label: 'Posture', icon: Icon.posture, end: true, group: 'assurance' },
+const NAV: Omit<NavItem, 'badge' | 'attention'>[] = [
+  { to: '/', label: 'Overview', icon: Icon.overview, end: true, group: 'assurance' },
+  { to: '/posture', label: 'Posture', icon: Icon.posture, group: 'assurance' },
   { to: '/controls', label: 'Controls', icon: Icon.coverage, group: 'assurance' },
-  { to: '/findings', label: 'Findings & Remediation', icon: Icon.findings, group: 'assurance' },
+  { to: '/findings', label: 'Findings', icon: Icon.findings, group: 'assurance' },
   { to: '/incidents', label: 'Incidents', icon: Icon.incidents, group: 'assurance' },
-  { to: '/reports', label: 'Evidence & Reports', icon: Icon.evidence, group: 'assurance' },
-  // Operations (original SOC views)
-  { to: '/operations', label: 'SOC Overview', icon: Icon.overview, group: 'operations' },
+  { to: '/reports', label: 'Reports', icon: Icon.report, group: 'assurance' },
   { to: '/alerts', label: 'Alerts', icon: Icon.alerts, group: 'operations' },
   { to: '/devices', label: 'Assets', icon: Icon.devices, group: 'operations' },
-  { to: '/switch', label: 'Network / Switch', icon: Icon.switch, group: 'operations' },
+  { to: '/switch', label: 'Switch', icon: Icon.switch, group: 'operations' },
   { to: '/authentication', label: 'Authentication', icon: Icon.auth, group: 'operations' },
-  { to: '/coverage', label: 'Detection Coverage', icon: Icon.coverage, group: 'operations' },
-  { to: '/drift', label: 'Configuration Drift', icon: Icon.drift, group: 'operations' },
-  { to: '/evidence', label: 'Evidence Bundles', icon: Icon.evidence, group: 'operations' },
+  { to: '/coverage', label: 'Coverage', icon: Icon.check, group: 'operations' },
+  { to: '/drift', label: 'Drift', icon: Icon.drift, group: 'operations' },
+  { to: '/evidence', label: 'Evidence', icon: Icon.evidence, group: 'operations' },
   { to: '/about', label: 'Architecture', icon: Icon.about, group: 'operations' },
 ]
 
 function Shell() {
   const loc = useLocation()
   const { data: meta } = useApi(endpoints.meta, [loc.pathname])
+  const [navOpen, setNavOpen] = useState(false)
+  useEffect(() => {
+    if (!navOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setNavOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [navOpen])
   const current = NAV.find((n) => (n.end ? loc.pathname === n.to : loc.pathname.startsWith(n.to)))
-  const stage = meta?.demo?.stage
+  const leaf = /^\/(incidents|findings|controls|devices|evidence)\/.+/.test(loc.pathname) ? decodeURIComponent(loc.pathname.split('/').slice(2).join('/')) : null
+  const crumbs = [{ label: current?.label ?? 'SentinelSwitch', to: current?.to }, ...(leaf ? [{ label: leaf }] : [])]
+  const reviewsOpen = meta?.counts.reviews_open ?? 0
+  const items: NavItem[] = NAV.map((n) => {
+    if (n.to === '/incidents' && meta) return { ...n, badge: reviewsOpen > 0 ? reviewsOpen : meta.counts.incidents, attention: reviewsOpen > 0 }
+    if (n.to === '/findings' && meta?.counts.findings_open !== undefined) return { ...n, badge: meta.counts.findings_open }
+    return n
+  })
   return (
-    <div className="shell">
-      <aside className="sidebar">
-        <Wordmark />
-        <nav className="nav">
-          <div className="nav-section">Assurance</div>
-          {NAV.filter((n) => n.group === 'assurance').map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => (isActive ? 'active' : '')}>
-              <n.icon />
-              {n.label}
-              {n.to === '/incidents' && meta && <span className="nav-badge">{meta.counts.incidents}</span>}
-              {n.to === '/findings' && meta && meta.counts.findings_open !== undefined && <span className="nav-badge">{meta.counts.findings_open}</span>}
-            </NavLink>
-          ))}
-          <div className="nav-section">Operations</div>
-          {NAV.filter((n) => n.group === 'operations').map((n) => (
-            <NavLink key={n.to} to={n.to} className={({ isActive }) => (isActive ? 'active' : '')}>
-              <n.icon />
-              {n.label}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="sidebar-foot">
-          {meta ? (
-            <>
-              <div>
-                <b style={{ color: 'var(--text-2)' }}>{meta.switch.hostname}</b> · {meta.switch.model}
-              </div>
-              <div>IOS {meta.switch.ios_version} · {meta.switch.management_ip}</div>
-              <div style={{ marginTop: 6 }}>Dataset day {meta.dataset.day} (UTC)</div>
-              <div>SentinelSwitch {meta.version}</div>
-            </>
-          ) : (
-            <div>connecting…</div>
-          )}
-        </div>
-      </aside>
+    <div className={`shell ${navOpen ? 'nav-open' : ''}`}>
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
+      <Sidebar items={items} meta={meta} open={navOpen} onClose={() => setNavOpen(false)} />
+      <div className="nav-backdrop" onClick={() => setNavOpen(false)} aria-hidden="true" />
       <div className="main">
-        <header className="topbar">
-          <div className="crumbs">
-            {current?.label ?? 'SentinelSwitch'} {/^\/(incidents|findings|controls)\/.+/.test(loc.pathname) && <span>/ {decodeURIComponent(loc.pathname.split('/').slice(2).join('/'))}</span>}
-          </div>
-          <span className="chip sim">Simulation · synthetic telemetry</span>
-          <div className="spacer" />
-          <div className="meta">
-            {stage && (
-              <span className={`chip ${stage === 'contained' ? 'contained' : stage === 'restored' ? 'resolved' : 'neutral'}`}>
-                {stage === 'contained' ? `${meta?.flagship_incident} contained` : stage === 'restored' ? `${meta?.flagship_incident} resolved` : 'baseline · flagship not replayed'}
-              </span>
-            )}
-            {meta ? (
-              <span>
-                <span className="dot" />
-                {meta.switch.hostname} reachable
-              </span>
-            ) : (
-              <span className="dim">connecting to API…</span>
-            )}
-            <span className="mono">{meta?.switch.now?.replace('T', ' ').slice(0, 19)} UTC</span>
-          </div>
-        </header>
-        <main className="content">
+        <Topbar crumbs={crumbs} meta={meta} onMenu={() => setNavOpen(true)} />
+        <main className="content" id="main">
           <Routes>
-            <Route path="/" element={<Posture />} />
+            <Route path="/" element={<Overview />} />
+            <Route path="/posture" element={<Posture />} />
+            <Route path="/operations" element={<Navigate replace to="/" />} />
             <Route path="/controls" element={<Controls />} />
             <Route path="/controls/:id" element={<Controls />} />
             <Route path="/findings" element={<Findings />} />
             <Route path="/findings/:id" element={<Findings />} />
             <Route path="/reports" element={<Reports />} />
-            <Route path="/operations" element={<Overview />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/incidents" element={<Incidents />} />
             <Route path="/incidents/:id" element={<IncidentDetail />} />
@@ -135,9 +100,11 @@ function Shell() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/media/:slug" element={<Media />} />
-      <Route path="/*" element={<Shell />} />
-    </Routes>
+    <ToastProvider>
+      <Routes>
+        <Route path="/media/:slug" element={<Media />} />
+        <Route path="/*" element={<Shell />} />
+      </Routes>
+    </ToastProvider>
   )
 }

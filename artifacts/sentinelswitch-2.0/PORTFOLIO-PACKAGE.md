@@ -12,7 +12,9 @@ the media.
 
 | path | what it is |
 | --- | --- |
-| `screenshots/sentinelswitch-2.0-dashboard.png` | the posture dashboard after the flagship incident was contained (1600 × 1000 CSS px at 2×) |
+| `screenshots/sentinelswitch-2.0-overview.png` | the Overview home page (`/`) after the flagship incident was contained: attention strip, alert stream, response ledger, control status (1600 × 1000 CSS px at 2×) |
+| `screenshots/sentinelswitch-2.0-dashboard.png` | the posture dashboard (`/posture`) after the flagship incident was contained (1600 × 1000 CSS px at 2×) |
+| `screenshots/sentinelswitch-2.0-review-dialog.png` | the analyst authorization dialog for the detection that policy routed to manual review |
 | `screenshots/sentinelswitch-2.0-dashboard-full.png` | the same view, full page |
 | `screenshots/sentinelswitch-2.0-incident.png`, `-incident-full.png` | INC-2026-0042 with detection → correlation → identification → recommendation → authorization → execution → verification |
 | `screenshots/sentinelswitch-2.0-findings-open.png`, `-findings-open-full.png` | the six open findings before remediation |

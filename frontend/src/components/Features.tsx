@@ -2,10 +2,10 @@ import type { Feature } from '../lib/api'
 
 export function Confidence({ value, base }: { value: number; base?: number }) {
   return (
-    <div className="confidence">
+    <div className="confidence" role="img" aria-label={`confidence ${value.toFixed(2)}${base !== undefined ? `, base ${base.toFixed(2)}` : ''}`}>
       <span className="num">{value.toFixed(2)}</span>
       <div className="bar-track">
-        <span style={{ width: `${value * 100}%` }} />
+        <span style={{ width: `${Math.max(0, Math.min(1, value)) * 100}%` }} />
       </div>
       {base !== undefined && <span className="dim small">base {base.toFixed(2)}</span>}
     </div>
@@ -21,9 +21,7 @@ export function Features({ features }: { features: Feature[] }) {
             <div>{f.label}</div>
             {f.evidence && <div className="ev">{f.evidence}</div>}
           </div>
-          <span className={`w ${f.weight < 0 ? 'neg' : ''}`}>
-            {f.matched ? (f.weight > 0 ? '+' : '') + f.weight.toFixed(2) : '—'}
-          </span>
+          <span className={`w ${f.weight < 0 ? 'neg' : ''}`}>{f.matched ? (f.weight > 0 ? '+' : '') + f.weight.toFixed(2) : '—'}</span>
         </div>
       ))}
     </div>

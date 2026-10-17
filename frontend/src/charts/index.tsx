@@ -1,9 +1,31 @@
+import { useMemo } from 'react'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { fmtBytes, fmtNum } from '../lib/format'
 
-const AX = { stroke: '#34445a', fontSize: 11, fill: '#7d8b9c' }
-const GRID = { stroke: '#263241', strokeDasharray: undefined, vertical: false }
-const CURSOR = { fill: 'rgba(88,166,255,0.06)' }
+/** Chart colours are read from the design tokens so SVG attributes stay in sync with the stylesheet. */
+function token(name: string, fallback: string): string {
+  if (typeof window === 'undefined') return fallback
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  return v || fallback
+}
+export function useChartTokens() {
+  return useMemo(
+    () => ({
+      c1: token('--chart-1', 'currentColor'),
+      c2: token('--chart-2', 'currentColor'),
+      c3: token('--chart-3', 'currentColor'),
+      c4: token('--chart-4', 'currentColor'),
+      c5: token('--chart-5', 'currentColor'),
+      grid: token('--chart-grid', 'currentColor'),
+      axis: token('--chart-axis', 'currentColor'),
+      label: token('--chart-label', 'currentColor'),
+      text2: token('--text-2', 'currentColor'),
+      surface: token('--surface-1', 'transparent'),
+      cursor: token('--accent-dim', 'transparent'),
+    }),
+    [],
+  )
+}
 
 function Tip({ active, payload, label, fmt }: { active?: boolean; payload?: { name: string; value: number; color?: string; dataKey?: string }[]; label?: string; fmt?: (v: number, k: string) => string }) {
   if (!active || !payload?.length) return null
@@ -24,52 +46,59 @@ function Tip({ active, payload, label, fmt }: { active?: boolean; payload?: { na
 }
 
 export function AlertTimeline({ data, height = 190 }: { data: { hour: string; high: number; medium: number; low: number }[]; height?: number }) {
+  const t = useChartTokens()
+  const AX = { stroke: t.axis, fontSize: 11, fill: t.label }
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 6, right: 8, left: -18, bottom: 0 }} barCategoryGap={3}>
-        <CartesianGrid {...GRID} />
-        <XAxis dataKey="hour" tick={AX} tickLine={false} axisLine={{ stroke: '#34445a' }} interval={3} />
+        <CartesianGrid stroke={t.grid} vertical={false} />
+        <XAxis dataKey="hour" tick={AX} tickLine={false} axisLine={{ stroke: t.axis }} interval={3} />
         <YAxis tick={AX} tickLine={false} axisLine={false} allowDecimals={false} />
-        <Tooltip content={<Tip />} cursor={CURSOR} />
-        <Bar dataKey="low" name="low" stackId="s" fill="#3987e5" maxBarSize={22} />
-        <Bar dataKey="medium" name="medium" stackId="s" fill="#c99420" maxBarSize={22} />
-        <Bar dataKey="high" name="high" stackId="s" fill="#e05a5a" maxBarSize={22} radius={[3, 3, 0, 0]} />
+        <Tooltip content={<Tip />} cursor={{ fill: t.cursor }} />
+        <Bar dataKey="low" name="low" stackId="s" fill={t.c1} maxBarSize={22} />
+        <Bar dataKey="medium" name="medium" stackId="s" fill={t.c4} maxBarSize={22} />
+        <Bar dataKey="high" name="high" stackId="s" fill={t.c3} maxBarSize={22} radius={[3, 3, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )
 }
 
 export function TrafficArea({ data, height = 190, metric = 'bytes' }: { data: { ts: string; connections: number; bytes: number; dns: number; alerts: number; hosts: number }[]; height?: number; metric?: 'bytes' | 'connections' }) {
+  const t = useChartTokens()
+  const AX = { stroke: t.axis, fontSize: 11, fill: t.label }
   const rows = data.map((d) => ({ ...d, label: d.ts.slice(11, 16) }))
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={rows} margin={{ top: 6, right: 8, left: -6, bottom: 0 }}>
         <defs>
           <linearGradient id="traffic-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3987e5" stopOpacity={0.22} />
-            <stop offset="100%" stopColor="#3987e5" stopOpacity={0.02} />
+            <stop offset="0%" stopColor={t.c1} stopOpacity={0.22} />
+            <stop offset="100%" stopColor={t.c1} stopOpacity={0.02} />
           </linearGradient>
         </defs>
-        <CartesianGrid {...GRID} />
-        <XAxis dataKey="label" tick={AX} tickLine={false} axisLine={{ stroke: '#34445a' }} interval={11} />
+        <CartesianGrid stroke={t.grid} vertical={false} />
+        <XAxis dataKey="label" tick={AX} tickLine={false} axisLine={{ stroke: t.axis }} interval={11} />
         <YAxis tick={AX} tickLine={false} axisLine={false} tickFormatter={(v) => (metric === 'bytes' ? fmtBytes(v) : fmtNum(v))} width={62} />
-        <Tooltip content={<Tip fmt={(v, k) => (k === 'bytes' ? fmtBytes(v) : fmtNum(v))} />} cursor={{ stroke: '#58a6ff', strokeWidth: 1 }} />
-        <Area type="monotone" dataKey={metric} name={metric === 'bytes' ? 'bytes (15 min)' : 'connections (15 min)'} stroke="#3987e5" strokeWidth={2} fill="url(#traffic-fill)" dot={false} activeDot={{ r: 4, stroke: '#161d26', strokeWidth: 2 }} />
+        <Tooltip content={<Tip fmt={(v, k) => (k === 'bytes' ? fmtBytes(v) : fmtNum(v))} />} cursor={{ stroke: t.c1, strokeWidth: 1 }} />
+        <Area type="monotone" dataKey={metric} name={metric === 'bytes' ? 'bytes (15 min)' : 'connections (15 min)'} stroke={t.c1} strokeWidth={2} fill="url(#traffic-fill)" dot={false} activeDot={{ r: 4, stroke: t.surface, strokeWidth: 2 }} />
       </AreaChart>
     </ResponsiveContainer>
   )
 }
 
-export function HBars({ data, height, color = '#3987e5', nameKey = 'name', valueKey = 'count' }: { data: Record<string, unknown>[]; height?: number; color?: string; nameKey?: string; valueKey?: string }) {
+export function HBars({ data, height, tone = 'c1', nameKey = 'name', valueKey = 'count', labelWidth = 150 }: { data: Record<string, unknown>[]; height?: number; tone?: 'c1' | 'c2' | 'c3' | 'c4' | 'c5'; nameKey?: string; valueKey?: string; labelWidth?: number }) {
+  const t = useChartTokens()
+  const AX = { stroke: t.axis, fontSize: 11, fill: t.label }
+  const color = t[tone]
   const h = height ?? Math.max(120, data.length * 26 + 20)
   return (
     <ResponsiveContainer width="100%" height={h}>
       <BarChart data={data} layout="vertical" margin={{ top: 2, right: 34, left: 6, bottom: 0 }} barCategoryGap={6}>
-        <CartesianGrid stroke="#263241" horizontal={false} />
+        <CartesianGrid stroke={t.grid} horizontal={false} />
         <XAxis type="number" tick={AX} tickLine={false} axisLine={false} allowDecimals={false} />
-        <YAxis type="category" dataKey={nameKey} tick={{ ...AX, fill: '#b3c0cf' }} tickLine={false} axisLine={false} width={150} />
-        <Tooltip content={<Tip />} cursor={CURSOR} />
-        <Bar dataKey={valueKey} name="count" fill={color} maxBarSize={16} radius={[0, 3, 3, 0]} label={{ position: 'right', fill: '#b3c0cf', fontSize: 11 }}>
+        <YAxis type="category" dataKey={nameKey} tick={{ ...AX, fill: t.text2 }} tickLine={false} axisLine={false} width={labelWidth} />
+        <Tooltip content={<Tip />} cursor={{ fill: t.cursor }} />
+        <Bar dataKey={valueKey} name="count" fill={color} maxBarSize={16} radius={[0, 3, 3, 0]} label={{ position: 'right', fill: t.text2, fontSize: 11 }}>
           {data.map((_, i) => (
             <Cell key={i} fill={color} />
           ))}
@@ -80,27 +109,30 @@ export function HBars({ data, height, color = '#3987e5', nameKey = 'name', value
 }
 
 export function AuthBars({ data, height = 200 }: { data: { hour: string; accept: number; reject: number; guest: number }[]; height?: number }) {
+  const t = useChartTokens()
+  const AX = { stroke: t.axis, fontSize: 11, fill: t.label }
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 6, right: 8, left: -18, bottom: 0 }} barCategoryGap={3}>
-        <CartesianGrid {...GRID} />
-        <XAxis dataKey="hour" tick={AX} tickLine={false} axisLine={{ stroke: '#34445a' }} interval={3} />
+        <CartesianGrid stroke={t.grid} vertical={false} />
+        <XAxis dataKey="hour" tick={AX} tickLine={false} axisLine={{ stroke: t.axis }} interval={3} />
         <YAxis tick={AX} tickLine={false} axisLine={false} allowDecimals={false} />
-        <Tooltip content={<Tip />} cursor={CURSOR} />
-        <Bar dataKey="accept" name="Access-Accept" stackId="a" fill="#2f9e4f" maxBarSize={22} />
-        <Bar dataKey="guest" name="Guest VLAN" stackId="a" fill="#3987e5" maxBarSize={22} />
-        <Bar dataKey="reject" name="Access-Reject" stackId="a" fill="#e05a5a" maxBarSize={22} radius={[3, 3, 0, 0]} />
+        <Tooltip content={<Tip />} cursor={{ fill: t.cursor }} />
+        <Bar dataKey="accept" name="Access-Accept" stackId="a" fill={t.c2} maxBarSize={22} />
+        <Bar dataKey="guest" name="Guest VLAN" stackId="a" fill={t.c1} maxBarSize={22} />
+        <Bar dataKey="reject" name="Access-Reject" stackId="a" fill={t.c3} maxBarSize={22} radius={[3, 3, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )
 }
 
-export function Legend({ items }: { items: [string, string][] }) {
+/** Legend keyed by chart token so swatches always match the series. */
+export function Legend({ items }: { items: [string, 'c1' | 'c2' | 'c3' | 'c4' | 'c5'][] }) {
   return (
     <div className="legend">
-      {items.map(([label, color]) => (
+      {items.map(([label, tone]) => (
         <span key={label}>
-          <span className="sw" style={{ background: color }} />
+          <span className={`sw ${tone}`} />
           {label}
         </span>
       ))}

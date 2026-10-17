@@ -1,0 +1,67 @@
+/* Fixed-size media cards rendered by /media/<slug> for scripts/screenshots.py. Density overrides only;
+   components are the shared ones from components.css. */
+.media { width: 1080px; height: 1350px; background: var(--bg-1); color: var(--text-1); display: flex; flex-direction: column; padding: 56px 60px; gap: 28px; position: relative; overflow: hidden; font-size: 16px; }
+.media.landscape { width: 1600px; height: 800px; padding: 48px 64px; }
+.media .m-top { display: flex; align-items: center; justify-content: space-between; }
+.media .m-step { font-family: var(--font-mono); font-size: 15px; color: var(--text-3); letter-spacing: 0.1em; }
+.media h1 { font-size: 46px; letter-spacing: -0.02em; line-height: 1.08; }
+.media .m-sub { font-size: 20px; color: var(--text-2); line-height: 1.4; max-width: 900px; }
+.media .m-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 22px; overflow: hidden; }
+.media .m-foot { display: flex; justify-content: space-between; align-items: center; color: var(--text-3); font-size: 14px; border-top: 1px solid var(--line-1); padding-top: 22px; }
+.media .m-foot b { color: var(--text-2); }
+.media .m-fill { flex: 1; min-height: 0; background: var(--bg-0); border: 1px solid var(--line-1); border-radius: var(--r-panel); padding: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.media .m-fill img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
+.media .m-cols-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.media .m-cols-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.media .m-chain-grid { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 18px; flex: 1; min-height: 0; align-items: start; }
+.media .metric .value { font-size: 40px; }
+.media .metric .label { font-size: 13px; }
+.media table.data { font-size: 17px; }
+.media table.data th { font-size: 13px; }
+.media table.data td { padding: 11px 14px; }
+.media pre.term, .media .terminal pre { font-size: 16px; line-height: 1.55; max-height: none; }
+.media .chain-node { min-width: 0; padding: 16px 18px; }
+.media .chain-node .v { font-size: 22px; }
+.media .chain-node .k { font-size: 12px; }
+.media .chain-node .s { font-size: 14px; }
+.media .step { font-size: 16px; grid-template-columns: 150px 18px minmax(0, 1fr); padding: 12px 0; }
+.media .step .name { font-size: 14px; }
+.media .tl-item { grid-template-columns: 130px 14px minmax(0, 1fr); padding: 9px 0; }
+.media .tl-item .tl-ts { font-size: 15px; }
+.media .tl-item .tl-msg { font-size: 16px; }
+.media .tl-item .tl-phase { font-size: 12px; }
+.media .feature { font-size: 16px; padding: 10px 14px; }
+.media .feature .ev { font-size: 14px; }
+.media .chip { font-size: 13px; height: 26px; padding: 0 10px; }
+.media .chip.sim { font-size: 12px; }
+.media .kv { font-size: 17px; gap: 8px 22px; }
+.media .legend { font-size: 14px; }
+.media .panel-head { padding: 10px 20px; }
+.media .panel-head h2 { font-size: 16px; }
+.media .panel-body { padding: 18px 20px; }
+.media .panel-body.none { padding: 0; }
+.media .matrix td.pf { font-size: 16px; }
+.media .big-num { font-size: 64px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.media .big-num small { font-size: 22px; color: var(--text-3); font-weight: 500; margin-left: 6px; }
+.media .big-num.danger { color: var(--danger-ink); }
+.media .big-num.accent { color: var(--accent); }
+.media.landscape .chain .chain-node { flex: 1; }
+.media .chain.vertical .chain-node { padding: 14px 16px; }
+.media .chain.vertical .chain-node .v { font-size: 20px; }
+.media .step .detail .src { font-size: 12px; }
+.media .notice { font-size: 16px; }
+.media .port text { font-size: 8px; }
+.media .hero-title { font-size: 44px; }
+.media .hero-sub { margin-top: 8px; font-size: 19px; max-width: 1250px; }
+.media.hero { gap: 22px; padding: 40px 56px 32px; }
+.media .hero-panel { padding: 4px 14px 0; }
+.media .m-foot.hero { padding-top: 14px; }
+body.media-body { background: var(--bg-1); }
+.media .m-sub { margin-top: 10px; }
+.media .brand-name { font-size: 24px; }
+.media .brand-sub { font-size: 14px; }
+.media .m-term-fill { flex: 1; font-size: 17px; }
+.media .metric .big-num { margin-top: 10px; }
+.media .stack { gap: 18px; }
+.media .m-top .row { gap: 14px; }
+.media .brand-text { display: flex; }
