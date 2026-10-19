@@ -16,7 +16,7 @@
 .src-row .why { color: var(--text-3); font-size: var(--fs-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* posture */
-.posture-hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); gap: var(--sp-4); }
+.posture-hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); gap: var(--sp-4); align-items: start; }
 .posture-hero > * { min-width: 0; }
 .ratio-band { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-1); border: 1px solid var(--line-1); border-radius: var(--r-panel); overflow: hidden; }
 .ratio-band > * { background: var(--surface-1); }

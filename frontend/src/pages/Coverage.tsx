@@ -11,6 +11,7 @@ import { useToast } from '../components/toast'
 import { Timeline } from '../components/Timeline'
 import { Features } from '../components/Features'
 import { fmtSeconds } from '../lib/format'
+import { StageTiming } from '../charts/viz'
 import { Icon } from '../components/Icons'
 
 /** Validation response column: CONTAINED, WITHHELD (policy) and FAIL are distinct outcomes; withheld is never a containment. */
@@ -65,6 +66,9 @@ export function Coverage() {
         <Metric label="Mean time to contain" value={fmtSeconds(m.mttc)} tone="accent" hint={`median ${fmtSeconds(m.median_ttc)}`} />
         <Metric label="Mean end to end" value={fmtSeconds(m.mean_end_to_end)} hint="first event → verified" />
       </MetricBand>
+      <Panel title="Response stage timing" sub="per validation scenario · simulated clock" right={<span className="mono dim small">{m.contained ?? '—'} contained · {m.withheld ?? '—'} withheld</span>}>
+        <StageTiming rows={data.results} />
+      </Panel>
       <Panel title="Security validation" sub="open a row for its timeline" bodyClass="none">
         <DataTable
           rows={data.results}

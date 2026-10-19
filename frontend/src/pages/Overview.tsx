@@ -1,37 +1,65 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints, type ContainmentAction } from '../lib/api'
 import { useApi } from '../lib/hooks'
 import { Loading, Panel, Segmented, Ts, ErrorState } from '../components/ui'
 import { PageHeader } from '../components/layout'
-import { Metric, MetricBand, Ratio, StatusBar } from '../components/metric'
-import { AssessChip, Chip, ResponseChip, SeverityChip, responseStateOf } from '../components/status'
+import { StatusBar } from '../components/metric'
+import { AssessChip, Chip, ResponseChip, responseStateOf } from '../components/status'
 import { DataTable } from '../components/table'
 import { ConfirmDialog } from '../components/dialog'
 import { useToast } from '../components/toast'
-import { AlertTimeline, HBars, Legend, TrafficArea } from '../charts'
-import { fmtNum, fmtSeconds, fmtTime, pct, vlanName } from '../lib/format'
+import { TrafficStack } from '../charts'
+import { BarRows, ResponseFlow, SeverityRing, TechniqueTiles } from '../charts/viz'
+import { SignalConsole } from '../components/signal/SignalConsole'
+import { byEndpoint, bySource, ms, severityCounts } from '../lib/telemetry'
+import { fmtNum, fmtSeconds, fmtTime, pct } from '../lib/format'
 import { Icon } from '../components/Icons'
 
 const TELEMETRY_CONTROL = 'CTL-TELEMETRY-FRESH'
 
+function Sect({ idx, title, children, right }: { idx: string; title: string; children?: React.ReactNode; right?: React.ReactNode }) {
+  return (
+    <div className="sect">
+      <span className="idx">{idx}</span>
+      <h2>{title}</h2>
+      {children && <p>{children}</p>}
+      {right && <span className="right">{right}</span>}
+    </div>
+  )
+}
+
 export function Overview() {
   const { data, error, reload } = useApi(endpoints.overview)
+  const { data: sw } = useApi(endpoints.switch)
+  const { data: devices } = useApi(endpoints.devices)
+  const { data: alerts } = useApi(() => endpoints.alerts('?limit=5000'))
+  const { data: detections } = useApi(endpoints.detections)
   const { data: posture } = useApi(endpoints.posture)
   const { data: reviews } = useApi(endpoints.reviews)
   const { data: telemetry } = useApi(() => endpoints.assessments(`?control_id=${TELEMETRY_CONTROL}`))
+  const { data: sensorCov } = useApi(() => endpoints.assessments('?control_id=CTL-SENSOR-COVERAGE'))
   const { data: incidents } = useApi(endpoints.incidents)
   const toast = useToast()
-  const [metric, setMetric] = useState<'bytes' | 'connections'>('bytes')
+  const [metric, setMetric] = useState<'bytes' | 'connections'>('connections')
   const [dialog, setDialog] = useState<'replay' | 'reset' | null>(null)
   const [busy, setBusy] = useState(false)
   const [dlgError, setDlgError] = useState<string | null>(null)
+
+  const inputs = useMemo(
+    () =>
+      sw && devices && alerts && data && incidents && reviews
+        ? { sw, devices: devices.devices, unknown: devices.unknown, alerts, incidents, actions: data.containment_activity, reviews, coverage: new Map((sensorCov ?? []).filter((a) => a.scope.vlan !== null).map((a) => [a.scope.vlan as number, a.status])) }
+        : null,
+    [sw, devices, alerts, data, incidents, reviews, sensorCov],
+  )
+  const domain = useMemo(() => (data ? { start: ms(data.dataset.start), end: ms(data.dataset.end) } : null), [data])
+
   if (error && !data) return <ErrorState error={error} retry={reload} />
   if (!data) return <Loading rows={6} />
   const k = data.kpis
   const stage = data.demo.stage
   const awaiting = reviews ? reviews.filter((r) => r.status === 'review').length : null
-  const unverified = posture ? posture.totals.unknown + posture.totals.stale : null
   const confirm = async () => {
     setBusy(true)
     setDlgError(null)
@@ -52,16 +80,20 @@ export function Overview() {
     }
   }
   const byIncident = new Map((incidents ?? []).map((i) => [i.id, i]))
-  const nonPass = posture ? posture.by_control.filter((c) => c.status !== 'PASS' && c.status !== 'NOT_ASSESSED').slice(0, 3) : []
+  const nonPass = posture ? posture.by_control.filter((c) => c.status !== 'PASS' && c.status !== 'NOT_ASSESSED').slice(0, 4) : []
   const telemetryRun = telemetry?.[0]
+  const sev = alerts ? severityCounts(alerts) : null
+  const disp = detections ? { auto: detections.filter((d) => d.disposition === 'automatic_containment').length, review: detections.filter((d) => d.disposition === 'manual_review').length, monitor: detections.filter((d) => d.disposition === 'monitor').length } : null
+  const openIncidents = incidents ? incidents.filter((i) => i.status !== 'resolved' && i.status !== 'closed').length : k.open_incidents
+  const t = posture?.totals
   return (
     <>
       <PageHeader
-        title="Overview"
-        sub={`Access-layer status for dataset day ${data.dataset.day}`}
+        eyebrow={<span className="mono xs dim">SW01 · {data.dataset.day} · simulated switch clock</span>}
+        title="Network operations"
         info={
           <>
-            Every number on this page is derived from the seeded synthetic dataset and the live state of the SW01 digital twin. Timestamps are on the simulated switch clock (UTC). The attention strip reads the manual review queue, the twin's quarantined ports, open findings and unverified (UNKNOWN or STALE) assessments; nothing here is recomputed client-side.
+            Every number on this page comes from the seeded synthetic dataset and the current state of the SW01 digital twin, on the simulated switch clock (UTC). Values marked DAY count the whole dataset day; NOW is the current state of the twin and the application store; RUN is the latest assessment run. The page refreshes when the server announces a change; it is not a continuous live feed.
           </>
         }
       >
@@ -76,198 +108,253 @@ export function Overview() {
         )}
       </PageHeader>
 
-      {/* 1 · attention strip */}
-      <div className="attention" aria-label="Needs attention">
-        <Link to="/incidents">
-          <span className={`n ${awaiting ? 'on warn' : ''}`}>{awaiting ?? '…'}</span>
-          <span className="what">
-            <b>{awaiting === 1 ? 'detection awaiting authorization' : 'detections awaiting authorization'}</b>
-            <span>manual review queue</span>
+      {/* status rail: each cell names its scope */}
+      <nav className="status-rail reveal" aria-label="Operational summary" style={{ ['--i' as string]: 0 }}>
+        <Link to="/alerts" title="Alerts recorded on the dataset day, all sources">
+          <span className="k">
+            alerts <span className="scope">DAY</span>
           </span>
-          <Icon.chevron />
+          <span className="v">{alerts ? alerts.length : k.alerts}</span>
+          <span className="d">{sev ? `${sev.high} high · ${sev.medium} medium · ${sev.low} low` : '…'}</span>
         </Link>
-        <Link to="/incidents">
-          <span className={`n ${k.quarantined_hosts ? 'on danger' : ''}`}>{k.quarantined_hosts}</span>
-          <span className="what">
-            <b>{k.quarantined_hosts === 1 ? 'host contained' : 'hosts contained'}</b>
-            <span>{k.open_incidents} open {k.open_incidents === 1 ? 'incident' : 'incidents'} · VLAN 50 or administrative hold</span>
+        <Link to="/coverage" title="Correlation detections scored on the dataset day, by policy disposition">
+          <span className="k">
+            detections <span className="scope">DAY</span>
           </span>
-          <Icon.chevron />
+          <span className="v">{detections ? detections.length : '…'}</span>
+          <span className="d">{disp ? `${disp.auto} automatic · ${disp.review} review · ${disp.monitor} monitor` : '…'}</span>
         </Link>
-        <Link to="/findings">
-          <span className={`n ${posture?.findings.open ? 'on warn' : ''}`}>{posture ? posture.findings.open : '…'}</span>
-          <span className="what">
-            <b>open findings</b>
-            <span>{posture ? `${posture.findings.by_severity.high} high · ${posture.findings.by_severity.medium} medium · ${posture.findings.by_severity.low} low` : 'loading posture'}</span>
+        <Link to="/incidents" title="Manual-review detections with no analyst decision yet">
+          <span className="k">
+            awaiting authorization <span className="scope">NOW</span>
           </span>
-          <Icon.chevron />
+          <span className={`v ${awaiting ? 'warn' : 'zero'}`}>{awaiting ?? '…'}</span>
+          <span className="d">manual review queue</span>
         </Link>
-        <Link to="/posture">
-          <span className={`n ${unverified ? 'on warn' : ''}`}>{unverified ?? '…'}</span>
-          <span className="what">
-            <b>unverified assessments</b>
-            <span>{posture ? `${posture.totals.unknown} unknown · ${posture.totals.stale} stale` : 'loading posture'}</span>
+        <Link to="/incidents" title="Ports in the quarantine VLAN or under administrative hold on the twin">
+          <span className="k">
+            contained hosts <span className="scope">NOW</span>
           </span>
-          <Icon.chevron />
+          <span className={`v ${k.quarantined_hosts ? 'danger' : 'zero'}`}>{k.quarantined_hosts}</span>
+          <span className="d">VLAN 50 or administrative hold</span>
         </Link>
+        <Link to="/incidents" title="Incidents that are not resolved or closed">
+          <span className="k">
+            open incidents <span className="scope">NOW</span>
+          </span>
+          <span className={`v ${openIncidents ? 'danger' : 'zero'}`}>{openIncidents}</span>
+          <span className="d">{k.incidents} opened on the day</span>
+        </Link>
+        <Link to="/findings" title="Findings in open, reopened, remediation requested, remediated or remediation failed">
+          <span className="k">
+            open findings <span className="scope">NOW</span>
+          </span>
+          <span className={`v ${posture?.findings.open ? 'warn' : 'zero'}`}>{posture ? posture.findings.open : '…'}</span>
+          <span className="d">{posture ? `${posture.findings.by_severity.high} high · ${posture.findings.by_severity.medium} medium · ${posture.findings.by_severity.low} low` : '…'}</span>
+        </Link>
+        <Link to="/posture" title={posture?.definitions.pass_rate_of_determinate_pct ?? 'PASS / (PASS + FAIL)'}>
+          <span className="k">
+            determinate pass <span className="scope">RUN</span>
+          </span>
+          <span className="v accent">{t ? pct(t.pass_rate_of_determinate_pct) : '…'}</span>
+          <span className="d">{t ? `${t.pass} / ${t.determinate} determinate results` : '…'}</span>
+        </Link>
+        <Link to="/posture" title="UNKNOWN plus STALE results; never counted as a pass">
+          <span className="k">
+            unverified <span className="scope">RUN</span>
+          </span>
+          <span className={`v ${t && t.unknown + t.stale ? 'warn' : 'zero'}`}>{t ? t.unknown + t.stale : '…'}</span>
+          <span className="d">{t ? `${t.unknown} unknown · ${t.stale} stale` : '…'}</span>
+        </Link>
+      </nav>
+
+      {/* 01 · signal field */}
+      <div className="reveal" style={{ ['--i' as string]: 1 }}>
+        {inputs && domain ? <SignalConsole inputs={inputs} domain={domain} day={data.dataset.day} now={sw ? ms(sw.now) : null} traffic={data.traffic} /> : <div className="sig instrument sig-loading"><Loading rows={8} /></div>}
       </div>
 
-      {/* 2 · activity stream + response rail */}
-      <div className="ov-grid">
-        <div className="ov-stream">
-          <Panel title="Security activity" sub="alerts per hour by severity" right={<Legend items={[['high', 'c3'], ['medium', 'c4'], ['low / info', 'c1']]} />}>
-            <AlertTimeline data={data.alert_timeline} />
-          </Panel>
-          <Panel title="Recent alerts" right={<Link to="/alerts">all alerts</Link>} bodyClass="none">
-            <DataTable
-              compact
-              rows={data.recent_alerts}
-              rowKey={(a) => a.id}
-              columns={[
-                { key: 'time', header: 'time', render: (a) => <Ts ts={a.ts} /> },
-                { key: 'sev', header: 'severity', render: (a) => <SeverityChip value={a.severity} /> },
-                { key: 'sig', header: 'signature', wrap: true, render: (a) => a.signature },
-                { key: 'src', header: 'source', priority: 2, className: 'mono', render: (a) => a.src_ip ?? a.mac ?? a.interface ?? '—' },
-                { key: 'inc', header: 'incident', priority: 3, render: (a) => (a.incident_id ? <Link className="id" to={`/incidents/${a.incident_id}`}>{a.incident_id}</Link> : <span className="faint">—</span>) },
-              ]}
-            />
-          </Panel>
-        </div>
-        <div className="ov-rail">
-          <Panel title="Response" sub="containment activity" right={<Link to="/incidents">incidents</Link>} bodyClass="none">
-            <DataTable
-              compact
-              rows={data.containment_activity}
-              rowKey={(a) => a.workflow_id}
-              empty="No containment actions since the last reset"
-              columns={[
-                { key: 'time', header: 'time', render: (a) => <Ts ts={a.applied_at ?? a.requested_at} ms={false} /> },
-                { key: 'port', header: 'port', className: 'mono', render: (a: ContainmentAction) => (a.incident_id ? <Link to={`/incidents/${a.incident_id}`}>{a.interface}</Link> : a.interface ?? '—') },
-                { key: 'state', header: 'state', render: (a) => <ResponseChip state={responseStateOf(a.incident_id ? byIncident.get(a.incident_id) : null, a)} /> },
-              ]}
-            />
-          </Panel>
-          <Panel title="Devices by VLAN" sub="inventory + quarantine">
-            <HBars data={data.devices_by_vlan.map((v) => ({ name: vlanName(v.vlan), count: v.devices }))} tone="c5" labelWidth={120} />
-          </Panel>
-        </div>
+      {/* 02 · telemetry */}
+      <Sect idx="02" title="Telemetry">
+        Alert composition for the dataset day and the SPAN feed the sensors observed.
+      </Sect>
+      <div className="vz-grid c3">
+        <Panel title="Severity" sub="alerts · dataset day">
+          {sev ? <SeverityRing counts={sev} /> : <Loading rows={3} />}
+        </Panel>
+        <Panel title="Detection sources" sub="alerts by sensor and severity">
+          {alerts ? <BarRows variant="source" rows={bySource(alerts).map((r) => ({ key: r.source, label: r.source, counts: r.counts }))} /> : <Loading rows={4} />}
+        </Panel>
+        <Panel title="Alert classes" sub="Sentinel detection classes" right={<Link to="/alerts">alerts</Link>}>
+          <BarRows rows={data.alerts_by_category.map((c) => ({ key: c.category, label: c.category, value: c.count }))} limit={8} />
+        </Panel>
       </div>
-
-      {/* 3 · network activity + control status */}
-      <div className="ov-grid">
+      <div className="vz-grid c21">
         <Panel
-          title="Network activity"
-          sub="SPAN feed, 15-minute buckets"
+          title="SPAN traffic"
+          sub="15-minute buckets · mirrored VLANs 20, 30, 40"
           right={
             <Segmented
               label="Traffic metric"
               options={[
-                { id: 'bytes', label: 'bytes' },
                 { id: 'connections', label: 'connections' },
+                { id: 'bytes', label: 'bytes' },
               ]}
               value={metric}
               onChange={setMetric}
             />
           }
         >
-          <TrafficArea data={data.traffic} metric={metric} />
+          <TrafficStack data={data.traffic} metric={metric} height={236} />
+          <div className="vz-def">Upper: {metric} per bucket. Lower: DNS queries seen by Zeek per bucket. Separate scales, shared time axis.</div>
         </Panel>
-        <div className="ov-rail">
-          <Panel title="Control status" right={<Link to="/posture">posture</Link>}>
-            {!posture ? (
-              <Loading rows={3} />
-            ) : posture.totals.assessments === 0 ? (
-              <div className="empty">No assessment run yet</div>
-            ) : (
-              <div className="ctl-mini">
-                <div className="ratios">
-                  <div>
-                    <span className="eyebrow" title={posture.definitions.coverage_pct}>
-                      coverage
-                    </span>
-                    <span className="n">
-                      {pct(posture.totals.coverage_pct)}
-                      <small>
-                        {posture.totals.determinate} / {posture.totals.assessments}
-                      </small>
-                    </span>
-                  </div>
-                  <div>
-                    <span className="eyebrow" title={posture.definitions.pass_rate_of_determinate_pct}>
-                      determinate pass
-                    </span>
-                    <span className="n">
-                      {pct(posture.totals.pass_rate_of_determinate_pct)}
-                      <small>
-                        {posture.totals.pass} / {posture.totals.determinate}
-                      </small>
-                    </span>
-                  </div>
-                </div>
-                <StatusBar counts={{ PASS: posture.totals.pass, FAIL: posture.totals.fail, UNKNOWN: posture.totals.unknown, STALE: posture.totals.stale }} label="assessment outcomes" />
-                {nonPass.length ? (
-                  nonPass.map((c) => (
-                    <div key={c.control_id} className="stat-row">
-                      <Link to={`/controls/${c.control_id}`} className="clip">
-                        {c.name}
-                      </Link>
-                      <AssessChip value={c.status} />
-                    </div>
-                  ))
-                ) : (
-                  <div className="dim small">Every assessed control passes</div>
-                )}
-              </div>
-            )}
-          </Panel>
-          <Panel title="Telemetry freshness" sub={telemetryRun ? `as of run ${telemetryRun.run_id} · ${fmtTime(telemetryRun.assessed_at, { ms: false })} UTC` : 'no assessment run yet'}>
-            {!telemetry ? (
-              <Loading rows={2} />
-            ) : telemetry.length === 0 ? (
-              <div className="empty">No assessment run yet — freshness is only known after an assessment</div>
-            ) : (
-              <div>
-                {telemetry.map((a) => (
-                  <div key={a.id} className="src-row">
-                    <span className="src">{a.scope.id}</span>
-                    <AssessChip value={a.status} />
-                    <span className="why" title={a.explanation}>
-                      {a.explanation}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Panel>
-        </div>
+        <Panel title="Endpoint activity" sub="alerts attributed per endpoint · dataset day" right={<Link to="/devices">assets</Link>}>
+          {alerts ? (
+            <BarRows
+              variant="rank"
+              limit={8}
+              rows={byEndpoint(alerts).map((r) => ({ key: r.key, label: r.device ?? `${r.port} · unregistered`, sub: r.device ? r.port : 'not in inventory', href: r.device ? `/devices/${r.device}` : undefined, counts: r.counts }))}
+            />
+          ) : (
+            <Loading rows={6} />
+          )}
+        </Panel>
       </div>
 
-      {/* 4 · metric band */}
-      <MetricBand>
-        <Metric label="Devices online" value={<Ratio num={k.devices_online} den={k.devices_total} />} hint="MAC-table presence" />
-        <Metric label="Security alerts" value={fmtNum(k.alerts)} hint="Suricata · Zeek · AAA · syslog" />
-        <Metric label="High severity" value={k.high_alerts} tone={k.high_alerts ? 'danger' : undefined} hint={`${k.incidents} incidents · ${k.open_incidents} open`} />
-        <Metric label="802.1X success" value={pct(k.auth_success_rate)} tone="good" hint={`${k.auth_accepts} accepts · ${k.auth_rejects} rejects`} />
-        <Metric label="Traffic observed" value={k.traffic_human} hint={`${fmtNum(k.connections)} connections on SPAN`} />
-        <Metric label="Active VLANs" value={k.active_vlans} hint={k.active_vlan_ids.join(', ')} />
-        <Metric label="Mean time to detect" value={fmtSeconds(k.mttd)} tone="accent" hint={`${k.validation_total ?? '—'} validation scenarios · simulated clock`} />
-        <Metric label="Mean time to contain" value={fmtSeconds(k.mttc)} tone="accent" hint="detection → verified · simulated clock" />
-      </MetricBand>
+      {/* 03 · detection and response */}
+      <Sect idx="03" title="Detection and response">
+        How each detection was handled, from policy disposition to the recorded outcome.
+      </Sect>
+      <div className="vz-grid c21">
+        <Panel title="Response outcomes" sub="detections → policy disposition → recorded outcome">
+          {detections && incidents && reviews ? <ResponseFlow detections={detections} incidents={incidents} actions={data.containment_activity} reviews={reviews} /> : <Loading rows={6} />}
+          <div className="vz-def">Outcomes come from each detection&apos;s incident, containment action (including read-back verification) or review record; nothing is inferred from approval alone.</div>
+        </Panel>
+        <Panel title="ATT&CK techniques" sub="tags on the day's detections" right={<Link to="/coverage">rules</Link>}>
+          {detections ? <TechniqueTiles detections={detections} /> : <Loading rows={4} />}
+        </Panel>
+      </div>
+      <div className="vz-grid c21">
+        <Panel title="Containment ledger" sub="actions since the last reset" right={<Link to="/incidents">incidents</Link>} bodyClass="none">
+          <DataTable
+            compact
+            rows={data.containment_activity}
+            rowKey={(a) => a.workflow_id}
+            empty="No containment actions since the last reset"
+            columns={[
+              { key: 'time', header: 'applied', render: (a) => <Ts ts={a.applied_at ?? a.requested_at} ms={false} /> },
+              { key: 'inc', header: 'incident', render: (a: ContainmentAction) => (a.incident_id ? <Link className="id" to={`/incidents/${a.incident_id}`}>{a.incident_id}</Link> : <span className="faint">—</span>) },
+              { key: 'port', header: 'port', className: 'mono', render: (a) => a.interface ?? '—' },
+              { key: 'act', header: 'action', priority: 2, render: (a) => (a.action === 'quarantine_vlan' ? `VLAN ${a.from_vlan} → ${a.to_vlan}` : a.action === 'port_shutdown' ? 'shutdown' : a.action.replace(/_/g, ' ')) },
+              { key: 'state', header: 'state', render: (a) => <ResponseChip state={responseStateOf(a.incident_id ? byIncident.get(a.incident_id) : null, a)} /> },
+            ]}
+          />
+        </Panel>
+        <Panel title="Pipeline timing" sub="validation harness · simulated clock" right={<Link to="/coverage">coverage</Link>}>
+          <ul className="timing-tiles">
+            <li>
+              <span className="k">mean time to detect</span>
+              <span className="v mono">{fmtSeconds(k.mttd)}</span>
+            </li>
+            <li>
+              <span className="k">mean time to attribute</span>
+              <span className="v mono">{fmtSeconds(k.mtta)}</span>
+            </li>
+            <li>
+              <span className="k">mean time to contain</span>
+              <span className="v mono">{fmtSeconds(k.mttc)}</span>
+            </li>
+          </ul>
+          <div className="vz-def">
+            Means over {k.validation_total ?? '—'} replayed scenarios ({k.validation_passed ?? '—'} met their expected outcome). Detect: first anomalous event → detection; contain: detection → verified containment.
+          </div>
+        </Panel>
+      </div>
 
-      <Panel title="Recent authentication" right={<Link to="/authentication">details</Link>} bodyClass="none">
-        <DataTable
-          compact
-          rows={data.recent_auth}
-          rowKey={(e) => e.event_id}
-          columns={[
-            { key: 'time', header: 'time', render: (e) => <Ts ts={e.timestamp} /> },
-            { key: 'result', header: 'result', render: (e) => <Chip kind={e.result === 'Access-Accept' ? 'ok' : e.result === 'Access-Reject' ? 'danger' : 'info'}>{e.result}</Chip> },
-            { key: 'id', header: 'identity', className: 'mono', render: (e) => e.username },
-            { key: 'port', header: 'port', className: 'mono', priority: 2, render: (e) => e.nas_port_id.replace('GigabitEthernet', 'Gi') },
-            { key: 'method', header: 'method', priority: 3, render: (e) => e.method },
-          ]}
-        />
-      </Panel>
+      {/* 04 · assurance and access */}
+      <Sect idx="04" title="Assurance and access">
+        Control state from the latest assessment run, sensor freshness, and 802.1X activity.
+      </Sect>
+      <div className="vz-grid c3">
+        <Panel title="Control status" right={<Link to="/posture">posture</Link>}>
+          {!posture ? (
+            <Loading rows={3} />
+          ) : posture.totals.assessments === 0 ? (
+            <div className="empty">No assessment run yet</div>
+          ) : (
+            <div className="ctl-mini">
+              <div className="ratios">
+                <div>
+                  <span className="eyebrow" title={posture.definitions.coverage_pct}>
+                    coverage
+                  </span>
+                  <span className="n">
+                    {pct(posture.totals.coverage_pct)}
+                    <small>
+                      {posture.totals.determinate} / {posture.totals.assessments}
+                    </small>
+                  </span>
+                </div>
+                <div>
+                  <span className="eyebrow" title={posture.definitions.pass_rate_of_determinate_pct}>
+                    determinate pass
+                  </span>
+                  <span className="n">
+                    {pct(posture.totals.pass_rate_of_determinate_pct)}
+                    <small>
+                      {posture.totals.pass} / {posture.totals.determinate}
+                    </small>
+                  </span>
+                </div>
+              </div>
+              <StatusBar counts={{ PASS: posture.totals.pass, FAIL: posture.totals.fail, UNKNOWN: posture.totals.unknown, STALE: posture.totals.stale }} label="assessment outcomes" />
+              {nonPass.length ? (
+                nonPass.map((c) => (
+                  <div key={c.control_id} className="stat-row">
+                    <Link to={`/controls/${c.control_id}`} className="clip">
+                      {c.name}
+                    </Link>
+                    <AssessChip value={c.status} />
+                  </div>
+                ))
+              ) : (
+                <div className="dim small">Every assessed control passes</div>
+              )}
+            </div>
+          )}
+        </Panel>
+        <Panel title="Telemetry freshness" sub={telemetryRun ? `as of run ${telemetryRun.run_id} · ${fmtTime(telemetryRun.assessed_at, { ms: false })} UTC` : 'no assessment run yet'}>
+          {!telemetry ? (
+            <Loading rows={2} />
+          ) : telemetry.length === 0 ? (
+            <div className="empty">No assessment run yet — freshness is only known after an assessment</div>
+          ) : (
+            <div>
+              {telemetry.map((a) => (
+                <div key={a.id} className="src-row">
+                  <span className="src">{a.scope.id}</span>
+                  <AssessChip value={a.status} />
+                  <span className="why" title={a.explanation}>
+                    {a.explanation}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Panel>
+        <Panel title="Recent authentication" sub={`${pct(k.auth_success_rate)} success · ${fmtNum(k.auth_accepts)} accepts · ${fmtNum(k.auth_rejects)} rejects`} right={<Link to="/authentication">details</Link>} bodyClass="none">
+          <DataTable
+            compact
+            rows={data.recent_auth.slice(0, 6)}
+            rowKey={(e) => e.event_id}
+            columns={[
+              { key: 'time', header: 'time', render: (e) => <Ts ts={e.timestamp} ms={false} /> },
+              { key: 'result', header: 'result', render: (e) => <Chip kind={e.result === 'Access-Accept' ? 'ok' : e.result === 'Access-Reject' ? 'danger' : 'info'}>{e.result.replace('Access-', '')}</Chip> },
+              { key: 'id', header: 'identity', className: 'mono', render: (e) => e.username },
+              { key: 'port', header: 'port', className: 'mono', priority: 2, render: (e) => e.nas_port_id.replace('GigabitEthernet', 'Gi') },
+            ]}
+          />
+        </Panel>
+      </div>
 
       <ConfirmDialog
         open={dialog === 'replay'}

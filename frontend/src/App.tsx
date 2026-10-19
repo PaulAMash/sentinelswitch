@@ -70,6 +70,7 @@ function Shell() {
       <div className="main">
         <Topbar crumbs={crumbs} meta={meta} onMenu={() => setNavOpen(true)} />
         <main className="content" id="main">
+          <div className="page" key={loc.pathname.split('/')[1] || 'home'}>
           <Routes>
             <Route path="/" element={<Overview />} />
             <Route path="/posture" element={<Posture />} />
@@ -92,6 +93,7 @@ function Shell() {
             <Route path="/evidence/:id" element={<Evidence />} />
             <Route path="/about" element={<About />} />
           </Routes>
+          </div>
         </main>
       </div>
     </div>

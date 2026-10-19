@@ -10,6 +10,9 @@ import { DataTable } from '../components/table'
 import { Terminal } from '../components/terminal'
 import { Features as FeatureList, Confidence } from '../components/Features'
 import { sevRank } from '../lib/format'
+import { Scrubber } from '../components/signal/Scrubber'
+import { SeverityRing } from '../charts/viz'
+import { ms, severityCounts, type Window } from '../lib/telemetry'
 
 export function Alerts() {
   const { data, error, reload } = useApi(() => endpoints.alerts('?limit=1000'))
@@ -18,15 +21,20 @@ export function Alerts() {
   const [status, setStatus] = useState('all')
   const [q, setQ] = useState('')
   const [sel, setSel] = useState<Alert | null>(null)
+  const { data: meta } = useApi(endpoints.meta)
+  const domain = useMemo<Window | null>(() => (meta ? { start: ms(meta.dataset.start), end: ms(meta.dataset.end) } : null), [meta])
+  const [win, setWin] = useState<Window | null>(null)
+  const w = win ?? domain
   const rows = useMemo(() => {
     if (!data) return []
     return data
+      .filter((a) => !w || (ms(a.ts) >= w.start && ms(a.ts) < w.end))
       .filter((a) => sev === 'all' || a.severity === sev)
       .filter((a) => src === 'all' || a.source === src)
       .filter((a) => status === 'all' || a.status === status)
       .filter((a) => !q || `${a.signature} ${a.src_ip} ${a.dest_ip} ${a.device} ${a.mac} ${a.interface}`.toLowerCase().includes(q.toLowerCase()))
       .sort((a, b) => (a.ts < b.ts ? 1 : -1))
-  }, [data, sev, src, status, q])
+  }, [data, sev, src, status, q, w])
   if (error && !data) return <ErrorState error={error} retry={reload} />
   if (!data) return <Loading rows={6} />
   const counts = { high: data.filter((a) => a.severity === 'high').length, medium: data.filter((a) => a.severity === 'medium').length, low: data.filter((a) => sevRank(a.severity) <= 1).length }
@@ -56,6 +64,18 @@ export function Alerts() {
           ))}
         </select>
       </PageHeader>
+      <div className="vz-grid c21">
+        <Panel title="Timeline" sub="drag to narrow the table to a time range · simulated switch clock">
+          {domain && w ? (
+            <Scrubber alerts={data.filter((a) => (sev === 'all' || a.severity === sev) && (src === 'all' || a.source === src) && (status === 'all' || a.status === status))} domain={domain} binMs={15 * 60_000} window={w} onWindow={setWin} label="Alert timeline" />
+          ) : (
+            <Loading rows={2} />
+          )}
+        </Panel>
+        <Panel title="Severity" sub="rows currently shown">
+          <SeverityRing counts={severityCounts(rows)} caption="shown" />
+        </Panel>
+      </div>
       <Panel title={`${rows.length} of ${data.length} alerts`} sub="open a row for the correlation detection and the raw record" bodyClass="none">
         <div className="scroll-page">
           <DataTable

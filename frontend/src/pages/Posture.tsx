@@ -4,16 +4,15 @@ import { endpoints, type AssessmentRun, type AssessmentStatus, type Finding } fr
 import { useApi } from '../lib/hooks'
 import { Empty, ErrorState, Loading, Panel, Ts } from '../components/ui'
 import { PageHeader, Section } from '../components/layout'
-import { Counts, Metric, Ratio, StatusBar } from '../components/metric'
+import { Counts, Metric, Ratio, StatusBar, StatusLegend } from '../components/metric'
 import { AssessChip, Chip, Id, SeverityChip, StatusChip } from '../components/status'
 import { DataTable, Cell2 } from '../components/table'
 import { useToast } from '../components/toast'
-import { Legend } from '../charts'
+import { CategoryStack, CsfWheel, RunLedger } from '../charts/viz'
 import { fmtTime, pct } from '../lib/format'
 import { Icon } from '../components/Icons'
 
 const STATUSES: AssessmentStatus[] = ['PASS', 'FAIL', 'UNKNOWN', 'STALE']
-const TONE: Record<AssessmentStatus, 'c1' | 'c2' | 'c3' | 'c4' | 'c5'> = { PASS: 'c2', FAIL: 'c3', UNKNOWN: 'c1', STALE: 'c4' }
 
 function tallyOf(counts: AssessmentRun['counts']) {
   return { PASS: counts.PASS ?? 0, FAIL: counts.FAIL ?? 0, UNKNOWN: counts.UNKNOWN ?? 0, STALE: counts.STALE ?? 0 }
@@ -148,9 +147,14 @@ export function Posture() {
         </Panel>
       ) : (
         <div className="posture-hero">
-          <div className="ratio-band">
-            <Metric hero label="Determinate pass rate" value={pct(t.pass_rate_of_determinate_pct)} tone={t.determinate === 0 ? undefined : t.fail ? 'warn' : 'good'} hint={p.definitions.pass_rate_of_determinate_pct} chip={<Ratio num={t.pass} den={t.determinate} />} />
-            <Metric hero label="Coverage" value={pct(t.coverage_pct)} tone="accent" hint={p.definitions.coverage_pct} chip={<Ratio num={t.determinate} den={t.assessments} />} />
+          <div className="stack">
+            <div className="ratio-band">
+              <Metric hero label="Determinate pass rate" value={pct(t.pass_rate_of_determinate_pct)} tone={t.determinate === 0 ? undefined : t.fail ? 'warn' : 'good'} hint={p.definitions.pass_rate_of_determinate_pct} chip={<Ratio num={t.pass} den={t.determinate} />} />
+              <Metric hero label="Coverage" value={pct(t.coverage_pct)} tone="accent" hint={p.definitions.coverage_pct} chip={<Ratio num={t.determinate} den={t.assessments} />} />
+            </div>
+          <Panel title="NIST CSF 2.0 subcategories" sub="worst result per subcategory · documentation aid, not a framework assessment">
+            <CsfWheel csf={p.csf} />
+          </Panel>
           </div>
           <Panel title="Assessment outcomes" sub={`${plural(t.assessments, 'result')} · ${plural(t.controls, 'control')} · ${plural(p.runs, 'run')}${t.retired ? ` · ${plural(t.retired, 'retired result')} excluded` : ''}`} bodyClass="flush">
             <div className="stack">
@@ -169,67 +173,109 @@ export function Posture() {
                 })}
               </div>
               <StatusBar counts={counts} large label="assessment outcomes" />
-              <Legend items={STATUSES.map((s) => [s, TONE[s]])} />
+              <StatusLegend />
               <div className="eyebrow">Outcomes by category</div>
-              <div className="by-category">
-                {p.by_category.map((c) => (
-                  <div key={c.category} className="stat-row">
-                    <span className="clip" title={c.category}>
-                      {c.category}
-                    </span>
-                    <Counts counts={upper(c)} />
-                  </div>
-                ))}
-              </div>
+              <CategoryStack rows={p.by_category} />
             </div>
           </Panel>
         </div>
       )}
 
       <div className="grid grid-main-rail">
-        <Panel title="Open findings" sub={`${f.open} open · ${f.closed} closed`} right={<Link to="/findings">all findings</Link>} bodyClass="none">
-          {openShown.length === 0 ? (
-            <>
-              <Empty>
-                No open findings — {plural(verified, 'finding')} verified{closed ? `, ${closed} closed (scope retired)` : ''}
-                {f.recently_closed.length > 0 && <span className="faint"> · most recently closed, newest first:</span>}
-              </Empty>
-              {f.recently_closed.length > 0 && <ClosedTable rows={f.recently_closed} showScope showStatus={false} />}
-            </>
-          ) : (
-            <DataTable
-              rows={openShown}
-              rowKey={(fi) => fi.id}
-              columns={[
-                { key: 'sev', header: 'severity', render: (fi) => <SeverityChip value={fi.severity} /> },
-                { key: 'id', header: 'finding', render: (fi) => <Cell2 primary={<Link className="id" to={`/findings/${fi.id}`}>{fi.id}</Link>} secondary={fi.control_name} /> },
-                { key: 'scope', header: 'scope', priority: 2, render: (fi) => <Cell2 primary={<span className="mono">{scopeOf(fi).main}</span>} secondary={scopeOf(fi).sub} /> },
-                {
-                  key: 'result',
-                  header: 'result → status',
-                  render: (fi) => (
-                    <span className="row nowrap">
-                      <AssessChip value={fi.result} />
-                      <StatusChip value={fi.status} />
-                    </span>
-                  ),
-                },
-                { key: 'opened', header: 'opened', priority: 3, render: (fi) => <span title={fi.occurrences > 1 ? `seen in ${plural(fi.occurrences, 'run')} since ${fi.first_run_id}` : fi.first_run_id}><Ts ts={fi.opened_at} date ms={false} /></span> },
-                { key: 'why', header: 'explanation', wrap: true, priority: 2, render: (fi) => <span className="clamp-2 small dim" title={fi.explanation}>{fi.explanation}</span> },
-              ]}
-              footer={
-                f.open_items.length > openShown.length ? (
-                  <tr>
-                    <td colSpan={6} className="dim">
-                      <Link to="/findings">{f.open_items.length - openShown.length} more open findings</Link>
-                    </td>
-                  </tr>
-                ) : undefined
-              }
-            />
-          )}
-        </Panel>
-
+        <div className="stack">
+          <Panel title="Open findings" sub={`${f.open} open · ${f.closed} closed`} right={<Link to="/findings">all findings</Link>} bodyClass="none">
+            {openShown.length === 0 ? (
+              <>
+                <Empty>
+                  No open findings — {plural(verified, 'finding')} verified{closed ? `, ${closed} closed (scope retired)` : ''}
+                  {f.recently_closed.length > 0 && <span className="faint"> · most recently closed, newest first:</span>}
+                </Empty>
+                {f.recently_closed.length > 0 && <ClosedTable rows={f.recently_closed} showScope showStatus={false} />}
+              </>
+            ) : (
+              <DataTable
+                rows={openShown}
+                rowKey={(fi) => fi.id}
+                columns={[
+                  { key: 'sev', header: 'severity', render: (fi) => <SeverityChip value={fi.severity} /> },
+                  { key: 'id', header: 'finding', render: (fi) => <Cell2 primary={<Link className="id" to={`/findings/${fi.id}`}>{fi.id}</Link>} secondary={fi.control_name} /> },
+                  { key: 'scope', header: 'scope', priority: 2, render: (fi) => <Cell2 primary={<span className="mono">{scopeOf(fi).main}</span>} secondary={scopeOf(fi).sub} /> },
+                  {
+                    key: 'result',
+                    header: 'result → status',
+                    render: (fi) => (
+                      <span className="row nowrap">
+                        <AssessChip value={fi.result} />
+                        <StatusChip value={fi.status} />
+                      </span>
+                    ),
+                  },
+                  { key: 'opened', header: 'opened', priority: 3, render: (fi) => <span title={fi.occurrences > 1 ? `seen in ${plural(fi.occurrences, 'run')} since ${fi.first_run_id}` : fi.first_run_id}><Ts ts={fi.opened_at} date ms={false} /></span> },
+                  { key: 'why', header: 'explanation', wrap: true, priority: 2, render: (fi) => <span className="clamp-2 small dim" title={fi.explanation}>{fi.explanation}</span> },
+                ]}
+                footer={
+                  f.open_items.length > openShown.length ? (
+                    <tr>
+                      <td colSpan={6} className="dim">
+                        <Link to="/findings">{f.open_items.length - openShown.length} more open findings</Link>
+                      </td>
+                    </tr>
+                  ) : undefined
+                }
+              />
+            )}
+          </Panel>
+          <div className="stack">
+            <Panel title="Assets with open findings" sub={plural(p.assets_with_open_findings.length, 'asset')} bodyClass="none">
+              {p.assets_with_open_findings.length === 0 ? (
+                <Empty>No assets carry an open finding</Empty>
+              ) : (
+                <DataTable
+                  compact
+                  rows={p.assets_with_open_findings}
+                  rowKey={(a) => a.asset}
+                  columns={[
+                    { key: 'asset', header: 'asset', className: 'mono strong', render: (a) => a.asset },
+                    { key: 'iface', header: 'interface', className: 'mono', render: (a) => a.interface ?? <span className="dim">—</span> },
+                    { key: 'n', header: 'findings', align: 'right', render: (a) => a.findings },
+                    { key: 'worst', header: 'worst', render: (a) => <SeverityChip value={a.worst} /> },
+                    { key: 'controls', header: 'controls', wrap: true, priority: 2, render: (a) => <span className="row">{a.controls.map((cid) => <Link key={cid} className="mono small" to={`/controls/${cid}`}>{cid}</Link>)}</span> },
+                  ]}
+                />
+              )}
+            </Panel>
+            <Panel title="Unverified assessments" sub="UNKNOWN and STALE results — never counted as a pass" bodyClass="none">
+              {p.unverified.length === 0 ? (
+                <Empty>Every assessment has a determinate result</Empty>
+              ) : (
+                <DataTable
+                  compact
+                  rows={p.unverified}
+                  rowKey={(u) => u.id}
+                  columns={[
+                    {
+                      key: 'scope',
+                      header: 'scope',
+                      render: (u) => (
+                        <Cell2
+                          primary={<span className="mono strong">{u.scope.id}</span>}
+                          secondary={
+                            <>
+                              <Link to={`/controls/${u.control_id}`}>{u.control_id}</Link>
+                              {u.scope.asset && u.scope.asset !== u.scope.id ? ` · ${u.scope.asset}` : ''}
+                            </>
+                          }
+                        />
+                      ),
+                    },
+                    { key: 'status', header: 'result', render: (u) => <AssessChip value={u.status} /> },
+                    { key: 'why', header: 'explanation', wrap: true, render: (u) => <span className="clamp-2 small" title={u.explanation}>{u.explanation}</span> },
+                  ]}
+                />
+              )}
+            </Panel>
+          </div>
+        </div>
         <Panel title="Control status" sub="pass · fail · unknown · stale" right={<Link to="/controls">all controls</Link>} bodyClass="flush" className="rail">
           {p.by_control.length === 0 ? (
             <Empty>No controls in the catalog</Empty>
@@ -257,58 +303,10 @@ export function Posture() {
         </Panel>
       </div>
 
-      <div className="grid grid-2">
-        <Panel title="Assets with open findings" sub={plural(p.assets_with_open_findings.length, 'asset')} bodyClass="none">
-          {p.assets_with_open_findings.length === 0 ? (
-            <Empty>No assets carry an open finding</Empty>
-          ) : (
-            <DataTable
-              compact
-              rows={p.assets_with_open_findings}
-              rowKey={(a) => a.asset}
-              columns={[
-                { key: 'asset', header: 'asset', className: 'mono strong', render: (a) => a.asset },
-                { key: 'iface', header: 'interface', className: 'mono', render: (a) => a.interface ?? <span className="dim">—</span> },
-                { key: 'n', header: 'findings', align: 'right', render: (a) => a.findings },
-                { key: 'worst', header: 'worst', render: (a) => <SeverityChip value={a.worst} /> },
-                { key: 'controls', header: 'controls', wrap: true, priority: 2, render: (a) => <span className="row">{a.controls.map((cid) => <Link key={cid} className="mono small" to={`/controls/${cid}`}>{cid}</Link>)}</span> },
-              ]}
-            />
-          )}
+      <div className="vz-grid c12">
+        <Panel title="Run ledger" sub="every assessment run, oldest first" right={run ? <span className="mono dim small">last {fmtTime(run.assessed_at, { ms: false })} UTC</span> : undefined}>
+          <RunLedger runs={p.recent_runs} />
         </Panel>
-        <Panel title="Unverified assessments" sub="UNKNOWN and STALE results — never counted as a pass" bodyClass="none">
-          {p.unverified.length === 0 ? (
-            <Empty>Every assessment has a determinate result</Empty>
-          ) : (
-            <DataTable
-              compact
-              rows={p.unverified}
-              rowKey={(u) => u.id}
-              columns={[
-                {
-                  key: 'scope',
-                  header: 'scope',
-                  render: (u) => (
-                    <Cell2
-                      primary={<span className="mono strong">{u.scope.id}</span>}
-                      secondary={
-                        <>
-                          <Link to={`/controls/${u.control_id}`}>{u.control_id}</Link>
-                          {u.scope.asset && u.scope.asset !== u.scope.id ? ` · ${u.scope.asset}` : ''}
-                        </>
-                      }
-                    />
-                  ),
-                },
-                { key: 'status', header: 'result', render: (u) => <AssessChip value={u.status} /> },
-                { key: 'why', header: 'explanation', wrap: true, render: (u) => <span className="clamp-2 small" title={u.explanation}>{u.explanation}</span> },
-              ]}
-            />
-          )}
-        </Panel>
-      </div>
-
-      <div className="grid grid-2">
         <Panel title="Assessment runs" sub={`${plural(p.runs, 'run')} recorded`} bodyClass="none">
           <DataTable
             compact
@@ -324,10 +322,11 @@ export function Posture() {
             ]}
           />
         </Panel>
-        <Panel title="Recently closed findings" sub="verification outcome from the reassessment that closed them" bodyClass="none">
-          <ClosedTable rows={f.recently_closed} />
-        </Panel>
       </div>
+
+      <Panel title="Recently closed findings" sub="verification outcome from the reassessment that closed them" bodyClass="none">
+        <ClosedTable rows={f.recently_closed} />
+      </Panel>
 
       <Panel
         title="NIST CSF 2.0 mapping"

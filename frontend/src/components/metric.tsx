@@ -59,3 +59,17 @@ export function Counts({ counts }: { counts: Partial<Record<AssessmentStatus, nu
 export function MetricBand({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`grid-metrics ${className}`}>{children}</div>
 }
+
+/** Swatches matching StatusBar, Counts and the posture charts. */
+export function StatusLegend() {
+  return (
+    <div className="legend">
+      {(['PASS', 'FAIL', 'UNKNOWN', 'STALE'] as const).map((s) => (
+        <span key={s}>
+          <span className={`sw st-${s}`} />
+          {s}
+        </span>
+      ))}
+    </div>
+  )
+}

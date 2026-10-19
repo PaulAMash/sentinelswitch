@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { kv } from '../lib/kv'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../lib/api'
 import { useApi } from '../lib/hooks'
 import { ErrorState, KV, Loading, Panel, Ts } from '../components/ui'
@@ -15,7 +15,8 @@ const INITIAL_CMD = 'show interfaces Gi1/0/23 switchport'
 
 export function SwitchPage() {
   const { data, error, reload } = useApi(endpoints.switch)
-  const [sel, setSel] = useState<string | null>('Gi1/0/23')
+  const [params] = useSearchParams()
+  const [sel, setSel] = useState<string | null>(params.get('port') ?? 'Gi1/0/23')
   const [initial, setInitial] = useState<{ cmd: string; out: string } | null | undefined>(undefined)
   useEffect(() => {
     endpoints
@@ -36,7 +37,7 @@ export function SwitchPage() {
         sub={`IOS ${data.ios_version} · uptime ${data.uptime} · management ${data.management_ip}`}
         info={<>Digital twin of the access switch. Select a port on the front panel (click, or Tab and arrow keys) for its state, intent and IOS output. The console sends the typed string unchanged to the twin; only <code>show</code> commands are accepted, enforced by the API.</>}
       >
-        <Chip kind="ok">{s.connected} connected</Chip>
+        <Chip kind="accent">{s.connected} connected</Chip>
         <Chip kind="info">{s.trunk} trunks</Chip>
         <Chip kind="neutral">
           {s.notconnect} notconnect · {s.disabled} shutdown

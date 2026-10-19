@@ -9,14 +9,14 @@
 .chip svg { width: 11px; height: 11px; flex: none; }
 .chip.mono { font-family: var(--font-mono); font-weight: 500; letter-spacing: 0; }
 .chip.caps { text-transform: uppercase; letter-spacing: 0.06em; }
-.chip.ok, .chip.PASS, .chip.pass, .chip.resolved, .chip.closed, .chip.verified, .chip.restored, .chip.authorized, .chip.contained-verified, .chip.online, .chip.approved { color: var(--ok-ink); background: var(--ok-dim); border-color: var(--ok-line); }
+.chip.ok, .chip.PASS, .chip.pass, .chip.resolved, .chip.verified, .chip.restored, .chip.authorized, .chip.contained-verified, .chip.approved { color: var(--ok-ink); background: var(--ok-dim); border-color: var(--ok-line); }
 .chip.outline-ok { color: var(--ok-ink); background: transparent; border-color: var(--ok-line); }
 .chip.danger, .chip.FAIL, .chip.fail, .chip.high, .chip.critical, .chip.contained, .chip.open, .chip.quarantined, .chip.failed, .chip.containment_failed, .chip.reopened, .chip.remediation_failed, .chip.automatic_containment, .chip.refused { color: var(--danger-ink); background: var(--danger-dim); border-color: var(--danger-line); }
 .chip.warn, .chip.STALE, .chip.medium, .chip.review, .chip.monitor, .chip.held, .chip.pending, .chip.manual_review, .chip.remediation_requested, .chip.remediated, .chip.applied, .chip.requested { color: var(--warn-ink); background: var(--warn-dim); border-color: var(--warn-line); }
 .chip.info, .chip.low, .chip.trunk, .chip.protected, .chip.accent { color: var(--info-ink); background: var(--info-dim); border-color: var(--info-line); }
 .chip.accent { color: var(--accent); background: var(--accent-dim); border-color: var(--accent-line); }
 .chip.withheld, .chip.rejected, .chip.declined { color: var(--withheld-ink); background: var(--withheld-dim); border-color: var(--withheld-line); }
-.chip.neutral, .chip.UNKNOWN, .chip.informational, .chip.correlated, .chip.analyst_approved, .chip.offline, .chip.not_applicable, .chip.monitor-only { color: var(--text-2); background: var(--surface-3); border-color: var(--line-2); }
+.chip.closed, .chip.online, .chip.neutral, .chip.UNKNOWN, .chip.informational, .chip.correlated, .chip.analyst_approved, .chip.offline, .chip.not_applicable, .chip.monitor-only { color: var(--text-2); background: var(--surface-3); border-color: var(--line-2); }
 .chip.RETIRED { color: var(--text-3); background: transparent; border-color: var(--line-2); border-style: dashed; }
 .chip.NOT_ASSESSED, .chip.outline { color: var(--text-4); background: transparent; border-color: var(--line-1); }
 .chip.source { font-family: var(--font-mono); font-weight: 500; color: var(--text-2); background: var(--surface-2); border-color: var(--line-2); }
@@ -66,10 +66,10 @@ a.id { color: var(--accent); }
 .tabs button.active, .tabs button[aria-selected="true"] { color: var(--text-1); border-bottom-color: var(--accent); }
 
 /* ---------------------------------------------------------------- panels */
-.panel { background: var(--surface-1); border: 1px solid var(--line-1); border-radius: var(--r-panel); min-width: 0; display: flex; flex-direction: column; }
+.panel { background: linear-gradient(180deg, var(--surface-1), rgba(14, 20, 28, 0.86)); border: 1px solid var(--line-1); border-radius: var(--r-panel); min-width: 0; display: flex; flex-direction: column; box-shadow: var(--edge-highlight); }
 .panel.inset { background: var(--surface-2); }
 .panel.rail { background: var(--bg-1); }
-.panel-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); min-height: 40px; padding: 6px var(--sp-4); border-bottom: 1px solid var(--line-1); }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); min-height: 42px; padding: 6px var(--sp-4); border-bottom: 1px solid var(--line-hair); }
 .panel-head h2 { font-size: var(--fs-lg); font-weight: 600; display: flex; align-items: baseline; gap: 8px; min-width: 0; flex-wrap: wrap; }
 .panel-head .sub { color: var(--text-3); font-size: var(--fs-sm); font-weight: 400; }
 .panel-head .right { display: flex; align-items: center; gap: var(--sp-2); flex: none; }
@@ -95,7 +95,7 @@ a.id { color: var(--accent); }
 .metric .ratio .den { color: var(--text-3); font-size: var(--fs-md); font-family: var(--font-mono); }
 .status-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--surface-3); gap: 1px; }
 .status-bar > span { display: block; height: 100%; }
-.status-bar .PASS { background: var(--chart-2); } .status-bar .FAIL { background: var(--chart-3); } .status-bar .UNKNOWN { background: var(--text-4); } .status-bar .STALE { background: var(--chart-4); }
+.status-bar .PASS { background: var(--chart-2); } .status-bar .FAIL { background: var(--sev-high); } .status-bar .UNKNOWN { background: var(--cat-3); } .status-bar .STALE { background: var(--sev-medium); }
 .status-bar.lg { height: 12px; border-radius: 6px; }
 .counts { display: inline-flex; gap: 4px; font-family: var(--font-mono); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
 .counts span { padding: 1px 5px; border-radius: 4px; background: var(--surface-3); min-width: 22px; text-align: center; color: var(--text-4); }
@@ -314,8 +314,8 @@ pre.term { border: 1px solid var(--line-1); }
 .port { cursor: pointer; }
 .port rect.body { fill: var(--bg-0); stroke: var(--line-2); stroke-width: 1; transition: filter var(--t-fast) var(--ease); }
 .port .slot { fill: var(--surface-3); }
-.port.connected rect.body { stroke: var(--chart-2); }
-.port.connected .led { fill: var(--ok); }
+.port.connected rect.body { stroke: var(--accent-line); }
+.port.connected .led { fill: var(--accent); }
 .port.notconnect .led { fill: var(--line-2); }
 .port.disabled rect.body { stroke: var(--line-1); stroke-dasharray: 2 2; }
 .port.disabled .led { fill: var(--surface-3); }
@@ -344,7 +344,7 @@ pre.term { border: 1px solid var(--line-1); }
 .chassis-led.ok { fill: var(--ok); } .chassis-led.accent { fill: var(--accent); }
 .port-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: var(--fs-xs); color: var(--text-2); }
 .port-legend .sw { display: inline-block; width: 12px; height: 10px; border-radius: 4px; border: 1.5px solid; margin-right: 6px; vertical-align: -1px; background: var(--bg-0); }
-.port-legend .sw.connected { border-color: var(--chart-2); } .port-legend .sw.trunk { border-color: var(--info); } .port-legend .sw.monitor { border-color: var(--accent); }
+.port-legend .sw.connected { border-color: var(--accent-line); } .port-legend .sw.trunk { border-color: var(--info); } .port-legend .sw.monitor { border-color: var(--accent); }
 .port-legend .sw.quarantined { border-color: var(--danger); } .port-legend .sw.held { border-color: var(--warn); } .port-legend .sw.notconnect { border-color: var(--line-2); } .port-legend .sw.disabled { border-color: var(--line-1); }
 
 /* ---------------------------------------------------------------- detection features, evidence */
@@ -412,3 +412,5 @@ details > summary { cursor: pointer; }
   .panel-head { flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; }
   .panel-head .right { flex: 1 1 100%; flex-wrap: wrap; justify-content: flex-start; }
 }
+
+.legend .sw.st-PASS { background: var(--chart-2); } .legend .sw.st-FAIL { background: var(--sev-high); } .legend .sw.st-UNKNOWN { background: var(--cat-3); } .legend .sw.st-STALE { background: var(--sev-medium); }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { kv, type KVRow } from '../lib/kv'
 import { Link, useParams } from 'react-router-dom'
 import { endpoints, type Authorization } from '../lib/api'
@@ -16,6 +16,8 @@ import { useToast } from '../components/toast'
 import { Timeline } from '../components/Timeline'
 import { Confidence, Features } from '../components/Features'
 import { fmtBytes, fmtSeconds, vlanName } from '../lib/format'
+import { MiniField } from '../components/signal/MiniField'
+import { ms } from '../lib/telemetry'
 
 type Tab = 'timeline' | 'detections' | 'decision' | 'evidence' | 'verify'
 const ANALYST = 'tlee'
@@ -24,6 +26,17 @@ const RESTORE_NOTE = 'Endpoint re-imaged and cleared by IT; returning to product
 export function IncidentDetail() {
   const { id = '' } = useParams()
   const { data, error, reload } = useApi(() => endpoints.incident(id), [id])
+  const { data: sw } = useApi(endpoints.switch)
+  const { data: devices } = useApi(endpoints.devices)
+  const { data: alerts } = useApi(() => endpoints.alerts('?limit=5000'))
+  const { data: incidents } = useApi(endpoints.incidents)
+  const { data: reviews } = useApi(endpoints.reviews)
+  const { data: meta } = useApi(endpoints.meta)
+  const fieldInputs = useMemo(
+    () => (sw && devices && alerts && incidents && reviews && data ? { sw, devices: devices.devices, unknown: devices.unknown, alerts, incidents, actions: data.actions, reviews } : null),
+    [sw, devices, alerts, incidents, reviews, data],
+  )
+  const dayWindow = useMemo(() => (meta ? { start: ms(meta.dataset.start), end: ms(meta.dataset.end) } : null), [meta])
   const toast = useToast()
   const [tab, setTab] = useState<Tab>('timeline')
   const [dialog, setDialog] = useState(false)
@@ -96,11 +109,21 @@ export function IncidentDetail() {
         <ResponseLedger incident={inc} detection={det} attribution={att} action={action} />
       </Panel>
 
-      {att && (
-        <Panel title="Attribution trace" sub="IP → DHCP binding → MAC → MAC table → port → VLAN → containment" right={<TraceLegend />}>
-          <Trace attribution={att} toVlan={action?.to_vlan} action={inc.action} toNote={toNote} />
+      <div className="vz-grid c21">
+        <Panel title="Position in the access layer" sub={`${inc.interface ?? 'port not recorded'} and every port it exchanged alert traffic with · dataset day`}>
+          {fieldInputs && dayWindow ? <MiniField inputs={fieldInputs} window={dayWindow} focus={inc.interface} caption={`${inc.interface} · ${inc.device ?? 'unknown device'}`} /> : <Loading rows={5} />}
         </Panel>
-      )}
+        {att ? (
+          <Panel title="Attribution trace" sub="source IP → containment target">
+            <TraceLegend />
+            <Trace attribution={att} toVlan={action?.to_vlan} action={inc.action} toNote={toNote} vertical />
+          </Panel>
+        ) : (
+          <Panel title="Attribution trace">
+            <div className="dim small">No attribution record is attached to this incident.</div>
+          </Panel>
+        )}
+      </div>
 
       <div className="inc-workspace">
         <div className="panel">

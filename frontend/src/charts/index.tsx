@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { useMedia } from '../lib/hooks'
 import { fmtBytes, fmtNum } from '../lib/format'
 
 /** Chart colours are read from the design tokens so SVG attributes stay in sync with the stylesheet. */
@@ -22,6 +23,8 @@ export function useChartTokens() {
       text2: token('--text-2', 'currentColor'),
       surface: token('--surface-1', 'transparent'),
       cursor: token('--accent-dim', 'transparent'),
+      accent: token('--accent', 'currentColor'),
+      sevLow: token('--sev-low', 'currentColor'),
     }),
     [],
   )
@@ -136,6 +139,48 @@ export function Legend({ items }: { items: [string, 'c1' | 'c2' | 'c3' | 'c4' | 
           {label}
         </span>
       ))}
+    </div>
+  )
+}
+
+/**
+ * SPAN traffic as two small multiples sharing the 15-minute time axis: connections or bytes (area,
+ * switchable) above, DNS queries (bars) below. Separate panels instead of a dual axis so neither
+ * series is rescaled against the other.
+ */
+export function TrafficStack({ data, metric = 'connections', height = 210 }: { data: { ts: string; connections: number; bytes: number; dns: number; hosts?: number }[]; metric?: 'bytes' | 'connections'; height?: number }) {
+  const t = useChartTokens()
+  const reduce = useMedia('(prefers-reduced-motion: reduce)')
+  const AX = { stroke: t.axis, fontSize: 11, fill: t.label }
+  const rows = data.map((d) => ({ ...d, label: d.ts.slice(11, 16) }))
+  const top = Math.round(height * 0.62)
+  const fmt = (v: number) => (metric === 'bytes' ? fmtBytes(v) : fmtNum(v))
+  return (
+    <div className="vz-traffic">
+      <ResponsiveContainer width="100%" height={top}>
+        <AreaChart data={rows} syncId="span-traffic" margin={{ top: 6, right: 8, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="span-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={t.accent} stopOpacity={0.28} />
+              <stop offset="100%" stopColor={t.accent} stopOpacity={0.01} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid stroke={t.grid} vertical={false} />
+          <XAxis dataKey="label" hide />
+          <YAxis tick={AX} tickLine={false} axisLine={false} width={58} tickFormatter={fmt} />
+          <Tooltip content={<Tip fmt={(v, k) => (k === 'bytes' ? fmtBytes(v) : fmtNum(v))} />} cursor={{ stroke: t.accent, strokeWidth: 1 }} />
+          <Area type="monotone" dataKey={metric} name={metric === 'bytes' ? 'bytes / 15 min' : 'connections / 15 min'} stroke={t.accent} strokeWidth={1.6} fill="url(#span-fill)" dot={false} activeDot={{ r: 3.5, stroke: t.surface, strokeWidth: 2 }} isAnimationActive={!reduce} animationDuration={700} />
+        </AreaChart>
+      </ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={height - top}>
+        <BarChart data={rows} syncId="span-traffic" margin={{ top: 4, right: 8, left: 0, bottom: 0 }} barCategoryGap={1}>
+          <CartesianGrid stroke={t.grid} vertical={false} />
+          <XAxis dataKey="label" tick={AX} tickLine={false} axisLine={{ stroke: t.axis }} interval={11} />
+          <YAxis tick={AX} tickLine={false} axisLine={false} width={58} allowDecimals={false} />
+          <Tooltip content={<Tip />} cursor={{ fill: t.cursor }} />
+          <Bar dataKey="dns" name="DNS queries / 15 min" fill={t.c5} isAnimationActive={!reduce} animationDuration={700} />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   )
 }

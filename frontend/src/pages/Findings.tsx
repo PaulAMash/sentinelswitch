@@ -12,6 +12,7 @@ import { ConfirmDialog } from '../components/dialog'
 import { useToast } from '../components/toast'
 import { fmtTime, sevRank, title, vlanName } from '../lib/format'
 import { EvidenceList, Freshness, ValueBlock, fmtInline } from './Controls'
+import { LifecycleStrip } from '../charts/viz'
 
 type RemediateResult = Awaited<ReturnType<typeof endpoints.remediate>>
 
@@ -45,6 +46,7 @@ function FindingList({ onOpen }: { onOpen: (id: string) => void }) {
   const [sev, setSev] = useState('all')
   const [status, setStatus] = useState('all')
   const { data, fresh, error } = useApi(() => endpoints.findings(openOnly ? '?open_only=true' : ''), [openOnly])
+  const { data: posture } = useApi(endpoints.posture)
   // Rows are only shown when they answer the current open-only/all question; while the new request is
   // in flight (or if it failed) the table shows a loading or error row instead of the previous result.
   const current = fresh ? data : null
@@ -92,6 +94,10 @@ function FindingList({ onOpen }: { onOpen: (id: string) => void }) {
           ))}
         </select>
       </PageHeader>
+
+      <Panel title="Lifecycle" sub="every finding ever recorded, by current state · findings are never deleted">
+        {posture ? <LifecycleStrip byStatus={posture.findings.by_status} /> : <Loading rows={2} />}
+      </Panel>
 
       <Panel title={openOnly ? 'Open findings' : 'All findings'} sub="open a row for evidence and remediation" bodyClass="none">
         <DataTable

@@ -267,16 +267,27 @@ assessment ids, finding ids and counts. See [docs/workflow-2.0.md](docs/workflow
 
 ## The dashboard
 
-The dashboard opens on the **Overview** (`/`): an attention strip (detections awaiting
-authorization, contained hosts, open findings, unverified assessments), the alert stream, the
-response ledger of recent containment actions, control status and telemetry freshness as of the last
-assessment run. The navigation is split into **Assurance** (Overview, Posture at `/posture`,
-Controls, Findings, Incidents, Reports) and **Operations** (Alerts, Assets, Switch, Authentication,
-Coverage, Drift, Evidence, Architecture); `/operations` redirects to `/`. Every number is derived from
-the seeded dataset and the live twin; views refresh over Server-Sent Events when the demo runs, a
-finding is remediated or containment is released. Consequential actions (authorize or decline
-containment, release containment, remediate, replay or reset the demo) confirm in a dialog that
-states what will change; the backend authorization and guard checks are unchanged.
+The dashboard opens on the **Overview** (`/`). A status rail states every headline number with its
+scope (DAY for the dataset day, NOW for the current state of the twin, RUN for the latest assessment).
+Below it, the **Network signal field** draws each of SW01's 50 interfaces as a hexagon, grouped into
+colonies by operational VLAN around the switch: fill shows alert activity in the selected time window,
+outlines show port state, rings show response state (contained, awaiting authorization, open
+incident), and arcs show source → destination pairs recorded in alerts. Selecting a port traces it
+through the switch tables (DHCP binding → MAC table → port → VLAN → inventory); selecting an event
+highlights the ports it involved. A brushable timeline sets the window and can replay the day's recorded
+alerts in time order. The layout is schematic, the background lattice is decorative, and nothing in the
+field is animated unless data or the user changed it; when containment moves a port to the quarantine
+VLAN, the hexagon travels to that colony and leaves its vacated slot outlined. Telemetry, response and
+assurance analytics follow (severity, sources, SPAN traffic and DNS, endpoint ranking, response
+outcomes per detection, ATT&CK technique tags, pipeline timing, control status, sensor freshness).
+
+The navigation is split into **Assurance** (Overview, Posture at `/posture`, Controls, Findings,
+Incidents, Reports) and **Operations** (Alerts, Assets, Switch, Authentication, Coverage, Drift,
+Evidence, Architecture); `/operations` redirects to `/`. Every number is derived from the seeded
+dataset and the live twin; views refresh over Server-Sent Events when the demo runs, a finding is
+remediated or containment is released. Consequential actions (authorize or decline containment,
+release containment, remediate, replay or reset the demo) confirm in a dialog that states what will
+change; the backend authorization and guard checks are unchanged.
 
 ![Overview](artifacts/sentinelswitch-2.0/screenshots/sentinelswitch-2.0-overview.png)
 
