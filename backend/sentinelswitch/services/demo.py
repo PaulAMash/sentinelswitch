@@ -50,6 +50,65 @@ def run_flagship(
     return result
 
 
+SCRIPTED_ANALYST = "tlee"
+SCRIPTED_CHANNEL = "scripted-demo"
+
+
+def apply_scripted_decisions(
+    store: Store, env: Environment, settings: Settings, *, on_event: Callable[[dict[str, Any]], None] | None = None
+) -> list[dict[str, Any]]:
+    """The demo replay's analyst. After the flagship incident, each open manual review whose containment
+    can execute is approved through the same approval service a person uses on the Incidents page:
+    an analyst authorization record (marked `channel: scripted-demo`), execution through the containment
+    controller and adapter, the switch read-back, an incident and its evidence bundle, then an assessment
+    run. Policy is not changed: the guard that withheld automation stays on the record and the approval
+    says it was acknowledged. Reviews that cannot execute (protected port, trunk, non-containable class)
+    stay open for a person.
+    """
+    from sentinelswitch.assurance.engine import AssessmentEngine
+
+    from . import response as response_service
+
+    decisions: list[dict[str, Any]] = []
+    for review in [r for r in store.reviews() if r.get("status") == "review"]:
+        guards = (review.get("decision") or {}).get("guards_triggered") or []
+        note = (
+            "Scripted demo decision: detection evidence reviewed and containment approved"
+            + (f"; the policy guard that withheld automation ({', '.join(guards)}) is acknowledged" if guards else "")
+            + "."
+        )
+        try:
+            result = response_service.approve_review(
+                store,
+                env,
+                settings,
+                review["detection_id"],
+                actor=SCRIPTED_ANALYST,
+                note=note,
+                channel=SCRIPTED_CHANNEL,
+            )
+        except RuntimeError:
+            continue
+        result["assessment_run"] = AssessmentEngine(env, store, settings.incidents_dir).run(
+            f"post-containment-{result['incident']['id']}", actor=SCRIPTED_ANALYST
+        )
+        decisions.append(result)
+        if on_event:
+            on_event(
+                {
+                    "type": "incident",
+                    "payload": {"id": result["incident"]["id"], "status": result["incident"]["status"]},
+                }
+            )
+    status = demo_status(store)
+    status["scripted_decisions"] = [
+        {"review": d["review"]["detection_id"], "incident": d["incident"]["id"], "actor": SCRIPTED_ANALYST}
+        for d in decisions
+    ]
+    store.kv_set("demo", status)
+    return decisions
+
+
 def _persist(store: Store, result: RunResult, on_event: Callable[[dict[str, Any]], None] | None) -> None:
     # Alerts from the flagship telemetry
     existing = store.alerts(limit=100000)

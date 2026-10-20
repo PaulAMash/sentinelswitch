@@ -45,6 +45,7 @@ export function Overview() {
   const toast = useToast()
   const [metric, setMetric] = useState<'bytes' | 'connections'>('connections')
   const [dialog, setDialog] = useState<'replay' | 'reset' | null>(null)
+  const [demoAnalyst, setDemoAnalyst] = useState(true)
   const [busy, setBusy] = useState(false)
   const [dlgError, setDlgError] = useState<string | null>(null)
 
@@ -72,8 +73,9 @@ export function Overview() {
     setDlgError(null)
     try {
       if (dialog === 'replay') {
-        const r = await endpoints.demoRun()
-        toast.push({ title: `Replayed ${r.incident.id}`, detail: `status ${r.incident.status}`, tone: 'ok' })
+        const r = await endpoints.demoRun({ scripted_analyst: demoAnalyst })
+        const decided = r.analyst_decisions.map((d) => d.incident).join(', ')
+        toast.push({ title: `Replayed ${r.incident.id}`, detail: `status ${r.incident.status}${decided ? ` · demo analyst approved ${decided}` : ''}`, tone: 'ok' })
       } else {
         await endpoints.demoReset()
         toast.push({ title: 'Reset to baseline', detail: 'dataset re-seeded; incident and findings history discarded', tone: 'warn' })
@@ -392,6 +394,16 @@ export function Overview() {
         tone="consequential"
         title="Replay the flagship incident"
         summary={<>Replays {data.demo.flagship_incident ?? 'the flagship incident'} through the real detection, attribution and containment pipeline. Gi1/0/23 will be quarantined to VLAN 50 if policy authorizes it, and an assessment run follows.</>}
+        option={{
+          label: 'Let the demo analyst decide the open review',
+          hint: (
+            <>
+              Two minutes after the flagship containment, analyst <span className="mono">tlee</span> approves each open manual review through the same approval workflow as the Incidents page (authorization, switch read-back, incident, evidence), recorded as a scripted demo decision. Policy guards stay on the record. Untick to decide it yourself on Incidents.
+            </>
+          ),
+          checked: demoAnalyst,
+          onChange: setDemoAnalyst,
+        }}
         confirmLabel="Replay incident"
         busy={busy}
         error={dlgError}

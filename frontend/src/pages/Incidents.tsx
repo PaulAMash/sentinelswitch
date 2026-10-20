@@ -4,11 +4,11 @@ import { endpoints, type ContainmentAction, type Incident, type Review } from '.
 import { useApi } from '../lib/hooks'
 import { ErrorState, Loading, Panel, Ts } from '../components/ui'
 import { PageHeader } from '../components/layout'
-import { Chip, Id, ResponseChip, SeverityChip, StatusChip, responseStateOf } from '../components/status'
+import { Chip, Id, ResponseChip, ScriptedTag, SeverityChip, StatusChip, responseStateOf } from '../components/status'
 import { DataTable, Cell2 } from '../components/table'
 import { ConfirmDialog } from '../components/dialog'
 import { useToast } from '../components/toast'
-import { vlanName } from '../lib/format'
+import { isScripted, vlanName } from '../lib/format'
 
 const ANALYST = 'tlee'
 const APPROVE_NOTE = 'approved after analyst review'
@@ -66,6 +66,7 @@ export function Incidents() {
 
   const queue = reviews ?? []
   const waiting = queue.filter((r) => r.status === 'review').length
+  const scripted = queue.filter((r) => isScripted(r.authorization))
   // latest action per incident, preferring the one that reached verification/restore
   const actionFor = new Map<string, ContainmentAction>()
   for (const a of overview?.containment_activity ?? []) {
@@ -85,6 +86,15 @@ export function Incidents() {
       />
 
       <Panel title={waiting ? 'Awaiting authorization' : 'Manual review queue'} sub="detections between the review and automatic thresholds" right={waiting ? <Chip kind="pending">{waiting} waiting</Chip> : undefined} bodyClass="none">
+        {scripted.length > 0 && (
+          <div className="queue-note" role="note">
+            <ScriptedTag />
+            <span>
+              The demo replay’s analyst ({scripted[0].authorization?.authorized_by}) approved {scripted.map((r) => r.title).join(', ')} through this same approval workflow, so its quarantine plays in the{' '}
+              <Link to="/">signal field</Link>. The policy guard that withheld automation stays on the record. To make this decision yourself, reset to baseline on the Overview and replay with the demo analyst switched off.
+            </span>
+          </div>
+        )}
         <DataTable
           cards
           rows={reviews}
@@ -126,7 +136,17 @@ export function Incidents() {
               render: (r) => (
                 <Cell2
                   primary={<ResponseChip state={responseStateOf(null, null, r, busy === r.detection_id)} />}
-                  secondary={r.authorization ? `${r.authorization.mode}${r.authorization.authorized_by ? ` · ${r.authorization.authorized_by}` : ''}` : r.closed_at ? `closed by ${r.closed_by}` : undefined}
+                  secondary={
+                    r.authorization ? (
+                      <span className="auth-by">
+                        {r.authorization.mode}
+                        {r.authorization.authorized_by ? ` · ${r.authorization.authorized_by}` : ''}
+                        {isScripted(r.authorization) && <ScriptedTag />}
+                      </span>
+                    ) : r.closed_at ? (
+                      `closed by ${r.closed_by}`
+                    ) : undefined
+                  }
                 />
               ),
             },

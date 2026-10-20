@@ -85,6 +85,9 @@ def start_server(port: int, db: Path) -> subprocess.Popen:
         SENTINEL_ARTIFACTS_DIR=str(db.parent / "artifacts"),
         SENTINEL_AUTO_SEED="1",
         SENTINEL_AUTO_DEMO="1",
+        # keep the manual review open so its approval dialog can be captured; capture_review_dialog then
+        # replays with the scripted demo analyst, which is what the hosted demo shows
+        SENTINEL_DEMO_ANALYST="0",
         SENTINEL_PORT=str(port),
     )
     proc = subprocess.Popen(
@@ -232,10 +235,39 @@ def _get(base: str, path: str) -> dict:
         return json.loads(r.read().decode())
 
 
+def capture_review_dialog(base: str) -> None:
+    """The analyst authorization dialog for the detection policy routed to manual review, captured while
+    the review is still open; then reset and replay with the scripted demo analyst (the hosted state),
+    which the remaining captures show."""
+    from playwright.sync_api import sync_playwright
+
+    out = ARTIFACTS / "screenshots"
+    out.mkdir(parents=True, exist_ok=True)
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        ctx = browser.new_context(viewport={"width": 1600, "height": 1000}, device_scale_factor=2, color_scheme="dark")
+        page = ctx.new_page()
+        page.goto(f"{base}/incidents", wait_until="networkidle")
+        page.wait_for_selector(".content", timeout=15000)
+        approve = page.get_by_role("button", name="Approve containment")
+        if approve.count():
+            approve.first.click()
+            page.wait_for_selector("dialog.confirm[open]", timeout=5000)
+            page.wait_for_timeout(400)
+            page.screenshot(path=str(out / "sentinelswitch-2.0-review-dialog.png"), full_page=False)
+            page.keyboard.press("Escape")
+            print("artifact review-dialog")
+        ctx.close()
+    _post(base, "/api/demo/reset")
+    run = _post(base, "/api/demo/run", {"scripted_analyst": True})
+    print("replayed with the scripted demo analyst:", [d["incident"] for d in run.get("analyst_decisions", [])])
+
+
 def capture_2(base: str) -> None:
     """SentinelSwitch 2.0 artifact screenshots, captured from the real dashboard at two workflow stages:
-    (1) after the flagship incident was contained (open findings, active incident, pending analyst decision);
-    (2) after analyst decision, remediation, restore and report generation (verified findings, recovery)."""
+    (1) after the flagship incident was contained and the scripted demo analyst approved the open review
+        (open findings, active incidents, as the hosted demo shows);
+    (2) after remediation, restore and report generation (verified findings, recovery)."""
     from playwright.sync_api import sync_playwright
 
     out = ARTIFACTS / "screenshots"
@@ -247,7 +279,7 @@ def capture_2(base: str) -> None:
         ("/findings", "sentinelswitch-2.0-findings-open"),
         ("/controls", "sentinelswitch-2.0-controls"),
     ]
-    # stage 1: the temporary server already applied the flagship incident (SENTINEL_AUTO_DEMO=1)
+    # stage 1: the flagship incident and the scripted analyst decision are applied (capture_review_dialog)
     with sync_playwright() as p:
         browser = p.chromium.launch()
         ctx = browser.new_context(viewport={"width": 1600, "height": 1000}, device_scale_factor=2, color_scheme="dark")
@@ -260,17 +292,6 @@ def capture_2(base: str) -> None:
             page.screenshot(path=str(out / f"{fname}.png"), full_page=False)
             page.screenshot(path=str(out / f"{fname}-full.png"), full_page=True)
             print("artifact", fname)
-        # the analyst authorization dialog for the detection policy routed to manual review
-        page.goto(f"{base}/incidents", wait_until="networkidle")
-        page.wait_for_selector(".content", timeout=15000)
-        approve = page.get_by_role("button", name="Approve containment")
-        if approve.count():
-            approve.first.click()
-            page.wait_for_selector("dialog.confirm[open]", timeout=5000)
-            page.wait_for_timeout(400)
-            page.screenshot(path=str(out / "sentinelswitch-2.0-review-dialog.png"), full_page=False)
-            page.keyboard.press("Escape")
-            print("artifact review-dialog")
         # stage 2: drive the rest of the workflow through the API
         reviews = _get(base, "/api/reviews")
         for r in reviews:
@@ -342,6 +363,7 @@ def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="sentinel-shots-"))
     proc = start_server(port, tmp / "shots.db")
     try:
+        capture_review_dialog(f"http://127.0.0.1:{port}")
         if not args.only_2:
             capture(f"http://127.0.0.1:{port}")
         if not args.skip_2:

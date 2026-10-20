@@ -21,6 +21,8 @@ class Settings:
     frontend_dist: Path = Path(os.environ.get("SENTINEL_FRONTEND_DIST", str(ROOT / "frontend" / "dist")))
     auto_seed: bool = os.environ.get("SENTINEL_AUTO_SEED", "1") == "1"
     auto_demo: bool = os.environ.get("SENTINEL_AUTO_DEMO", "0") == "1"
+    # the demo replay also plays the analyst: it approves open manual reviews (recorded as a scripted decision)
+    demo_analyst: bool = os.environ.get("SENTINEL_DEMO_ANALYST", "1") == "1"
     cors_origins: tuple[str, ...] = tuple(
         o for o in os.environ.get("SENTINEL_CORS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o
     )

@@ -20,6 +20,8 @@ export interface DemoStatus {
   flagship_incident: string | null
   ran_at: string | null
   checks?: Record<string, boolean>
+  /** reviews the demo replay's scripted analyst approved, and the incidents they opened */
+  scripted_decisions?: { review: string; incident: string; actor: string }[]
 }
 
 export interface Alert {
@@ -669,6 +671,8 @@ export interface Authorization {
   guards: string[]
   action: string
   note: string | null
+  /** how a non-console decision was made, e.g. `scripted-demo` for the demo replay's analyst */
+  channel?: string
 }
 
 export interface ReportInfo {
@@ -752,7 +756,8 @@ export const endpoints = {
   rules: () => api<RuleCatalog>('/api/rules'),
   about: () => api<About>('/api/about'),
   demoStatus: () => api<DemoStatus>('/api/demo/status'),
-  demoRun: () => api<{ incident: Incident; metrics: Record<string, unknown>; checks: Record<string, boolean>; timeline: TimelineEntry[] }>('/api/demo/run', { method: 'POST' }),
+  demoRun: (body: { scripted_analyst?: boolean } = {}) =>
+    api<{ incident: Incident; metrics: Record<string, unknown>; checks: Record<string, boolean>; timeline: TimelineEntry[]; analyst_decisions: { review: string; incident: string; action: string; authorization: Authorization }[] }>('/api/demo/run', { method: 'POST', body: JSON.stringify(body) }),
   demoReset: () => api<unknown>('/api/demo/reset', { method: 'POST' }),
   // SentinelSwitch 2.0
   posture: () => api<Posture>('/api/posture'),

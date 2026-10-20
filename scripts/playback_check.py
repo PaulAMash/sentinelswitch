@@ -102,7 +102,7 @@ def run(base: str) -> None:
             rq > expected * 2 and "quiet" in sub(),
             f"{rq:.0f} sim-min/s ({sub()})",
         )
-        from_end(1)  # 21:00, before the flagship containment at 21:14:41
+        from_end(1)  # 15 minutes before the end of the record: before the flagship containment at 21:14:41
         page.keyboard.press(" ")
         page.wait_for_function("document.querySelector('.pb-time').textContent >= '21:14:30'", timeout=20000)
         a = secs(clock())
@@ -124,6 +124,14 @@ def run(base: str) -> None:
             "end of record holds on the quarantine",
             "quarantine" in head.lower() and still and clock() == held_at,
             f"{head} at {held_at}",
+        )
+        # the demo replay's analyst approved the open review, so its quarantine plays too (startup default)
+        chips = page.evaluate("[...document.querySelectorAll('.cs-chip')].map(c => c.textContent)")
+        scripted = page.evaluate("document.querySelector('.cs-facts')?.parentElement.textContent || ''")
+        check(
+            "the demo analyst's approved quarantine plays",
+            sum("quarantine" in c for c in chips) == 2 and "scripted demo" in scripted,
+            f"{len(chips)} containment actions; quarantines: {[c for c in chips if 'quarantine' in c]}",
         )
         page.locator(".cs-chip").first.click()
         page.wait_for_timeout(300)

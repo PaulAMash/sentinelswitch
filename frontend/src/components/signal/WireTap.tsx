@@ -13,6 +13,8 @@ export interface WireTapProps {
   alertT: Float64Array
   names: Map<string, string>
   families: Set<Family>
+  /** the switch clock: lines recorded after it are not replayed */
+  until?: number
 }
 
 /**
@@ -76,7 +78,8 @@ export function WireTap(p: WireTapProps) {
       }
       last = now
       lastPos = pos
-      const { wire, alerts, alertT, names, families } = props.current
+      const { wire, alerts, alertT, names, families, until } = props.current
+      pos = Math.min(pos, until ?? Infinity)
       seen.conn = fill(connRef.current, connLines(wire, pos, ROWS, names, families), force ? new Set() : seen.conn)
       seen.ev = fill(evRef.current, eventLines(wire, alerts, alertT, pos, ROWS), force ? new Set() : seen.ev)
       const perMin = upper(wire.t, pos) - upper(wire.t, pos - 60_000)

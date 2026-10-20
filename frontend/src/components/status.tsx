@@ -119,3 +119,12 @@ export function responseLabel(state: ResponseState): string {
 export function remediationLabel(f: Finding): string {
   return f.remediation.status.replace(/_/g, ' ')
 }
+
+/** Marks a decision the demo replay's scripted analyst made through the normal approval workflow. */
+export function ScriptedTag() {
+  return (
+    <Chip kind="scripted" title="Made by the demo replay's scripted analyst through the same approval workflow as the Incidents page, and recorded as such">
+      scripted demo
+    </Chip>
+  )
+}

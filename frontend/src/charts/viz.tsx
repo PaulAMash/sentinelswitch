@@ -444,7 +444,7 @@ export function RunLedger({ runs }: { runs: AssessmentRun[] }) {
   const max = Math.max(...ordered.map((r) => r.assessments))
   return (
     <div className="vz-runs">
-      <ol>
+      <ol className="scroll-x">
         {ordered.map((r, i) => {
           const c = r.counts
           const nonpass = (c.FAIL ?? 0) + (c.UNKNOWN ?? 0) + (c.STALE ?? 0)

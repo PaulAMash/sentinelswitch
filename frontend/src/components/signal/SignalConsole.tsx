@@ -132,8 +132,8 @@ export function SignalConsole(p: SignalConsoleProps) {
   }, [view])
 
   const win = pb.window ?? p.domain
-  // windows end on the 15-minute grid at the recorded end, like the presets: nothing is recorded later
-  const limit = Math.min(p.domain.end, p.domain.start + Math.ceil((p.recordedEnd - p.domain.start) / BIN) * BIN)
+  // windows end at the first whole minute after the recorded end, like the presets: nothing is recorded later
+  const limit = Math.min(p.domain.end, p.domain.start + Math.ceil((p.recordedEnd - p.domain.start) / 60_000) * 60_000)
   const t = pb.ready ? pb.t : win.end
   const recentMs = recentSpan(win)
   const filter: AlertFilter = useMemo(() => ({ severities: sevs, sources: srcs }), [sevs, srcs])
@@ -343,7 +343,7 @@ export function SignalConsole(p: SignalConsoleProps) {
                 onHoverNode={setHover}
                 onFocusCluster={setFocus}
               />
-              {wire && !reduce && <FlowCanvas model={model} wire={wire} alerts={alertsAsc} families={fams} actions={p.inputs.actions} />}
+              {wire && !reduce && <FlowCanvas model={model} wire={wire} alerts={alertsAsc} families={fams} actions={p.inputs.actions} until={p.recordedEnd} />}
               </div>
               <div className="sig-frame bl" aria-live="polite">
                 {hovered ? describeNode(hovered) : focus ? `focus · ${model.clusters.find((c) => c.id === focus)?.title ?? ''} — select the label again to clear` : 'hover or tab to a port · arrows move · Enter selects · Esc clears'}
@@ -389,7 +389,7 @@ export function SignalConsole(p: SignalConsoleProps) {
             </div>
           )}
           <ContainmentStrip windows={cwin} t={t} byId={byId} incidents={p.inputs.incidents} coverage={p.inputs.coverage} wire={wire} />
-          {wire && <WireTap wire={wire} alerts={alertsAsc} alertT={alertT} names={names} families={fams} />}
+          {wire && <WireTap wire={wire} alerts={alertsAsc} alertT={alertT} names={names} families={fams} until={p.recordedEnd} />}
           <div className="sig-transport">
         <PlaybackBar s={pb} disabled={!hasData} note={!hasData ? 'no recorded alerts in the dataset day' : undefined} />
         <Scrubber

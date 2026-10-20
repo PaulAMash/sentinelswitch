@@ -151,9 +151,9 @@ if (typeof document !== 'undefined') {
 }
 
 function presetWindow(preset: WindowPreset, domain: Window, end: number): Window {
-  // windows end on the 15-minute grid the timeline uses
-  const grid = 15 * 60_000
-  const e = Math.min(domain.end, Math.max(domain.start + grid, domain.start + Math.ceil((end - domain.start) / grid) * grid))
+  // windows end at the first whole minute after the last record, so the replay never runs on past what was recorded
+  const grid = 60_000
+  const e = Math.min(domain.end, Math.max(domain.start + 15 * grid, domain.start + Math.ceil((end - domain.start) / grid) * grid))
   if (preset === '4h') return { start: Math.max(domain.start, e - 4 * 3600_000), end: e }
   if (preset === '1h') return { start: Math.max(domain.start, e - 3600_000), end: e }
   return { start: domain.start, end: e }

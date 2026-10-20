@@ -481,22 +481,37 @@ def demo_status(request: Request) -> dict[str, Any]:
     return demo_service.demo_status(store)
 
 
+class DemoRunBody(BaseModel):
+    # None follows SENTINEL_DEMO_ANALYST (on by default); false leaves open reviews for a person to decide
+    scripted_analyst: bool | None = None
+
+
 @router.post("/demo/run")
 @serialized
-def demo_run(request: Request) -> dict[str, Any]:
+def demo_run(request: Request, body: DemoRunBody | None = None) -> dict[str, Any]:
     store, env, settings = _ctx(request)
+    publish = lambda e: bus.publish(e["type"], e["payload"])  # noqa: E731
     try:
-        result = demo_service.run_flagship(
-            store, env, settings, on_event=lambda e: bus.publish(e["type"], e["payload"])
-        )
+        result = demo_service.run_flagship(store, env, settings, on_event=publish)
     except RuntimeError as exc:
         raise HTTPException(409, str(exc)) from None
+    scripted = settings.demo_analyst if body is None or body.scripted_analyst is None else body.scripted_analyst
+    decisions = demo_service.apply_scripted_decisions(store, env, settings, on_event=publish) if scripted else []
     bus.publish("state", {"reason": "demo"})
     return {
         "incident": result.incident,
         "metrics": result.metrics,
         "checks": result.checks,
         "timeline": result.timeline,
+        "analyst_decisions": [
+            {
+                "review": d["review"]["detection_id"],
+                "incident": d["incident"]["id"],
+                "action": d["action"]["status"],
+                "authorization": d["review"]["authorization"],
+            }
+            for d in decisions
+        ],
     }
 
 

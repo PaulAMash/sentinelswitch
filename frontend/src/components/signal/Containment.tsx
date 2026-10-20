@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { AssessmentStatus, Incident } from '../../lib/api'
-import { vlanName } from '../../lib/format'
+import { authLabel, vlanName } from '../../lib/format'
 import { playback } from '../../lib/playback'
 import { upper, wireClock, type Wire } from '../../lib/wire'
 import type { ContainmentWindow, FieldNode } from './model'
@@ -111,7 +111,7 @@ export function ContainmentStrip({ windows, t, byId, incidents, coverage, wire }
         </div>
         <div className="cs-line cs-facts">
           <span>
-            <i>authorized</i> {auth ? `${auth.mode}${auth.authorized_by ? ` · ${auth.authorized_by}` : ''}` : 'not recorded'}
+            <i>authorized</i> {authLabel(auth)}
           </span>
           <span title={a.verification?.expected ? `read-back: ${a.verification.expected}` : undefined}>
             <i>verified</i> {verified ? `${wireClock(pick.verified!)} · ${failed ? 'read-back mismatch' : `read-back “${a.verification?.expected ?? 'matched'}”`}` : 'not yet at this moment'}
@@ -127,8 +127,8 @@ export function ContainmentStrip({ windows, t, byId, incidents, coverage, wire }
         </div>
         {blind && (
           <div className="cs-line cs-notes">
-            <span className="cs-warn" title={`VLAN ${a.to_vlan} is not in the SPAN session (sensor coverage FAIL), so the host’s traffic after the move is not recorded`}>
-              VLAN {a.to_vlan} not mirrored to the sensor: traffic after the move is unrecorded
+            <span className="cs-warn" title={`The sensor-coverage assessment for VLAN ${a.to_vlan} is FAIL: the VLAN is not a source of the SPAN session, so the sensor cannot observe the host after the move`}>
+              VLAN {a.to_vlan} is not mirrored to the sensor (sensor coverage FAIL)
             </span>
           </div>
         )}

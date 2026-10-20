@@ -34,8 +34,9 @@ def test_switch_endpoints(api_client):
 
 def test_demo_run_restore_reset(api_client):
     assert api_client.get("/api/demo/status").json()["stage"] == "baseline"
-    r = api_client.post("/api/demo/run")
-    assert r.status_code == 200
+    # the flagship incident on its own: the scripted demo analyst is switched off for this run
+    r = api_client.post("/api/demo/run", json={"scripted_analyst": False})
+    assert r.status_code == 200 and r.json()["analyst_decisions"] == []
     body = r.json()
     assert body["incident"]["id"] == "INC-2026-0042" and body["checks"] == {
         "detect": True,

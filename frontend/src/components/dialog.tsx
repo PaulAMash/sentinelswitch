@@ -11,6 +11,8 @@ export interface ConfirmDialogProps {
   note?: { label: string; value: string; onChange: (v: string) => void }
   /** shown only when the request records an actor (plan guardrail 7) */
   actor?: string | null
+  /** one opt-in or opt-out that changes what the request does, stated in full */
+  option?: { label: ReactNode; hint?: ReactNode; checked: boolean; onChange: (v: boolean) => void }
   confirmLabel: string
   busy?: boolean
   error?: string | null
@@ -62,6 +64,15 @@ export function ConfirmDialog(p: ConfirmDialogProps) {
           <label className="field">
             {p.note.label}
             <textarea ref={noteRef} value={p.note.value} onChange={(e) => p.note?.onChange(e.target.value)} rows={2} disabled={p.busy} />
+          </label>
+        )}
+        {p.option && (
+          <label className="dlg-option">
+            <input type="checkbox" checked={p.option.checked} onChange={(e) => p.option?.onChange(e.target.checked)} disabled={p.busy} />
+            <span>
+              <span className="dlg-option-label">{p.option.label}</span>
+              {p.option.hint && <span className="dlg-option-hint">{p.option.hint}</span>}
+            </span>
           </label>
         )}
         {p.actor && <div className="actor">Recorded as analyst <span className="mono">{p.actor}</span> (demo identity, no sign-in).</div>}

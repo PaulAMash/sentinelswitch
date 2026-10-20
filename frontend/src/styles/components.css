@@ -15,6 +15,7 @@
 .chip.info, .chip.low, .chip.trunk, .chip.protected, .chip.accent { color: var(--info-ink); background: var(--info-dim); border-color: var(--info-line); }
 .chip.accent { color: var(--accent); background: var(--accent-dim); border-color: var(--accent-line); }
 .chip.withheld, .chip.rejected, .chip.declined { color: var(--withheld-ink); background: var(--withheld-dim); border-color: var(--withheld-line); }
+.chip.scripted { color: var(--accent-strong); background: var(--accent-faint); border-color: var(--accent-line); border-style: dashed; }
 .chip.closed, .chip.online, .chip.neutral, .chip.UNKNOWN, .chip.informational, .chip.correlated, .chip.analyst_approved, .chip.offline, .chip.not_applicable, .chip.monitor-only { color: var(--text-2); background: var(--surface-3); border-color: var(--line-2); }
 .chip.RETIRED { color: var(--text-3); background: transparent; border-color: var(--line-2); border-style: dashed; }
 .chip.NOT_ASSESSED, .chip.outline { color: var(--text-4); background: transparent; border-color: var(--line-1); }
@@ -488,3 +489,8 @@ table.data tbody tr:not(.state-row) { animation: row-in 420ms var(--ease-out) bo
 .port.pulse .led.act { animation: led-pulse 600ms var(--ease) 1; }
 @keyframes led-blink { 50% { opacity: 0.18; } }
 .led-note { margin: 6px 0 0; }
+/* confirm dialog: one stated option */
+.dlg-option { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: var(--r-panel); background: var(--surface-2); cursor: pointer; }
+.dlg-option input { margin-top: 3px; accent-color: var(--accent); flex: none; }
+.dlg-option-label { display: block; color: var(--text-1); font-size: var(--fs-md); font-weight: 600; }
+.dlg-option-hint { display: block; margin-top: 3px; color: var(--text-3); font-size: var(--fs-sm); line-height: 1.5; }

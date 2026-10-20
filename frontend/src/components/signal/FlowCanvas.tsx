@@ -66,6 +66,8 @@ export interface FlowCanvasProps {
   hosts?: Set<string>
   /** recorded containment actions: a lock-down wave when one is applied, a green wave when it is restored */
   actions?: ContainmentAction[]
+  /** the switch clock: telemetry recorded after it is not replayed */
+  until?: number
 }
 
 function cssColor(name: string, fallback: string): string {
@@ -169,8 +171,10 @@ export function FlowCanvas(p: FlowCanvasProps) {
       for (let k = 0; k < 3; k++) rings.push({ x: pt.x, y: pt.y, born: clock + k * 380, dur: 2600, color, r0: HEX * 1.1, r1: HEX * (6 + k * 1.5), w: 3 - k * 0.6 })
     }
 
-    const spawn = (t0: number, t1: number) => {
+    const spawn = (t0: number, tEnd: number) => {
       const { wire, alerts, families } = props.current
+      const t1 = Math.min(tEnd, props.current.until ?? Infinity)
+      if (t1 <= t0) return
       const g = geomRef.current
       const core = g.core
       const i0 = upper(wire.t, t0)

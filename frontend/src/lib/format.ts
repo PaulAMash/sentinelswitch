@@ -53,3 +53,14 @@ export function vlanName(v: number | null | undefined): string {
   if (v === null || v === undefined) return '—'
   return names[v] ? `${v} ${names[v]}` : String(v)
 }
+
+/** True when an analyst authorization was made by the demo replay's scripted analyst, not at the console. */
+export function isScripted(a: { channel?: string } | null | undefined): boolean {
+  return a?.channel === 'scripted-demo'
+}
+
+/** "analyst · tlee" or "automatic · policy-engine", with the scripted-demo channel when it applies. */
+export function authLabel(a: { mode: string; authorized_by?: string | null; channel?: string } | null | undefined): string {
+  if (!a) return 'not recorded'
+  return `${a.mode}${a.authorized_by ? ` · ${a.authorized_by}` : ''}${isScripted(a) ? ' · scripted demo' : ''}`
+}

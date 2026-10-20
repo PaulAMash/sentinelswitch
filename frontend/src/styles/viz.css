@@ -187,7 +187,7 @@ a.vz-bar-row:hover .lb .clip { color: var(--accent-strong); }
 .vz-runs .seg.UNKNOWN { background: var(--cat-3); }
 .vz-runs .seg.STALE { background: var(--sev-medium); }
 .vz-runs .np { font-size: var(--fs-xs); color: var(--text-2); }
-.vz-runs .tg { font-size: var(--fs-xs); color: var(--text-2); white-space: nowrap; }
+.vz-runs .tg { font-size: var(--fs-xs); color: var(--text-2); max-width: 132px; text-align: center; overflow-wrap: anywhere; line-height: 1.3; }
 .vz-runs .tm { font-size: var(--fs-xs); color: var(--text-4); white-space: nowrap; }
 
 /* ---------------------------------------------------------------- findings lifecycle */

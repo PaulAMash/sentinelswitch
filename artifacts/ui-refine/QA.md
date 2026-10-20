@@ -196,8 +196,8 @@ The quarantine is the most important outcome in the replay but sat in the last s
   containment action of the window as a chip coloured by its state at the playhead (to come, holding,
   restored); a chip replays from 20 s before its action. The detail lines give port, endpoint, VLAN
   move, authorization, switch read-back, time held or restore, connections from the host in the minute
-  before, and for a quarantine into a VLAN whose sensor-coverage assessment is FAIL, that later traffic
-  is not recorded. Everything comes from the action record, the inventory, the coverage assessment and
+  before, and for a quarantine into a VLAN whose sensor-coverage assessment is FAIL, that the VLAN is
+  not mirrored to the sensor. Everything comes from the action record, the inventory, the coverage assessment and
   the recorded connections, and every line says "recorded". The strip keeps one height per width in
   every state (172 px two-column, 214 px narrow, 352 px phone), so nothing below it jumps.
 - **End-of-record hold:** auto pace holds the last moment for 6 s before looping ("end of record").
@@ -209,3 +209,37 @@ Results: playback check 24/24 (adds: end of record holds on the quarantine; a ch
 before its action), UI audit 76/76, 85 backend tests, ruff, tsc, oxlint (same 11 warnings). Strip
 measured at 390, 768, 1024, 1200, 1280, 1440, 1600 and 1920 px: constant height per width, no page
 overflow.
+
+# Pass 5: the demo analyst
+
+The manual-review detection (Critical Asset Scan, SRV-GIT01 on Gi1/0/12) only reached the replay if a
+person approved it on the Incidents page. The demo now plays that analyst, without bypassing anything:
+
+- `services/demo.py: apply_scripted_decisions` calls the existing `response.approve_review` for each open
+  review whose containment can execute. That is the same path as the Approve button: analyst
+  authorization record, containment controller and adapter, switch read-back, incident `INC-2026-0043`
+  with its evidence bundle, then an assessment run. The policy decision and its `critical_assets`
+  guard are unchanged and the approval note acknowledges the guard. Reviews that cannot execute stay
+  open.
+- It runs after the flagship on server start (`SENTINEL_AUTO_DEMO=1`, the hosted demo) and from
+  `POST /api/demo/run`. It is on by default; `SENTINEL_DEMO_ANALYST=0`, the body
+  `{"scripted_analyst": false}`, or unticking the option in the Overview's replay dialog leave the
+  review for a person. `make demo` and `make demo-2` do not use it, so their documented results are
+  unchanged.
+- The authorization record carries `channel: "scripted-demo"`; the Incidents queue shows a *scripted
+  demo* tag and a note explaining it, the incident ledger reads "tlee (scripted demo)", the decision
+  tab and the Overview's containment strip say so too. The flagship's authorization stays automatic.
+- The replay window now ends at the first whole minute after the last record (21:17 rather than
+  21:30), and the particles and wire console stop at the switch clock, so the end-of-record hold shows
+  the second quarantine.
+- The incident view's traffic loop is anchored on the detection time, not the incident time (an
+  approved review opens its incident long after the detection fired).
+
+Results: 88 backend tests (3 new: approval through the workflow, startup with the scripted analyst,
+switching it off), playback check 25/25 (adds: the demo analyst's quarantine plays), validation 9/9,
+UI audit 76/76 in demo state; baseline state fails only `/incidents/INC-2026-0042` (404 before the
+replay, as before).
+- `scripts/screenshots.py` starts its temporary server with the demo analyst off, captures the analyst
+  approval dialog while the review is open, then resets and replays that temporary server with the
+  scripted analyst, so every other image shows the hosted state. It never resets a server given with
+  `--base`.

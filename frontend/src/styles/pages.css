@@ -123,3 +123,7 @@
 /* drift: each observed value that differs from intent is marked once as the row arrives */
 .drift-cmp .obs { border-radius: var(--r-ctl); animation: diff-mark 1.8s var(--ease-out) both; animation-delay: calc(0.35s + var(--ri, 0) * 90ms); }
 @keyframes diff-mark { 0% { background: var(--warn-dim); box-shadow: -4px 0 0 var(--warn-dim), 4px 0 0 var(--warn-dim); } 100% { background: transparent; box-shadow: none; } }
+/* incidents: a review the demo replay's scripted analyst decided */
+.queue-note { display: flex; align-items: flex-start; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line-hair); background: var(--accent-faint); font-size: var(--fs-sm); color: var(--text-2); line-height: 1.5; }
+.queue-note .chip { flex: none; margin-top: 1px; }
+.auth-by { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }

@@ -31,6 +31,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             seed_database(store, env, settings.seed_dir, settings.incidents_dir)
         if settings.auto_demo and demo_service.demo_status(store).get("stage") == "baseline":
             demo_service.run_flagship(store, env, settings)
+            if settings.demo_analyst:
+                demo_service.apply_scripted_decisions(store, env, settings)
         yield
 
     app = FastAPI(

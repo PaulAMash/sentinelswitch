@@ -45,7 +45,10 @@ def approve_review(
     actor: str,
     note: str,
     at: datetime | None = None,
+    channel: str | None = None,
 ) -> dict[str, Any]:
+    """`channel` records how the analyst decision was made when it was not a person at the console
+    (for example `scripted-demo`); it is stored on the authorization record and shown wherever it is."""
     review = store.review(detection_id)
     if review is None:
         raise KeyError(detection_id)
@@ -72,6 +75,8 @@ def approve_review(
         tier_before_guards=decision.disposition,
     )
     authorization = authorization_record(approved, at=at, mode="analyst", authorized_by=actor, note=note)
+    if channel:
+        authorization["channel"] = channel
     controller = ContainmentController(
         SimulatedCisco2960XAdapter(twin), quarantine_vlan=int(policy.policy["quarantine_vlan"])
     )

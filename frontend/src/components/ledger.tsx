@@ -1,5 +1,5 @@
 import type { Attribution, Authorization, ContainmentAction, Detection, Incident } from '../lib/api'
-import { fmtTime } from '../lib/format'
+import { fmtTime, isScripted } from '../lib/format'
 import { Icon } from './Icons'
 
 type StageState = 'done' | 'pending' | 'withheld' | 'failed' | 'none'
@@ -41,7 +41,7 @@ export function stagesOf(incident: Incident, detection: Detection | null, attrib
   const recommended = incident.disposition ? attribution?.completed_at ?? detection?.ts ?? null : null
   const authorized: Stage = auth
     ? auth.status === 'authorized'
-      ? { name: 'Authorized', state: 'done', when: auth.authorized_at, who: auth.mode === 'automatic' ? `policy · ${auth.authorized_by}` : auth.authorized_by }
+      ? { name: 'Authorized', state: 'done', when: auth.authorized_at, who: auth.mode === 'automatic' ? `policy · ${auth.authorized_by}` : `${auth.authorized_by}${isScripted(auth) ? ' (scripted demo)' : ''}` }
       : auth.status === 'rejected'
         ? { name: 'Authorized', state: 'withheld', when: auth.authorized_at, who: `declined by ${auth.authorized_by}` }
         : { name: 'Authorized', state: 'pending', when: null, who: 'awaiting decision' }

@@ -167,10 +167,23 @@ Earlier the same evening **SRV-GIT01** (10.30.0.50, `Gi1/0/12`, SERVERS VLAN, cr
 port-scans the server segment. The detection scores 0.96 and attribution resolves cleanly to the
 port, so the policy would otherwise act automatically — but the `critical_assets` guard downgrades
 the recommendation to manual review. The review carries the full attribution, the switch is not
-touched, and the detection waits in the queue. In the 2.0 demo the analyst rejects containment
-(the scan was an unscheduled but benign repository migration check); the rejection is recorded as
-the authorization decision and the assessment `CTL-RESPONSE-AUTHORIZED` confirms that no action
-executed without one.
+touched, and the detection waits in the queue. In the `make demo-2` workflow the analyst rejects
+containment (the scan was an unscheduled but benign repository migration check); the rejection is
+recorded as the authorization decision and the assessment `CTL-RESPONSE-AUTHORIZED` confirms that no
+action executed without one.
+
+The web dashboard plays the other branch so that the replay shows both kinds of authorization. When
+the server replays the flagship incident on start (`SENTINEL_AUTO_DEMO=1`, the hosted demo) or from
+the Overview's *Replay flagship incident* button, a **scripted demo analyst** (`tlee`) then approves
+each open manual review through the same approval service the Incidents page uses: an analyst
+authorization record, execution through the containment controller and adapter, the switch
+read-back, an incident (`INC-2026-0043`, `Gi1/0/12` VLAN 30 → 50) with its evidence bundle, and an
+assessment run. Policy is unchanged: the `critical_assets` guard stays on the record and the approval
+note acknowledges it. The authorization is marked `channel: scripted-demo`, and every view that shows
+it says *scripted demo* (the Incidents queue, the incident's response ledger and decision tab, and
+the containment strip on the Overview). To make the decision yourself, untick *Let the demo analyst
+decide the open review* in the replay dialog after a reset, or start the server with
+`SENTINEL_DEMO_ANALYST=0`; `POST /api/demo/run` accepts `{"scripted_analyst": false}`.
 
 ## Findings and remediation
 
@@ -298,12 +311,13 @@ movement burst, the quarantine move and the read-back can be followed; at the en
 holds for six seconds before looping. The clock always shows the recorded time.
 
 Containment gets its own treatment because it is the outcome that matters. A strip under the field
-lists every recorded containment action of the day (three port shutdowns that were later restored and
-the 21:14 quarantine of Gi1/0/23), coloured by its state at the playhead; selecting one replays from
+lists every recorded containment action of the day (three port shutdowns that were later restored, the
+21:14 automatic quarantine of Gi1/0/23 and, with the scripted demo analyst, the 21:16 analyst-approved
+quarantine of Gi1/0/12), coloured by its state at the playhead; selecting one replays from
 20 s before it. While an action holds, the strip gives the port, endpoint, VLAN move, who authorized
 it, the switch read-back that verified it, how long it has held, how many connections the host made
-in the minute before, and, for the quarantine, that VLAN 50 is not mirrored to the sensor (the open
-sensor-coverage finding), so the host's traffic after the move is not recorded. On the field the
+in the minute before, and, for the quarantine, that VLAN 50 is not mirrored to the sensor (the
+sensor-coverage assessment is FAIL). On the field the
 quarantine colony becomes a fenced isolation zone and each containment sends a lock-down wave (green
 when restored); the timeline carries a band for every containment interval. The playback bar has play/pause, return to start, the simulated time, 0.5×/1×/2×/4×,
 the auto-pace toggle and Day / 4 h / 1 h windows; the timeline is the scrubber (click or drag to seek,

@@ -5,7 +5,7 @@ import { endpoints, type Authorization } from '../lib/api'
 import { useApi } from '../lib/hooks'
 import { ErrorState, KV, Loading, Panel, Tabs, Ts } from '../components/ui'
 import { PageHeader, Section } from '../components/layout'
-import { Chip, Id, ResponseChip, SeverityChip, StatusChip, responseStateOf } from '../components/status'
+import { Chip, Id, ResponseChip, ScriptedTag, SeverityChip, StatusChip, responseStateOf } from '../components/status'
 import { ResponseLedger } from '../components/ledger'
 import { Trace, TraceLegend } from '../components/trace'
 import { Steps } from '../components/Chain'
@@ -15,7 +15,7 @@ import { ConfirmDialog } from '../components/dialog'
 import { useToast } from '../components/toast'
 import { Timeline } from '../components/Timeline'
 import { Confidence, Features } from '../components/Features'
-import { fmtBytes, fmtSeconds, vlanName } from '../lib/format'
+import { fmtBytes, fmtSeconds, isScripted, vlanName } from '../lib/format'
 import { MiniField } from '../components/signal/MiniField'
 import { ms } from '../lib/telemetry'
 import { decodeWire } from '../lib/wire'
@@ -69,7 +69,7 @@ export function IncidentDetail() {
       setBusy(false)
     }
   }
-  const toNote = auth?.mode === 'analyst' ? `authorized by ${auth.authorized_by}` : auth?.mode === 'automatic' ? 'automatic · policy' : undefined
+  const toNote = auth?.mode === 'analyst' ? `authorized by ${auth.authorized_by}${isScripted(auth) ? ' (scripted demo)' : ''}` : auth?.mode === 'automatic' ? 'automatic · policy' : undefined
   return (
     <>
       <PageHeader
@@ -121,8 +121,9 @@ export function IncidentDetail() {
               focus={inc.interface}
               caption={`${inc.interface} · ${inc.device ?? 'unknown device'}`}
               wire={wire}
-              // the recorded traffic of the incident host from 90 s before the incident opened until 25 s after
-              replay={att?.ip ? { start: ms(inc.opened_at) - 90_000, end: ms(inc.opened_at) + 25_000, ip: att.ip } : null}
+              // the recorded traffic of the incident host around its detection (an approved review can open the
+              // incident long after the detection fired): 90 s before the detection until 25 s after
+              replay={att?.ip ? { start: ms(det?.ts ?? inc.opened_at) - 90_000, end: ms(det?.ts ?? inc.opened_at) + 25_000, ip: att.ip } : null}
             />
           ) : (
             <Loading rows={5} />
@@ -231,7 +232,7 @@ export function IncidentDetail() {
                       </div>
                       <KV
                         rows={[
-                          kv('authorized by', auth.authorized_by),
+                          kv('authorized by', <>{auth.authorized_by}{isScripted(auth) && <> <ScriptedTag /></>}</>),
                           kv('authorized at', <Ts ts={auth.authorized_at} date />),
                           kv('basis', auth.basis),
                           kv('reason', <span className="wrap">{auth.reason}</span>),
@@ -411,7 +412,7 @@ function authRows(a: Authorization | undefined): KVRow[] {
   if (!a) return [kv('record', <span className="dim">not recorded</span>)]
   return [
     kv('status', <><StatusChip value={a.status} /> <span className="dim">{a.mode}</span></>),
-    kv('by', a.authorized_by),
+    kv('by', <>{a.authorized_by}{isScripted(a) && <> <ScriptedTag /></>}</>),
     kv('at', <Ts ts={a.authorized_at} date />),
     // a zero-width space after each underscore lets long policy-tier names wrap inside the narrow card
     kv('basis', <span className="wrap">{a.basis.replaceAll('_', '_​')}</span>),
