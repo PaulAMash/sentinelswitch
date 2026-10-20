@@ -90,6 +90,7 @@ export function DataTable<T>(p: DataTableProps<T>) {
                 <tr
                   key={k}
                   className={`${act ? 'clickable' : ''} ${p.rowClass?.(row) ?? ''}`}
+                  style={{ ['--ri' as string]: Math.min(i, 16) }}
                   tabIndex={act ? 0 : undefined}
                   aria-selected={act ? selected : undefined}
                   onClick={act ? () => act(row) : undefined}

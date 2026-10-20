@@ -1,4 +1,5 @@
-import { endpoints } from '../lib/api'
+import { useEffect, useState } from 'react'
+import { BASE, endpoints } from '../lib/api'
 import { kv } from '../lib/kv'
 import { useApi } from '../lib/hooks'
 import { ErrorState, KV, Loading, Panel } from '../components/ui'
@@ -16,9 +17,7 @@ export function About() {
     <>
       <PageHeader title="Architecture" sub={`${data.name} — ${data.tagline}`} info={<>A reproducible network-defense digital twin: deterministic synthetic telemetry drives a real detection, attribution and containment pipeline against a simulated Catalyst 2960-X access layer.</>} />
       <Panel title="System architecture" sub="diagrams/svg/architecture.svg">
-        <div className="diagram">
-          <img src="/diagrams/architecture.svg" alt="SentinelSwitch architecture" />
-        </div>
+        <ArchitectureDiagram />
       </Panel>
       <div className="grid grid-2">
         <Panel title="Components and trust boundaries" bodyClass="none">
@@ -76,5 +75,32 @@ export function About() {
         </div>
       )}
     </>
+  )
+}
+
+/**
+ * The repository's architecture diagram, inlined so its connectors can show the direction data moves
+ * (a dash flow along each arrow). The file is generated from diagrams/source; if it cannot be read
+ * inline, the plain image is shown instead.
+ */
+function ArchitectureDiagram() {
+  const [svg, setSvg] = useState<string | null>(null)
+  useEffect(() => {
+    let live = true
+    fetch(`${BASE}/diagrams/architecture.svg`)
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+      .then((t) => {
+        // only a plain SVG document from our own origin is inlined
+        if (live && t.trimStart().startsWith('<svg') && !/<script|on[a-z]+=/i.test(t)) setSvg(t)
+      })
+      .catch(() => {})
+    return () => {
+      live = false
+    }
+  }, [])
+  return (
+    <div className="diagram">
+      {svg ? <div className="arch-svg" role="img" aria-label="SentinelSwitch architecture" dangerouslySetInnerHTML={{ __html: svg }} /> : <img src="/diagrams/architecture.svg" alt="SentinelSwitch architecture" />}
+    </div>
   )
 }

@@ -37,7 +37,7 @@ export function Sidebar({ items, meta, open, onClose }: { items: NavItem[]; meta
           <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => (isActive ? 'active' : '')} title={n.label}>
             <n.icon />
             <span className="label">{n.label}</span>
-            {n.badge !== undefined && n.badge > 0 && <span className={`nav-badge ${n.attention ? 'attention' : ''}`}>{n.badge}</span>}
+            {n.badge !== undefined && n.badge > 0 && <span className={`nav-badge ${n.attention ? 'is-warn' : ''}`}>{n.badge}</span>}
           </NavLink>
         ))}
     </>

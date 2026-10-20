@@ -14,7 +14,12 @@ const PORT_ORDER = (() => {
  * focusable button with Arrow-key navigation and an accessible name. A one-shot LED pulse plays when
  * `highlight` changes.
  */
-export function SwitchPanel({ ports, selected, onSelect, highlight, hostname = 'SW01', model = 'WS-C2960X-48FPD-L' }: { ports: PortState[]; selected?: string | null; onSelect?: (name: string) => void; highlight?: string | null; hostname?: string; model?: string }) {
+/** LED blink period for a port with `n` recorded connections in the hour: busier ports blink faster. */
+function blinkPeriod(n: number): string {
+  return `${Math.max(0.16, Math.min(2.2, 6 / Math.sqrt(n))).toFixed(2)}s`
+}
+
+export function SwitchPanel({ ports, selected, onSelect, highlight, hostname = 'SW01', model = 'WS-C2960X-48FPD-L', activity }: { ports: PortState[]; selected?: string | null; onSelect?: (name: string) => void; highlight?: string | null; hostname?: string; model?: string; activity?: Map<string, number> }) {
   const byName = new Map(ports.map((p) => [p.name, p]))
   const [pulse, setPulse] = useState<string | null>(null)
   const lastHl = useRef<string | null>(null)
@@ -64,14 +69,15 @@ export function SwitchPanel({ ports, selected, onSelect, highlight, hostname = '
         if (!p) continue
         const x = x0 + g * (cols * (pw + gapX) + groupGap) + c * (pw + gapX)
         const y = rowY[r]
-        const label = `${name} · ${p.description} · ${p.state}${p.oper_vlan ? ` · VLAN ${p.oper_vlan}` : ''}${p.device ? ` · ${p.device}` : ''}`
+        const act = activity?.get(name) ?? 0
+        const label = `${name} · ${p.description} · ${p.state}${p.oper_vlan ? ` · VLAN ${p.oper_vlan}` : ''}${p.device ? ` · ${p.device}` : ''}${act ? ` · ${act} recorded connections in the last hour` : ''}`
         const cls = `port ${p.state} ${selected === name ? 'selected' : ''} ${pulse === name ? 'pulse' : ''}`
         elems.push(
           <g key={name} className={cls} transform={`translate(${x},${y})`} onClick={() => onSelect?.(name)} onKeyDown={(e) => onKey(e, name)} tabIndex={onSelect ? 0 : -1} role="button" aria-label={label} aria-pressed={selected === name} data-port={name}>
             <title>{label}</title>
             <rect className="body" width={pw} height={ph} rx={2.5} />
             <rect className="slot" x={7} y={ph - 6} width={pw - 14} height={3} rx={1} />
-            <circle className="led" cx={5} cy={5} r={2.2} />
+            <circle className={`led ${act ? 'act' : ''}`} cx={5} cy={5} r={2.2} style={act ? { ['--blink' as string]: blinkPeriod(act), ['--phase' as string]: `${-((idx * 0.37) % 1).toFixed(2)}s` } : undefined} />
             {p.protected && <rect className="lock" x={pw - 8} y={3} width={5} height={4} rx={0.8} />}
             <text x={pw / 2} y={15} textAnchor="middle">
               {idx}
@@ -119,7 +125,7 @@ export function SwitchPanel({ ports, selected, onSelect, highlight, hostname = '
       </g>
       <circle className="chassis-led ok" cx={52} cy={97} r={2} />
       <circle className="chassis-led ok" cx={52} cy={109} r={2} />
-      <circle className="chassis-led accent" cx={52} cy={121} r={2} />
+      <circle className={`chassis-led accent ${activity && activity.size ? 'act' : ''}`} cx={52} cy={121} r={2} style={activity && activity.size ? { ['--blink' as string]: blinkPeriod([...activity.values()].reduce((a, b) => a + b, 0)) } : undefined} />
       {[0, 1, 2, 3].map((g) => (
         <text key={g} className="chassis-mono" x={x0 + g * (cols * (pw + gapX) + groupGap) + (cols * (pw + gapX)) / 2 - 3} y={rowY[1] + ph + 16} textAnchor="middle" fontSize={8}>
           {g * 12 + 1}–{g * 12 + 12}

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { AssessmentStatus } from '../lib/api'
+import { AnimatedValue } from './motion'
 
 export type MetricTone = 'accent' | 'danger' | 'good' | 'warn'
 
@@ -12,7 +13,7 @@ export function Metric({ label, value, unit, hint, tone, chip, hero = false, cla
         {chip}
       </div>
       <div className="value">
-        {value}
+        <AnimatedValue value={value} />
         {unit && <small>{unit}</small>}
       </div>
       {hint && <div className="hint">{hint}</div>}
@@ -24,7 +25,9 @@ export function Metric({ label, value, unit, hint, tone, chip, hero = false, cla
 export function Ratio({ num, den, suffix }: { num: ReactNode; den: ReactNode; suffix?: string }) {
   return (
     <span className="ratio">
-      <span>{num}</span>
+      <span>
+        <AnimatedValue value={num} />
+      </span>
       <span className="den">/ {den}{suffix ? ` ${suffix}` : ''}</span>
     </span>
   )

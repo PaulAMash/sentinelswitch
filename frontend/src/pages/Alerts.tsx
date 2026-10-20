@@ -13,6 +13,7 @@ import { sevRank } from '../lib/format'
 import { Scrubber } from '../components/signal/Scrubber'
 import { SeverityRing } from '../charts/viz'
 import { ms, severityCounts, type Window } from '../lib/telemetry'
+import { binWire, decodeWire } from '../lib/wire'
 
 export function Alerts() {
   const { data, error, reload } = useApi(() => endpoints.alerts('?limit=1000'))
@@ -23,6 +24,9 @@ export function Alerts() {
   const [sel, setSel] = useState<Alert | null>(null)
   const { data: meta } = useApi(endpoints.meta)
   const domain = useMemo<Window | null>(() => (meta ? { start: ms(meta.dataset.start), end: ms(meta.dataset.end) } : null), [meta])
+  // the recorded wire behind the alerts: connections, RADIUS and syslog up to the switch clock
+  const { data: feed } = useApi(endpoints.telemetry)
+  const lanes = useMemo(() => (feed && domain && meta ? binWire(decodeWire(feed), domain.start, domain.end, 5 * 60_000, ms(meta.switch.now)) : null), [feed, domain, meta])
   const [win, setWin] = useState<Window | null>(null)
   const w = win ?? domain
   const rows = useMemo(() => {
@@ -67,7 +71,7 @@ export function Alerts() {
       <div className="vz-grid c21">
         <Panel title="Timeline" sub="drag to narrow the table to a time range · simulated switch clock">
           {domain && w ? (
-            <Scrubber alerts={data.filter((a) => (sev === 'all' || a.severity === sev) && (src === 'all' || a.source === src) && (status === 'all' || a.status === status))} domain={domain} binMs={15 * 60_000} window={w} onWindow={setWin} label="Alert timeline" />
+            <Scrubber alerts={data.filter((a) => (sev === 'all' || a.severity === sev) && (src === 'all' || a.source === src) && (status === 'all' || a.status === status))} domain={domain} binMs={15 * 60_000} window={w} onWindow={setWin} label="Alert timeline" lanes={lanes} now={meta ? ms(meta.switch.now) : null} />
           ) : (
             <Loading rows={2} />
           )}

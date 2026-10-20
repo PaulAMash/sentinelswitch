@@ -66,6 +66,15 @@
   --cat-2: #4f8ef7;
   --cat-3: #8597b0;
   --cat-4: #4f7f8f;
+  /* recorded traffic by service family (Zeek service field); distinct from the severity scale */
+  --svc-tls: #3ccbe0;
+  --svc-dns: #9b7cf6;
+  --svc-web: #4f8ef7;
+  --svc-file: #f06fb0;
+  --svc-admin: #ff8a4c;
+  --svc-dir: #4fd18b;
+  --svc-infra: #8094ad;
+  --svc-other: #56677d;
   /* signal field */
   --hx-lattice: rgba(120, 160, 200, 0.07);
   --hx-body: #101822;

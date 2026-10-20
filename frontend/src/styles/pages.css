@@ -27,7 +27,7 @@
 .by-category { display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; }
 .ctl-status { display: flex; flex-direction: column; }
 .ctl-status .stat-row { padding: 5px 0; }
-.ctl-status .name { font-size: var(--fs-md); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctl-status .name { font-size: var(--fs-md); font-weight: 600; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3; }
 .ctl-status .cat { font-size: var(--fs-xs); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ctl-status .cat .open { color: var(--danger-ink); text-transform: none; letter-spacing: 0; }
 
@@ -65,8 +65,8 @@
 .ev-doc-id .eyebrow { font-family: var(--font-mono); letter-spacing: 0.08em; overflow-wrap: anywhere; }
 .ev-doc-id h2 { font-size: var(--fs-xl); font-weight: 600; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
 .ev-doc-id h2 .dim { font-weight: 500; }
-.ev-context { display: flex; flex-wrap: wrap; gap: 1px; margin: 0 18px 12px; background: var(--line-hair); border: 1px solid var(--line-hair); border-radius: var(--r-ctl); overflow: hidden; }
-.ev-context > div { background: var(--bg-1); padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 112px; }
+.ev-context { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 1px; margin: 0 18px 12px; background: var(--line-hair); border: 1px solid var(--line-hair); border-radius: var(--r-ctl); overflow: hidden; }
+.ev-context > div { background: var(--bg-1); padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .ev-context dt { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); }
 .ev-context dd { margin: 0; font-size: var(--fs-md); color: var(--text-1); overflow-wrap: anywhere; }
 .ev-artifacts { display: flex; flex-wrap: wrap; gap: 10px 22px; padding: 12px 18px; border-top: 1px solid var(--line-hair); border-bottom: 1px solid var(--line-hair); background: rgba(7, 10, 15, 0.35); }
@@ -91,6 +91,10 @@
 /* about */
 .diagram { background: var(--bg-0); border: 1px solid var(--line-1); border-radius: var(--r-panel); padding: 8px; }
 .diagram img { width: 100%; display: block; }
+.arch-svg svg { width: 100%; height: auto; display: block; }
+/* connectors carry a slow dash flow in the direction of the arrow; boxes stay still */
+.arch-svg path[marker-end] { stroke-dasharray: 7 5; animation: arch-flow 1.4s linear infinite; }
+@keyframes arch-flow { to { stroke-dashoffset: -24; } }
 
 @media (max-width: 1199px) {
   .ov-grid, .posture-hero, .inc-workspace, .switch-grid, .ev-layout { grid-template-columns: minmax(0, 1fr); }
@@ -116,3 +120,6 @@
 .drift-cmp .exp::before { content: "want"; color: var(--text-4); }
 .drift-cmp .obs { color: var(--warn-ink); }
 .drift-cmp .obs::before { content: "have"; color: var(--text-4); }
+/* drift: each observed value that differs from intent is marked once as the row arrives */
+.drift-cmp .obs { border-radius: var(--r-ctl); animation: diff-mark 1.8s var(--ease-out) both; animation-delay: calc(0.35s + var(--ri, 0) * 90ms); }
+@keyframes diff-mark { 0% { background: var(--warn-dim); box-shadow: -4px 0 0 var(--warn-dim), 4px 0 0 var(--warn-dim); } 100% { background: transparent; box-shadow: none; } }

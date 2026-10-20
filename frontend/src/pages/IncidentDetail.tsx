@@ -18,6 +18,7 @@ import { Confidence, Features } from '../components/Features'
 import { fmtBytes, fmtSeconds, vlanName } from '../lib/format'
 import { MiniField } from '../components/signal/MiniField'
 import { ms } from '../lib/telemetry'
+import { decodeWire } from '../lib/wire'
 
 type Tab = 'timeline' | 'detections' | 'decision' | 'evidence' | 'verify'
 const ANALYST = 'tlee'
@@ -32,6 +33,8 @@ export function IncidentDetail() {
   const { data: incidents } = useApi(endpoints.incidents)
   const { data: reviews } = useApi(endpoints.reviews)
   const { data: meta } = useApi(endpoints.meta)
+  const { data: feed } = useApi(endpoints.telemetry)
+  const wire = useMemo(() => (feed ? decodeWire(feed) : null), [feed])
   const fieldInputs = useMemo(
     () => (sw && devices && alerts && incidents && reviews && data ? { sw, devices: devices.devices, unknown: devices.unknown, alerts, incidents, actions: data.actions, reviews } : null),
     [sw, devices, alerts, incidents, reviews, data],
@@ -111,7 +114,19 @@ export function IncidentDetail() {
 
       <div className="vz-grid c21">
         <Panel title="Position in the access layer" sub={`${inc.interface ?? 'port not recorded'} and every port it exchanged alert traffic with · dataset day`}>
-          {fieldInputs && dayWindow ? <MiniField inputs={fieldInputs} window={dayWindow} focus={inc.interface} caption={`${inc.interface} · ${inc.device ?? 'unknown device'}`} /> : <Loading rows={5} />}
+          {fieldInputs && dayWindow ? (
+            <MiniField
+              inputs={fieldInputs}
+              window={dayWindow}
+              focus={inc.interface}
+              caption={`${inc.interface} · ${inc.device ?? 'unknown device'}`}
+              wire={wire}
+              // the recorded traffic of the incident host from 90 s before the incident opened until 25 s after
+              replay={att?.ip ? { start: ms(inc.opened_at) - 90_000, end: ms(inc.opened_at) + 25_000, ip: att.ip } : null}
+            />
+          ) : (
+            <Loading rows={5} />
+          )}
         </Panel>
         {att ? (
           <Panel title="Attribution trace" sub="source IP → containment target">

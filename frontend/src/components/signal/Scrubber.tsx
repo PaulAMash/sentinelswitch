@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } fro
 import type { Alert } from '../../lib/api'
 import { playback } from '../../lib/playback'
 import { binAlerts, fmtClock, fmtEnd, fmtSpan, ms, type Window } from '../../lib/telemetry'
+import { FAMILIES, FAMILY_LABEL, type WireBins } from '../../lib/wire'
 
 const VB_W = 1000
 const VB_H = 56
@@ -21,7 +22,87 @@ export interface ScrubberProps {
    * chosen on the rail underneath. Without it the histogram itself brushes the window (Alerts page).
    */
   playback?: { t: number; onSeek: (t: number) => void; onToggle: () => void }
+  /** recorded traffic, RADIUS and syslog per bin across the domain, drawn as lanes under the alert bars */
+  lanes?: WireBins | null
 }
+
+const LANE_CONN = 58
+const LANE_GAP = 3
+const LANE_EVT = 6
+
+/** The recorded wire per bin: connections stacked by service family (log height), then RADIUS results, then syslog. */
+function Lanes({ lanes, domain }: { lanes: WireBins; domain: Window }) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    const c = ref.current
+    if (!c) return
+    const css = (n: string, f: string) => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || f
+    const famCol = FAMILIES.map((f) => css(`--svc-${f}`, 'transparent'))
+    const ok = css('--ok', 'transparent')
+    const bad = css('--danger', 'transparent')
+    const warn = css('--warn', 'transparent')
+    const info = css('--svc-infra', 'transparent')
+    const guest = css('--info', 'transparent')
+    const draw = () => {
+      const dpr = Math.min(2, window.devicePixelRatio || 1)
+      const w = c.clientWidth
+      const h = c.clientHeight
+      c.width = Math.max(1, Math.round(w * dpr))
+      c.height = Math.max(1, Math.round(h * dpr))
+      const ctx = c.getContext('2d')
+      if (!ctx) return
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      ctx.clearRect(0, 0, w, h)
+      const span = domain.end - domain.start
+      const n = lanes.conn.length
+      const x = (k: number) => ((lanes.start + k * lanes.binMs - domain.start) / span) * w
+      const bw = Math.max(1, (lanes.binMs / span) * w - 0.6)
+      let max = 1
+      for (let k = 0; k < n; k++) max = Math.max(max, lanes.conn[k])
+      const lmax = Math.log1p(max)
+      ctx.globalAlpha = 0.9
+      for (let k = 0; k < n; k++) {
+        const total = lanes.conn[k]
+        if (!total) continue
+        // bar height follows log(1 + connections); the families split it in proportion to their counts
+        const hTot = Math.max(2, (Math.log1p(total) / lmax) * LANE_CONN)
+        let y = LANE_CONN
+        for (let f = 0; f < FAMILIES.length; f++) {
+          const c = lanes.fam[f][k]
+          if (!c) continue
+          const hh = (c / total) * hTot
+          y -= hh
+          ctx.fillStyle = famCol[f]
+          ctx.fillRect(x(k), y, bw, hh)
+        }
+      }
+      const yA = LANE_CONN + LANE_GAP
+      const yS = yA + LANE_EVT + 2
+      for (let k = 0; k < n; k++) {
+        const a = lanes.authOk[k] + lanes.authBad[k] + lanes.authGuest[k]
+        if (a) {
+          ctx.fillStyle = lanes.authBad[k] ? bad : lanes.authGuest[k] > lanes.authOk[k] ? guest : ok
+          ctx.globalAlpha = Math.min(1, 0.35 + a * 0.12)
+          ctx.fillRect(x(k), yA, bw, LANE_EVT)
+        }
+        const sy = lanes.sysHigh[k] + lanes.sysWarn[k] + lanes.sysInfo[k]
+        if (sy) {
+          ctx.fillStyle = lanes.sysHigh[k] ? bad : lanes.sysWarn[k] ? warn : info
+          ctx.globalAlpha = Math.min(1, 0.3 + sy * 0.1)
+          ctx.fillRect(x(k), yS, bw, LANE_EVT)
+        }
+      }
+      ctx.globalAlpha = 1
+    }
+    draw()
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(draw) : null
+    ro?.observe(c)
+    return () => ro?.disconnect()
+  }, [lanes, domain.start, domain.end])
+  return <canvas ref={ref} className="scrub-lanes" aria-hidden="true" />
+}
+
+export const LANES_HEIGHT = LANE_CONN + LANE_GAP + LANE_EVT * 2 + 2
 
 /**
  * Alert histogram across the dataset day (15-minute bins of the simulated switch clock). Bars after
@@ -32,6 +113,7 @@ export function Scrubber(p: ScrubberProps) {
   const railRef = useRef<HTMLDivElement>(null)
   const headRef = useRef<HTMLDivElement>(null)
   const playedRef = useRef<HTMLDivElement>(null)
+  const aheadRef = useRef<HTMLDivElement>(null)
   const drag = useRef<{ zone: 'track' | 'rail'; mode: 'new' | 'move' | 'start' | 'end' | 'seek'; x0: number; w0: Window } | null>(null)
   const span = p.domain.end - p.domain.start
   const bins = useMemo(() => binAlerts(p.alerts, p.domain.start, p.domain.end, p.binMs), [p.alerts, p.domain.start, p.domain.end, p.binMs])
@@ -75,6 +157,10 @@ export function Scrubber(p: ScrubberProps) {
       const f = `${frac(pos) * 100}%`
       if (headRef.current) headRef.current.style.left = f
       if (playedRef.current) playedRef.current.style.width = `calc(${f} - ${frac(p.window.start) * 100}%)`
+      if (aheadRef.current) {
+        aheadRef.current.style.left = f
+        aheadRef.current.style.width = `calc(${frac(p.window.end) * 100}% - ${f})`
+      }
     }
     place(playback.position())
     return playback.subscribeFrame(place)
@@ -167,7 +253,7 @@ export function Scrubber(p: ScrubberProps) {
     </>
   )
   return (
-    <div className={`scrub ${p.playback ? 'is-playback' : ''}`}>
+    <div className={`scrub ${p.playback ? 'is-playback' : ''} ${p.lanes ? 'has-lanes' : ''}`}>
       <div
         ref={trackRef}
         className={`scrub-track ${full && !p.playback ? 'full' : ''}`}
@@ -184,8 +270,8 @@ export function Scrubber(p: ScrubberProps) {
         onPointerCancel={up}
         onKeyDown={trackKeys}
       >
-        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" aria-hidden="true">
-          {trafficPath && <path className="scrub-traffic" d={trafficPath} />}
+        <svg className="scrub-bars" viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" aria-hidden="true">
+          {trafficPath && !p.lanes && <path className="scrub-traffic" d={trafficPath} />}
           {bins.map((b, i) => {
             if (!b.total) return null
             const x = i * bw + 0.8
@@ -204,10 +290,12 @@ export function Scrubber(p: ScrubberProps) {
             )
           })}
         </svg>
+        {p.lanes && <Lanes lanes={p.lanes} domain={p.domain} />}
         {windowEl}
         {p.playback ? (
           <>
             <div className="scrub-played" ref={playedRef} style={{ left: `${wl}%` }} />
+            <div className="scrub-ahead" ref={aheadRef} />
             <div className="scrub-head" ref={headRef}>
               <span className="knob" />
             </div>
@@ -251,8 +339,27 @@ export function Scrubber(p: ScrubberProps) {
           window {fmtClock(p.window.start)}–{fmtEnd(p.window.start, p.window.end)} UTC · {fmtSpan(p.window.end - p.window.start)}
         </span>
         <span className="dim">{peak ? `bars: alerts per ${fmtSpan(p.binMs)} · peak ${peak}` : 'no alerts match the filters on this day'}</span>
-        {trafficPath && <span className="dim">shaded: SPAN connections, own scale</span>}
+        {trafficPath && !p.lanes && <span className="dim">shaded: SPAN connections, own scale</span>}
       </div>
+      {p.lanes && (
+        <div className="scrub-key" aria-label="Timeline lanes">
+          <span className="dim">lower band: recorded connections per 5 min (log height) by service</span>
+          {FAMILIES.map((f) => (
+            <span key={f} className="sk">
+              <i className={`sw svc-${f}`} />
+              {FAMILY_LABEL[f]}
+            </span>
+          ))}
+          <span className="sk">
+            <i className="sw auth" />
+            RADIUS (red: reject)
+          </span>
+          <span className="sk">
+            <i className="sw sys" />
+            switch syslog
+          </span>
+        </div>
+      )}
     </div>
   )
 }

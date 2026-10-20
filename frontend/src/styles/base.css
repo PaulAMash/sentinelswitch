@@ -88,7 +88,7 @@ code, pre, .mono, .ts { font-family: var(--font-mono); font-size: var(--fs-sm); 
 .nav a svg { width: 16px; height: 16px; flex: none; opacity: 0.85; }
 .nav .label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .nav-badge { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-xs); min-width: 20px; text-align: center; background: var(--surface-3); border: 1px solid var(--line-2); color: var(--text-2); border-radius: 6px; padding: 0 6px; line-height: 18px; }
-.nav-badge.attention { color: var(--warn-ink); border-color: var(--warn-line); background: var(--warn-dim); }
+.nav-badge.is-warn { color: var(--warn-ink); border-color: var(--warn-line); background: var(--warn-dim); }
 .sidebar-foot { margin-top: auto; padding: 12px 8px 0; color: var(--text-3); font-size: var(--fs-xs); line-height: 1.5; border-top: 1px solid var(--line-1); }
 .sidebar-foot b { color: var(--text-2); font-weight: 600; }
 .sidebar-foot .chip { margin-top: 6px; }

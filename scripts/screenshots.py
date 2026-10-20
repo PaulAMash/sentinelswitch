@@ -141,7 +141,7 @@ def capture(base: str) -> None:
         for _name, path, fname in PAGES:
             page.goto(f"{base}{path}", wait_until="networkidle")
             page.wait_for_selector(".content", timeout=15000)
-            page.wait_for_timeout(700)
+            page.wait_for_timeout(1300)
             _settle(page, path)
             page.screenshot(
                 path=str(ASSETS / "screenshots" / f"{fname}.png"),
@@ -156,7 +156,7 @@ def capture(base: str) -> None:
             ("/switch", "switch-panel"),
         ]:
             page.goto(f"{base}{path}", wait_until="networkidle")
-            page.wait_for_timeout(700)
+            page.wait_for_timeout(1300)
             _settle(page, path)
             page.screenshot(path=str(ASSETS / "github" / f"{fname}.png"), full_page=False)
             print("github", fname)
@@ -255,7 +255,7 @@ def capture_2(base: str) -> None:
         for path, fname in stage1:
             page.goto(f"{base}{path}", wait_until="networkidle")
             page.wait_for_selector(".content", timeout=15000)
-            page.wait_for_timeout(900)
+            page.wait_for_timeout(1300)
             _settle(page, path)
             page.screenshot(path=str(out / f"{fname}.png"), full_page=False)
             page.screenshot(path=str(out / f"{fname}-full.png"), full_page=True)

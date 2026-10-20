@@ -20,6 +20,12 @@ export const PLAYBACK = {
   STEPS_PER_PASS: 1500,
   /** Longest frame gap applied at once (a stalled frame never skips minutes of simulated time). */
   MAX_FRAME_MS: 250,
+  /** Auto pace: the most the clock may be sped up where few records exist… */
+  MAX_PACE: 10,
+  /** …and the most it may be slowed around a recorded alert or containment action. */
+  MIN_PACE: 0.002,
+  /** Finest published step (simulated ms) while the clock is slowed. */
+  MIN_STEP_MS: 250,
 }
 
 export type WindowPreset = 'day' | '4h' | '1h' | 'custom'
@@ -37,14 +43,20 @@ export interface PlaybackSnapshot {
   loops: number
   /** what moved the playhead last, so views can tell a natural advance from a jump */
   change: ChangeKind
-  /** simulated milliseconds per real second at the current speed */
+  /** simulated milliseconds per real second at the current speed, before quiet-stretch pacing */
   rate: number
+  /** auto pace (on by default): fast-forward through stretches with few records, slow down around alerts */
+  autoPace: boolean
+  /** current auto-pace multiplier on top of `rate` (>1 quiet stretch, <1 around an alert, 1 otherwise) */
+  pace: number
 }
 
 type Listener = () => void
 type FrameListener = (pos: number) => void
 
-let snap: PlaybackSnapshot = { ready: false, domain: null, window: null, preset: 'day', t: 0, playing: false, speed: 1, loops: 0, change: 'init', rate: 0 }
+let snap: PlaybackSnapshot = { ready: false, domain: null, window: null, preset: 'day', t: 0, playing: false, speed: 1, loops: 0, change: 'init', rate: 0, autoPace: true, pace: 1 }
+/** multiplier for the playhead position given the simulated ms per real second (supplied by a view that knows record density) */
+let pacing: ((t: number, rate: number) => number) | null = null
 let pos = 0
 let lastFrame: number | null = null
 let raf: number | null = null
@@ -96,7 +108,9 @@ function frame(now: number) {
   const w = snap.window
   const dt = lastFrame == null ? 0 : Math.min(now - lastFrame, PLAYBACK.MAX_FRAME_MS)
   lastFrame = now
-  pos += (dt / 1000) * snap.rate
+  const pace = snap.autoPace && pacing ? Math.max(PLAYBACK.MIN_PACE, Math.min(PLAYBACK.MAX_PACE, pacing(pos, snap.rate))) : 1
+  pos += (dt / 1000) * snap.rate * pace
+  if (pace !== snap.pace) publish({ pace })
   let change: ChangeKind = 'tick'
   let loops = snap.loops
   if (pos >= w.end) {
@@ -104,7 +118,8 @@ function frame(now: number) {
     loops += 1
     change = 'loop'
   }
-  const q = quantum(w)
+  // while slowed, publish proportionally finer steps so the field follows each record one by one
+  const q = Math.max(PLAYBACK.MIN_STEP_MS, quantum(w) * Math.min(1, pace))
   const t = Math.min(w.end, w.start + Math.floor((pos - w.start) / q) * q)
   if (t !== snap.t || change === 'loop') publish({ t, loops, change })
   emitFrame()
@@ -185,6 +200,21 @@ export const playback = {
   },
   setSpeed(speed: number) {
     publish({ speed })
+  },
+  /** Auto pace on or off. The clock always shows true simulated time; only the pace changes. */
+  setAutoPace(autoPace: boolean) {
+    publish({ autoPace, pace: autoPace ? snap.pace : 1 })
+  },
+  /**
+   * Install the auto-pace function: given the playhead and the simulated ms per real second it returns
+   * a multiplier (clamped to MIN_PACE…MAX_PACE). Returns the uninstaller.
+   */
+  setPacing(fn: (t: number, rate: number) => number) {
+    pacing = fn
+    return () => {
+      if (pacing === fn) pacing = null
+      if (snap.pace !== 1) publish({ pace: 1 })
+    }
   },
   setWindow(w: Window, preset: WindowPreset = 'custom') {
     if (!snap.domain) return

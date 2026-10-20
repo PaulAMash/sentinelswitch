@@ -698,7 +698,37 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return (await res.text()) as unknown as T
 }
 
+/** Recorded telemetry of the dataset day (GET /api/telemetry): every row is a line of a dataset file. */
+export interface TelemetryFeed {
+  day: string
+  /** UTC midnight of the dataset day; every `t` is milliseconds after it */
+  start: string
+  files: Record<string, string>
+  counts: { conn: number; auth: number; syslog: number; with_detail: number }
+  hosts: string[]
+  services: string[]
+  /** DNS query, TLS server name or HTTP request joined to a connection by Zeek uid */
+  details: string[]
+  /** columnar Zeek connections: time, originator host, responder host, responder port, service, bytes, detail (-1 when absent) */
+  conn: { t: number[]; o: number[]; r: number[]; p: number[]; s: number[]; b: number[]; d: number[] }
+  auth: { t: number; result: string; user: string | null; device: string | null; port: string | null; method: string | null; vlan: number | null }[]
+  syslog: { t: number; severity: number; mnemonic: string; port: string | null; message: string }[]
+}
+
+let telemetryOnce: Promise<TelemetryFeed> | null = null
+/** The feed is static per dataset, so it is fetched once per page load and shared by every view. */
+function telemetry(): Promise<TelemetryFeed> {
+  if (!telemetryOnce) {
+    telemetryOnce = api<TelemetryFeed>('/api/telemetry')
+    telemetryOnce.catch(() => {
+      telemetryOnce = null
+    })
+  }
+  return telemetryOnce
+}
+
 export const endpoints = {
+  telemetry,
   meta: () => api<Meta>('/api/meta'),
   overview: () => api<Overview>('/api/overview'),
   alerts: (q = '') => api<Alert[]>(`/api/alerts${q}`),

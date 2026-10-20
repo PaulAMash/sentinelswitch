@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Alert } from '../../lib/api'
+import type { Alert, TelemetryFeed } from '../../lib/api'
+import { useMedia } from '../../lib/hooks'
+import { FAMILIES, FAMILY_LABEL, binWire, decodeWire, recordDensity, upper, type Family } from '../../lib/wire'
 import { SEVERITIES, SOURCES, fmtClock, fmtSpan, ms, sev3, type AlertFilter, type Sev3, type Window } from '../../lib/telemetry'
 import { playback, usePlayback } from '../../lib/playback'
 import { vlanName } from '../../lib/format'
@@ -11,10 +13,26 @@ import { SignalField, describeNode, type Pulse } from './SignalField'
 import { Scrubber } from './Scrubber'
 import { PlaybackBar } from './PlaybackBar'
 import { AlertInspector, FieldSummary, NodeInspector } from './Inspector'
+import { FlowCanvas } from './FlowCanvas'
+import { WireTap } from './WireTap'
 import { buildField, containmentAt, containmentKey, layoutField, streamAlerts, type ClusterId, type FieldInputs, type FieldNode, type FillMode, type Preset } from './model'
 
 const BIN = 15 * 60_000
 const PULSE_MS = 1500
+/** bins of the recorded-traffic lanes and of quiet-stretch pacing */
+const LANE_BIN = 5 * 60_000
+/** quiet-stretch pacing aims for at least this many recorded lines per real second */
+const TARGET_RPS = 150
+const PACE_STEPS = [10, 6, 4, 3, 2, 1.5, 1]
+/** auto pace slows to this around a recorded alert, from a minute before to 90 s after */
+const SLOW_PACE = 0.15
+const SLOW_BEFORE = 60_000
+const SLOW_AFTER = 90_000
+/** around a containment action (12 s before to 5 s after) the clock runs at this many simulated ms per real second */
+const DEEP_RATE = 4000
+const DEEP_BEFORE = 12_000
+const DEEP_AFTER = 5_000
+const FAMILY_SHORT: Record<Family, string> = { tls: 'TLS', dns: 'DNS', web: 'HTTP', file: 'file/RPC', admin: 'SSH/RDP', dir: 'directory', infra: 'infra', other: 'other' }
 
 /** Span behind the playhead that counts as "recent" activity: a twelfth of the window, 15–60 minutes. */
 function recentSpan(w: Window | null): number {
@@ -33,6 +51,8 @@ export interface SignalConsoleProps {
   recordedEnd: number
   traffic?: { ts: string; connections: number }[]
   initialNode?: string | null
+  /** recorded Zeek / RADIUS / syslog lines of the dataset day (GET /api/telemetry); the field plays without it */
+  wireFeed?: TelemetryFeed | null
 }
 
 type View = 'field' | 'list'
@@ -57,6 +77,34 @@ export function SignalConsole(p: SignalConsoleProps) {
   const [pulses, setPulses] = useState<(Pulse & { until: number })[]>([])
   const [arrive, setArrive] = useState(true)
   const [fresh, setFresh] = useState<Set<string>>(new Set())
+  const [fams, setFams] = useState<Set<Family>>(() => new Set(FAMILIES))
+  const reduce = useMedia('(prefers-reduced-motion: reduce)')
+  const wire = useMemo(() => (p.wireFeed ? decodeWire(p.wireFeed) : null), [p.wireFeed])
+  // nothing after the switch clock is replayed, so the lanes stop there too
+  const lanes = useMemo(() => (wire ? binWire(wire, p.domain.start, p.domain.end, LANE_BIN, p.recordedEnd) : null), [wire, p.domain.start, p.domain.end, p.recordedEnd])
+
+  // auto pace: where few lines were recorded the clock runs up to 10× faster, and around a recorded alert or
+  // containment action it slows down so the moment can be followed (the times shown stay true)
+  useEffect(() => {
+    if (!wire) return
+    const dens = recordDensity(wire, p.inputs.alerts, p.domain.start, p.domain.end, LANE_BIN)
+    const acts = Float64Array.from(p.inputs.actions.flatMap((a) => [a.applied_at, a.verified_at].filter(Boolean).map((x) => ms(x as string))).sort((a, b) => a - b))
+    const marks = Float64Array.from([...p.inputs.alerts.map((a) => ms(a.ts)), ...acts].sort((a, b) => a - b))
+    const near = (arr: Float64Array, t: number, before: number, after: number) => {
+      const i = upper(arr, t + before)
+      return i > 0 && arr[i - 1] >= t - after
+    }
+    return playback.setPacing((t, rate) => {
+      // a containment action is the moment to watch: the burst before it, the move and the read-back
+      if (near(acts, t, DEEP_BEFORE, DEEP_AFTER)) return DEEP_RATE / rate
+      if (near(marks, t, SLOW_BEFORE, SLOW_AFTER)) return SLOW_PACE
+      const k = Math.floor((t - p.domain.start) / LANE_BIN)
+      // look one bin ahead so the clock slows before a burst, not inside it
+      const d = Math.max(dens[k] ?? 0, dens[k + 1] ?? 0)
+      const want = TARGET_RPS / Math.max((d / LANE_BIN) * rate, 1e-9)
+      return PACE_STEPS.find((x) => x <= want) ?? 1
+    })
+  }, [wire, p.inputs.alerts, p.inputs.actions, p.domain.start, p.domain.end])
 
   const hasData = p.inputs.alerts.some((a) => {
     const x = ms(a.ts)
@@ -137,6 +185,21 @@ export function SignalConsole(p: SignalConsoleProps) {
   const stream = useMemo(() => streamAlerts(p.inputs, byId, win.start, t, filter, focus), [p.inputs, byId, win.start, t, filter, focus])
   const totalInWindow = useMemo(() => p.inputs.alerts.filter((a) => ms(a.ts) >= win.start && ms(a.ts) <= win.end && sevs.has(sev3(a.severity)) && srcs.has(a.source)).length, [p.inputs.alerts, win.start, win.end, sevs, srcs])
   const filteredForTimeline = useMemo(() => p.inputs.alerts.filter((a) => sevs.has(sev3(a.severity)) && srcs.has(a.source)), [p.inputs.alerts, sevs, srcs])
+  const alertsAsc = useMemo(() => [...filteredForTimeline].sort((a, b) => ms(a.ts) - ms(b.ts)), [filteredForTimeline])
+  const alertT = useMemo(() => Float64Array.from(alertsAsc.map((a) => ms(a.ts))), [alertsAsc])
+  const names = useMemo(() => {
+    const m = new Map<string, string>()
+    for (const d of p.inputs.devices) if (d.ip) m.set(d.ip, d.hostname)
+    if (p.inputs.sw.management_ip) m.set(p.inputs.sw.management_ip, p.inputs.sw.hostname)
+    return m
+  }, [p.inputs.devices, p.inputs.sw])
+  const famCounts = useMemo(() => {
+    const c = Object.fromEntries(FAMILIES.map((f) => [f, 0])) as Record<Family, number>
+    if (!wire) return c
+    const end = Math.min(win.end, p.recordedEnd)
+    for (let i = upper(wire.t, win.start), j = upper(wire.t, end); i < j; i++) c[FAMILIES[wire.fam[i]]]++
+    return c
+  }, [wire, win.start, win.end, p.recordedEnd])
   const selFlow = selAlert ? model.flows.find((f) => f.id === selAlert.id) ?? null : null
   const travel = useMemo(() => new Set([...pulses.map((x) => x.key.replace(/^play-/, '').replace(/-\d+$/, '')), ...fresh]), [pulses, fresh])
   const recentIds = useMemo(() => new Set(model.flows.map((f) => f.id).concat(model.nodes.flatMap((n) => n.alerts.map((a) => a.id)))), [model])
@@ -165,7 +228,7 @@ export function SignalConsole(p: SignalConsoleProps) {
   const srcCount = (s: string) => inWinAll.filter((a) => a.source === s).length
   const hovered = hover ? byId.get(hover) : null
   const selectedNode = selNode ? byId.get(selNode) ?? null : null
-  const modeLabel = !hasData ? 'NO RECORDED EVENTS' : pb.playing ? 'PLAYBACK' : 'PAUSED'
+  const modeLabel = !hasData ? 'NO RECORDED EVENTS' : pb.playing ? (pb.pace > 1 ? `PLAYBACK ×${pb.pace} QUIET` : pb.pace < 1 ? 'PLAYBACK · SLOW-MOTION' : 'PLAYBACK') : 'PAUSED'
 
   return (
     <section className="sig instrument" aria-labelledby="sig-title">
@@ -219,6 +282,18 @@ export function SignalConsole(p: SignalConsoleProps) {
             </button>
           ))}
         </div>
+        {wire && (
+          <div className="sig-filter" role="group" aria-label="Recorded traffic filter (service families)">
+            <span className="sig-filter-k">traffic</span>
+            {FAMILIES.map((f) => (
+              <button key={f} type="button" className={`fchip svc ${fams.has(f) ? 'on' : ''}`} aria-pressed={fams.has(f)} title={`${FAMILY_LABEL[f]}: recorded Zeek connections`} onClick={() => toggle(fams, f, setFams)}>
+                <span className={`svc-dot svc-${f}`} aria-hidden="true" />
+                {FAMILY_SHORT[f]}
+                <span className="n mono">{famCounts[f]}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <span className="sig-filter-note dim">counts: selected window</span>
       </div>
       <div className="sig-body">
@@ -238,6 +313,7 @@ export function SignalConsole(p: SignalConsoleProps) {
                   {modeLabel} · {fmtClock(t)} UTC · simulated
                 </span>
               </div>
+              <div className="sf-wrap">
               <SignalField
                 model={model}
                 selectedNode={selNode}
@@ -252,6 +328,8 @@ export function SignalConsole(p: SignalConsoleProps) {
                 onHoverNode={setHover}
                 onFocusCluster={setFocus}
               />
+              {wire && !reduce && <FlowCanvas model={model} wire={wire} alerts={alertsAsc} families={fams} />}
+              </div>
               <div className="sig-frame bl" aria-live="polite">
                 {hovered ? describeNode(hovered) : focus ? `focus · ${model.clusters.find((c) => c.id === focus)?.title ?? ''} — select the label again to clear` : 'hover or tab to a port · arrows move · Enter selects · Esc clears'}
               </div>
@@ -295,6 +373,7 @@ export function SignalConsole(p: SignalConsoleProps) {
               />
             </div>
           )}
+          {wire && <WireTap wire={wire} alerts={alertsAsc} alertT={alertT} names={names} families={fams} />}
           <div className="sig-transport">
         <PlaybackBar s={pb} disabled={!hasData} note={!hasData ? 'no recorded alerts in the dataset day' : undefined} />
         <Scrubber
@@ -304,13 +383,14 @@ export function SignalConsole(p: SignalConsoleProps) {
           window={win}
           onWindow={(w) => playback.setWindow(w)}
           traffic={p.traffic}
+          lanes={lanes}
           now={p.now}
           playback={hasData ? { t, onSeek: playback.seek, onToggle: playback.toggle } : undefined}
           label="Alert timeline for the signal field"
         />
           </div>
 
-          <FieldLegend recent={fmtSpan(recentMs)} />
+          <FieldLegend recent={fmtSpan(recentMs)} wire={!!wire} />
         </div>
 
         <aside className="sig-side" aria-label="Inspector and event stream">
@@ -361,7 +441,7 @@ export function SignalConsole(p: SignalConsoleProps) {
   )
 }
 
-function FieldLegend({ recent }: { recent: string }) {
+function FieldLegend({ recent, wire }: { recent: string; wire: boolean }) {
   return (
     <div className="sig-legend" aria-label="Legend">
       <span className="lg-group">
@@ -410,6 +490,20 @@ function FieldLegend({ recent }: { recent: string }) {
           <i className="hxs rs restored" /> restored
         </span>
       </span>
+      {wire && (
+        <span className="lg-group">
+          <span className="lg-k">motion · recorded lines</span>
+          <span className="lg">
+            <i className="lg-particle" /> one recorded connection (colour: service) via the switch
+          </span>
+          <span className="lg">
+            <i className="hxs lg-flash" /> RADIUS, syslog or alert at a port
+          </span>
+          <span className="lg">
+            <i className="lg-core" /> core ring: connections per second
+          </span>
+        </span>
+      )}
       <span className="lg-group">
         <span className="lg">
           <i className="lnk" /> recorded flow (alert source → destination)

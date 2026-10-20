@@ -51,7 +51,7 @@ export function Authentication() {
         </div>
         <div className="stack">
           <Panel title="Methods">
-            <HBars data={data.methods.map((m) => ({ name: m.method, count: m.count }))} labelWidth={110} />
+            <HBars data={data.methods.map((m) => ({ name: m.method, count: m.count }))} labelWidth={190} />
           </Panel>
           <Panel title="VLAN assignments" sub="successful sessions">
             <HBars data={data.vlans.map((v) => ({ name: `VLAN ${v.vlan}`, count: v.count }))} tone="c5" labelWidth={110} />

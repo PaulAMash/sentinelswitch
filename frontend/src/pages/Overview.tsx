@@ -12,6 +12,7 @@ import { useToast } from '../components/toast'
 import { TrafficStack } from '../charts'
 import { BarRows, ResponseFlow, SeverityRing, TechniqueTiles } from '../charts/viz'
 import { SignalConsole } from '../components/signal/SignalConsole'
+import { AnimatedValue } from '../components/motion'
 import { byEndpoint, bySource, ms, severityCounts } from '../lib/telemetry'
 import { fmtNum, fmtSeconds, fmtTime, pct } from '../lib/format'
 import { Icon } from '../components/Icons'
@@ -40,6 +41,7 @@ export function Overview() {
   const { data: telemetry } = useApi(() => endpoints.assessments(`?control_id=${TELEMETRY_CONTROL}`))
   const { data: sensorCov } = useApi(() => endpoints.assessments('?control_id=CTL-SENSOR-COVERAGE'))
   const { data: incidents } = useApi(endpoints.incidents)
+  const { data: wireFeed } = useApi(endpoints.telemetry)
   const toast = useToast()
   const [metric, setMetric] = useState<'bytes' | 'connections'>('connections')
   const [dialog, setDialog] = useState<'replay' | 'reset' | null>(null)
@@ -120,7 +122,7 @@ export function Overview() {
             <span className="kt">alerts</span>
           </span>
           <span className="vrow">
-            <span className="v">{alerts ? alerts.length : k.alerts}</span>
+            <span className="v"><AnimatedValue value={alerts ? alerts.length : k.alerts} /></span>
             <span className="scope">DAY</span>
           </span>
           <span className="d">{sev ? `${sev.high} high · ${sev.medium} medium · ${sev.low} low` : '…'}</span>
@@ -130,7 +132,7 @@ export function Overview() {
             <span className="kt">detections</span>
           </span>
           <span className="vrow">
-            <span className="v">{detections ? detections.length : '…'}</span>
+            <span className="v"><AnimatedValue value={detections ? detections.length : '…'} /></span>
             <span className="scope">DAY</span>
           </span>
           <span className="d">{disp ? `${disp.auto} automatic · ${disp.review} review · ${disp.monitor} monitor` : '…'}</span>
@@ -140,7 +142,7 @@ export function Overview() {
             <span className="kt">awaiting authorization</span>
           </span>
           <span className="vrow">
-            <span className={`v ${awaiting ? 'warn' : 'zero'}`}>{awaiting ?? '…'}</span>
+            <span className={`v ${awaiting ? 'warn' : 'zero'}`}><AnimatedValue value={awaiting ?? '…'} /></span>
             <span className="scope">NOW</span>
           </span>
           <span className="d">manual review queue</span>
@@ -150,7 +152,7 @@ export function Overview() {
             <span className="kt">contained hosts</span>
           </span>
           <span className="vrow">
-            <span className={`v ${k.quarantined_hosts ? 'danger' : 'zero'}`}>{k.quarantined_hosts}</span>
+            <span className={`v ${k.quarantined_hosts ? 'danger' : 'zero'}`}><AnimatedValue value={k.quarantined_hosts} /></span>
             <span className="scope">NOW</span>
           </span>
           <span className="d">VLAN 50 or administrative hold</span>
@@ -160,7 +162,7 @@ export function Overview() {
             <span className="kt">open incidents</span>
           </span>
           <span className="vrow">
-            <span className={`v ${openIncidents ? 'danger' : 'zero'}`}>{openIncidents}</span>
+            <span className={`v ${openIncidents ? 'danger' : 'zero'}`}><AnimatedValue value={openIncidents} /></span>
             <span className="scope">NOW</span>
           </span>
           <span className="d">{k.incidents} opened on the day</span>
@@ -170,7 +172,7 @@ export function Overview() {
             <span className="kt">open findings</span>
           </span>
           <span className="vrow">
-            <span className={`v ${posture?.findings.open ? 'warn' : 'zero'}`}>{posture ? posture.findings.open : '…'}</span>
+            <span className={`v ${posture?.findings.open ? 'warn' : 'zero'}`}><AnimatedValue value={posture ? posture.findings.open : '…'} /></span>
             <span className="scope">NOW</span>
           </span>
           <span className="d">{posture ? `${posture.findings.by_severity.high} high · ${posture.findings.by_severity.medium} medium · ${posture.findings.by_severity.low} low` : '…'}</span>
@@ -180,7 +182,7 @@ export function Overview() {
             <span className="kt">determinate pass</span>
           </span>
           <span className="vrow">
-            <span className="v accent">{t ? pct(t.pass_rate_of_determinate_pct) : '…'}</span>
+            <span className="v accent"><AnimatedValue value={t ? pct(t.pass_rate_of_determinate_pct) : '…'} /></span>
             <span className="scope">RUN</span>
           </span>
           <span className="d">{t ? `${t.pass} / ${t.determinate} determinate results` : '…'}</span>
@@ -190,7 +192,7 @@ export function Overview() {
             <span className="kt">unverified</span>
           </span>
           <span className="vrow">
-            <span className={`v ${t && t.unknown + t.stale ? 'warn' : 'zero'}`}>{t ? t.unknown + t.stale : '…'}</span>
+            <span className={`v ${t && t.unknown + t.stale ? 'warn' : 'zero'}`}><AnimatedValue value={t ? t.unknown + t.stale : '…'} /></span>
             <span className="scope">RUN</span>
           </span>
           <span className="d">{t ? `${t.unknown} unknown · ${t.stale} stale` : '…'}</span>
@@ -199,7 +201,7 @@ export function Overview() {
 
       {/* 01 · signal field */}
       <div className="reveal" style={{ ['--i' as string]: 1 }}>
-        {inputs && domain ? <SignalConsole inputs={inputs} domain={domain} day={data.dataset.day} now={sw ? ms(sw.now) : null} recordedEnd={recordedEnd} traffic={data.traffic} /> : <div className="sig instrument sig-loading"><Loading rows={8} /></div>}
+        {inputs && domain ? <SignalConsole inputs={inputs} domain={domain} day={data.dataset.day} now={sw ? ms(sw.now) : null} recordedEnd={recordedEnd} traffic={data.traffic} wireFeed={wireFeed} /> : <div className="sig instrument sig-loading"><Loading rows={8} /></div>}
       </div>
 
       {/* 02 · telemetry */}
@@ -282,15 +284,15 @@ export function Overview() {
           <ul className="timing-tiles">
             <li>
               <span className="k">mean time to detect</span>
-              <span className="v mono">{fmtSeconds(k.mttd)}</span>
+              <span className="v mono"><AnimatedValue value={fmtSeconds(k.mttd)} /></span>
             </li>
             <li>
               <span className="k">mean time to attribute</span>
-              <span className="v mono">{fmtSeconds(k.mtta)}</span>
+              <span className="v mono"><AnimatedValue value={fmtSeconds(k.mtta)} /></span>
             </li>
             <li>
               <span className="k">mean time to contain</span>
-              <span className="v mono">{fmtSeconds(k.mttc)}</span>
+              <span className="v mono"><AnimatedValue value={fmtSeconds(k.mttc)} /></span>
             </li>
           </ul>
           <div className="vz-def">

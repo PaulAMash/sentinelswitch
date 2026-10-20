@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { kv } from '../lib/kv'
 import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../lib/api'
@@ -10,6 +10,8 @@ import { DataTable, Cell2 } from '../components/table'
 import { Console, Terminal } from '../components/terminal'
 import { PortLegend, SwitchPanel } from '../components/SwitchPanel'
 import { vlanName } from '../lib/format'
+import { ms } from '../lib/telemetry'
+import { decodeWire, upper } from '../lib/wire'
 
 const INITIAL_CMD = 'show interfaces Gi1/0/23 switchport'
 
@@ -25,6 +27,30 @@ export function SwitchPage() {
       .catch(() => setInitial(null))
   }, [])
   const { data: iface, error: ifaceError } = useApi(() => (sel ? endpoints.iface(sel) : Promise.resolve(null)), [sel])
+  const { data: feed } = useApi(endpoints.telemetry)
+  const { data: devs } = useApi(endpoints.devices)
+  // front-panel activity: recorded Zeek connections per port in the hour before the switch clock
+  const activity = useMemo(() => {
+    if (!feed || !devs || !data) return undefined
+    const w = decodeWire(feed)
+    const ipOf = new Map(devs.devices.map((d) => [d.hostname, d.ip]))
+    const hostIdx = new Map(w.hosts.map((h, i) => [h, i]))
+    const portOfHost = new Map<number, string>()
+    for (const p of data.interfaces) {
+      const ip = p.device ? ipOf.get(p.device) : null
+      const i = ip ? hostIdx.get(ip) : undefined
+      if (i !== undefined) portOfHost.set(i, p.name)
+    }
+    const now = ms(data.now)
+    const counts = new Map<string, number>()
+    for (let i = upper(w.t, now - 3600_000), j = upper(w.t, now); i < j; i++) {
+      for (const h of [w.o[i], w.r[i]]) {
+        const port = portOfHost.get(h)
+        if (port) counts.set(port, (counts.get(port) ?? 0) + 1)
+      }
+    }
+    return counts
+  }, [feed, devs, data])
   if (error && !data) return <ErrorState error={error} retry={reload} />
   if (!data) return <Loading rows={5} />
   const s = data.summary
@@ -46,8 +72,9 @@ export function SwitchPage() {
       </PageHeader>
 
       <div className="switch-hero">
-        <SwitchPanel ports={data.interfaces} selected={sel} onSelect={setSel} hostname={data.hostname} model={data.model} highlight={sel} />
+        <SwitchPanel ports={data.interfaces} selected={sel} onSelect={setSel} hostname={data.hostname} model={data.model} highlight={sel} activity={activity} />
         <PortLegend />
+        {activity && activity.size > 0 && <p className="led-note dim small">Port LEDs blink with each port's recorded connections in the hour before the switch clock: faster means busier ({activity.size} ports active).</p>}
       </div>
 
       <div className="switch-grid">

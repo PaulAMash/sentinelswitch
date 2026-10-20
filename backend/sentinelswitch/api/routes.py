@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from fastapi.responses import PlainTextResponse, StreamingResponse
+from fastapi.responses import PlainTextResponse, Response, StreamingResponse
 from pydantic import BaseModel, Field
 
 from sentinelswitch import __version__
@@ -19,7 +19,7 @@ from sentinelswitch.detection.suricata_rules import load_rules as load_suricata_
 from sentinelswitch.drift.engine import DriftEngine
 from sentinelswitch.evidence.bundle import BUNDLE_FILES
 from sentinelswitch.services import demo as demo_service
-from sentinelswitch.services import metrics
+from sentinelswitch.services import metrics, replay_feed
 from sentinelswitch.services.seed import seed_database
 from sentinelswitch.simulator import cli_render
 from sentinelswitch.validation.harness import run_validation
@@ -68,6 +68,22 @@ def overview(request: Request) -> dict[str, Any]:
 def traffic(request: Request) -> list[dict[str, Any]]:
     store, _, _ = _ctx(request)
     return store.buckets()
+
+
+@router.get("/telemetry")
+def telemetry(request: Request) -> Response:
+    """Recorded Zeek connections, RADIUS results and switch syslog of the dataset day, for the replay.
+
+    Read-only and static per dataset: served gzip-compressed with an ETag so a revisit costs nothing.
+    """
+    _, env, settings = _ctx(request)
+    raw, packed, etag = replay_feed.encoded_feed(settings.data_dir, env.dataset["day"])
+    headers = {"ETag": f'"{etag}"', "Cache-Control": "public, max-age=600", "Vary": "Accept-Encoding"}
+    if request.headers.get("if-none-match") == f'"{etag}"':
+        return Response(status_code=304, headers=headers)
+    if "gzip" in request.headers.get("accept-encoding", ""):
+        return Response(packed, media_type="application/json", headers={**headers, "Content-Encoding": "gzip"})
+    return Response(raw, media_type="application/json", headers=headers)
 
 
 # ---- alerts / detections --------------------------------------------------------------------

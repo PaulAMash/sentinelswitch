@@ -277,21 +277,43 @@ through the switch tables (DHCP binding → MAC table → port → VLAN → inve
 highlights the ports it involved. The layout is schematic; when containment moves a port to the
 quarantine VLAN, the hexagon travels to that colony and leaves its vacated slot outlined.
 
-The field **replays the recorded day on a loop** as soon as the page loads. One pass through the
-selected window takes 75 s at 1× (`PLAYBACK.WINDOW_SECONDS` in `frontend/src/lib/playback.ts`); the
-playback bar under the field has play/pause, return to start, the simulated time, 0.5×/1×/2×/4×,
-and Day / 4 h / 1 h windows, and the timeline beneath it is the scrubber (click or drag to seek, which
-pauses; drag the lower rail to choose a custom window; ←/→ step 15 min, Shift for 1 h, Home/End,
-Space toggles). One clock drives the field, the event stream, the inspector and the timeline; it keeps
-its position across page navigation, holds while the tab is hidden and resumes without a jump. At every
-playhead the field shows what the records say at that moment: which alerts had fired, which ports were
-contained (from each action's applied and restored times), which detections were awaiting
-authorization and which incidents were open. Replay is read-only: it makes no API requests at all, it
-never re-executes containment or touches the switch, and a historical response is never shown as a new
-one. The slow lattice sheen and spoke flow while playing are decorative and stop under
-`prefers-reduced-motion`; the playback controls keep working. Telemetry, response and assurance
-analytics follow (severity, sources, SPAN traffic and DNS, endpoint ranking, response outcomes per
-detection, ATT&CK technique tags, pipeline timing, control status, sensor freshness).
+The field **replays the recorded day on a loop** as soon as the page loads, and it replays the wire,
+not just the alerts. `GET /api/telemetry` serves the dataset's recorded Zeek connections (with the DNS
+query, TLS server name or HTTP request joined by uid), RADIUS results and switch syslog in a compact,
+read-only, gzip-compressed form. Every particle crossing the field is one of those 10,524 connections,
+drawn from its port through the switch to the responding port (or to the uplink trunk when the
+responder is not on SW01) and coloured by service; RADIUS results, syslog lines and alerts flash at the
+port they name; the core ring turns with connections per second. A two-pane wire console under the
+field prints the recorded lines at the playhead, and the timeline under it stacks connections per 5
+minutes by service (log height) with RADIUS and syslog rows, cut off at the switch clock. The traffic
+filter chips double as the colour key. Nothing is generated: busy minutes draw a sample of their
+connections, and every connection still lights the ports it touched.
+
+One pass through the selected window takes 75 s at 1× (`PLAYBACK.WINDOW_SECONDS` in
+`frontend/src/lib/playback.ts`) before **auto pace**, which is on by default: stretches with few records
+fast-forward (up to 10×, labelled *quiet*), the clock slows around every recorded alert, and it drops to
+about four recorded seconds per real second around each containment action, so the 21:14 lateral
+movement burst, the quarantine move and the read-back can be followed. The clock always shows the
+recorded time. The playback bar has play/pause, return to start, the simulated time, 0.5×/1×/2×/4×,
+the auto-pace toggle and Day / 4 h / 1 h windows; the timeline is the scrubber (click or drag to seek,
+which pauses; drag the lower rail to choose a custom window; ←/→ step 15 min, Shift for 1 h, Home/End,
+Space toggles). One clock drives the field, the particles, the console, the event stream, the inspector
+and the timeline; it keeps its position across page navigation, holds while the tab is hidden and
+resumes without a jump. At every playhead the field shows what the records say at that moment: which
+alerts had fired, which ports were contained (from each action's applied and restored times), which
+detections were awaiting authorization and which incidents were open. Replay is read-only: the feed is
+fetched once per page load, a full pass makes no further data request and no write, containment is
+never re-executed, the switch is never touched, and a historical response is never shown as a new one
+(`make playback-check` verifies this in a browser). Under `prefers-reduced-motion` the particles and
+every CSS animation stop while playback and its controls keep working. Telemetry, response and
+assurance analytics follow (severity, sources, SPAN traffic and DNS, endpoint ranking, response outcomes
+per detection, ATT&CK technique tags, pipeline timing, control status, sensor freshness).
+
+Elsewhere, motion stays small and tied to data: numbers count to the values the API returned, table
+rows arrive in order, panel headers scan once, a pending authorization breathes, the incident view
+loops the incident host's recorded connections around the incident, the switch front panel blinks each
+port LED at its recorded connection rate for the last hour, drift marks each observed value that
+differs from intent, and the architecture diagram's arrows flow in the direction data moves.
 
 The top bar keeps four facts apart: the demo stage, **API** connectivity (reachable, errors when a
 request returned an HTTP error in the last minute, unreachable when the network request failed; the

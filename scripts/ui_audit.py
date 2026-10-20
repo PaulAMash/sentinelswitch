@@ -67,6 +67,8 @@ METRICS_JS = """() => {
   const fonts = {}; let tiny = 0; const tinyEls = [];
   for (const e of vis) {
     if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue;
+    // an inlined diagram keeps its own typography, exactly as when it is shown with <img>
+    if (e.closest('.arch-svg')) continue;
     const fs = parseFloat(getComputedStyle(e).fontSize); fonts[fs] = (fonts[fs] || 0) + 1;
     if (fs < 11 && !e.closest('svg')) { tiny++; if (tinyEls.length < 5) tinyEls.push((e.className ? String(e.className).slice(0, 30) : e.tagName) + ':' + e.textContent.trim().slice(0, 24)); }
   }

@@ -1,0 +1,7 @@
+76 route/viewport combinations measured; screenshots in artifacts/ui-refine/after-baseline
+routes failing a criterion: 4
+   desktop /incidents/INC-2026-0042: 1 console messages; 1 failed requests
+   laptop /incidents/INC-2026-0042: 1 console messages; 1 failed requests
+   tablet /incidents/INC-2026-0042: 1 console messages; 1 failed requests
+   mobile /incidents/INC-2026-0042: 1 console messages; 1 failed requests
+tsx files with hex colour literals: none

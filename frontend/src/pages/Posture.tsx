@@ -123,7 +123,7 @@ export function Posture() {
         title="Security posture"
         sub={
           <>
-            {org ? `${org.name} · ${org.site}` : 'Simulated event network'} — assessment clock <span className="mono">{fmtTime(p.clock, { date: true, ms: false })}</span> UTC
+            {org ? `${org.name} · ${org.site}` : 'Simulated event network'} — <span className="nowrap">assessment clock <span className="mono">{fmtTime(p.clock, { date: true, ms: false })}</span> UTC</span>
           </>
         }
         info={<>Evidence-driven control assessment summary. Every ratio keeps its denominator visible; UNKNOWN and STALE results are never counted as a pass; RETIRED results are excluded from totals. {p.scope_note}</>}

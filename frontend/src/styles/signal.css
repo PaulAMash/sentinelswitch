@@ -237,7 +237,7 @@
 .sig-legend { display: flex; gap: 8px 20px; flex-wrap: wrap; font-size: var(--fs-xs); color: var(--text-3); padding-top: 4px; border-top: 1px solid var(--line-hair); }
 .lg-group { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .lg-k { text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); font-family: var(--font-mono); }
-.lg { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.sig-legend .lg { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
 .hxs { display: inline-block; width: 11px; height: 12px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); position: relative; background: var(--hx-edge); }
 .hxs::after { content: ""; position: absolute; inset: 1.5px; clip-path: inherit; background: var(--bg-1); }
 .hxs.act::after { display: none; }
@@ -336,6 +336,76 @@
 .ev-st { font-family: var(--font-mono); color: var(--text-3); margin-left: auto; }
 .newtag { font-family: var(--font-mono); color: var(--accent-strong); text-transform: uppercase; letter-spacing: 0.08em; }
 
+/* ---------------------------------------------------------------- recorded wire: colours by service, result and level */
+.svc-tls { --c: var(--svc-tls); }
+.svc-dns { --c: var(--svc-dns); }
+.svc-web { --c: var(--svc-web); }
+.svc-file { --c: var(--svc-file); }
+.svc-admin { --c: var(--svc-admin); }
+.svc-dir { --c: var(--svc-dir); }
+.svc-infra { --c: var(--svc-infra); }
+.svc-other { --c: var(--svc-other); }
+.auth-ok { --c: var(--ok); }
+.auth-bad { --c: var(--danger); }
+.auth-guest { --c: var(--info); }
+.sys-high { --c: var(--danger); }
+.sys-warn { --c: var(--warn); }
+.sys-info { --c: var(--svc-infra); }
+.wl.sev-high { --c: var(--sev-high); }
+.wl.sev-medium { --c: var(--sev-medium); }
+.wl.sev-low { --c: var(--sev-low); }
+.svc-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); opacity: 0.35; box-shadow: 0 0 0 0 var(--c); }
+.fchip.on .svc-dot { opacity: 1; box-shadow: 0 0 6px var(--c); }
+
+/* particles over the field */
+.sf-wrap { position: relative; }
+.sf-flowcanvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: block; }
+
+/* wire tap: the recorded lines at the playhead */
+.wire { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1px; border: 1px solid var(--line-1); border-radius: var(--r-panel); background: var(--line-1); overflow: hidden; }
+.wire-pane { background: rgba(5, 8, 12, 0.92); min-width: 0; position: relative; }
+.wire-pane::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 3px); }
+.wire-head { display: flex; justify-content: space-between; gap: 10px; padding: 6px 10px; border-bottom: 1px solid var(--line-1); font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); }
+.wire-k::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); margin-right: 7px; vertical-align: 1px; box-shadow: 0 0 6px var(--ok); animation: rec-blink 1.2s var(--ease-in-out) infinite; }
+.wire-head > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wire-rate { text-transform: none; letter-spacing: 0; color: var(--text-3); flex: none; }
+.wire-lines { list-style: none; margin: 0; padding: 4px 0 6px; font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 17px; }
+.wl { display: grid; grid-template-columns: 92px max-content minmax(0, 1fr); gap: 8px; padding: 0 10px; white-space: nowrap; color: var(--text-3); height: 17px; }
+.wl > span { overflow: hidden; text-overflow: ellipsis; }
+.wl-t { color: var(--text-4); font-variant-numeric: tabular-nums; }
+.wl-tag { color: var(--c, var(--text-3)); min-width: 44px; }
+.wl-x { color: var(--text-2); }
+.wl.k-alert { background: color-mix(in srgb, var(--c) 12%, transparent); }
+.wl.k-alert .wl-x { color: var(--text-1); }
+.wl.auth-bad .wl-x, .wl.sys-high .wl-x { color: var(--danger-ink); }
+.wl.new { animation: wl-in 900ms var(--ease-out); }
+.wl:last-child:not(.is-blank) .wl-x::after { content: "▍"; color: var(--accent-strong); margin-left: 4px; animation: rec-blink 1s steps(2) infinite; }
+@keyframes wl-in { from { background: color-mix(in srgb, var(--c, var(--accent)) 22%, transparent); } }
+@media (max-width: 1099px) { .wire { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 599px) { .wl { grid-template-columns: 84px max-content minmax(0, 1fr); gap: 6px; padding: 0 8px; } }
+
+/* timeline lanes */
+.scrub.has-lanes .scrub-track { height: 118px; }
+.scrub.has-lanes .scrub-bars { bottom: auto; height: 36px; }
+.scrub-lanes { position: absolute; left: 0; right: 0; bottom: 4px; height: 75px; width: 100%; display: block; pointer-events: none; }
+.scrub-ahead { position: absolute; top: 0; bottom: 0; background: rgba(5, 8, 12, 0.38); pointer-events: none; }
+.scrub-key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: var(--fs-xs); color: var(--text-3); }
+.scrub-key .sk { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.scrub-key .sw { display: inline-block; width: 10px; height: 6px; background: var(--c); }
+.scrub-key .sw.auth { background: linear-gradient(90deg, var(--ok) 0 60%, var(--danger) 60%); }
+.scrub-key .sw.sys { background: linear-gradient(90deg, var(--svc-infra) 0 60%, var(--warn) 60%); }
+
+/* transport: quiet-stretch pacing */
+.pb-skip { border: 1px solid var(--line-2); border-radius: var(--r-ctl); background: var(--surface-2); }
+.pb-pace { color: var(--svc-dns); }
+.pb-pace.slow { color: var(--warn-ink); }
+.sig-frame.tr span { white-space: nowrap; }
+
+/* legend: motion */
+.lg-particle { display: inline-block; width: 16px; height: 3px; background: linear-gradient(90deg, transparent, var(--svc-tls)); box-shadow: 4px 0 6px -1px var(--svc-tls); }
+.hxs.lg-flash { background: var(--ok); }
+.lg-core { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--accent); border-right-color: transparent; border-bottom-color: transparent; }
+
 /* ---------------------------------------------------------------- responsive */
 @media (max-width: 1439px) { .sig-body { grid-template-columns: minmax(0, 1fr) 320px; } }
 @media (max-width: 1199px) {
@@ -357,14 +427,18 @@
   .sig-frame.tr { max-width: 100%; left: 0; right: auto; }
 }
 @media (max-width: 599px) {
+  .sig-legend .lg { white-space: normal; }
   .sf { max-height: none; }
   .fchip { min-height: 36px; }
   .sig-legend { gap: 6px 14px; }
 }
 .mini-field { display: flex; flex-direction: column; gap: 8px; }
 .mini-field .sf { max-height: 520px; }
+.mini-replay { font-size: var(--fs-xs); color: var(--accent-strong); text-transform: uppercase; letter-spacing: 0.08em; }
+.mini-replay::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-strong); margin-right: 7px; vertical-align: 1px; animation: rec-blink 1.6s var(--ease-in-out) infinite; }
 .mini-cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--text-3); border-top: 1px solid var(--line-hair); padding-top: 8px; }
 @media (prefers-reduced-motion: reduce) {
+  .wl.new, .wl:last-child .wl-x::after, .wire-k::before { animation: none; }
   /* without the draw animation a newly arrived flow must still be visible */
   .sf-flow.travel path { stroke-dasharray: none; stroke-dashoffset: 0; }
   .sf-flow.hot path { stroke-dasharray: 5 4; }

@@ -1,8 +1,10 @@
 """Browser check of the Overview playback against a temporary server.
 
-Checks autoplay and its rate, pause, click and drag seeking, resume, speed, window presets, looping,
-navigation away and back, a hidden tab, reload, reduced motion, and that a full replay pass issues no
-data request and no write: historical replay must never become an execution mechanism.
+Checks autoplay, the recorded-traffic canvas and console, auto pace (fast through quiet stretches, slow
+motion at a containment), then with auto pace off: the 1x rate, pause, click and drag seeking, resume,
+speed, window presets, looping, navigation away and back, a hidden tab, reload, reduced motion, and that
+a full replay pass issues no data request and no write: historical replay must never become an
+execution mechanism.
 
     python scripts/playback_check.py
 
@@ -69,11 +71,60 @@ def run(base: str) -> None:
             page.wait_for_timeout(int(seconds * 1000))
             return (secs(clock()) - a) / seconds / 60  # simulated minutes per real second
 
+        def sub() -> str:
+            return page.evaluate("document.querySelector('.pb-sub').textContent")
+
+        def from_end(steps_back: int) -> None:
+            page.evaluate("document.querySelector('.scrub-track').focus({ preventScroll: true })")
+            page.keyboard.press("End")
+            for _ in range(steps_back):
+                page.keyboard.press("ArrowLeft")
+
         page.goto(f"{base}/", wait_until="networkidle")
         page.wait_for_function("document.querySelector('.pb-state')?.textContent === 'playing'", timeout=15000)
         check("autoplay", state() == "playing", f"state {state()} at {clock()}")
+        page.wait_for_selector(".sf-flowcanvas", timeout=15000)
+        page.wait_for_timeout(1200)
+        lines = page.evaluate("document.querySelectorAll('.wire-lines .wl:not(.is-blank)').length")
+        check(
+            "recorded traffic: particle canvas and wire console",
+            page.locator(".sf-flowcanvas").count() == 1 and lines > 0,
+            f"{lines} console lines",
+        )
 
         expected = window_minutes(window_text()) / WINDOW_SECONDS
+        from_end(73)  # 03:00, a quiet night hour
+        page.keyboard.press(" ")
+        page.wait_for_timeout(400)
+        rq = rate(1.0)
+        check(
+            "auto pace fast-forwards a quiet stretch",
+            rq > expected * 2 and "quiet" in sub(),
+            f"{rq:.0f} sim-min/s ({sub()})",
+        )
+        from_end(1)  # 21:00, before the flagship containment at 21:14:41
+        page.keyboard.press(" ")
+        page.wait_for_function("document.querySelector('.pb-time').textContent >= '21:14:30'", timeout=20000)
+        a = secs(clock())
+        page.wait_for_timeout(1000)
+        slow_s = secs(clock()) - a
+        check(
+            "auto pace slows to the containment",
+            0 <= slow_s <= 12 and "slow" in sub(),
+            f"{slow_s} simulated s in 1 s ({sub()})",
+        )
+        burst = page.evaluate("document.querySelector('.wire-lines').textContent")
+        check("wire console shows the recorded burst", "ENG-LT-047" in burst, "ENG-LT-047 connections listed at 21:14")
+        page.get_by_role("button", name="auto pace").click()
+        check(
+            "auto pace can be switched off",
+            page.get_by_role("button", name="auto pace").get_attribute("aria-pressed") == "false",
+            "the rest runs at the plain rate",
+        )
+        page.evaluate("document.querySelector('.scrub-track').focus({ preventScroll: true })")
+        page.keyboard.press("Home")
+        page.keyboard.press(" ")
+        page.wait_for_timeout(300)
         r1 = rate()
         check("1x rate", abs(r1 - expected) / expected < 0.15, f"{r1:.1f} sim-min/s, expected {expected:.1f}")
 
@@ -193,7 +244,7 @@ def run(base: str) -> None:
         page.goto(f"{base}/", wait_until="networkidle")
         page.wait_for_function("document.querySelector('.pb-state')?.textContent === 'playing'", timeout=15000)
         r_rm = rate()
-        animations = page.evaluate("document.getAnimations().length")
+        animations = page.evaluate("document.getAnimations().length") + page.locator(".sf-flowcanvas").count()
         check(
             "reduced motion keeps playback, stops CSS motion",
             r_rm > 0 and animations == 0,

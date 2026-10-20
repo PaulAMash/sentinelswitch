@@ -4,8 +4,7 @@
 .chip {
   display: inline-flex; align-items: center; gap: 5px; height: 20px; padding: 0 7px; border-radius: var(--r-ctl);
   font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.02em; line-height: 1; white-space: nowrap;
-  border: 1px solid var(--line-2); background: var(--surface-3); color: var(--text-2); vertical-align: middle;
-}
+  border: 1px solid var(--line-2); background: var(--surface-3); color: var(--text-2); vertical-align: middle; justify-self: start; }
 .chip svg { width: 11px; height: 11px; flex: none; }
 .chip.mono { font-family: var(--font-mono); font-weight: 500; letter-spacing: 0; }
 .chip.caps { text-transform: uppercase; letter-spacing: 0.06em; }
@@ -84,6 +83,9 @@ a.id { color: var(--accent); }
 .panel-head .toggle { background: none; border: none; color: var(--text-3); cursor: pointer; display: inline-flex; padding: 4px; border-radius: var(--r-ctl); transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
 .panel:not(.collapsed) > .panel-body { animation: reveal-up var(--t-base) var(--ease-out) both; }
 .panel-head .toggle:hover { color: var(--text-1); background: var(--surface-2); }
+.panel-head .toggle { min-width: 28px; min-height: 28px; align-items: center; justify-content: center; border: 1px solid var(--line-2); }
+.panel-head .toggle svg { width: 16px; height: 16px; flex: none; }
+.panel.collapsed .panel-head { border-bottom-color: transparent; }
 
 /* ---------------------------------------------------------------- metrics */
 .metric { padding: var(--sp-3) var(--sp-4); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -467,3 +469,22 @@ details > summary { cursor: pointer; }
 table.data td.col-note { min-width: 180px; max-width: 280px; }
 table.data td.break-ids { white-space: normal; overflow-wrap: anywhere; min-width: 140px; }
 table.data td.wrap .cell-2 .secondary, table.data td.break-ids .cell-2 .secondary { white-space: normal; overflow-wrap: anywhere; }
+
+/* ---------------------------------------------------------------- motion: entrances and live states
+   Data-driven and one-shot unless the state itself is live; all of it is switched off by the
+   prefers-reduced-motion rule in base.css. */
+/* table rows arrive in order once; rows added later by a refresh arrive the same way */
+table.data tbody tr:not(.state-row) { animation: row-in 420ms var(--ease-out) both; animation-delay: calc(var(--ri, 0) * 22ms); }
+@keyframes row-in { from { opacity: 0; transform: translateY(5px); } }
+/* a single scan along each panel header when it appears */
+.panel-head { position: relative; }
+.panel-head::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; pointer-events: none; opacity: 0; background: linear-gradient(90deg, transparent, var(--accent-strong), transparent) no-repeat; background-size: 30% 100%; animation: head-scan 1.6s var(--ease-in-out) 0.15s both; }
+@keyframes head-scan { 0% { background-position: -60% 0; opacity: 1; } 85% { opacity: 1; } 100% { background-position: 160% 0; opacity: 0; } }
+/* a decision someone has to make is the one state that breathes */
+.chip.pending { animation: chip-live 2.4s var(--ease-in-out) infinite; }
+@keyframes chip-live { 0% { box-shadow: 0 0 0 0 var(--warn-line); } 70%, 100% { box-shadow: 0 0 0 5px transparent; } }
+/* front-panel LEDs blink at each port's recorded connection rate (Switch page) */
+.port .led.act, .chassis-led.act { animation: led-blink var(--blink, 1s) steps(1, end) infinite; animation-delay: var(--phase, 0s); }
+.port.pulse .led.act { animation: led-pulse 600ms var(--ease) 1; }
+@keyframes led-blink { 50% { opacity: 0.18; } }
+.led-note { margin: 6px 0 0; }

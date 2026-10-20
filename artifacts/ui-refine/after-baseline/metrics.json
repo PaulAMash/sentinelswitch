@@ -1,0 +1,1965 @@
+{
+ "desktop /": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 335,
+   "12": 162,
+   "13": 33,
+   "14": 17,
+   "16": 3,
+   "20": 20,
+   "28": 9
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 155,
+   "6px": 17,
+   "50%": 21
+  },
+  "inlineStyled": 161,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 32,
+  "docHeight": 3736,
+  "console": [],
+  "failed": []
+ },
+ "desktop /posture": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 220,
+   "12": 95,
+   "13": 35,
+   "14": 14,
+   "16": 1,
+   "20": 5,
+   "36": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 154,
+   "6px": 16,
+   "50%": 13
+  },
+  "inlineStyled": 67,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 2205,
+  "console": [],
+  "failed": []
+ },
+ "desktop /controls": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 108,
+   "12": 88,
+   "13": 20,
+   "14": 4,
+   "20": 1,
+   "28": 3
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 122,
+   "6px": 8,
+   "50%": 16
+  },
+  "inlineStyled": 35,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1089,
+  "console": [],
+  "failed": []
+ },
+ "desktop /controls/CTL-ENDPOINT-IDENTITY": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 43,
+   "12": 275,
+   "13": 28,
+   "14": 11,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 64,
+   "6px": 10,
+   "50%": 5
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2406,
+  "console": [],
+  "failed": []
+ },
+ "desktop /findings": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 33,
+   "12": 72,
+   "13": 15,
+   "14": 5,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 37,
+   "6px": 4,
+   "50%": 15
+  },
+  "inlineStyled": 7,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 1080,
+  "console": [],
+  "failed": []
+ },
+ "desktop /findings/FND-SENSOR-COVERAGE-vlan-50": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 35,
+   "12": 41,
+   "13": 52,
+   "14": 13,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 32,
+   "6px": 13,
+   "50%": 4
+  },
+  "inlineStyled": 3,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1431,
+  "console": [],
+  "failed": []
+ },
+ "desktop /incidents": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 69,
+   "12": 70,
+   "13": 15,
+   "14": 5,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 41,
+   "6px": 4,
+   "50%": 11
+  },
+  "inlineStyled": 9,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 1080,
+  "console": [],
+  "failed": []
+ },
+ "desktop /incidents/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 15,
+   "12": 6,
+   "13": 16,
+   "14": 3
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 19,
+   "6px": 2,
+   "50%": 2
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1080,
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "failed": [
+   "404 http://127.0.0.1:49561/api/incidents/INC-2026-0042"
+  ]
+ },
+ "desktop /reports": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 42,
+   "12": 26,
+   "13": 35,
+   "14": 9,
+   "20": 1,
+   "28": 6
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 36,
+   "6px": 15,
+   "50%": 6
+  },
+  "inlineStyled": 25,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 6,
+  "docHeight": 1080,
+  "console": [],
+  "failed": []
+ },
+ "desktop /alerts": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 179,
+   "12": 324,
+   "13": 15,
+   "14": 6,
+   "20": 1,
+   "28": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 155,
+   "6px": 5,
+   "50%": 50
+  },
+  "inlineStyled": 56,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1324,
+  "console": [],
+  "failed": []
+ },
+ "desktop /devices": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 96,
+   "12": 321,
+   "13": 15,
+   "14": 5,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 91,
+   "6px": 4,
+   "50%": 3
+  },
+  "inlineStyled": 40,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1763,
+  "console": [],
+  "failed": []
+ },
+ "desktop /devices/ENG-LT-047": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 117,
+   "12": 345,
+   "13": 41,
+   "14": 7,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 100,
+   "6px": 4,
+   "50%": 3
+  },
+  "inlineStyled": 45,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1763,
+  "console": [],
+  "failed": []
+ },
+ "desktop /switch": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "8": 60,
+   "11": 35,
+   "12": 501,
+   "13": 38,
+   "14": 10,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 31,
+   "6px": 15,
+   "50%": 3
+  },
+  "inlineStyled": 108,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 2602,
+  "console": [],
+  "failed": []
+ },
+ "desktop /authentication": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 217,
+   "12": 964,
+   "13": 16,
+   "14": 8,
+   "20": 1,
+   "28": 5
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 156,
+   "6px": 13,
+   "50%": 3
+  },
+  "inlineStyled": 158,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1097,
+  "console": [],
+  "failed": []
+ },
+ "desktop /coverage": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 98,
+   "12": 245,
+   "13": 17,
+   "14": 7,
+   "20": 1,
+   "28": 5
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 119,
+   "6px": 12,
+   "50%": 24
+  },
+  "inlineStyled": 68,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1862,
+  "console": [],
+  "failed": []
+ },
+ "desktop /drift": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 34,
+   "12": 36,
+   "13": 15,
+   "14": 4,
+   "20": 1,
+   "28": 4
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 33,
+   "6px": 16,
+   "50%": 7
+  },
+  "inlineStyled": 9,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 5,
+  "docHeight": 1080,
+  "console": [],
+  "failed": []
+ },
+ "desktop /evidence": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 97,
+   "12": 110,
+   "13": 29,
+   "14": 17,
+   "16": 8,
+   "20": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 49,
+   "6px": 10,
+   "50%": 7
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 17,
+  "docHeight": 3792,
+  "console": [],
+  "failed": []
+ },
+ "desktop /evidence/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 97,
+   "12": 111,
+   "13": 29,
+   "14": 18,
+   "16": 8,
+   "20": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 49,
+   "6px": 10,
+   "50%": 7
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 17,
+  "docHeight": 3792,
+  "console": [],
+  "failed": []
+ },
+ "desktop /about": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 30,
+   "12": 57,
+   "13": 26,
+   "14": 11,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 29,
+   "6px": 15,
+   "50%": 3
+  },
+  "inlineStyled": 18,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2871,
+  "console": [],
+  "failed": []
+ },
+ "laptop /": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 335,
+   "12": 162,
+   "13": 33,
+   "14": 17,
+   "16": 3,
+   "20": 20,
+   "28": 9
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 155,
+   "6px": 17,
+   "50%": 21
+  },
+  "inlineStyled": 161,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 32,
+  "docHeight": 3810,
+  "console": [],
+  "failed": []
+ },
+ "laptop /posture": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 213,
+   "12": 85,
+   "13": 35,
+   "14": 14,
+   "16": 1,
+   "20": 5,
+   "36": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 154,
+   "6px": 16,
+   "50%": 13
+  },
+  "inlineStyled": 67,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 2226,
+  "console": [],
+  "failed": []
+ },
+ "laptop /controls": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 108,
+   "12": 88,
+   "13": 20,
+   "14": 4,
+   "20": 1,
+   "28": 3
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 122,
+   "6px": 8,
+   "50%": 16
+  },
+  "inlineStyled": 35,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1104,
+  "console": [],
+  "failed": []
+ },
+ "laptop /controls/CTL-ENDPOINT-IDENTITY": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 38,
+   "12": 129,
+   "13": 28,
+   "14": 11,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 64,
+   "6px": 10,
+   "50%": 5
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 1929,
+  "console": [],
+  "failed": []
+ },
+ "laptop /findings": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 32,
+   "12": 57,
+   "13": 15,
+   "14": 5,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 37,
+   "6px": 4,
+   "50%": 15
+  },
+  "inlineStyled": 7,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 900,
+  "console": [],
+  "failed": []
+ },
+ "laptop /findings/FND-SENSOR-COVERAGE-vlan-50": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 35,
+   "12": 41,
+   "13": 52,
+   "14": 13,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 32,
+   "6px": 13,
+   "50%": 4
+  },
+  "inlineStyled": 3,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1431,
+  "console": [],
+  "failed": []
+ },
+ "laptop /incidents": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 68,
+   "12": 63,
+   "13": 15,
+   "14": 5,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 41,
+   "6px": 4,
+   "50%": 11
+  },
+  "inlineStyled": 9,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 900,
+  "console": [],
+  "failed": []
+ },
+ "laptop /incidents/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 15,
+   "12": 6,
+   "13": 16,
+   "14": 3
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 19,
+   "6px": 2,
+   "50%": 2
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 900,
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "failed": [
+   "404 http://127.0.0.1:49561/api/incidents/INC-2026-0042"
+  ]
+ },
+ "laptop /reports": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 42,
+   "12": 26,
+   "13": 35,
+   "14": 9,
+   "20": 1,
+   "28": 6
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 36,
+   "6px": 15,
+   "50%": 6
+  },
+  "inlineStyled": 25,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 6,
+  "docHeight": 1010,
+  "console": [],
+  "failed": []
+ },
+ "laptop /alerts": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 178,
+   "12": 236,
+   "13": 15,
+   "14": 6,
+   "20": 1,
+   "28": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 155,
+   "6px": 5,
+   "50%": 50
+  },
+  "inlineStyled": 56,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1144,
+  "console": [],
+  "failed": []
+ },
+ "laptop /devices": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 96,
+   "12": 321,
+   "13": 15,
+   "14": 5,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 91,
+   "6px": 4,
+   "50%": 3
+  },
+  "inlineStyled": 40,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1799,
+  "console": [],
+  "failed": []
+ },
+ "laptop /devices/ENG-LT-047": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 117,
+   "12": 345,
+   "13": 41,
+   "14": 7,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 100,
+   "6px": 4,
+   "50%": 3
+  },
+  "inlineStyled": 45,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1799,
+  "console": [],
+  "failed": []
+ },
+ "laptop /switch": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "8": 60,
+   "11": 35,
+   "12": 470,
+   "13": 38,
+   "14": 10,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 31,
+   "6px": 15,
+   "50%": 3
+  },
+  "inlineStyled": 108,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 2511,
+  "console": [],
+  "failed": []
+ },
+ "laptop /authentication": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 215,
+   "12": 415,
+   "13": 16,
+   "14": 8,
+   "20": 1,
+   "28": 5
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 156,
+   "6px": 13,
+   "50%": 3
+  },
+  "inlineStyled": 158,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1097,
+  "console": [],
+  "failed": []
+ },
+ "laptop /coverage": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 86,
+   "12": 170,
+   "13": 17,
+   "14": 7,
+   "20": 1,
+   "28": 5
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 110,
+   "6px": 12,
+   "50%": 15
+  },
+  "inlineStyled": 68,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1877,
+  "console": [],
+  "failed": []
+ },
+ "laptop /drift": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 34,
+   "12": 36,
+   "13": 15,
+   "14": 4,
+   "20": 1,
+   "28": 4
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 33,
+   "6px": 16,
+   "50%": 7
+  },
+  "inlineStyled": 9,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 5,
+  "docHeight": 900,
+  "console": [],
+  "failed": []
+ },
+ "laptop /evidence": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 97,
+   "12": 110,
+   "13": 29,
+   "14": 17,
+   "16": 8,
+   "20": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 49,
+   "6px": 10,
+   "50%": 7
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 17,
+  "docHeight": 3937,
+  "console": [],
+  "failed": []
+ },
+ "laptop /evidence/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 97,
+   "12": 111,
+   "13": 29,
+   "14": 18,
+   "16": 8,
+   "20": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 49,
+   "6px": 10,
+   "50%": 7
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 17,
+  "docHeight": 3937,
+  "console": [],
+  "failed": []
+ },
+ "laptop /about": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 30,
+   "12": 57,
+   "13": 26,
+   "14": 11,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 29,
+   "6px": 15,
+   "50%": 3
+  },
+  "inlineStyled": 18,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2417,
+  "console": [],
+  "failed": []
+ },
+ "tablet /": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 324,
+   "12": 159,
+   "13": 19,
+   "14": 15,
+   "16": 3,
+   "20": 20,
+   "28": 9
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 154,
+   "6px": 17,
+   "50%": 21
+  },
+  "inlineStyled": 161,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 32,
+  "docHeight": 4919,
+  "console": [],
+  "failed": []
+ },
+ "tablet /posture": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 203,
+   "12": 85,
+   "13": 21,
+   "14": 12,
+   "16": 1,
+   "20": 5,
+   "36": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 153,
+   "6px": 16,
+   "50%": 13
+  },
+  "inlineStyled": 67,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 3329,
+  "console": [],
+  "failed": []
+ },
+ "tablet /controls": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 98,
+   "12": 88,
+   "13": 6,
+   "14": 2,
+   "20": 1,
+   "28": 3
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 121,
+   "6px": 8,
+   "50%": 16
+  },
+  "inlineStyled": 35,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1373,
+  "console": [],
+  "failed": []
+ },
+ "tablet /controls/CTL-ENDPOINT-IDENTITY": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 32,
+   "12": 215,
+   "13": 14,
+   "14": 9,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 63,
+   "6px": 10,
+   "50%": 5
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 0,
+  "docHeight": 2610,
+  "console": [],
+  "failed": []
+ },
+ "tablet /findings": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 22,
+   "12": 57,
+   "13": 1,
+   "14": 3,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 36,
+   "6px": 4,
+   "50%": 15
+  },
+  "inlineStyled": 7,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 768,
+  "console": [],
+  "failed": []
+ },
+ "tablet /findings/FND-SENSOR-COVERAGE-vlan-50": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 25,
+   "12": 41,
+   "13": 38,
+   "14": 11,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 31,
+   "6px": 13,
+   "50%": 4
+  },
+  "inlineStyled": 3,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1996,
+  "console": [],
+  "failed": []
+ },
+ "tablet /incidents": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 57,
+   "12": 58,
+   "13": 1,
+   "14": 3,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 40,
+   "6px": 4,
+   "50%": 11
+  },
+  "inlineStyled": 9,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 891,
+  "console": [],
+  "failed": []
+ },
+ "tablet /incidents/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 5,
+   "12": 6,
+   "13": 2,
+   "14": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 18,
+   "6px": 2,
+   "50%": 2
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 768,
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "failed": [
+   "404 http://127.0.0.1:49561/api/incidents/INC-2026-0042"
+  ]
+ },
+ "tablet /reports": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 32,
+   "12": 26,
+   "13": 21,
+   "14": 7,
+   "20": 1,
+   "28": 6
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 35,
+   "6px": 15,
+   "50%": 6
+  },
+  "inlineStyled": 25,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 6,
+  "docHeight": 1331,
+  "console": [],
+  "failed": []
+ },
+ "tablet /alerts": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 168,
+   "12": 146,
+   "13": 1,
+   "14": 4,
+   "20": 1,
+   "28": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 154,
+   "6px": 5,
+   "50%": 50
+  },
+  "inlineStyled": 56,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1113,
+  "console": [],
+  "failed": []
+ },
+ "tablet /devices": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 85,
+   "12": 248,
+   "13": 1,
+   "14": 3,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 90,
+   "6px": 4,
+   "50%": 3
+  },
+  "inlineStyled": 40,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1853,
+  "console": [],
+  "failed": []
+ },
+ "tablet /devices/ENG-LT-047": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 106,
+   "12": 272,
+   "13": 27,
+   "14": 5,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 99,
+   "6px": 4,
+   "50%": 3
+  },
+  "inlineStyled": 45,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1853,
+  "console": [],
+  "failed": []
+ },
+ "tablet /switch": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "8": 60,
+   "11": 25,
+   "12": 501,
+   "13": 24,
+   "14": 8,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 30,
+   "6px": 15,
+   "50%": 3
+  },
+  "inlineStyled": 108,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 3900,
+  "console": [],
+  "failed": []
+ },
+ "tablet /authentication": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 206,
+   "12": 691,
+   "13": 2,
+   "14": 6,
+   "20": 1,
+   "28": 5
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 155,
+   "6px": 13,
+   "50%": 3
+  },
+  "inlineStyled": 158,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 1780,
+  "console": [],
+  "failed": []
+ },
+ "tablet /coverage": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 77,
+   "12": 216,
+   "13": 3,
+   "14": 5,
+   "20": 1,
+   "28": 5
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 109,
+   "6px": 12,
+   "50%": 15
+  },
+  "inlineStyled": 68,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 2357,
+  "console": [],
+  "failed": []
+ },
+ "tablet /drift": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 24,
+   "12": 36,
+   "13": 1,
+   "14": 2,
+   "20": 1,
+   "28": 4
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 32,
+   "6px": 16,
+   "50%": 7
+  },
+  "inlineStyled": 9,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 5,
+  "docHeight": 958,
+  "console": [],
+  "failed": []
+ },
+ "tablet /evidence": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 87,
+   "12": 110,
+   "13": 15,
+   "14": 15,
+   "16": 8,
+   "20": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 48,
+   "6px": 10,
+   "50%": 7
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 17,
+  "docHeight": 4058,
+  "console": [],
+  "failed": []
+ },
+ "tablet /evidence/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 87,
+   "12": 111,
+   "13": 15,
+   "14": 16,
+   "16": 8,
+   "20": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 48,
+   "6px": 10,
+   "50%": 7
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 17,
+  "docHeight": 4058,
+  "console": [],
+  "failed": []
+ },
+ "tablet /about": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 20,
+   "12": 57,
+   "13": 12,
+   "14": 9,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 28,
+   "6px": 15,
+   "50%": 3
+  },
+  "inlineStyled": 18,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 1,
+  "docHeight": 4389,
+  "console": [],
+  "failed": []
+ },
+ "mobile /": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 317,
+   "12": 150,
+   "13": 19,
+   "14": 15,
+   "16": 4,
+   "20": 27,
+   "28": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 154,
+   "6px": 17,
+   "50%": 20
+  },
+  "inlineStyled": 161,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 35,
+  "docHeight": 7894,
+  "console": [],
+  "failed": []
+ },
+ "mobile /posture": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 184,
+   "12": 65,
+   "13": 21,
+   "14": 12,
+   "16": 2,
+   "20": 4,
+   "36": 2
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 153,
+   "6px": 16,
+   "50%": 12
+  },
+  "inlineStyled": 67,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 5589,
+  "console": [],
+  "failed": []
+ },
+ "mobile /controls": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 75,
+   "12": 46,
+   "13": 6,
+   "14": 2,
+   "16": 1,
+   "28": 3
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 108,
+   "6px": 8,
+   "50%": 15
+  },
+  "inlineStyled": 35,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 2727,
+  "console": [],
+  "failed": []
+ },
+ "mobile /controls/CTL-ENDPOINT-IDENTITY": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 18,
+   "12": 126,
+   "13": 15,
+   "14": 8,
+   "16": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 63,
+   "6px": 10,
+   "50%": 4
+  },
+  "inlineStyled": 32,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 4660,
+  "console": [],
+  "failed": []
+ },
+ "mobile /findings": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 12,
+   "12": 40,
+   "13": 1,
+   "14": 3,
+   "16": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 36,
+   "6px": 4,
+   "50%": 14
+  },
+  "inlineStyled": 7,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 1399,
+  "console": [],
+  "failed": []
+ },
+ "mobile /findings/FND-SENSOR-COVERAGE-vlan-50": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 20,
+   "12": 36,
+   "13": 39,
+   "14": 10,
+   "16": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 31,
+   "6px": 13,
+   "50%": 3
+  },
+  "inlineStyled": 3,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 5,
+  "docHeight": 2664,
+  "console": [],
+  "failed": []
+ },
+ "mobile /incidents": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 43,
+   "12": 48,
+   "13": 1,
+   "14": 3,
+   "16": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 40,
+   "6px": 4,
+   "50%": 10
+  },
+  "inlineStyled": 9,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 4,
+  "docHeight": 2214,
+  "console": [],
+  "failed": []
+ },
+ "mobile /incidents/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 2,
+   "12": 4,
+   "13": 3
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 18,
+   "6px": 2,
+   "50%": 1
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 844,
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "failed": [
+   "404 http://127.0.0.1:49561/api/incidents/INC-2026-0042"
+  ]
+ },
+ "mobile /reports": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 26,
+   "12": 24,
+   "13": 21,
+   "14": 7,
+   "16": 1,
+   "28": 6
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 35,
+   "6px": 15,
+   "50%": 5
+  },
+  "inlineStyled": 25,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 11,
+  "docHeight": 2717,
+  "console": [],
+  "failed": []
+ },
+ "mobile /alerts": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 159,
+   "12": 100,
+   "13": 1,
+   "14": 4,
+   "16": 1,
+   "28": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 154,
+   "6px": 5,
+   "50%": 49
+  },
+  "inlineStyled": 56,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 1520,
+  "console": [],
+  "failed": []
+ },
+ "mobile /devices": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 38,
+   "12": 159,
+   "13": 1,
+   "14": 3,
+   "16": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 54,
+   "6px": 4,
+   "50%": 2
+  },
+  "inlineStyled": 40,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 5729,
+  "console": [],
+  "failed": []
+ },
+ "mobile /devices/ENG-LT-047": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 53,
+   "12": 182,
+   "13": 28,
+   "14": 4,
+   "16": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 63,
+   "6px": 4,
+   "50%": 2
+  },
+  "inlineStyled": 45,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 5729,
+  "console": [],
+  "failed": []
+ },
+ "mobile /switch": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "8": 60,
+   "11": 19,
+   "12": 428,
+   "13": 24,
+   "14": 8,
+   "16": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 30,
+   "6px": 15,
+   "50%": 2
+  },
+  "inlineStyled": 108,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 5,
+  "docHeight": 4696,
+  "console": [],
+  "failed": []
+ },
+ "mobile /authentication": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 200,
+   "12": 411,
+   "13": 2,
+   "14": 6,
+   "16": 1,
+   "28": 5
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 155,
+   "6px": 13,
+   "50%": 2
+  },
+  "inlineStyled": 158,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 2037,
+  "console": [],
+  "failed": []
+ },
+ "mobile /coverage": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 67,
+   "12": 126,
+   "13": 3,
+   "14": 5,
+   "16": 1,
+   "28": 5
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 109,
+   "6px": 12,
+   "50%": 14
+  },
+  "inlineStyled": 68,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 3,
+  "docHeight": 4187,
+  "console": [],
+  "failed": []
+ },
+ "mobile /drift": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 17,
+   "12": 31,
+   "13": 1,
+   "14": 2,
+   "16": 1,
+   "28": 4
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 32,
+   "6px": 16,
+   "50%": 6
+  },
+  "inlineStyled": 9,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 6,
+  "docHeight": 1664,
+  "console": [],
+  "failed": []
+ },
+ "mobile /evidence": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 73,
+   "12": 108,
+   "13": 15,
+   "14": 15,
+   "16": 9,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 76,
+   "6px": 10,
+   "50%": 6
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 18,
+  "docHeight": 9538,
+  "console": [],
+  "failed": []
+ },
+ "mobile /evidence/INC-2026-0042": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 73,
+   "12": 109,
+   "13": 16,
+   "14": 15,
+   "16": 9,
+   "20": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 76,
+   "6px": 10,
+   "50%": 6
+  },
+  "inlineStyled": 1,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 18,
+  "docHeight": 9538,
+  "console": [],
+  "failed": []
+ },
+ "mobile /about": {
+  "hOverflow": 0,
+  "wide": 0,
+  "fonts": {
+   "11": 13,
+   "12": 53,
+   "13": 12,
+   "14": 9,
+   "16": 1
+  },
+  "tiny": 0,
+  "tinyEls": [],
+  "radii": {
+   "4px": 28,
+   "6px": 15,
+   "50%": 2
+  },
+  "inlineStyled": 18,
+  "rowsNotFocusable": 0,
+  "chipsWithoutText": 0,
+  "smallButtons": 2,
+  "docHeight": 4555,
+  "console": [],
+  "failed": []
+ }
+}

@@ -95,3 +95,75 @@ correctly stays "live" until the process exits; the hard-stop case above is the 
 - The copy button of wide terminal blocks (Switch logging buffer) overlaps the first line's tail
   while the block is scrolled horizontally.
 - The main JavaScript chunk exceeds Vite's 900 kB warning size (unchanged by this pass).
+
+# Pass 2: the recorded wire, auto pace, motion across pages, formatting sweep
+
+Requested after the first pass was deployed: no dead time after load, a timeline filled with
+activity that still means something, more life on the other pages, and the small formatting mistakes
+fixed. Captures for this pass: `pass-2/`. Audit captures were refreshed in `after/` (demo state) and
+added in `after-baseline/` (baseline state).
+
+## What changed
+
+- **Recorded wire.** New read-only `GET /api/telemetry` (`backend/sentinelswitch/services/replay_feed.py`)
+  serves the dataset's 10,524 Zeek connections (DNS query, TLS server name or HTTP request joined by
+  uid), 136 RADIUS results and 369 switch syslog lines, columnar, gzip-compressed (388 KB to 101 KB),
+  with an ETag. Three backend tests check row counts against the files, compression and caching, and
+  that POST, PUT and DELETE are refused.
+- **Overview.** A canvas over the field draws each recorded connection as a particle from its port
+  through the switch to the responder (the uplink trunk when the responder is not on SW01), coloured by
+  service; RADIUS, syslog and alerts flash at their port; the core ring turns with connections per
+  second. A two-pane wire console prints the recorded lines at the playhead. The timeline stacks
+  connections per 5 minutes by service (log height) with RADIUS and syslog rows up to the switch clock.
+  Traffic filter chips by service family.
+- **Auto pace** (on by default, toggle in the bar): up to 10× through quiet stretches, 0.15× around each
+  recorded alert, about 4 recorded seconds per real second around each containment action. The clock
+  always shows recorded time and the bar says which pace applies. The field reaches the busy morning
+  about 5 s after load; a full default pass takes about 80 s.
+- **Other pages.** Count-up numbers, ordered row entrance, a single scan along panel headers, a
+  breathing pending-authorization chip, port LEDs blinking at each port's recorded connection rate
+  (Switch), the incident host's recorded traffic looping in the incident view, drift marking each
+  observed value that differs, flowing arrows on the architecture diagram, timeline lanes on Alerts.
+
+## Formatting fixes found by sweeps
+
+| Problem | Cause | Fix |
+| --- | --- | --- |
+| Incidents badge in the sidebar stretched | badge modifier `attention` collided with the `.attention` grid component | renamed to `is-warn` |
+| Posture status bar layout | size modifier `lg` collided with the field legend's `.lg` item rule | legend rule scoped to `.sig-legend` |
+| Coverage "withheld by policy" chip 302 px wide | chip stretched in a grid cell | chips start-aligned in grid cells |
+| Panel collapse toggles invisible (8×8 px) | chevron icon had no size | 28 px toggle, 16 px icon |
+| Authentication methods label overlapped | long method name in a 110 px label column | 190 px |
+| Posture header split date from time | wrap inside the clock value | kept together |
+| Control-status names over-truncated | single line with ellipsis | two lines |
+| Evidence context strip left one cell alone | flex wrap | even auto-fit grid |
+| Alerts timeline panel half empty | short chart beside a taller panel | timeline lanes fill it |
+
+A collision detector (two stand-alone component classes on one element), a stretched-pill and clipped-
+text detector, an undersized-control detector and the page and table overflow sweeps were re-run on
+every route after the fixes: no findings.
+
+## Results on the final build
+
+| Check | Result |
+| --- | --- |
+| Backend tests | 85 passed (82 + 3 new) |
+| ruff | passed |
+| tsc | passed |
+| oxlint | 0 errors; the same 11 pre-existing warnings |
+| Validation harness | 9/9 |
+| UI audit, demo state | 76 combinations, 0 failing |
+| UI audit, baseline state | 72 pass; 4 fail only because INC-2026-0042 does not exist before the demo runs (expected 404) |
+| `make playback-check` | 20/20, including auto pace both ways and no request or write in a full pass |
+| Default auto-paced loop | no data request and no write; only the 60 s health ping to `/api/meta` |
+| Page overflow, 360–2560 px, both states | none |
+| Frame timing during the busiest hour, 1× and 4× | p95 8.4 ms (headless Chromium) |
+
+The UI audit now skips text inside the inlined architecture diagram when counting font sizes; the same
+file shown as an `<img>` was never counted. Its arrows animate only because it is inlined.
+
+## Not reproduced
+
+The Drift page in the shared screenshot looked about 30 px wider than the window. No page overflows in
+Chromium at 13 widths from 1280 to 2560 px in either state, with or without classic scrollbars. Safari
+was not tested because the WebKit test browser is not installed.

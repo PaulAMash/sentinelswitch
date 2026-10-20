@@ -18,7 +18,9 @@ export function PlaybackBar({ s, disabled, note }: { s: PlaybackSnapshot; disabl
   }, [])
   const w = s.window
   const state = disabled ? 'idle' : s.playing ? 'playing' : 'paused'
-  const perSecond = s.rate ? fmtSpan(s.rate) : '—'
+  const perSecond = s.rate ? fmtSpan(s.rate * s.pace) : '—'
+  const fast = s.playing && s.pace > 1
+  const slow = s.playing && s.pace < 1
   return (
     <div className={`pb ${state}`} role="group" aria-label="Playback of the recorded dataset day">
       <button
@@ -44,6 +46,16 @@ export function PlaybackBar({ s, disabled, note }: { s: PlaybackSnapshot; disabl
           <span className="pb-loop" title="Playback loops to the start of the window">
             <Icon.loop /> {s.loops ? `loop ${s.loops + 1}` : 'loops'}
           </span>
+          {fast && (
+            <span className="pb-pace" title="Few records here: the clock runs faster until activity picks up. Times shown are still the recorded times.">
+              ×{s.pace} quiet
+            </span>
+          )}
+          {slow && (
+            <span className="pb-pace slow" title="A recorded alert or containment action is near: the clock slows so it can be followed. Times shown are still the recorded times.">
+              slow-motion
+            </span>
+          )}
         </span>
       </div>
       <div className="pb-group" role="group" aria-label="Playback speed">
@@ -53,6 +65,16 @@ export function PlaybackBar({ s, disabled, note }: { s: PlaybackSnapshot; disabl
           </button>
         ))}
       </div>
+      <button
+        type="button"
+        className={`pb-seg pb-skip ${s.autoPace ? 'on' : ''}`}
+        aria-pressed={s.autoPace}
+        onClick={() => playback.setAutoPace(!s.autoPace)}
+        disabled={disabled}
+        title="Auto pace: fast-forward (up to 10×) through stretches with few records and slow down around alerts and containment. The clock always shows the recorded time."
+      >
+        auto pace
+      </button>
       <div className="pb-group" role="group" aria-label="Time window">
         {(
           [
@@ -75,7 +97,7 @@ export function PlaybackBar({ s, disabled, note }: { s: PlaybackSnapshot; disabl
         ) : (
           <span>—</span>
         )}
-        <span className="dim">{note ?? `${perSecond} of recorded time per second`}</span>
+        <span className="dim">{note ?? `${perSecond} of recorded time per second${fast ? ' (quiet stretch)' : slow ? ' (around a recorded alert)' : ''}`}</span>
       </div>
     </div>
   )
