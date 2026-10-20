@@ -3,9 +3,9 @@
   "hOverflow": 0,
   "wide": 0,
   "fonts": {
-   "11": 340,
+   "11": 332,
    "12": 170,
-   "13": 33,
+   "13": 32,
    "14": 17,
    "16": 3,
    "20": 22,
@@ -18,7 +18,7 @@
    "6px": 17,
    "50%": 21
   },
-  "inlineStyled": 167,
+  "inlineStyled": 165,
   "rowsNotFocusable": 0,
   "chipsWithoutText": 0,
   "smallButtons": 32,
@@ -491,9 +491,9 @@
   "hOverflow": 0,
   "wide": 0,
   "fonts": {
-   "11": 340,
+   "11": 332,
    "12": 170,
-   "13": 33,
+   "13": 32,
    "14": 17,
    "16": 3,
    "20": 22,
@@ -506,7 +506,7 @@
    "6px": 17,
    "50%": 21
   },
-  "inlineStyled": 167,
+  "inlineStyled": 165,
   "rowsNotFocusable": 0,
   "chipsWithoutText": 0,
   "smallButtons": 32,
@@ -979,9 +979,9 @@
   "hOverflow": 0,
   "wide": 0,
   "fonts": {
-   "11": 329,
+   "11": 321,
    "12": 166,
-   "13": 19,
+   "13": 18,
    "14": 15,
    "16": 3,
    "20": 22,
@@ -994,7 +994,7 @@
    "6px": 17,
    "50%": 21
   },
-  "inlineStyled": 167,
+  "inlineStyled": 165,
   "rowsNotFocusable": 0,
   "chipsWithoutText": 0,
   "smallButtons": 32,
@@ -1467,9 +1467,9 @@
   "hOverflow": 0,
   "wide": 0,
   "fonts": {
-   "11": 322,
+   "11": 314,
    "12": 157,
-   "13": 19,
+   "13": 18,
    "14": 15,
    "16": 4,
    "20": 29,
@@ -1482,7 +1482,7 @@
    "6px": 17,
    "50%": 20
   },
-  "inlineStyled": 167,
+  "inlineStyled": 165,
   "rowsNotFocusable": 0,
   "chipsWithoutText": 0,
   "smallButtons": 35,

@@ -106,6 +106,7 @@ export function fmtEnd(start: number, end: number): string {
 }
 
 export function fmtSpan(msSpan: number): string {
+  if (msSpan < 59_500) return `${Math.max(1, Math.round(msSpan / 1000))} s`
   const m = Math.round(msSpan / 60000)
   if (m < 60) return `${m} min`
   const h = m / 60

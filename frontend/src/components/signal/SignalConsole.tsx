@@ -22,7 +22,7 @@ const PULSE_MS = 1500
 /** bins of the recorded-traffic lanes and of quiet-stretch pacing */
 const LANE_BIN = 5 * 60_000
 /** quiet-stretch pacing aims for at least this many recorded lines per real second */
-const TARGET_RPS = 150
+const TARGET_RPS = 100
 const PACE_STEPS = [10, 6, 4, 3, 2, 1.5, 1]
 /** auto pace slows to this around a recorded alert, from a minute before to 90 s after */
 const SLOW_PACE = 0.15
@@ -131,6 +131,8 @@ export function SignalConsole(p: SignalConsoleProps) {
   }, [view])
 
   const win = pb.window ?? p.domain
+  // windows end on the 15-minute grid at the recorded end, like the presets: nothing is recorded later
+  const limit = Math.min(p.domain.end, p.domain.start + Math.ceil((p.recordedEnd - p.domain.start) / BIN) * BIN)
   const t = pb.ready ? pb.t : win.end
   const recentMs = recentSpan(win)
   const filter: AlertFilter = useMemo(() => ({ severities: sevs, sources: srcs }), [sevs, srcs])
@@ -381,7 +383,8 @@ export function SignalConsole(p: SignalConsoleProps) {
           domain={p.domain}
           binMs={BIN}
           window={win}
-          onWindow={(w) => playback.setWindow(w)}
+          onWindow={(w) => (w.start <= p.domain.start && w.end >= limit ? playback.setPreset('day') : playback.setWindow(w))}
+          limit={limit}
           traffic={p.traffic}
           lanes={lanes}
           now={p.now}

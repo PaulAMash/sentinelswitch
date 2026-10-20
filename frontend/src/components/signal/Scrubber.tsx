@@ -24,6 +24,8 @@ export interface ScrubberProps {
   playback?: { t: number; onSeek: (t: number) => void; onToggle: () => void }
   /** recorded traffic, RADIUS and syslog per bin across the domain, drawn as lanes under the alert bars */
   lanes?: WireBins | null
+  /** latest time a window may reach (the recorded end); defaults to the end of the domain */
+  limit?: number
 }
 
 const LANE_CONN = 58
@@ -116,6 +118,7 @@ export function Scrubber(p: ScrubberProps) {
   const aheadRef = useRef<HTMLDivElement>(null)
   const drag = useRef<{ zone: 'track' | 'rail'; mode: 'new' | 'move' | 'start' | 'end' | 'seek'; x0: number; w0: Window } | null>(null)
   const span = p.domain.end - p.domain.start
+  const hi = Math.min(p.domain.end, p.limit ?? p.domain.end)
   const bins = useMemo(() => binAlerts(p.alerts, p.domain.start, p.domain.end, p.binMs), [p.alerts, p.domain.start, p.domain.end, p.binMs])
   const peak = Math.max(0, ...bins.map((b) => b.total))
   const max = Math.max(1, peak)
@@ -138,9 +141,9 @@ export function Scrubber(p: ScrubberProps) {
       end += p.domain.start - start
       start = p.domain.start
     }
-    if (end > p.domain.end) {
-      start -= end - p.domain.end
-      end = p.domain.end
+    if (end > hi) {
+      start -= end - hi
+      end = hi
     }
     return { start: Math.max(p.domain.start, start), end }
   }
@@ -170,7 +173,9 @@ export function Scrubber(p: ScrubberProps) {
     const el = zone === 'track' ? trackRef.current! : railRef.current!
     const t = tAt(el, e.clientX)
     const part = (e.target as HTMLElement).dataset.part
-    const mode = part === 'start' || part === 'end' ? part : part === 'win' && t > p.window.start && t < p.window.end ? 'move' : 'new'
+    // a window that already spans the whole day cannot be moved or resized: any drag selects a new range
+    const isFull = p.window.start <= p.domain.start && p.window.end >= hi
+    const mode = !isFull && (part === 'start' || part === 'end') ? part : !isFull && part === 'win' && t > p.window.start && t < p.window.end ? 'move' : 'new'
     drag.current = { zone, mode, x0: t, w0: p.window }
     el.setPointerCapture(e.pointerId)
     if (mode === 'new') p.onWindow(clamp({ start: snap(t), end: snap(t) + p.binMs }))
@@ -210,7 +215,7 @@ export function Scrubber(p: ScrubberProps) {
   const windowKeys = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Home' || e.key === 'Escape') {
       e.preventDefault()
-      p.onWindow({ ...p.domain })
+      p.onWindow({ start: p.domain.start, end: hi })
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault()
       const dt = e.key === 'ArrowLeft' ? -p.binMs : p.binMs
@@ -236,7 +241,7 @@ export function Scrubber(p: ScrubberProps) {
     }
   }
 
-  const full = p.window.start <= p.domain.start && p.window.end >= p.domain.end
+  const full = p.window.start <= p.domain.start && p.window.end >= hi
   const wl = frac(p.window.start) * 100
   const wr = frac(p.window.end) * 100
   const head = p.playback ? p.playback.t : null

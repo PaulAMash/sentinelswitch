@@ -167,3 +167,23 @@ file shown as an `<img>` was never counted. Its arrows animate only because it i
 The Drift page in the shared screenshot looked about 30 px wider than the window. No page overflows in
 Chromium at 13 widths from 1280 to 2560 px in either state, with or without classic scrollbars. Safari
 was not tested because the WebKit test browser is not installed.
+
+# Pass 3: timeline drag and calmer replay
+
+- **Alerts timeline drag was broken.** The pass-1 rewrite of the scrubber dropped the guard that treats
+  a whole-day window as "select a new range": every drag landed on the full-day window element and was
+  read as moving a window that cannot move. Restored the guard. The Overview rail had the same shape
+  of problem with the Day preset (00:00–21:15), and a dragged window could slide past the switch clock
+  to 24:00; the rail now counts the recorded end as "whole day" and windows stop at the switch clock.
+  `scripts/playback_check.py` gained two checks (drag selects a range and filters the table; Home
+  restores the whole day): 22/22 pass.
+- **Calmer replay.** One pass at 1× now takes 120 s (was 75 s). At most 80 particles a second are drawn
+  (an even sample of each moment's connections; every connection still lights the ports it touched),
+  with at most 160 in flight, slower, smaller and dimmer than before. The particle canvas now sits
+  beneath the ports, so particles never cover a port number or label. Another private address now ends
+  at the switch itself instead of the uplink; only public addresses leave through the uplink. Quiet
+  stretches still fast-forward; the slow motion around alerts and the containment is unchanged.
+- Slow-motion rates under a minute per second now read in seconds instead of "0 min".
+
+Results: 85 backend tests, ruff, tsc, oxlint (same 11 warnings), UI audit 76/76 in demo state,
+playback check 22/22.

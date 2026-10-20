@@ -281,15 +281,16 @@ The field **replays the recorded day on a loop** as soon as the page loads, and 
 not just the alerts. `GET /api/telemetry` serves the dataset's recorded Zeek connections (with the DNS
 query, TLS server name or HTTP request joined by uid), RADIUS results and switch syslog in a compact,
 read-only, gzip-compressed form. Every particle crossing the field is one of those 10,524 connections,
-drawn from its port through the switch to the responding port (or to the uplink trunk when the
-responder is not on SW01) and coloured by service; RADIUS results, syslog lines and alerts flash at the
+drawn from its port through the switch to the responding port (into the switch for another private
+address, out through the uplink trunk for a public one) and coloured by service. Particles run beneath
+the ports so they never cover a port number; RADIUS results, syslog lines and alerts flash at the
 port they name; the core ring turns with connections per second. A two-pane wire console under the
 field prints the recorded lines at the playhead, and the timeline under it stacks connections per 5
 minutes by service (log height) with RADIUS and syslog rows, cut off at the switch clock. The traffic
-filter chips double as the colour key. Nothing is generated: busy minutes draw a sample of their
-connections, and every connection still lights the ports it touched.
+filter chips double as the colour key. Nothing is generated: at most 80 particles a second are drawn,
+so busy minutes show an even sample of their connections, and every connection still lights the ports it touched.
 
-One pass through the selected window takes 75 s at 1× (`PLAYBACK.WINDOW_SECONDS` in
+One pass through the selected window takes 120 s at 1× (`PLAYBACK.WINDOW_SECONDS` in
 `frontend/src/lib/playback.ts`) before **auto pace**, which is on by default: stretches with few records
 fast-forward (up to 10×, labelled *quiet*), the clock slows around every recorded alert, and it drops to
 about four recorded seconds per real second around each containment action, so the 21:14 lateral

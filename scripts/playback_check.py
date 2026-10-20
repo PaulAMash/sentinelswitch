@@ -236,6 +236,29 @@ def run(base: str) -> None:
         page.reload(wait_until="networkidle")
         page.wait_for_function("document.querySelector('.pb-state')?.textContent === 'playing'", timeout=15000)
         check("reload autoplays", state() == "playing", clock())
+        # the Alerts page timeline is a brush: a drag anywhere on a full-day window selects a range
+        page.goto(f"{base}/alerts", wait_until="networkidle")
+        page.wait_for_timeout(800)
+        brush = page.locator(".scrub-track").first
+        bb = brush.bounding_box()
+        rows_before = page.evaluate("document.querySelectorAll('table.data tbody tr').length")
+        page.mouse.move(bb["x"] + bb["width"] * 0.35, bb["y"] + bb["height"] / 2)
+        page.mouse.down()
+        page.mouse.move(bb["x"] + bb["width"] * 0.55, bb["y"] + bb["height"] / 2, steps=10)
+        page.mouse.up()
+        page.wait_for_timeout(400)
+        picked = page.evaluate("document.querySelector('.scrub-meta .mono').textContent")
+        rows_after = page.evaluate("document.querySelectorAll('table.data tbody tr').length")
+        check(
+            "alerts timeline drag selects a range",
+            "24 h" not in picked and rows_after < rows_before,
+            f"{picked}, {rows_before} -> {rows_after} rows",
+        )
+        brush.focus()
+        page.keyboard.press("Home")
+        page.wait_for_timeout(300)
+        reset = page.evaluate("document.querySelector('.scrub-meta .mono').textContent")
+        check("Home restores the whole day", "24 h" in reset, reset)
         check("no console errors", not errors, "; ".join(errors[:3]) or "none")
         page.close()
 

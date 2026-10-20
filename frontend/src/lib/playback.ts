@@ -13,7 +13,7 @@ import type { Window } from './telemetry'
  */
 export const PLAYBACK = {
   /** Real seconds for one pass through the selected window at 1×. Change the demo pacing here. */
-  WINDOW_SECONDS: 75,
+  WINDOW_SECONDS: 120,
   /** User-selectable multipliers of that baseline. */
   SPEEDS: [0.5, 1, 2, 4] as const,
   /** Number of published steps per pass; React views re-render at most this often per loop. */

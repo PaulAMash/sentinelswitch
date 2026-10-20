@@ -9,7 +9,8 @@ import type { FieldModel } from './model'
 /**
  * Recorded traffic drawn over the signal field. Every particle is one Zeek connection whose recorded
  * time the playhead just passed, travelling from the originating port through the switch to the
- * responding port (or to the uplink trunk when the responder is not attached to SW01). Rings mark
+ * responding port (into the switch itself for another private address, out through the uplink trunk
+ * for a public one). Particles run beneath the ports so they never cover a number. Rings mark
  * RADIUS results, syslog lines and alerts at the port they name. Nothing is drawn that is not a record;
  * busy moments draw a sample of their connections, and every connection still lights its ports.
  *
@@ -17,8 +18,10 @@ import type { FieldModel } from './model'
  * it pauses and clears on a seek or loop.
  */
 
-const MAX_PARTICLES = 560
-const MAX_SPAWN_PER_FRAME = 40
+const MAX_PARTICLES = 160
+/** particles drawn per real second at most; busier moments draw an even sample (every connection still lights its ports) */
+const PARTICLES_PER_SECOND = 80
+const PARTICLE_BURST = 6
 /** a playhead move larger than this between frames is a jump (seek, window change), not playback */
 const JUMP_MS = 30 * 60_000
 const HALO_HALF_LIFE = 650
@@ -87,7 +90,9 @@ export function FlowCanvas(p: FlowCanvasProps) {
     }
     const trunks = p.model.nodes.filter((n) => n.port.mode === 'trunk')
     const uplink = trunks.find((n) => /uplink|core|dist/i.test(n.port.description ?? '')) ?? trunks[0] ?? null
-    const anchor: (string | null)[] = p.wire.hosts.map((ip) => ipNode.get(ip) ?? (uplink ? uplink.id : null))
+    // an address on a SW01 port enters at that port; another private address ends at the switch itself
+    // (it is not attached here); a public address leaves through the uplink trunk
+    const anchor: (string | null)[] = p.wire.hosts.map((ip) => ipNode.get(ip) ?? (PRIVATE.test(ip) || !uplink ? null : uplink.id))
     const external = p.wire.hosts.map((ip) => !PRIVATE.test(ip))
     const only = p.hosts ? p.wire.hosts.map((ip) => p.hosts!.has(ip)) : null
     return { pos, anchor, external, only, uplink: uplink?.id ?? null, core: p.model.core }
@@ -119,6 +124,7 @@ export function FlowCanvas(p: FlowCanvasProps) {
     const halo = new Map<string, { v: number; fam: number }>()
     let coreV = 0
     let spin = 0
+    let budget = PARTICLE_BURST
     let clock = 0 // particle clock: real ms elapsed while playing
     let lastReal: number | null = null
     let lastT: number | null = null
@@ -163,7 +169,8 @@ export function FlowCanvas(p: FlowCanvasProps) {
       const i0 = upper(wire.t, t0)
       const i1 = upper(wire.t, t1)
       const total = i1 - i0
-      const stride = total > MAX_SPAWN_PER_FRAME ? total / MAX_SPAWN_PER_FRAME : 1
+      const allowed = Math.min(Math.floor(budget), MAX_PARTICLES - parts.length)
+      const stride = allowed > 0 ? Math.max(1, total / allowed) : Infinity
       let next = 0
       for (let k = 0; k < total; k++) {
         const i = i0 + k
@@ -175,13 +182,14 @@ export function FlowCanvas(p: FlowCanvasProps) {
         bump(aId, fam)
         bump(bId, fam)
         coreV = Math.min(6, coreV + 0.035)
-        if (k < next || parts.length >= MAX_PARTICLES) continue
+        if (k < next || budget < 1 || parts.length >= MAX_PARTICLES) continue
         next = k + stride
+        budget -= 1
         const a = at(aId) ?? core
         const b = at(bId) ?? core
         if (a === b) continue
         const len = Math.hypot(b.x - a.x, b.y - a.y)
-        parts.push({ ax: a.x, ay: a.y, cx: core.x, cy: core.y, bx: b.x, by: b.y, born: clock, dur: 650 + len * 1.15, fam, r: 0.9 + Math.min(1.6, Math.log10(1 + wire.b[i]) / 3.2) })
+        parts.push({ ax: a.x, ay: a.y, cx: core.x, cy: core.y, bx: b.x, by: b.y, born: clock, dur: 1100 + len * 1.6, fam, r: 0.8 + Math.min(1.2, Math.log10(1 + wire.b[i]) / 3.5) })
       }
       for (let ai = upper(wire.authT, t0); ai < upper(wire.authT, t1); ai++) {
         const a = wire.auth[ai]
@@ -230,8 +238,8 @@ export function FlowCanvas(p: FlowCanvasProps) {
         if (!pt || h.v < 0.02) continue
         hexPath(pt.x, pt.y, HEX * 1.16)
         ctx!.strokeStyle = famColor[h.fam]
-        ctx!.globalAlpha = Math.min(0.85, h.v * 0.55)
-        ctx!.lineWidth = (1 + Math.min(1.6, h.v)) * view.dpr
+        ctx!.globalAlpha = Math.min(0.6, h.v * 0.45)
+        ctx!.lineWidth = (0.8 + Math.min(1.2, h.v)) * view.dpr
         ctx!.stroke()
       }
       // switch fabric: throughput ring around the core
@@ -242,7 +250,7 @@ export function FlowCanvas(p: FlowCanvasProps) {
       ctx!.strokeStyle = col.accent
       for (let k = 0; k < 3; k++) {
         const a0 = spin + (k * Math.PI * 2) / 3
-        ctx!.globalAlpha = Math.min(0.75, 0.12 + coreV * 0.12)
+        ctx!.globalAlpha = Math.min(0.6, 0.1 + coreV * 0.1)
         ctx!.beginPath()
         ctx!.arc(cx, cy, R, a0, a0 + 0.35 + Math.min(1.2, coreV * 0.22))
         ctx!.stroke()
@@ -265,9 +273,9 @@ export function FlowCanvas(p: FlowCanvasProps) {
         ctx!.strokeStyle = c
         ctx!.lineWidth = pt.r * 0.9 * view.dpr
         let prev = quad(pt, e)
-        for (let k = 1; k <= 5; k++) {
-          const q = quad(pt, Math.max(0, e - k * 0.035))
-          ctx!.globalAlpha = 0.55 * (1 - k / 6)
+        for (let k = 1; k <= 4; k++) {
+          const q = quad(pt, Math.max(0, e - k * 0.03))
+          ctx!.globalAlpha = 0.42 * (1 - k / 5)
           ctx!.beginPath()
           ctx!.moveTo(X(prev.x), Y(prev.y))
           ctx!.lineTo(X(q.x), Y(q.y))
@@ -276,11 +284,11 @@ export function FlowCanvas(p: FlowCanvasProps) {
         }
         const h = quad(pt, e)
         ctx!.fillStyle = c
-        ctx!.globalAlpha = 0.22
+        ctx!.globalAlpha = 0.16
         ctx!.beginPath()
-        ctx!.arc(X(h.x), Y(h.y), pt.r * 2.6 * view.dpr, 0, Math.PI * 2)
+        ctx!.arc(X(h.x), Y(h.y), pt.r * 2.2 * view.dpr, 0, Math.PI * 2)
         ctx!.fill()
-        ctx!.globalAlpha = 0.95
+        ctx!.globalAlpha = 0.85
         ctx!.beginPath()
         ctx!.arc(X(h.x), Y(h.y), pt.r * view.dpr, 0, Math.PI * 2)
         ctx!.fill()
@@ -311,7 +319,8 @@ export function FlowCanvas(p: FlowCanvasProps) {
       const dt = lastReal == null ? 0 : Math.min(64, now - lastReal)
       lastReal = now
       clock += dt
-      spin += dt * (0.0005 + Math.min(6, coreV) * 0.00045)
+      spin += dt * (0.0003 + Math.min(6, coreV) * 0.00025)
+      budget = Math.min(PARTICLE_BURST, budget + (dt * PARTICLES_PER_SECOND) / 1000)
       const decay = (half: number) => Math.pow(0.5, dt / half)
       const hd = decay(HALO_HALF_LIFE)
       for (const [id, h] of halo) {
