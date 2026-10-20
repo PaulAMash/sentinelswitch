@@ -7,7 +7,7 @@ import { Empty, ErrorState, KV, Loading, Panel, Ts } from '../components/ui'
 import { PageHeader } from '../components/layout'
 import { Metric, MetricBand } from '../components/metric'
 import { Chip, SeverityChip, StatusChip } from '../components/status'
-import { DataTable } from '../components/table'
+import { DataTable, Cell2 } from '../components/table'
 import { useToast } from '../components/toast'
 import { fmtBytes, fmtTime } from '../lib/format'
 import { Icon } from '../components/Icons'
@@ -213,6 +213,7 @@ export function Reports() {
       <div className="grid grid-2">
         <Panel title="Evidence bundles" sub="original evidence · data/incidents/<id>/" right={<Link to="/evidence">browse</Link>} bodyClass="none">
           <DataTable
+            cards="narrow"
             compact
             rows={bundles}
             loading={!bundles}
@@ -220,12 +221,9 @@ export function Reports() {
             rowKey={(e) => e.incident.id}
             empty="No evidence bundles yet. Bundles are written when an incident is contained."
             columns={[
-              { key: 'id', header: 'incident', render: (e) => <Link className="id" to={`/evidence/${e.incident.id}`}>{e.incident.id}</Link> },
-              { key: 'opened', header: 'opened', priority: 2, render: (e) => <Ts ts={e.incident.opened_at} date ms={false} /> },
-              { key: 'sev', header: 'severity', render: (e) => <SeverityChip value={e.incident.severity} /> },
-              { key: 'status', header: 'status', render: (e) => <StatusChip value={e.incident.status} /> },
-              { key: 'files', header: 'artifacts', render: (e) => <Chip kind={e.complete ? 'ok' : 'warn'}>{e.files.length} files</Chip> },
-              { key: 'size', header: 'size', align: 'right', className: 'mono', priority: 3, render: (e) => fmtBytes(e.files.reduce((n, f) => n + f.bytes, 0)) },
+              { key: 'id', header: 'incident', wrap: true, render: (e) => <Cell2 primary={<Link className="id" to={`/evidence/${e.incident.id}`}>{e.incident.id}</Link>} secondary={e.incident.title} /> },
+              { key: 'state', header: 'state', render: (e) => <span className="row"><SeverityChip value={e.incident.severity} /><StatusChip value={e.incident.status} /></span> },
+              { key: 'files', header: 'artifacts', align: 'right', render: (e) => <span className={e.complete ? 'mono' : 'mono warn-ink'}>{e.files.length} · {fmtBytes(e.files.reduce((n, f) => n + f.bytes, 0))}</span> },
             ]}
           />
         </Panel>
@@ -238,7 +236,7 @@ export function Reports() {
               columns={[
                 { key: 'k', header: 'key', className: 'mono strong', render: ([k]) => k },
                 { key: 'in', header: 'in this export', className: 'mono', render: ([k]) => (k in doc ? <span className="dim">{shape(doc[k])}</span> : <Chip kind="neutral">missing</Chip>) },
-                { key: 'm', header: 'meaning', wrap: true, priority: 2, render: ([, m]) => <span className="small">{m}</span> },
+                { key: 'm', header: 'meaning', wrap: true, hideBelow: 600, render: ([, m]) => <span className="small">{m}</span> },
               ]}
             />
           </Panel>

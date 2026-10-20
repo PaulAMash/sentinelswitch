@@ -172,3 +172,27 @@ export function Console({ hostname, commands, run, initial, hl = [], height = 34
     </div>
   )
 }
+
+/** Code block with a copy button; the text is shown exactly as written. */
+export function CodeBlock({ text }: { text: string }) {
+  const [done, setDone] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setDone(true)
+      setTimeout(() => setDone(false), 1200)
+    } catch {
+      /* clipboard unavailable */
+    }
+  }
+  return (
+    <div className="md-code">
+      <pre>
+        <code>{text}</code>
+      </pre>
+      <button type="button" className="btn sm ghost md-copy" onClick={copy} aria-label="Copy code">
+        {done ? 'copied' : 'copy'}
+      </button>
+    </div>
+  )
+}

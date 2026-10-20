@@ -78,7 +78,7 @@ function ClosedTable({ rows, showScope = false, showStatus = true }: { rows: Fin
           ),
         },
         { key: 'closed', header: 'closed', render: (fc) => <Ts ts={fc.resolved_at ?? fc.verification.at} date ms={false} /> },
-        ...(showStatus ? [{ key: 'status', header: 'status', priority: 3 as const, render: (fc: Finding) => <StatusChip value={fc.status} /> }] : []),
+        ...(showStatus ? [{ key: 'status', header: 'status', hideBelow: 400 as const, render: (fc: Finding) => <StatusChip value={fc.status} /> }] : []),
       ]}
     />
   )
@@ -194,12 +194,13 @@ export function Posture() {
               </>
             ) : (
               <DataTable
+                cards="narrow"
                 rows={openShown}
                 rowKey={(fi) => fi.id}
                 columns={[
                   { key: 'sev', header: 'severity', render: (fi) => <SeverityChip value={fi.severity} /> },
                   { key: 'id', header: 'finding', render: (fi) => <Cell2 primary={<Link className="id" to={`/findings/${fi.id}`}>{fi.id}</Link>} secondary={fi.control_name} /> },
-                  { key: 'scope', header: 'scope', priority: 2, render: (fi) => <Cell2 primary={<span className="mono">{scopeOf(fi).main}</span>} secondary={scopeOf(fi).sub} /> },
+                  { key: 'scope', header: 'scope', hideBelow: 1000, render: (fi) => <Cell2 primary={<span className="mono">{scopeOf(fi).main}</span>} secondary={scopeOf(fi).sub} /> },
                   {
                     key: 'result',
                     header: 'result → status',
@@ -210,8 +211,8 @@ export function Posture() {
                       </span>
                     ),
                   },
-                  { key: 'opened', header: 'opened', priority: 3, render: (fi) => <span title={fi.occurrences > 1 ? `seen in ${plural(fi.occurrences, 'run')} since ${fi.first_run_id}` : fi.first_run_id}><Ts ts={fi.opened_at} date ms={false} /></span> },
-                  { key: 'why', header: 'explanation', wrap: true, priority: 2, render: (fi) => <span className="clamp-2 small dim" title={fi.explanation}>{fi.explanation}</span> },
+                  { key: 'opened', header: 'opened', hideBelow: 700, render: (fi) => <span title={fi.occurrences > 1 ? `seen in ${plural(fi.occurrences, 'run')} since ${fi.first_run_id}` : fi.first_run_id}><Ts ts={fi.opened_at} date ms={false} /></span> },
+                  { key: 'why', header: 'explanation', wrap: true, hideBelow: 1000, render: (fi) => <span className="clamp-2 small dim" title={fi.explanation}>{fi.explanation}</span> },
                 ]}
                 footer={
                   f.open_items.length > openShown.length ? (
@@ -231,6 +232,7 @@ export function Posture() {
                 <Empty>No assets carry an open finding</Empty>
               ) : (
                 <DataTable
+                  cards="narrow"
                   compact
                   rows={p.assets_with_open_findings}
                   rowKey={(a) => a.asset}
@@ -239,7 +241,7 @@ export function Posture() {
                     { key: 'iface', header: 'interface', className: 'mono', render: (a) => a.interface ?? <span className="dim">—</span> },
                     { key: 'n', header: 'findings', align: 'right', render: (a) => a.findings },
                     { key: 'worst', header: 'worst', render: (a) => <SeverityChip value={a.worst} /> },
-                    { key: 'controls', header: 'controls', wrap: true, priority: 2, render: (a) => <span className="row">{a.controls.map((cid) => <Link key={cid} className="mono small" to={`/controls/${cid}`}>{cid}</Link>)}</span> },
+                    { key: 'controls', header: 'controls', wrap: true, hideBelow: 600, render: (a) => <span className="row">{a.controls.map((cid) => <Link key={cid} className="mono small" to={`/controls/${cid}`}>{cid}</Link>)}</span> },
                   ]}
                 />
               )}
@@ -249,6 +251,7 @@ export function Posture() {
                 <Empty>Every assessment has a determinate result</Empty>
               ) : (
                 <DataTable
+                  cards="narrow"
                   compact
                   rows={p.unverified}
                   rowKey={(u) => u.id}
@@ -309,14 +312,15 @@ export function Posture() {
         </Panel>
         <Panel title="Assessment runs" sub={`${plural(p.runs, 'run')} recorded`} bodyClass="none">
           <DataTable
+            cards="narrow"
             compact
             rows={p.recent_runs}
             rowKey={(r) => r.run_id}
             empty="No assessment runs recorded"
             columns={[
-              { key: 'run', header: 'run', render: (r) => <Cell2 primary={<Id>{r.run_id}</Id>} secondary={`${r.trigger} · ${r.actor}`} /> },
+              { key: 'run', header: 'run', wrap: true, className: 'break-ids', render: (r) => <Cell2 primary={<Id>{r.run_id}</Id>} secondary={`${r.trigger} · ${r.actor}`} /> },
               { key: 'at', header: 'assessed', render: (r) => <Ts ts={r.assessed_at} date ms={false} /> },
-              { key: 'n', header: 'results', align: 'right', priority: 3, render: (r) => <span title={`${r.assessments} assessments across ${r.controls} controls`}>{r.assessments}</span> },
+              { key: 'n', header: 'results', align: 'right', hideBelow: 600, render: (r) => <span title={`${r.assessments} assessments across ${r.controls} controls`}>{r.assessments}</span> },
               { key: 'outcomes', header: 'outcomes', render: (r) => <Counts counts={tallyOf(r.counts)} /> },
               { key: 'open', header: 'open', align: 'right', render: (r) => r.findings_open },
             ]}
@@ -347,7 +351,7 @@ export function Posture() {
               { key: 'id', header: 'subcategory', className: 'mono strong', render: (c) => c.id },
               { key: 'fn', header: 'fn', render: (c) => <Chip kind="neutral">{c.function}</Chip> },
               { key: 'text', header: 'outcome', wrap: true, render: (c) => <span className="small">{c.text}</span> },
-              { key: 'controls', header: 'controls', wrap: true, priority: 2, render: (c) => <span className="row">{c.controls.map((cid) => <Link key={cid} className="mono small" to={`/controls/${cid}`}>{cid}</Link>)}</span> },
+              { key: 'controls', header: 'controls', wrap: true, hideBelow: 700, render: (c) => <span className="row">{c.controls.map((cid) => <Link key={cid} className="mono small" to={`/controls/${cid}`}>{cid}</Link>)}</span> },
               { key: 'outcomes', header: 'outcomes', render: (c) => <Counts counts={upper(c)} /> },
             ]}
           />

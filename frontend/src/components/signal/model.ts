@@ -1,6 +1,6 @@
 import type { Alert, AssessmentStatus, ContainmentAction, Device, Incident, PortState, Review, SwitchState, UnknownDevice } from '../../lib/api'
 import { responseStateOf, type ResponseState } from '../status'
-import { inWindow, ms, portNumber, portOrder, sev3, type AlertFilter, type Sev3, type Window } from '../../lib/telemetry'
+import { ms, portNumber, portOrder, sev3, type AlertFilter, type Sev3 } from '../../lib/telemetry'
 import { HEX, SQ3, hexPath, spiral, toPixel, type Axial } from './hex'
 
 /**
@@ -23,7 +23,46 @@ const ANCHORS: Record<Preset, Record<ClusterId, Axial>> = {
   tall: { core: [3, -7], v20: [-3, 4], v50: [5, -1], v30: [-4, -1], trunk: [0, -9], v99: [8, -8], v10: [9, -5], v40: [1, -2], unused: [-3, 12], other: [-11, 12] },
 }
 
-export type NodeResponse = 'contained' | 'held' | 'review' | 'incident'
+export type NodeResponse = 'contained' | 'held' | 'review' | 'incident' | 'restored'
+export type FillMode = 'recent' | 'window'
+
+/**
+ * Containment at simulated time t, reconstructed from containment action records: an action is
+ * in force from `applied_at` until `restored_at`. From `presentFrom` on (the newest recorded time) the
+ * switch twin's current flags are authoritative as well. Nothing is inferred beyond those fields.
+ */
+export interface Containment {
+  quarantined: Map<string, { from: number | null; to: number | null }>
+  held: Set<string>
+  /** ports restored within the recent span before t, with the restore time */
+  restored: Map<string, number>
+}
+
+export function containmentAt(inp: FieldInputs, t: number, recentMs: number, presentFrom: number): Containment {
+  const quarantined = new Map<string, { from: number | null; to: number | null }>()
+  const held = new Set<string>()
+  const restored = new Map<string, number>()
+  for (const a of inp.actions) {
+    if (!a.interface || !a.applied_at) continue
+    const on = ms(a.applied_at)
+    const off = a.restored_at ? ms(a.restored_at) : Infinity
+    if (t >= on && t < off) {
+      if (a.action === 'quarantine_vlan') quarantined.set(a.interface, { from: a.from_vlan, to: a.to_vlan })
+      else held.add(a.interface)
+    } else if (t >= off && t - off < recentMs) restored.set(a.interface, off)
+  }
+  if (t >= presentFrom) {
+    for (const p of inp.sw.interfaces) {
+      if (p.quarantined && !quarantined.has(p.name)) quarantined.set(p.name, { from: p.original_vlan, to: p.oper_vlan })
+      if ((p.hold || p.state === 'held' || p.state === 'err-disabled') && !quarantined.has(p.name)) held.add(p.name)
+    }
+  }
+  return { quarantined, held, restored }
+}
+
+export function containmentKey(c: Containment): string {
+  return [...c.quarantined.entries()].map(([k, v]) => `${k}:${v.to}`).sort().join('|')
+}
 
 export interface FieldNode {
   id: string
@@ -38,10 +77,15 @@ export interface FieldNode {
   ip: string | null
   macs: string[]
   vlan: number | null
+  /** port state shown at the playhead (containment from the recorded timeline, otherwise the twin) */
+  state: string
   alerts: Alert[]
   counts: Record<Sev3, number>
   maxSev: Sev3 | null
   heat: 0 | 1 | 2 | 3
+  /** alerts earlier in the window than the activity span (drawn as a faint residue) */
+  seen: number
+  seenSev: Sev3 | null
   response: NodeResponse | null
   incident: Incident | null
   incidentState: ResponseState | null
@@ -108,10 +152,20 @@ function clusterOf(p: PortState): ClusterId {
   return clusterOfVlan(p.oper_vlan ?? p.access_vlan)
 }
 
-/** The colony a port belongs to when it is not quarantined: its original VLAN while quarantined. */
-function homeOf(p: PortState): ClusterId {
+/** The colony a port belongs to when it is not quarantined (its original VLAN while quarantined). */
+function homeOf(p: PortState, q?: Map<string, { from: number | null; to: number | null }>): ClusterId {
+  if (p.mode === 'trunk') return 'trunk'
   if (p.quarantined && p.original_vlan != null) return clusterOfVlan(p.original_vlan)
+  const from = q?.get(p.name)?.from
+  if (from != null) return clusterOfVlan(from)
   return clusterOf(p)
+}
+
+/** The colony a port is drawn in at the playhead: its quarantine VLAN while contained, otherwise home. */
+function placeOf(p: PortState, q?: Map<string, { from: number | null; to: number | null }>): ClusterId {
+  const at = q?.get(p.name)
+  if (at && at.to != null) return clusterOfVlan(at.to)
+  return homeOf(p, q)
 }
 
 function clusterOfVlan(v: number | null): ClusterId {
@@ -135,21 +189,19 @@ function clusterOfVlan(v: number | null): ClusterId {
   }
 }
 
-const OPEN_INCIDENT = (i: Incident) => i.status !== 'resolved' && i.status !== 'closed'
-
 export function passes(a: Alert, f: AlertFilter): boolean {
   return f.severities.has(sev3(a.severity)) && f.sources.has(a.source)
 }
 
 /** Static geometry: node positions, colonies and the decorative lattice. Depends only on port→VLAN membership. */
-export function layoutField(sw: SwitchState, preset: Preset, coverage?: Map<number, AssessmentStatus>) {
+export function layoutField(sw: SwitchState, preset: Preset, coverage?: Map<number, AssessmentStatus>, q?: Map<string, { from: number | null; to: number | null }>) {
   const anchors = ANCHORS[preset]
   // slots are assigned by home colony so a port that moves (quarantine) never re-flows its neighbours
   const home = new Map<ClusterId, PortState[]>()
   const current = new Map<ClusterId, PortState[]>()
   for (const p of sw.interfaces) {
-    const h = homeOf(p)
-    const c = clusterOf(p)
+    const h = homeOf(p, q)
+    const c = placeOf(p, q)
     if (!home.has(h)) home.set(h, [])
     home.get(h)!.push(p)
     if (!current.has(c)) current.set(c, [])
@@ -164,7 +216,7 @@ export function layoutField(sw: SwitchState, preset: Preset, coverage?: Map<numb
   const ids = new Set<ClusterId>([...home.keys(), ...current.keys()])
   for (const cid of ids) {
     const natives = (home.get(cid) ?? []).sort((a, b) => portOrder(a.name, b.name))
-    const visitors = (current.get(cid) ?? []).filter((p) => homeOf(p) !== cid).sort((a, b) => portOrder(a.name, b.name))
+    const visitors = (current.get(cid) ?? []).filter((p) => homeOf(p, q) !== cid).sort((a, b) => portOrder(a.name, b.name))
     const slots = [...natives, ...visitors]
     const cells = spiral(anchors[cid], Math.max(CAPACITY[cid], slots.length))
     let minY = Infinity
@@ -175,7 +227,7 @@ export function layoutField(sw: SwitchState, preset: Preset, coverage?: Map<numb
       const cell = cells[i]
       const [x, y] = toPixel(cell)
       occupied.add(cell.join(','))
-      if (clusterOf(p) !== cid) {
+      if (placeOf(p, q) !== cid) {
         ghosts.push({ id: p.name, label: portNumber(p.name), x, y })
         return
       }
@@ -211,7 +263,7 @@ export function layoutField(sw: SwitchState, preset: Preset, coverage?: Map<numb
   const x0 = Math.min(...xs) - pad
   const x1 = Math.max(...xs) + pad
   const y0 = Math.min(...ys) - pad * 0.7
-  const y1 = Math.max(...ys) + pad
+  const y1 = Math.max(...ys) + pad * 1.35
   // decorative lattice: every cell inside the frame that no node or the core occupies
   const parts: string[] = []
   const r0 = Math.floor((y0 - HEX) / (HEX * 1.5))
@@ -230,8 +282,22 @@ export function layoutField(sw: SwitchState, preset: Preset, coverage?: Map<numb
   return { pos, ghosts, clusters, core: { x: cx, y: cy }, viewBox: [x0, y0, x1 - x0, y1 - y0] as [number, number, number, number], lattice: parts.join('') }
 }
 
-/** Per-node state for the current window and filters. */
-export function buildField(inp: FieldInputs, geo: ReturnType<typeof layoutField>, preset: Preset, w: Window, f: AlertFilter): FieldModel {
+export interface FieldTime {
+  /** simulated playhead */
+  t: number
+  /** start of the selected window */
+  start: number
+  /** span behind the playhead that counts as recent activity */
+  recentMs: number
+  mode: FillMode
+  filter: AlertFilter
+  containment: Containment
+}
+
+const openAt = (opened: string | null | undefined, closed: string | null | undefined, t: number) => !!opened && ms(opened) <= t && (!closed || t < ms(closed))
+
+/** Per-node state at the playhead: activity from recorded alerts, response state from recorded timestamps. */
+export function buildField(inp: FieldInputs, geo: ReturnType<typeof layoutField>, preset: Preset, at: FieldTime): FieldModel {
   const devByPort = new Map(inp.devices.map((d) => [d.interface, d]))
   const unkByPort = new Map(inp.unknown.map((u) => [u.interface, u]))
   const ipByPort = new Map<string, string>()
@@ -249,35 +315,50 @@ export function buildField(inp: FieldInputs, geo: ReturnType<typeof layoutField>
     const cur = actionFor.get(a.incident_id)
     if (!cur || ['verified', 'restored', 'containment_failed'].includes(a.status)) actionFor.set(a.incident_id, a)
   }
+  // the incident a port carries at t: one open at t outranks the most recent one opened before t
   const incidentByPort = new Map<string, Incident>()
   for (const i of inp.incidents) {
-    if (!i.interface) continue
+    if (!i.interface || ms(i.opened_at) > at.t) continue
     const cur = incidentByPort.get(i.interface)
-    // an open incident outranks a resolved one; otherwise the most recent wins
-    if (!cur || (OPEN_INCIDENT(i) && !OPEN_INCIDENT(cur)) || (OPEN_INCIDENT(i) === OPEN_INCIDENT(cur) && ms(i.opened_at) > ms(cur.opened_at))) incidentByPort.set(i.interface, i)
+    const iOpen = openAt(i.opened_at, i.closed_at, at.t)
+    const cOpen = cur ? openAt(cur.opened_at, cur.closed_at, at.t) : false
+    if (!cur || (iOpen && !cOpen) || (iOpen === cOpen && ms(i.opened_at) > ms(cur.opened_at))) incidentByPort.set(i.interface, i)
   }
   const reviewByPort = new Map<string, Review>()
-  for (const r of inp.reviews) if (r.status === 'review' && r.attribution?.interface) reviewByPort.set(r.attribution.interface, r)
+  for (const r of inp.reviews) if (r.attribution?.interface && openAt(r.opened_at, r.closed_at, at.t)) reviewByPort.set(r.attribution.interface, r)
 
-  const visible = inp.alerts.filter((a) => inWindow(a, w) && passes(a, f))
+  const lo = at.mode === 'recent' ? at.t - at.recentMs : at.start
+  const played = inp.alerts.filter((a) => {
+    const x = ms(a.ts)
+    return x >= at.start && x <= at.t && passes(a, at.filter)
+  })
+  const active = played.filter((a) => ms(a.ts) > lo || (at.mode === 'window' && ms(a.ts) >= lo))
+  const activeIds = new Set(active.map((a) => a.id))
   const alertsByPort = new Map<string, Alert[]>()
-  for (const a of visible) {
+  const seenByPort = new Map<string, Alert[]>()
+  for (const a of played) {
     if (!a.interface) continue
-    if (!alertsByPort.has(a.interface)) alertsByPort.set(a.interface, [])
-    alertsByPort.get(a.interface)!.push(a)
+    const m = activeIds.has(a.id) ? alertsByPort : seenByPort
+    if (!m.has(a.interface)) m.set(a.interface, [])
+    m.get(a.interface)!.push(a)
   }
+  const worst = (list: Alert[]): Sev3 | null => (list.some((a) => sev3(a.severity) === 'high') ? 'high' : list.some((a) => sev3(a.severity) === 'medium') ? 'medium' : list.length ? 'low' : null)
 
   const nodes: FieldNode[] = inp.sw.interfaces.map((p) => {
     const g = geo.pos.get(p.name)!
     const alerts = (alertsByPort.get(p.name) ?? []).sort((a, b) => ms(b.ts) - ms(a.ts))
+    const seen = seenByPort.get(p.name) ?? []
     const counts: Record<Sev3, number> = { high: 0, medium: 0, low: 0 }
     for (const a of alerts) counts[sev3(a.severity)] += 1
-    const maxSev: Sev3 | null = counts.high ? 'high' : counts.medium ? 'medium' : counts.low ? 'low' : null
     const n = alerts.length
     const incident = incidentByPort.get(p.name) ?? null
     const review = reviewByPort.get(p.name) ?? null
-    const held = p.hold || p.state === 'held' || p.state === 'err-disabled'
-    const response: NodeResponse | null = p.quarantined ? 'contained' : held ? 'held' : review ? 'review' : incident && OPEN_INCIDENT(incident) ? 'incident' : null
+    const q = at.containment.quarantined.get(p.name)
+    const held = at.containment.held.has(p.name)
+    const response: NodeResponse | null = q ? 'contained' : held ? 'held' : review ? 'review' : incident && openAt(incident.opened_at, incident.closed_at, at.t) ? 'incident' : at.containment.restored.has(p.name) ? 'restored' : null
+    const currentlyContained = p.state === 'quarantined' || p.state === 'held' || p.state === 'err-disabled'
+    const state = q ? 'quarantined' : held ? 'held' : currentlyContained ? (p.oper_status === 'connected' ? 'connected' : 'notconnect') : p.state
+    const vlan = p.mode === 'trunk' ? null : q?.to ?? (p.quarantined ? p.original_vlan ?? p.oper_vlan : p.oper_vlan ?? p.access_vlan)
     return {
       id: p.name,
       label: portNumber(p.name),
@@ -290,11 +371,14 @@ export function buildField(inp: FieldInputs, geo: ReturnType<typeof layoutField>
       unknown: unkByPort.get(p.name) ?? null,
       ip: ipByPort.get(p.name) ?? null,
       macs: macsByPort.get(p.name) ?? p.macs.map((m) => m.mac),
-      vlan: p.mode === 'trunk' ? null : p.oper_vlan ?? p.access_vlan,
+      vlan,
+      state,
       alerts,
       counts,
-      maxSev,
+      maxSev: worst(alerts),
       heat: n === 0 ? 0 : n === 1 ? 1 : n <= 3 ? 2 : 3,
+      seen: seen.length,
+      seenSev: worst(seen),
       response,
       incident,
       incidentState: incident ? responseStateOf(incident, actionFor.get(incident.id) ?? null) : null,
@@ -303,7 +387,7 @@ export function buildField(inp: FieldInputs, geo: ReturnType<typeof layoutField>
   })
 
   const flows: Flow[] = []
-  for (const a of visible) {
+  for (const a of active) {
     if (!a.dest_ip || !a.interface) continue
     const to = portByIp.get(a.dest_ip) ?? null
     if (to === a.interface) continue
@@ -313,9 +397,12 @@ export function buildField(inp: FieldInputs, geo: ReturnType<typeof layoutField>
   return { preset, ghosts: geo.ghosts, viewBox: geo.viewBox, core: geo.core, nodes, clusters: geo.clusters, flows, lattice: geo.lattice }
 }
 
-/** Visible alerts for the stream, newest first, honouring the colony (VLAN) focus. */
-export function streamAlerts(inp: FieldInputs, nodesById: Map<string, FieldNode>, w: Window, f: AlertFilter, focus: ClusterId | null): Alert[] {
+/** Alerts from the window start up to the playhead, newest first, honouring the colony (VLAN) focus. */
+export function streamAlerts(inp: FieldInputs, nodesById: Map<string, FieldNode>, start: number, t: number, f: AlertFilter, focus: ClusterId | null): Alert[] {
   return inp.alerts
-    .filter((a) => inWindow(a, w) && passes(a, f) && (!focus || (a.interface && nodesById.get(a.interface)?.cluster === focus)))
+    .filter((a) => {
+      const x = ms(a.ts)
+      return x >= start && x <= t && passes(a, f) && (!focus || (a.interface && nodesById.get(a.interface)?.cluster === focus))
+    })
     .sort((a, b) => ms(b.ts) - ms(a.ts))
 }

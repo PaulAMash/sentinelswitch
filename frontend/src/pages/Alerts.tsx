@@ -79,6 +79,7 @@ export function Alerts() {
       <Panel title={`${rows.length} of ${data.length} alerts`} sub="open a row for the correlation detection and the raw record" bodyClass="none">
         <div className="scroll-page">
           <DataTable
+            cards="narrow"
             rows={rows}
             rowKey={(a) => a.id}
             onRowActivate={setSel}
@@ -90,12 +91,12 @@ export function Alerts() {
               { key: 'sev', header: 'severity', render: (a) => <SeverityChip value={a.severity} /> },
               { key: 'sig', header: 'signature', wrap: true, render: (a) => a.signature },
               { key: 'src', header: 'source', render: (a) => <Chip kind="source">{a.source}</Chip> },
-              { key: 'from', header: 'src', className: 'mono', priority: 2, render: (a) => (a.src_ip ? `${a.src_ip}${a.src_port ? ':' + a.src_port : ''}` : a.mac ?? '—') },
-              { key: 'to', header: 'dst', className: 'mono', priority: 2, render: (a) => (a.dest_ip ? `${a.dest_ip}${a.dest_port ? ':' + a.dest_port : ''}` : '—') },
+              { key: 'from', header: 'src', className: 'mono', hideBelow: 1100, render: (a) => (a.src_ip ? `${a.src_ip}${a.src_port ? ':' + a.src_port : ''}` : a.mac ?? '—') },
+              { key: 'to', header: 'dst', className: 'mono', hideBelow: 1100, render: (a) => (a.dest_ip ? `${a.dest_ip}${a.dest_port ? ':' + a.dest_port : ''}` : '—') },
               {
                 key: 'dev',
                 header: 'device / port',
-                priority: 2,
+                hideBelow: 1300,
                 render: (a) => (
                   <>
                     {a.device ? <Link to={`/devices/${a.device}`} onClick={(e) => e.stopPropagation()}>{a.device}</Link> : <span className="dim">unknown</span>}
@@ -104,7 +105,7 @@ export function Alerts() {
                 ),
               },
               { key: 'status', header: 'status', render: (a) => <StatusChip value={a.status} /> },
-              { key: 'inc', header: 'incident', priority: 3, render: (a) => (a.incident_id ? <Link className="id" to={`/incidents/${a.incident_id}`} onClick={(e) => e.stopPropagation()}>{a.incident_id}</Link> : <span className="faint">—</span>) },
+              { key: 'inc', header: 'incident', hideBelow: 800, render: (a) => (a.incident_id ? <Link className="id" to={`/incidents/${a.incident_id}`} onClick={(e) => e.stopPropagation()}>{a.incident_id}</Link> : <span className="faint">—</span>) },
             ]}
           />
         </div>

@@ -40,6 +40,7 @@ export function Devices() {
       </PageHeader>
       <Panel title="Inventory" sub={`${rows.length} shown`} bodyClass="none">
         <DataTable
+          cards="narrow"
           rows={rows}
           rowKey={(d) => d.hostname}
           onRowActivate={(d) => nav(`/devices/${d.hostname}`)}
@@ -47,30 +48,31 @@ export function Devices() {
           label="Inventory"
           columns={[
             { key: 'host', header: 'hostname', className: 'strong', render: (d) => d.hostname },
-            { key: 'role', header: 'role', priority: 3, render: (d) => d.role },
+            { key: 'role', header: 'role', hideBelow: 900, render: (d) => d.role },
             { key: 'ip', header: 'ip', className: 'mono', render: (d) => d.ip ?? '—' },
-            { key: 'mac', header: 'mac', className: 'mono', priority: 2, render: (d) => d.mac },
+            { key: 'mac', header: 'mac', className: 'mono', hideBelow: 1100, render: (d) => d.mac },
             { key: 'vlan', header: 'vlan', className: 'mono', render: (d) => (d.quarantined ? <StatusChip value="quarantined" /> : vlanName(d.current_vlan)) },
             { key: 'port', header: 'port', className: 'mono', render: (d) => <>{d.interface}{d.via_trunk && <span className="dim"> (trunk)</span>}</> },
-            { key: 'user', header: 'user', priority: 2, render: (d) => d.user ?? <span className="faint">—</span> },
-            { key: 'auth', header: 'auth', priority: 3, render: (d) => d.auth },
-            { key: 'crit', header: 'criticality', priority: 3, render: (d) => <Chip kind={d.criticality === 'critical' ? 'danger' : d.criticality === 'high' ? 'warn' : 'neutral'}>{d.criticality}</Chip> },
+            { key: 'user', header: 'user', hideBelow: 1100, render: (d) => d.user ?? <span className="faint">—</span> },
+            { key: 'auth', header: 'auth', hideBelow: 900, render: (d) => d.auth },
+            { key: 'crit', header: 'criticality', hideBelow: 900, render: (d) => <Chip kind={d.criticality === 'critical' ? 'danger' : d.criticality === 'high' ? 'warn' : 'neutral'}>{d.criticality}</Chip> },
             { key: 'state', header: 'state', render: (d) => <StatusChip value={d.online ? 'online' : 'offline'} /> },
           ]}
         />
       </Panel>
       <Panel title="Unregistered devices observed today" sub="not in inventory; each became a detection" bodyClass="none">
         <DataTable
+          cards="narrow"
           compact
           rows={data.unknown}
           rowKey={(u) => u.mac}
           columns={[
             { key: 'label', header: 'label', className: 'strong', render: (u) => u.label },
             { key: 'mac', header: 'mac', className: 'mono', render: (u) => u.mac },
-            { key: 'vendor', header: 'oui vendor', priority: 3, render: (u) => u.vendor },
+            { key: 'vendor', header: 'oui vendor', hideBelow: 600, render: (u) => u.vendor },
             { key: 'port', header: 'port', className: 'mono', render: (u) => u.interface },
-            { key: 'win', header: 'window', className: 'mono', priority: 2, render: (u) => `${fmtTime(u.schedule[0], { ms: false })} – ${fmtTime(u.schedule[1], { ms: false })}` },
-            { key: 'desc', header: 'description', wrap: true, priority: 2, render: (u) => u.description },
+            { key: 'win', header: 'window', className: 'mono', hideBelow: 900, render: (u) => `${fmtTime(u.schedule[0], { ms: false })} – ${fmtTime(u.schedule[1], { ms: false })}` },
+            { key: 'desc', header: 'description', wrap: true, hideBelow: 900, render: (u) => u.description },
           ]}
         />
       </Panel>
@@ -158,6 +160,7 @@ function DeviceDrawer({ hostname, onClose }: { hostname: string; onClose: () => 
         <span />
       </Section>
       <DataTable
+        cards="narrow"
         compact
         rows={data.alerts.slice(0, 20)}
         rowKey={(a) => a.id}
@@ -172,6 +175,7 @@ function DeviceDrawer({ hostname, onClose }: { hostname: string; onClose: () => 
         <span />
       </Section>
       <DataTable
+        cards="narrow"
         compact
         rows={data.auth.slice(0, 12)}
         rowKey={(e) => e.event_id}

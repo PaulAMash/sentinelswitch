@@ -139,7 +139,7 @@ export function IncidentDetail() {
             value={tab}
             onChange={setTab}
           />
-          <div className="panel-body">
+          <div className="panel-body tab-body" key={tab}>
             {tab === 'timeline' && (
               <>
                 {det && (
@@ -183,6 +183,7 @@ export function IncidentDetail() {
                   </div>
                 )}
                 <DataTable
+                  cards="narrow"
                   compact
                   rows={data.alerts}
                   rowKey={(a) => a.id}
@@ -191,7 +192,7 @@ export function IncidentDetail() {
                     { key: 'sev', header: 'severity', render: (a) => <SeverityChip value={a.severity} /> },
                     { key: 'src', header: 'source', render: (a) => <Chip kind="source">{a.source}</Chip> },
                     { key: 'sig', header: 'signature', wrap: true, render: (a) => a.signature },
-                    { key: 'flow', header: 'src → dst', className: 'mono', priority: 2, render: (a) => `${a.src_ip ?? a.mac ?? a.interface ?? ''} ${a.dest_ip ? `→ ${a.dest_ip}:${a.dest_port ?? ''}` : ''}` },
+                    { key: 'flow', header: 'src → dst', className: 'mono', hideBelow: 900, render: (a) => `${a.src_ip ?? a.mac ?? a.interface ?? ''} ${a.dest_ip ? `→ ${a.dest_ip}:${a.dest_port ?? ''}` : ''}` },
                   ]}
                 />
               </div>
@@ -301,7 +302,7 @@ export function IncidentDetail() {
                   columns={[
                     { key: 'name', header: 'artifact', className: 'mono', render: (f) => <Link to={`/evidence/${inc.id}?file=${f.name}`}>{f.name}</Link> },
                     { key: 'size', header: 'size', align: 'right', render: (f) => fmtBytes(f.bytes) },
-                    { key: 'desc', header: 'contents', wrap: true, priority: 2, render: (f) => <span className="dim">{describe(f.name)}</span> },
+                    { key: 'desc', header: 'contents', wrap: true, hideBelow: 700, render: (f) => <span className="dim">{describe(f.name)}</span> },
                   ]}
                 />
               </div>

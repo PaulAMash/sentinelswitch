@@ -4,7 +4,7 @@
 .sect { display: flex; align-items: baseline; gap: 14px; padding: var(--sp-4) 0 2px; border-bottom: 1px solid var(--line-hair); flex-wrap: wrap; }
 .sect .idx { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--accent); letter-spacing: 0.12em; }
 .sect h2 { font-size: var(--fs-xl); font-weight: 600; letter-spacing: -0.01em; }
-.sect p { color: var(--text-3); font-size: var(--fs-sm); flex: 1 1 320px; }
+.sect p { color: var(--text-3); font-size: var(--fs-md); flex: 1 1 320px; }
 .sect .right { margin-left: auto; display: flex; gap: var(--sp-2); align-items: center; }
 
 /* ---------------------------------------------------------------- status rail (summary strip) */
@@ -12,7 +12,10 @@
 .status-rail > * { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; min-width: 0; color: inherit; border-left: 1px solid var(--line-hair); position: relative; transition: background var(--t-fast) var(--ease); }
 .status-rail > *:first-child { border-left: 0; padding-left: 0; }
 .status-rail a:hover { background: linear-gradient(180deg, var(--accent-faint), transparent); text-decoration: none; }
-.status-rail .k { display: flex; gap: 6px; align-items: center; font-size: var(--fs-xs); color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status-rail .k { display: flex; gap: 6px; align-items: center; font-size: var(--fs-xs); color: var(--text-3); min-width: 0; }
+.status-rail .kt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.status-rail .scope { flex: none; }
+.status-rail .vrow { display: flex; align-items: baseline; gap: 8px; }
 .status-rail .scope { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-4); letter-spacing: 0.08em; border: 1px solid var(--line-1); border-radius: var(--r-ctl); padding: 0 4px; line-height: 15px; }
 .status-rail .v { font-family: var(--font-mono); font-size: var(--fs-3xl); font-weight: 500; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); font-variant-numeric: tabular-nums; }
 .status-rail .v small { font-size: var(--fs-md); color: var(--text-3); letter-spacing: 0; margin-left: 4px; }
@@ -31,7 +34,7 @@
 .vz-grid.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .vz-grid.c21 { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
 .vz-grid.c12 { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
-@media (max-width: 1199px) { .vz-grid.c3, .vz-grid.c21, .vz-grid.c12 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vz-grid.c3 > :last-child { grid-column: 1 / -1; } }
+@media (max-width: 1199px) { .vz-grid.c3, .vz-grid.c21 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vz-grid.c12 { grid-template-columns: minmax(0, 1fr); } .vz-grid.c3 > :last-child { grid-column: 1 / -1; } }
 @media (max-width: 899px) { .vz-grid.c3, .vz-grid.c2, .vz-grid.c21, .vz-grid.c12 { grid-template-columns: minmax(0, 1fr); } .vz-grid.c3 > :last-child { grid-column: auto; } }
 .vz-empty { color: var(--text-3); font-size: var(--fs-sm); padding: 18px 0; }
 .vz-foot { color: var(--text-4); font-size: var(--fs-xs); line-height: 1.5; margin-top: 10px; }
@@ -43,7 +46,8 @@
 .vz-ring-track { fill: none; stroke: var(--surface-3); stroke-width: 12; }
 .vz-ring-arcs { transform-box: view-box; transform-origin: 50% 50%; animation: ring-in var(--t-reveal) var(--ease-out) both; }
 @keyframes ring-in { from { opacity: 0; transform: rotate(-36deg) scale(0.92); } to { opacity: 1; transform: none; } }
-.vz-arc { fill: none; stroke-width: 12; transition: opacity var(--t-base) var(--ease), stroke-width var(--t-base) var(--ease); cursor: default; }
+.vz-arc { fill: none; stroke-width: 12; transition: opacity var(--t-base) var(--ease), stroke-width var(--t-base) var(--ease), stroke-dasharray var(--t-slow) var(--ease-out), stroke-dashoffset var(--t-slow) var(--ease-out); cursor: default; }
+.vz-arc:hover { stroke-width: 14; }
 .vz-arc.high { stroke: var(--sev-high); }
 .vz-arc.medium { stroke: var(--sev-medium); }
 .vz-arc.low { stroke: var(--sev-low); }
@@ -74,7 +78,7 @@ a.vz-bar-row:hover .lb .clip { color: var(--accent-strong); }
 .vz-bar-row .sb { color: var(--text-4); font-size: var(--fs-xs); font-family: var(--font-mono); }
 .vz-bar-row .tr { height: 8px; background: rgba(120, 150, 180, 0.06); border-radius: 4px; overflow: hidden; }
 .vz-bars.source .vz-bar-row .tr { height: 14px; }
-.vz-bar-row .fill { display: flex; height: 100%; gap: 1px; transform-origin: left center; animation: bar-grow var(--t-reveal) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); border-radius: 4px; overflow: hidden; }
+.vz-bar-row .fill { display: flex; height: 100%; gap: 1px; transform-origin: left center; transition: width var(--t-slow) var(--ease-out); animation: bar-grow var(--t-reveal) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); border-radius: 4px; overflow: hidden; }
 @keyframes bar-grow { from { transform: scaleX(0); } to { transform: none; } }
 .vz-bar-row .seg { display: block; height: 100%; min-width: 2px; }
 .vz-bar-row .seg.high { background: var(--sev-high); }
@@ -136,7 +140,7 @@ a.vz-bar-row:hover .lb .clip { color: var(--accent-strong); }
 .vz-cat li { display: grid; grid-template-columns: 110px minmax(0, 1fr) minmax(120px, auto); gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line-hair); font-size: var(--fs-sm); }
 .vz-cat li:last-child { border-bottom: 0; }
 .vz-cat .tr { height: 10px; border-radius: 4px; background: rgba(120, 150, 180, 0.05); overflow: hidden; }
-.vz-cat .fill { display: flex; gap: 1px; height: 100%; transform-origin: left; animation: bar-grow var(--t-reveal) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
+.vz-cat .fill { display: flex; gap: 1px; height: 100%; transform-origin: left; transition: width var(--t-slow) var(--ease-out); animation: bar-grow var(--t-reveal) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
 .vz-cat .seg { min-width: 3px; height: 100%; }
 .vz-cat .seg.PASS { background: var(--chart-2); }
 .vz-cat .seg.FAIL { background: var(--sev-high); }

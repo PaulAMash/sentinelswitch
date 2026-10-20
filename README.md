@@ -274,12 +274,30 @@ colonies by operational VLAN around the switch: fill shows alert activity in the
 outlines show port state, rings show response state (contained, awaiting authorization, open
 incident), and arcs show source → destination pairs recorded in alerts. Selecting a port traces it
 through the switch tables (DHCP binding → MAC table → port → VLAN → inventory); selecting an event
-highlights the ports it involved. A brushable timeline sets the window and can replay the day's recorded
-alerts in time order. The layout is schematic, the background lattice is decorative, and nothing in the
-field is animated unless data or the user changed it; when containment moves a port to the quarantine
-VLAN, the hexagon travels to that colony and leaves its vacated slot outlined. Telemetry, response and
-assurance analytics follow (severity, sources, SPAN traffic and DNS, endpoint ranking, response
-outcomes per detection, ATT&CK technique tags, pipeline timing, control status, sensor freshness).
+highlights the ports it involved. The layout is schematic; when containment moves a port to the
+quarantine VLAN, the hexagon travels to that colony and leaves its vacated slot outlined.
+
+The field **replays the recorded day on a loop** as soon as the page loads. One pass through the
+selected window takes 75 s at 1× (`PLAYBACK.WINDOW_SECONDS` in `frontend/src/lib/playback.ts`); the
+playback bar under the field has play/pause, return to start, the simulated time, 0.5×/1×/2×/4×,
+and Day / 4 h / 1 h windows, and the timeline beneath it is the scrubber (click or drag to seek, which
+pauses; drag the lower rail to choose a custom window; ←/→ step 15 min, Shift for 1 h, Home/End,
+Space toggles). One clock drives the field, the event stream, the inspector and the timeline; it keeps
+its position across page navigation, holds while the tab is hidden and resumes without a jump. At every
+playhead the field shows what the records say at that moment: which alerts had fired, which ports were
+contained (from each action's applied and restored times), which detections were awaiting
+authorization and which incidents were open. Replay is read-only: it makes no API requests at all, it
+never re-executes containment or touches the switch, and a historical response is never shown as a new
+one. The slow lattice sheen and spoke flow while playing are decorative and stop under
+`prefers-reduced-motion`; the playback controls keep working. Telemetry, response and assurance
+analytics follow (severity, sources, SPAN traffic and DNS, endpoint ranking, response outcomes per
+detection, ATT&CK technique tags, pipeline timing, control status, sensor freshness).
+
+The top bar keeps four facts apart: the demo stage, **API** connectivity (reachable, errors when a
+request returned an HTTP error in the last minute, unreachable when the network request failed; the
+tooltip gives the time since the last response), the **event stream** (live, connecting, reconnecting),
+and the **switch clock**, which is the simulated twin clock in UTC rather than the wall clock or a
+last-contact time. After the event stream reconnects, mounted views re-read their data once.
 
 The navigation is split into **Assurance** (Overview, Posture at `/posture`, Controls, Findings,
 Incidents, Reports) and **Operations** (Alerts, Assets, Switch, Authentication, Coverage, Drift,

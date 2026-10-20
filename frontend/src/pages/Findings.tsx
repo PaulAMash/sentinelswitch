@@ -101,6 +101,7 @@ function FindingList({ onOpen }: { onOpen: (id: string) => void }) {
 
       <Panel title={openOnly ? 'Open findings' : 'All findings'} sub="open a row for evidence and remediation" bodyClass="none">
         <DataTable
+          cards="narrow"
           rows={current ? rows : null}
           loading={!current}
           error={!current ? error : null}
@@ -109,14 +110,14 @@ function FindingList({ onOpen }: { onOpen: (id: string) => void }) {
           empty={current && current.length === 0 ? (openOnly ? 'No open findings — every assessed control passes or is awaiting evidence' : 'No findings have been recorded yet') : 'No findings match the current filters'}
           columns={[
             { key: 'sev', header: 'severity', render: (f) => <SeverityChip value={f.severity} /> },
-            { key: 'id', header: 'finding', render: (f) => <Id>{f.id}</Id> },
+            { key: 'id', header: 'finding', className: 'break-ids', render: (f) => <Id>{f.id}</Id> },
             { key: 'control', header: 'control', wrap: true, render: (f) => <Cell2 primary={f.control_name} secondary={<Id dim>{f.control_id}</Id>} /> },
-            { key: 'scope', header: 'asset / scope', className: 'mono', priority: 2, render: (f) => <>{f.asset ?? f.scope.id}{f.scope.interface && f.scope.interface !== f.asset && <span className="dim"> · {f.scope.interface}</span>}</> },
+            { key: 'scope', header: 'asset / scope', className: 'mono', hideBelow: 1200, render: (f) => <>{f.asset ?? f.scope.id}{f.scope.interface && f.scope.interface !== f.asset && <span className="dim"> · {f.scope.interface}</span>}</> },
             { key: 'result', header: 'result', render: (f) => <AssessChip value={f.result} /> },
             { key: 'status', header: 'status', render: (f) => <StatusChip value={f.status} /> },
-            { key: 'opened', header: 'opened', priority: 3, render: (f) => <Ts ts={f.opened_at} date ms={false} /> },
-            { key: 'occ', header: 'occurrences', align: 'right', priority: 3, render: (f) => f.occurrences },
-            { key: 'why', header: 'explanation', wrap: true, priority: 2, render: (f) => <span className="clamp-2 small dim" title={f.explanation}>{f.explanation}</span> },
+            { key: 'opened', header: 'opened', hideBelow: 900, render: (f) => <Ts ts={f.opened_at} date ms={false} /> },
+            { key: 'occ', header: 'occurrences', align: 'right', hideBelow: 900, render: (f) => f.occurrences },
+            { key: 'why', header: 'explanation', wrap: true, hideBelow: 1200, render: (f) => <span className="clamp-2 small dim" title={f.explanation}>{f.explanation}</span> },
           ]}
         />
       </Panel>
@@ -235,6 +236,7 @@ function FindingDetail({ id, onBack }: { id: string; onBack: () => void }) {
 
           <Panel title="Assessment history" sub="every run that assessed this scope" right={<span className="mono dim small">{history.length} run{history.length === 1 ? '' : 's'}</span>} bodyClass="none">
             <DataTable
+              cards="narrow"
               compact
               rows={history}
               rowKey={(h) => `${h.run_id}-${h.assessed_at}`}
@@ -243,7 +245,7 @@ function FindingDetail({ id, onBack }: { id: string; onBack: () => void }) {
                 { key: 'run', header: 'run', className: 'mono small', render: (h) => h.run_id },
                 { key: 'status', header: 'status', render: (h) => <AssessChip value={h.status} /> },
                 { key: 'at', header: 'assessed', render: (h) => <Ts ts={h.assessed_at} date ms={false} /> },
-                { key: 'obs', header: 'observed', wrap: true, className: 'mono small', priority: 2, render: (h) => fmtInline(h.observed) },
+                { key: 'obs', header: 'observed', wrap: true, className: 'mono small', hideBelow: 700, render: (h) => fmtInline(h.observed) },
               ]}
             />
           </Panel>

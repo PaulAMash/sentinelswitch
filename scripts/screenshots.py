@@ -97,6 +97,19 @@ def start_server(port: int, db: Path) -> subprocess.Popen:
     return proc
 
 
+def _settle(page, path: str) -> None:
+    """The Overview replays the recorded day from its start on load. Pause it at the end of the record
+    (the present state) the way a reader would with the End key, so every capture shows the same moment."""
+    if path.split("?")[0] != "/":
+        return
+    if page.evaluate(
+        "(() => { const t = document.querySelector('.scrub-track'); t?.focus({ preventScroll: true }); return !!t })()"
+    ):
+        page.keyboard.press("End")
+        page.evaluate("document.activeElement && document.activeElement.blur(); window.scrollTo(0, 0)")
+        page.wait_for_timeout(500)
+
+
 def _media(page, url: str, console: list[str]) -> None:
     """Load a /media/<slug> card; retry once and dump console output if the bundle never renders."""
     for attempt in range(2):
@@ -129,6 +142,7 @@ def capture(base: str) -> None:
             page.goto(f"{base}{path}", wait_until="networkidle")
             page.wait_for_selector(".content", timeout=15000)
             page.wait_for_timeout(700)
+            _settle(page, path)
             page.screenshot(
                 path=str(ASSETS / "screenshots" / f"{fname}.png"),
                 full_page=path in {"/", "/incidents/INC-2026-0042", "/switch"},
@@ -143,6 +157,7 @@ def capture(base: str) -> None:
         ]:
             page.goto(f"{base}{path}", wait_until="networkidle")
             page.wait_for_timeout(700)
+            _settle(page, path)
             page.screenshot(path=str(ASSETS / "github" / f"{fname}.png"), full_page=False)
             print("github", fname)
         ctx.close()
@@ -241,6 +256,7 @@ def capture_2(base: str) -> None:
             page.goto(f"{base}{path}", wait_until="networkidle")
             page.wait_for_selector(".content", timeout=15000)
             page.wait_for_timeout(900)
+            _settle(page, path)
             page.screenshot(path=str(out / f"{fname}.png"), full_page=False)
             page.screenshot(path=str(out / f"{fname}-full.png"), full_page=True)
             print("artifact", fname)

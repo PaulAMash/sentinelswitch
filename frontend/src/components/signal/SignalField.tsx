@@ -17,13 +17,13 @@ const P_CORE_OUT = hexPoints(HEX * 2.75)
 const P_CORE_MID = hexPoints(HEX * 2.2)
 const P_CORE_IN = hexPoints(HEX * 1.25)
 
-const RESPONSE_LABEL: Record<string, string> = { contained: 'contained (quarantine VLAN)', held: 'administrative hold', review: 'awaiting authorization', incident: 'open incident' }
+const RESPONSE_LABEL: Record<string, string> = { contained: 'contained (quarantine VLAN)', held: 'administrative hold', review: 'awaiting authorization', incident: 'open incident', restored: 'recently restored' }
 
 export function describeNode(n: FieldNode): string {
   const who = n.device?.hostname ?? (n.unknown ? `unregistered ${n.unknown.label}` : n.port.mode === 'trunk' ? n.port.description : null)
-  const parts = [n.id, who, n.vlan !== null ? `VLAN ${n.vlan}` : n.port.mode, n.port.state]
+  const parts = [n.id, who, n.vlan !== null ? `VLAN ${n.vlan}` : n.port.mode, n.state]
   const total = n.counts.high + n.counts.medium + n.counts.low
-  parts.push(total ? `${total} alert${total === 1 ? '' : 's'} in window` : 'no alerts in window')
+  parts.push(total ? `${total} recent alert${total === 1 ? '' : 's'}` : n.seen ? `${n.seen} earlier alert${n.seen === 1 ? '' : 's'}` : 'no alerts so far')
   if (n.response) parts.push(RESPONSE_LABEL[n.response])
   return parts.filter(Boolean).join(' · ')
 }
@@ -56,6 +56,16 @@ function arc(from: FieldNode, to: FieldNode | null, core: { x: number; y: number
   return { d: `M${x1.toFixed(1)},${y1.toFixed(1)} Q${(mx + px * k).toFixed(1)},${(my + py * k).toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`, ex: x2, ey: y2 }
 }
 
+/** Label for an unattributed destination: continues outward from the stub end, anchored away from it. */
+function stubLabel(from: FieldNode, g: { ex: number; ey: number }) {
+  const dx = g.ex - from.x
+  const dy = g.ey - from.y
+  const len = Math.hypot(dx, dy) || 1
+  const ux = dx / len
+  const uy = dy / len
+  return { x: g.ex + ux * 9, y: g.ey + uy * 9 + 4, textAnchor: (ux > 0.35 ? 'start' : ux < -0.35 ? 'end' : 'middle') as 'start' | 'end' | 'middle' }
+}
+
 export interface SignalFieldProps {
   model: FieldModel
   selectedNode: string | null
@@ -65,6 +75,8 @@ export interface SignalFieldProps {
   pulses: Pulse[]
   travel: Set<string>
   arrive: boolean
+  /** ambient decoration runs only while playback is running */
+  playing?: boolean
   onSelectNode: (id: string | null) => void
   onHoverNode: (id: string | null) => void
   onFocusCluster: (id: ClusterId | null) => void
@@ -153,7 +165,7 @@ export const SignalField = memo(function SignalField(p: SignalFieldProps) {
     pulsesByNode.get(pu.node)!.push(pu)
   }
   return (
-    <svg ref={svgRef} className={`sf ${p.arrive ? 'arrive' : ''} ${anySel ? 'has-sel' : ''} ${p.focusCluster ? 'has-focus' : ''}`} viewBox={`${vx} ${vy} ${vw} ${vh}`} role="group" aria-label={`Signal field: ${model.nodes.length} SW01 interfaces grouped by VLAN`}>
+    <svg ref={svgRef} className={`sf ${p.arrive ? 'arrive' : ''} ${p.playing ? 'is-playing' : ''} ${anySel ? 'has-sel' : ''} ${p.focusCluster ? 'has-focus' : ''}`} viewBox={`${vx} ${vy} ${vw} ${vh}`} role="group" aria-label={`Signal field: ${model.nodes.length} SW01 interfaces grouped by VLAN`}>
       <defs>
         <radialGradient id="sf-fade" cx="50%" cy="48%" r="62%">
           <stop offset="0%" stopColor="white" stopOpacity="1" />
@@ -168,11 +180,21 @@ export const SignalField = memo(function SignalField(p: SignalFieldProps) {
           <rect width="5" height="5" className="hatch-bg" />
           <line x1="0" y1="0" x2="0" y2="5" className="hatch-ln warn" />
         </pattern>
+        <radialGradient id="sf-spot">
+          <stop offset="0%" stopColor="white" stopOpacity="1" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        </radialGradient>
+        <mask id="sf-sheen-mask" maskUnits="userSpaceOnUse" x={vx} y={vy} width={vw} height={vh}>
+          <ellipse className="sf-spot" cx={vx + vw * 0.3} cy={vy + vh * 0.45} rx={vw * 0.22} ry={vh * 0.4} fill="url(#sf-spot)" />
+        </mask>
         <mask id="sf-mask">
           <rect x={vx} y={vy} width={vw} height={vh} fill="url(#sf-fade)" />
         </mask>
       </defs>
       <path className="sf-lattice" d={model.lattice} mask="url(#sf-mask)" aria-hidden="true" />
+      <g className="sf-sheen" aria-hidden="true" mask="url(#sf-sheen-mask)">
+        <path d={model.lattice} />
+      </g>
       <g className="sf-guides" aria-hidden="true">
         <circle cx={model.core.x} cy={model.core.y} r={HEX * 4.2} />
         <circle cx={model.core.x} cy={model.core.y} r={HEX * 9.5} />
@@ -197,7 +219,7 @@ export const SignalField = memo(function SignalField(p: SignalFieldProps) {
               <path d={g.d} pathLength={100} />
               {!to && <circle cx={g.ex} cy={g.ey} r={2.6} className="end open" />}
               {!to && hot && (
-                <text x={g.ex + (g.ex < from.x ? -6 : 6)} y={g.ey + (g.ey < from.y ? -4 : 12)} className="stub" textAnchor={g.ex < from.x ? 'end' : 'start'}>
+                <text {...stubLabel(from, g)} className="stub">
                   {f.toLabel}
                 </text>
               )}
@@ -234,7 +256,7 @@ export const SignalField = memo(function SignalField(p: SignalFieldProps) {
       <g className="sf-nodes">
         {model.nodes.map((n) => {
           const dim = (anySel && !related.has(n.id)) || (p.focusCluster !== null && p.focusCluster !== n.cluster)
-          const cls = ['hx', `ps-${n.port.state}`, n.maxSev ? `sev-${n.maxSev}` : '', `heat-${n.heat}`, n.response ? `rs-${n.response}` : '', p.selectedNode === n.id ? 'selected' : '', related.has(n.id) && p.selectedNode !== n.id ? 'related' : '', dim ? 'dim' : ''].filter(Boolean).join(' ')
+          const cls = ['hx', `ps-${n.state}`, n.maxSev ? `sev-${n.maxSev}` : '', `heat-${n.heat}`, !n.heat && n.seenSev ? `seen seen-${n.seenSev}` : '', n.response ? `rs-${n.response}` : '', p.selectedNode === n.id ? 'selected' : '', related.has(n.id) && p.selectedNode !== n.id ? 'related' : '', dim ? 'dim' : ''].filter(Boolean).join(' ')
           return (
             <g
               key={n.id}
@@ -257,7 +279,7 @@ export const SignalField = memo(function SignalField(p: SignalFieldProps) {
             >
               <g className="hx-in">
                 <polygon className="hx-body" points={P_BODY} />
-                {n.heat > 0 && <polygon className="hx-act" points={P_ACT} />}
+                {(n.heat > 0 || n.seen > 0) && <polygon className="hx-act" points={P_ACT} />}
                 {n.response === 'contained' && <polygon className="hx-inset" points={P_INSET} />}
                 {n.response && <polygon className="hx-ring" points={P_RING} />}
                 <text className="hx-label" y={4}>

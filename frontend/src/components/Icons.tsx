@@ -41,6 +41,15 @@ export const Icon = {
   play: () => (
     <svg viewBox="0 0 24 24" {...P}><path d="M7 5l12 7-12 7z" /></svg>
   ),
+  pause: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M8 5v14M16 5v14" /></svg>
+  ),
+  restart: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M6 5v14" /><path d="M18 5l-9 7 9 7z" /></svg>
+  ),
+  loop: () => (
+    <svg viewBox="0 0 24 24" {...P}><path d="M17 2l3 3-3 3" /><path d="M4 11V9a4 4 0 014-4h12" /><path d="M7 22l-3-3 3-3" /><path d="M20 13v2a4 4 0 01-4 4H4" /></svg>
+  ),
   reset: () => (
     <svg viewBox="0 0 24 24" {...P}><path d="M4 12a8 8 0 1 0 2.3-5.7" /><path d="M4 4v5h5" /></svg>
   ),

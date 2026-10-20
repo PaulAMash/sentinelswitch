@@ -84,6 +84,7 @@ function Catalog({ onOpen }: { onOpen: (id: string) => void }) {
 
       <Panel title="Control catalog" sub="open a row for its assessments and evidence" bodyClass="none">
         <DataTable
+          cards="narrow"
           rows={data.catalog}
           rowKey={(c) => c.id}
           onRowActivate={(c) => onOpen(c.id)}
@@ -91,10 +92,10 @@ function Catalog({ onOpen }: { onOpen: (id: string) => void }) {
           label="Control catalog"
           columns={[
             { key: 'control', header: 'control', wrap: true, render: (c) => <Cell2 primary={<span className="strong">{c.name}</span>} secondary={<Id dim>{c.id}</Id>} /> },
-            { key: 'cat', header: 'category', priority: 2, render: (c) => <Chip kind="neutral">{c.category}</Chip> },
-            { key: 'scope', header: 'scope', priority: 3, render: (c) => <span className="dim">{c.scope_type}</span> },
+            { key: 'cat', header: 'category', hideBelow: 900, render: (c) => <Chip kind="neutral">{c.category}</Chip> },
+            { key: 'scope', header: 'scope', hideBelow: 700, render: (c) => <span className="dim">{c.scope_type}</span> },
             { key: 'sev', header: 'severity', render: (c) => <SeverityChip value={c.severity} /> },
-            { key: 'fresh', header: 'freshness', className: 'mono', priority: 3, render: (c) => fmtWindow(c.freshness_window) },
+            { key: 'fresh', header: 'freshness', className: 'mono', hideBelow: 700, render: (c) => fmtWindow(c.freshness_window) },
             {
               key: 'outcomes',
               header: 'outcomes',
@@ -109,7 +110,7 @@ function Catalog({ onOpen }: { onOpen: (id: string) => void }) {
                 )
               },
             },
-            { key: 'open', header: 'open', align: 'right', priority: 2, render: (c) => <Count n={byId.get(c.id)?.open_findings} tone="warn" /> },
+            { key: 'open', header: 'open', align: 'right', hideBelow: 900, render: (c) => <Count n={byId.get(c.id)?.open_findings} tone="warn" /> },
             { key: 'status', header: 'status', render: (c) => <AssessChip value={byId.get(c.id)?.status ?? 'NOT_ASSESSED'} /> },
           ]}
         />
@@ -154,6 +155,7 @@ function ControlDetail({ id, onBack }: { id: string; onBack: () => void }) {
         <div className="stack">
           <Panel title="Assessments" sub={`${data.assessments.length} scope${data.assessments.length === 1 ? '' : 's'} · open a row for evidence and history`} bodyClass="none">
             <DataTable
+              cards="narrow"
               rows={rows}
               rowKey={(a) => a.id}
               onRowActivate={(a) => setSel(a.id)}
@@ -162,10 +164,10 @@ function ControlDetail({ id, onBack }: { id: string; onBack: () => void }) {
               columns={[
                 { key: 'scope', header: 'scope', render: (a) => <Cell2 primary={<span className="strong">{a.scope.asset ?? a.scope.id}</span>} secondary={<span className="mono">{a.scope.interface ?? a.scope.id}{a.scope.vlan !== null && a.scope.type !== 'vlan' ? ` · VLAN ${a.scope.vlan}` : ''}</span>} /> },
                 { key: 'status', header: 'status', render: (a) => <AssessChip value={a.status} /> },
-                { key: 'expected', header: 'expected', wrap: true, priority: 2, className: 'mono small', render: (a) => fmtInline(a.expected) },
-                { key: 'observed', header: 'observed', wrap: true, priority: 2, className: 'mono small', render: (a) => fmtInline(a.observed) },
-                { key: 'at', header: 'assessed', priority: 3, render: (a) => <Ts ts={a.assessed_at} date ms={false} /> },
-                { key: 'ev', header: 'evidence', align: 'right', priority: 3, render: (a) => a.evidence.length },
+                { key: 'expected', header: 'expected', wrap: true, hideBelow: 1100, className: 'mono small', render: (a) => fmtInline(a.expected) },
+                { key: 'observed', header: 'observed', wrap: true, hideBelow: 1100, className: 'mono small', render: (a) => fmtInline(a.observed) },
+                { key: 'at', header: 'assessed', hideBelow: 800, render: (a) => <Ts ts={a.assessed_at} date ms={false} /> },
+                { key: 'ev', header: 'evidence', align: 'right', hideBelow: 800, render: (a) => a.evidence.length },
                 { key: 'finding', header: 'finding', render: (a) => (a.finding_id ? <Link className="id" to={`/findings/${a.finding_id}`} onClick={(e) => e.stopPropagation()}>{a.finding_id}</Link> : <span className="faint">—</span>) },
               ]}
             />
@@ -173,18 +175,19 @@ function ControlDetail({ id, onBack }: { id: string; onBack: () => void }) {
           {data.findings.length > 0 && (
             <Panel title="Findings for this control" sub="open and closed" bodyClass="none">
               <DataTable
+                cards="narrow"
                 compact
                 rows={data.findings}
                 rowKey={(f) => f.id}
                 columns={[
-                  { key: 'id', header: 'finding', render: (f) => <Link className="id" to={`/findings/${f.id}`}>{f.id}</Link> },
+                  { key: 'id', header: 'finding', className: 'break-ids', render: (f) => <Link className="id" to={`/findings/${f.id}`}>{f.id}</Link> },
                   { key: 'asset', header: 'asset', className: 'mono', render: (f) => f.asset ?? f.scope.id },
                   { key: 'sev', header: 'severity', render: (f) => <SeverityChip value={f.severity} /> },
                   { key: 'result', header: 'result', render: (f) => <AssessChip value={f.result} /> },
                   { key: 'status', header: 'status', render: (f) => <StatusChip value={f.status} /> },
-                  { key: 'opened', header: 'opened', priority: 2, render: (f) => <Ts ts={f.opened_at} date ms={false} /> },
-                  { key: 'occ', header: 'occurrences', align: 'right', priority: 3, render: (f) => f.occurrences },
-                  { key: 'rem', header: 'remediation', priority: 3, render: (f) => <span className="dim">{f.remediation.status.replace(/_/g, ' ')}</span> },
+                  { key: 'opened', header: 'opened', hideBelow: 1000, render: (f) => <Ts ts={f.opened_at} date ms={false} /> },
+                  { key: 'occ', header: 'occurrences', align: 'right', hideBelow: 800, render: (f) => f.occurrences },
+                  { key: 'rem', header: 'remediation', hideBelow: 800, render: (f) => <span className="dim">{f.remediation.status.replace(/_/g, ' ')}</span> },
                 ]}
               />
             </Panel>

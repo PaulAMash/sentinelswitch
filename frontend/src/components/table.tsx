@@ -1,12 +1,18 @@
 import type { ReactNode } from 'react'
 
+export type HideBelow = 400 | 500 | 600 | 700 | 800 | 900 | 1000 | 1100 | 1200 | 1300
+
 export interface Column<T> {
   key: string
   header: ReactNode
   render: (row: T, index: number) => ReactNode
   className?: string
-  /** 2 = hidden ≤1199 px, 3 = hidden ≤899 px (cards mode shows everything) */
-  priority?: 2 | 3
+  /**
+   * Progressive disclosure: hide the column while the table's own container is narrower than this
+   * many px (a container query, so a table in a half-width panel sheds detail before a full-width one).
+   * Rows with a drawer or detail page keep every field there.
+   */
+  hideBelow?: HideBelow
   align?: 'left' | 'right'
   wrap?: boolean
   /** plain-text label for stacked (card) mode; defaults to header when it is a string */
@@ -25,8 +31,12 @@ export interface DataTableProps<T> {
   error?: string | null
   empty?: ReactNode
   compact?: boolean
-  /** stacked rows on phones (queue-style tables) */
-  cards?: boolean
+  /**
+   * Stacked label/value cards when the table's container is too narrow for a row: `true` below 900 px
+   * (queue-style tables whose every column matters), `'narrow'` on phone and small-tablet viewports below 720 px.
+   * Columns hidden by `hideBelow` stay hidden in cards.
+   */
+  cards?: boolean | 'narrow'
   className?: string
   /** aria-label for the table */
   label?: string
@@ -34,7 +44,7 @@ export interface DataTableProps<T> {
 }
 
 function colClass<T>(c: Column<T>): string {
-  return [c.className ?? '', c.priority === 2 ? 'col-p2' : c.priority === 3 ? 'col-p3' : '', c.align === 'right' ? 'num' : '', c.wrap ? 'wrap' : ''].filter(Boolean).join(' ')
+  return [c.className ?? '', c.hideBelow ? `hide-lt${c.hideBelow}` : '', c.align === 'right' ? 'num' : '', c.wrap ? 'wrap' : ''].filter(Boolean).join(' ')
 }
 
 /**
@@ -59,7 +69,7 @@ export function DataTable<T>(p: DataTableProps<T>) {
     </tr>
   ) : null
   return (
-    <div className={`table-wrap ${p.cards ? 'cards' : ''} ${p.className ?? ''}`}>
+    <div className={`table-wrap ${p.cards === 'narrow' ? 'cards-sm' : p.cards ? 'cards' : ''} ${p.className ?? ''}`}>
       <table className={`data ${p.compact ? 'compact' : ''}`} aria-label={p.label}>
         <thead>
           <tr>

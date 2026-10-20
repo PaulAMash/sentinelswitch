@@ -6,7 +6,7 @@ import { useApi } from '../lib/hooks'
 import { ErrorState, KV, Loading, Panel, Ts } from '../components/ui'
 import { PageHeader } from '../components/layout'
 import { Chip, StatusChip } from '../components/status'
-import { DataTable } from '../components/table'
+import { DataTable, Cell2 } from '../components/table'
 import { Console, Terminal } from '../components/terminal'
 import { PortLegend, SwitchPanel } from '../components/SwitchPanel'
 import { vlanName } from '../lib/format'
@@ -92,7 +92,7 @@ export function SwitchPage() {
         </Panel>
       </div>
 
-      <div className="grid grid-3">
+      <div className="vz-grid c12">
         <Panel title="VLANs" bodyClass="none">
           <DataTable
             compact
@@ -100,14 +100,14 @@ export function SwitchPage() {
             rowKey={(v) => String(v.id)}
             columns={[
               { key: 'id', header: 'id', className: 'mono', render: (v) => v.id },
-              { key: 'name', header: 'name', className: 'strong', render: (v) => v.name },
-              { key: 'subnet', header: 'subnet', className: 'mono', render: (v) => v.subnet ?? '—' },
+              { key: 'name', header: 'name · subnet', render: (v) => <Cell2 primary={<span className="strong">{v.name}</span>} secondary={<span className="mono">{v.subnet ?? '—'}</span>} /> },
               { key: 'ctl', header: 'controls', render: (v) => <span className="small">{[data.dhcp_snooping_vlans.includes(v.id) && 'snooping', data.dai_vlans.includes(v.id) && 'DAI', data.span.source_vlans.includes(v.id) && 'SPAN'].filter(Boolean).join(' · ') || '—'}</span> },
             ]}
           />
         </Panel>
         <Panel title="Recent configuration changes" sub="config_changes on the twin" bodyClass="none">
           <DataTable
+            cards="narrow"
             compact
             rows={[...data.config_changes].reverse()}
             rowKey={(c, i) => `${c.ts}-${i}`}
@@ -120,14 +120,16 @@ export function SwitchPage() {
             ]}
           />
         </Panel>
-        <Panel title="Logging buffer" sub="last 40 lines" bodyClass="none">
-          <Terminal text={data.log_tail.join('\n')} hl={['%SW_DAI', '%DHCP_SNOOPING', '%PORT_SECURITY', '%SPANTREE', 'sentinel']} maxHeight={320} />
-        </Panel>
       </div>
+      <Panel title="Logging buffer" sub="last 40 lines" bodyClass="none">
+          <Terminal text={data.log_tail.join('\n')} hl={['%SW_DAI', '%DHCP_SNOOPING', '%PORT_SECURITY', '%SPANTREE', 'sentinel']} maxHeight={320} />
+      </Panel>
+
       <div className="grid grid-2">
         <Panel title="MAC address table" sub={`${data.mac_table.length} entries`} bodyClass="none">
           <div className="scroll-360">
             <DataTable
+              cards="narrow"
               compact
               rows={[...data.mac_table].sort((a, b) => a.vlan - b.vlan || a.interface.localeCompare(b.interface, undefined, { numeric: true }))}
               rowKey={(e, i) => `${e.mac}-${i}`}
@@ -143,6 +145,7 @@ export function SwitchPage() {
         <Panel title="DHCP snooping bindings" sub={`${data.dhcp_bindings.length} bindings`} bodyClass="none">
           <div className="scroll-360">
             <DataTable
+              cards="narrow"
               compact
               rows={[...data.dhcp_bindings].sort((a, b) => a.vlan - b.vlan || a.ip.localeCompare(b.ip, undefined, { numeric: true }))}
               rowKey={(b, i) => `${b.ip}-${i}`}
@@ -151,8 +154,8 @@ export function SwitchPage() {
                 { key: 'mac', header: 'mac', className: 'mono', render: (b) => b.mac },
                 { key: 'vlan', header: 'vlan', className: 'mono', render: (b) => b.vlan },
                 { key: 'port', header: 'port', className: 'mono', render: (b) => b.interface },
-                { key: 'type', header: 'type', priority: 3, render: (b) => b.binding_type },
-                { key: 'exp', header: 'expires', className: 'mono', priority: 2, render: (b) => (b.binding_type === 'static' ? 'infinite' : b.lease_expires.replace('T', ' ').slice(5, 16)) },
+                { key: 'type', header: 'type', hideBelow: 500, render: (b) => b.binding_type },
+                { key: 'exp', header: 'expires', className: 'mono', hideBelow: 600, render: (b) => (b.binding_type === 'static' ? 'infinite' : b.lease_expires.replace('T', ' ').slice(5, 16)) },
               ]}
             />
           </div>

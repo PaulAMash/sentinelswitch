@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Alert } from '../../lib/api'
-import { fmtClock, fmtEnd, ms, sev3, type Window } from '../../lib/telemetry'
+import { fmtClock, ms, sev3 } from '../../lib/telemetry'
 import { vlanName } from '../../lib/format'
 import { Chip, Id, ResponseChip, SeverityChip, StatusChip } from '../status'
 import type { FieldModel, FieldNode, Flow } from './model'
@@ -17,7 +17,7 @@ function Hop({ k, v, src, tone = '' }: { k: string; v: string | null; src: strin
 
 function SevStrip({ c }: { c: Record<'high' | 'medium' | 'low', number> }) {
   const total = c.high + c.medium + c.low
-  if (!total) return <div className="dim small">No alerts on this port in the selected window and filters.</div>
+  if (!total) return <div className="dim small">No recent alerts on this port at the playhead.</div>
   return (
     <div className="sev-strip" role="img" aria-label={`${c.high} high, ${c.medium} medium, ${c.low} low`}>
       <div className="bar">
@@ -30,29 +30,31 @@ function SevStrip({ c }: { c: Record<'high' | 'medium' | 'low', number> }) {
   )
 }
 
-export function NodeInspector({ n, onSelectAlert }: { n: FieldNode; onSelectAlert: (a: Alert) => void }) {
+export function NodeInspector({ n, t, onSelectAlert }: { n: FieldNode; t: number; onSelectAlert: (a: Alert) => void }) {
   const p = n.port
   const total = n.counts.high + n.counts.medium + n.counts.low
   return (
     <div className="insp">
       <div className="insp-head">
         <Id>{n.id}</Id>
-        <StatusChip value={p.state} />
+        <StatusChip value={n.state} />
         {n.vlan !== null && <Chip kind="neutral" mono>{vlanName(n.vlan)}</Chip>}
       </div>
       <div className="insp-title">
         {n.device ? <Link to={`/devices/${n.device.hostname}`}>{n.device.hostname}</Link> : n.unknown ? <span>unregistered · {n.unknown.label}</span> : <span className="dim">{p.description || 'no endpoint in inventory'}</span>}
         {n.device && <span className="dim small"> {n.device.role}{n.device.user ? ` · ${n.device.user}` : ''}</span>}
       </div>
-      <div className="eyebrow">Attribution · switch tables</div>
+      <div className="eyebrow">Attribution · current switch tables</div>
       <ol className="hops">
         {n.ip ? <Hop k="IP" v={n.ip} src="DHCP snooping binding" /> : <Hop k="IP" v={n.device?.ip ?? null} src={n.device?.ip ? 'asset inventory · no current DHCP binding on this port' : 'no DHCP binding on this port'} />}
         <Hop k="MAC" v={n.macs.length ? n.macs.join(', ') : null} src="MAC address table" />
         <Hop k="Port" v={`SW01 ${n.id}`} src={p.port_class} tone="port" />
-        <Hop k="VLAN" v={n.vlan !== null ? vlanName(n.vlan) : `trunk ${p.allowed_vlans.join(',')}`} src={p.quarantined && p.original_vlan ? `quarantined · was ${vlanName(p.original_vlan)}` : 'operational VLAN'} tone={p.quarantined ? 'contained' : ''} />
+        <Hop k="VLAN" v={n.vlan !== null ? vlanName(n.vlan) : `trunk ${p.allowed_vlans.join(',')}`} src={n.response === 'contained' ? `at ${fmtClock(t)} · quarantined${p.original_vlan ? `, home ${vlanName(p.original_vlan)}` : ''}` : `operational VLAN at ${fmtClock(t)}`} tone={n.response === 'contained' ? 'contained' : ''} />
         <Hop k="Endpoint" v={n.device?.hostname ?? (n.unknown ? `unregistered (${n.unknown.vendor})` : null)} src={n.device ? 'asset inventory' : n.unknown ? 'seen on port, not in inventory' : 'inventory'} />
       </ol>
-      <div className="eyebrow">Activity · selected window ({total})</div>
+      <div className="eyebrow">
+        Activity · recent ({total}){n.seen ? ` · ${n.seen} earlier` : ''}
+      </div>
       <SevStrip c={n.counts} />
       {n.alerts.slice(0, 4).map((a) => (
         <button key={a.id} type="button" className="insp-alert" onClick={() => onSelectAlert(a)}>
@@ -61,15 +63,17 @@ export function NodeInspector({ n, onSelectAlert }: { n: FieldNode; onSelectAler
           <span className="clip">{a.signature.replace(/^SENTINELSWITCH /, '')}</span>
         </button>
       ))}
-      {(n.incident || n.review || n.response) && <div className="eyebrow">Response · current state</div>}
-      {n.response === 'contained' && <div className="insp-note contained">Port is in the quarantine VLAN on the switch twin.</div>}
-      {n.response === 'held' && <div className="insp-note warn">Port is under an administrative hold.</div>}
+      {(n.incident || n.review || n.response) && <div className="eyebrow">Response · at {fmtClock(t)}</div>}
+      {n.response === 'contained' && <div className="insp-note contained">Quarantine action in force at this time (applied, not yet restored).</div>}
+      {n.response === 'held' && <div className="insp-note warn">Administrative hold in force at this time.</div>}
+      {n.response === 'restored' && <div className="insp-note ok">Containment was released shortly before this time.</div>}
       {n.incident && (
         <div className="row">
           <Link className="id" to={`/incidents/${n.incident.id}`}>
             {n.incident.id}
           </Link>
           {n.incidentState && <ResponseChip state={n.incidentState} />}
+          <span className="dim small">now</span>
           <span className="dim small clip">{n.incident.rule_name}</span>
         </div>
       )}
@@ -151,32 +155,32 @@ export function AlertInspector({ a, flow, model }: { a: Alert; flow: Flow | null
   )
 }
 
-export function FieldSummary({ model, visible, window: w, day }: { model: FieldModel; visible: number; window: Window; day: string }) {
+export function FieldSummary({ model, played, total, t, recent }: { model: FieldModel; played: number; total: number; t: number; recent: string }) {
   const active = model.nodes.filter((n) => n.heat > 0).length
   const contained = model.nodes.filter((n) => n.response === 'contained' || n.response === 'held')
   const review = model.nodes.filter((n) => n.response === 'review')
-  const open = model.nodes.filter((n) => n.incident && n.incident.status !== 'resolved' && n.incident.status !== 'closed')
+  const open = model.nodes.filter((n) => n.response === 'incident' || (n.response === 'contained' && n.incident))
   return (
     <div className="insp">
-      <div className="eyebrow">Selected window</div>
+      <div className="eyebrow">At {fmtClock(t)} UTC · simulated</div>
       <div className="insp-stats">
         <div>
-          <b className="mono">{visible}</b>
-          <span>alerts</span>
+          <b className="mono">
+            {played}
+            <small>/{total}</small>
+          </b>
+          <span>alerts played</span>
         </div>
         <div>
           <b className="mono">{active}</b>
-          <span>ports with activity</span>
+          <span>ports active · {recent}</span>
         </div>
         <div>
           <b className="mono">{model.flows.length}</b>
-          <span>observed flows</span>
+          <span>recorded flows · {recent}</span>
         </div>
       </div>
-      <div className="dim small">
-        {day} · {fmtClock(w.start)}–{fmtEnd(w.start, w.end)} UTC
-      </div>
-      <div className="eyebrow">Current state</div>
+      <div className="eyebrow">Response state at the playhead</div>
       <ul className="insp-list">
         <li>
           <span className={`n ${contained.length ? 'danger' : ''}`}>{contained.length}</span> contained or held {contained.length ? <span className="mono dim">{contained.map((n) => n.id).join(', ')}</span> : null}
@@ -193,7 +197,7 @@ export function FieldSummary({ model, visible, window: w, day }: { model: FieldM
           ))}
         </li>
       </ul>
-      <div className="dim small">Select a port or an event to trace it through the switch tables.</div>
+      <div className="dim small">Select a port or an event to trace it.</div>
     </div>
   )
 }

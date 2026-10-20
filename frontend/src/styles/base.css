@@ -83,7 +83,8 @@ code, pre, .mono, .ts { font-family: var(--font-mono); font-size: var(--fs-sm); 
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 }
 .nav a:hover { background: var(--surface-2); color: var(--text-1); text-decoration: none; }
-.nav a.active { background: var(--surface-3); color: var(--text-1); border-left-color: var(--accent); }
+.nav a.active { background: var(--surface-3); color: var(--text-1); border-left-color: var(--accent); box-shadow: inset 12px 0 18px -14px var(--accent-glow); }
+.nav a { transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), border-color var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease); }
 .nav a svg { width: 16px; height: 16px; flex: none; opacity: 0.85; }
 .nav .label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .nav-badge { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-xs); min-width: 20px; text-align: center; background: var(--surface-3); border: 1px solid var(--line-2); color: var(--text-2); border-radius: 6px; padding: 0 6px; line-height: 18px; }
@@ -108,10 +109,16 @@ code, pre, .mono, .ts { font-family: var(--font-mono); font-size: var(--fs-sm); 
 .topbar .menu-btn, .brand-row .menu-btn { display: none; }
 .conn { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-2); white-space: nowrap; }
 .conn .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-4); display: inline-block; }
-.conn.connected .dot { background: var(--ok); box-shadow: 0 0 0 3px var(--ok-dim); }
-.conn.stale .dot { background: var(--warn); box-shadow: 0 0 0 3px var(--warn-dim); }
-.conn.unavailable .dot { background: var(--danger); box-shadow: 0 0 0 3px var(--danger-dim); }
-.conn.unavailable { color: var(--danger-ink); }
+.conn.api-reachable .dot, .conn.stream-live .dot { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+.conn.api-checking .dot, .conn.stream-connecting .dot, .conn.stream-reconnecting .dot { background: var(--warn); box-shadow: 0 0 0 3px var(--warn-dim); }
+.conn.api-unreachable .dot { background: var(--danger); box-shadow: 0 0 0 3px var(--danger-dim); }
+.conn.api-unreachable { color: var(--danger-ink); }
+.conn.api-errors .dot { background: var(--warn); box-shadow: 0 0 0 3px var(--warn-dim); }
+.conn.api-errors { color: var(--warn-ink); }
+.conn.stream-reconnecting { color: var(--warn-ink); }
+.conn.stream-unsupported .dot { background: var(--text-4); }
+.tb-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.tb-k { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); }
 
 .main {
   background:
@@ -125,8 +132,14 @@ code, pre, .mono, .ts { font-family: var(--font-mono); font-size: var(--fs-sm); 
   display: flex; flex-direction: column; gap: var(--sp-4);
 }
 /* route content: one short fade/rise when the section changes (keyed by the first path segment) */
-.page { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; animation: page-in var(--t-slow) var(--ease-out) both; }
-@keyframes page-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.page { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+/* motion system: page content enters in a short stagger when a section opens (or when loading finishes) */
+.page > * { animation: reveal-up var(--t-slow) var(--ease-out) both; }
+.page > :nth-child(2) { animation-delay: 40ms; }
+.page > :nth-child(3) { animation-delay: 80ms; }
+.page > :nth-child(4) { animation-delay: 120ms; }
+.page > :nth-child(5) { animation-delay: 160ms; }
+.page > :nth-child(n + 6) { animation-delay: 200ms; }
 /* staged reveal for hero sections: children set --i (0..6) */
 .reveal { animation: reveal-up var(--t-reveal) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
 @keyframes reveal-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -136,7 +149,7 @@ code, pre, .mono, .ts { font-family: var(--font-mono); font-size: var(--fs-sm); 
 .page-head .heading { min-width: 0; flex: 1 1 360px; display: flex; flex-direction: column; gap: 4px; }
 .page-head .ident { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 2px; }
 .page-head h1 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.page-head .sub { color: var(--text-3); font-size: var(--fs-md); max-width: 920px; }
+.page-head .sub { color: var(--text-3); font-size: var(--fs-lg); line-height: 1.5; max-width: 880px; }
 .page-head .toolbar { flex: none; align-self: flex-start; }
 .info-pop { position: relative; display: inline-flex; }
 .info-pop > button { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-3); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
@@ -229,3 +242,7 @@ label.field { display: flex; flex-direction: column; gap: 4px; font-size: var(--
   .page-head .toolbar > * { max-width: 100%; }
 }
 .page-head .ident-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 2px; }
+
+/* live event stream indicator: a slow pulse only while the stream is actually open */
+.conn.stream-live .dot { animation: live-dot 2.4s var(--ease-in-out) infinite; }
+@keyframes live-dot { 0%, 100% { box-shadow: 0 0 0 3px var(--accent-dim); } 50% { box-shadow: 0 0 0 5px rgba(57, 197, 214, 0.04); } }

@@ -94,6 +94,9 @@ screenshots-2: build ## Only the SentinelSwitch 2.0 artifact screenshots (artifa
 ui-audit: build ## Render every route at four viewports and check the visual-QA gate (artifacts/ui-redesign/after)
 	$(PYTHON) scripts/ui_audit.py artifacts/ui-redesign/after
 
+playback-check: build ## Browser check of the Overview playback (autoplay, pause, seek, loop; replay makes no request)
+	$(PYTHON) scripts/playback_check.py
+
 media: screenshots ## Alias for screenshots
 
 docker-up: ## Build and run the stack with docker compose
@@ -103,4 +106,4 @@ clean: ## Remove build artifacts and the local database (keeps the committed dat
 	rm -rf frontend/dist data/generated/sentinelswitch.db* .pytest_cache .ruff_cache
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +
 
-.PHONY: help setup generate seed reset demo demo-2 assess findings remediate report validate-security drift build dev dev-frontend serve test lint format diagrams screenshots screenshots-2 ui-audit media docker-up clean
+.PHONY: help setup generate seed reset demo demo-2 assess findings remediate report validate-security drift build dev dev-frontend serve test lint format diagrams screenshots screenshots-2 ui-audit playback-check media docker-up clean

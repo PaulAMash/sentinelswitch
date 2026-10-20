@@ -74,12 +74,19 @@ export function Sidebar({ items, meta, open, onClose }: { items: NavItem[]; meta
   )
 }
 
-const CONN_LABEL = { connected: 'API connected', stale: 'API stale', unavailable: 'API unavailable' } as const
+const API_LABEL = { checking: 'API checking', reachable: 'API reachable', errors: 'API errors', unreachable: 'API unreachable' } as const
+const STREAM_LABEL = { live: 'events live', connecting: 'events connecting', reconnecting: 'events reconnecting', unsupported: 'events off' } as const
+
+function ago(s: number | null) {
+  if (s === null) return 'no response yet'
+  if (s < 60) return `last response ${s} s ago`
+  return `last response ${Math.round(s / 60)} min ago`
+}
 
 export function Topbar({ crumbs, meta, onMenu }: { crumbs: { label: string; to?: string }[]; meta: Meta | null; onMenu: () => void }) {
-  const { status, sinceFetchS: since } = useConnection()
+  const conn = useConnection()
   const stage = meta?.demo?.stage
-  const stageChip = stage === 'contained' ? { kind: 'contained', text: `${meta?.flagship_incident} contained` } : stage === 'restored' ? { kind: 'resolved', text: `${meta?.flagship_incident} resolved` } : stage ? { kind: 'neutral', text: 'baseline · flagship not replayed' } : null
+  const stageChip = stage === 'contained' ? { kind: 'contained', text: `${meta?.flagship_incident} contained` } : stage === 'restored' ? { kind: 'resolved', text: `${meta?.flagship_incident} resolved` } : stage ? { kind: 'neutral', text: 'baseline' } : null
   return (
     <header className="topbar">
       <button className="btn sm icon ghost menu-btn" type="button" onClick={onMenu} aria-label="Open navigation" aria-controls="sidebar">
@@ -99,17 +106,25 @@ export function Topbar({ crumbs, meta, onMenu }: { crumbs: { label: string; to?:
       <div className="spacer" />
       <div className="meta">
         {stageChip && (
-          <Chip kind={stageChip.kind} className="stage hide-mobile">
-            {stageChip.text}
-          </Chip>
+          <span className="tb-item hide-mobile" title="Current state of the demo on the switch twin (not the playback position)">
+            <span className="tb-k">demo now</span>
+            <Chip kind={stageChip.kind} className="stage">
+              {stageChip.text}
+            </Chip>
+          </span>
         )}
-        <span className={`conn ${status}`} title={since !== null ? `last API response ${since}s ago` : 'no API response yet'}>
+        <span className={`conn api-${conn.api}`} title={`API: ${ago(conn.sinceOkS)} (client clock)${conn.lastError ? ` · last error: ${conn.lastError}` : ''}`}>
           <span className="dot" aria-hidden="true" />
-          {CONN_LABEL[status]}
+          {API_LABEL[conn.api]}
+        </span>
+        <span className={`conn stream-${conn.stream} hide-mobile`} title="Server-sent event stream: views refresh when the server announces a change">
+          <span className="dot" aria-hidden="true" />
+          {STREAM_LABEL[conn.stream]}
         </span>
         {meta?.switch.now && (
-          <span className="clock mono" title="Simulated switch clock (UTC)">
-            {meta.switch.now.replace('T', ' ').slice(0, 19)} UTC
+          <span className="tb-item clock" title="Simulated switch-twin clock (dataset time, UTC). Not the wall clock and not a last-contact time.">
+            <span className="tb-k">switch clock</span>
+            <span className="mono">{meta.switch.now.replace('T', ' ').slice(0, 16)} UTC</span>
           </span>
         )}
       </div>

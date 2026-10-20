@@ -31,18 +31,19 @@ export function Authentication() {
           <Panel title="Recent authentication records" bodyClass="none">
             <div className="scroll-480">
               <DataTable
+                cards="narrow"
                 compact
                 rows={data.recent}
                 rowKey={(e) => e.event_id}
                 columns={[
                   { key: 'time', header: 'time', render: (e) => <Ts ts={e.timestamp} /> },
                   { key: 'result', header: 'result', render: (e) => <Chip kind={e.result === 'Access-Accept' ? 'ok' : e.result === 'Access-Reject' ? 'danger' : 'info'}>{e.result}</Chip> },
-                  { key: 'id', header: 'identity', className: 'mono', render: (e) => e.identity },
-                  { key: 'method', header: 'method', priority: 3, render: (e) => e.method },
-                  { key: 'cs', header: 'calling station', className: 'mono', priority: 2, render: (e) => e.calling_station_id },
+                  { key: 'id', header: 'identity', className: 'mono break-ids', render: (e) => e.identity },
+                  { key: 'method', header: 'method', hideBelow: 800, render: (e) => e.method },
+                  { key: 'cs', header: 'calling station', className: 'mono', hideBelow: 1100, render: (e) => e.calling_station_id },
                   { key: 'port', header: 'port', className: 'mono', render: (e) => e.nas_port_id.replace('GigabitEthernet', 'Gi') },
-                  { key: 'vlan', header: 'vlan', className: 'mono', priority: 3, render: (e) => <>{e.assigned_vlan ?? '—'}{e.vlan_source === 'guest-vlan' && <span className="dim"> guest</span>}</> },
-                  { key: 'reason', header: 'reason', wrap: true, priority: 2, render: (e) => <span className="dim">{e.reason ?? '—'}</span> },
+                  { key: 'vlan', header: 'vlan', className: 'mono', hideBelow: 800, render: (e) => <>{e.assigned_vlan ?? '—'}{e.vlan_source === 'guest-vlan' && <span className="dim"> guest</span>}</> },
+                  { key: 'reason', header: 'reason', wrap: true, hideBelow: 1100, render: (e) => <span className="dim">{e.reason ?? '—'}</span> },
                 ]}
               />
             </div>

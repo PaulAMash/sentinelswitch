@@ -6,7 +6,7 @@ import { Loading, Panel, Segmented, Ts, ErrorState } from '../components/ui'
 import { PageHeader } from '../components/layout'
 import { StatusBar } from '../components/metric'
 import { AssessChip, Chip, ResponseChip, responseStateOf } from '../components/status'
-import { DataTable } from '../components/table'
+import { DataTable, Cell2 } from '../components/table'
 import { ConfirmDialog } from '../components/dialog'
 import { useToast } from '../components/toast'
 import { TrafficStack } from '../charts'
@@ -53,7 +53,12 @@ export function Overview() {
         : null,
     [sw, devices, alerts, data, incidents, reviews, sensorCov],
   )
-  const domain = useMemo(() => (data ? { start: ms(data.dataset.start), end: ms(data.dataset.end) } : null), [data])
+  const domain = useMemo(() => (data ? { start: ms(data.dataset.start), end: ms(data.dataset.end) } : null), [data?.dataset.start, data?.dataset.end]) // eslint-disable-line react-hooks/exhaustive-deps
+  // newest simulated time with recorded data: the switch clock or the latest alert or containment record
+  const recordedEnd = useMemo(() => {
+    const times = [sw ? ms(sw.now) : 0, ...(alerts ?? []).map((a) => ms(a.ts)), ...(data?.containment_activity ?? []).flatMap((a) => [a.applied_at, a.verified_at, a.restored_at].filter(Boolean).map((x) => ms(x as string)))]
+    return Math.max(...times)
+  }, [sw, alerts, data?.containment_activity])
 
   if (error && !data) return <ErrorState error={error} retry={reload} />
   if (!data) return <Loading rows={6} />
@@ -112,65 +117,89 @@ export function Overview() {
       <nav className="status-rail reveal" aria-label="Operational summary" style={{ ['--i' as string]: 0 }}>
         <Link to="/alerts" title="Alerts recorded on the dataset day, all sources">
           <span className="k">
-            alerts <span className="scope">DAY</span>
+            <span className="kt">alerts</span>
           </span>
-          <span className="v">{alerts ? alerts.length : k.alerts}</span>
+          <span className="vrow">
+            <span className="v">{alerts ? alerts.length : k.alerts}</span>
+            <span className="scope">DAY</span>
+          </span>
           <span className="d">{sev ? `${sev.high} high · ${sev.medium} medium · ${sev.low} low` : '…'}</span>
         </Link>
         <Link to="/coverage" title="Correlation detections scored on the dataset day, by policy disposition">
           <span className="k">
-            detections <span className="scope">DAY</span>
+            <span className="kt">detections</span>
           </span>
-          <span className="v">{detections ? detections.length : '…'}</span>
+          <span className="vrow">
+            <span className="v">{detections ? detections.length : '…'}</span>
+            <span className="scope">DAY</span>
+          </span>
           <span className="d">{disp ? `${disp.auto} automatic · ${disp.review} review · ${disp.monitor} monitor` : '…'}</span>
         </Link>
         <Link to="/incidents" title="Manual-review detections with no analyst decision yet">
           <span className="k">
-            awaiting authorization <span className="scope">NOW</span>
+            <span className="kt">awaiting authorization</span>
           </span>
-          <span className={`v ${awaiting ? 'warn' : 'zero'}`}>{awaiting ?? '…'}</span>
+          <span className="vrow">
+            <span className={`v ${awaiting ? 'warn' : 'zero'}`}>{awaiting ?? '…'}</span>
+            <span className="scope">NOW</span>
+          </span>
           <span className="d">manual review queue</span>
         </Link>
         <Link to="/incidents" title="Ports in the quarantine VLAN or under administrative hold on the twin">
           <span className="k">
-            contained hosts <span className="scope">NOW</span>
+            <span className="kt">contained hosts</span>
           </span>
-          <span className={`v ${k.quarantined_hosts ? 'danger' : 'zero'}`}>{k.quarantined_hosts}</span>
+          <span className="vrow">
+            <span className={`v ${k.quarantined_hosts ? 'danger' : 'zero'}`}>{k.quarantined_hosts}</span>
+            <span className="scope">NOW</span>
+          </span>
           <span className="d">VLAN 50 or administrative hold</span>
         </Link>
         <Link to="/incidents" title="Incidents that are not resolved or closed">
           <span className="k">
-            open incidents <span className="scope">NOW</span>
+            <span className="kt">open incidents</span>
           </span>
-          <span className={`v ${openIncidents ? 'danger' : 'zero'}`}>{openIncidents}</span>
+          <span className="vrow">
+            <span className={`v ${openIncidents ? 'danger' : 'zero'}`}>{openIncidents}</span>
+            <span className="scope">NOW</span>
+          </span>
           <span className="d">{k.incidents} opened on the day</span>
         </Link>
         <Link to="/findings" title="Findings in open, reopened, remediation requested, remediated or remediation failed">
           <span className="k">
-            open findings <span className="scope">NOW</span>
+            <span className="kt">open findings</span>
           </span>
-          <span className={`v ${posture?.findings.open ? 'warn' : 'zero'}`}>{posture ? posture.findings.open : '…'}</span>
+          <span className="vrow">
+            <span className={`v ${posture?.findings.open ? 'warn' : 'zero'}`}>{posture ? posture.findings.open : '…'}</span>
+            <span className="scope">NOW</span>
+          </span>
           <span className="d">{posture ? `${posture.findings.by_severity.high} high · ${posture.findings.by_severity.medium} medium · ${posture.findings.by_severity.low} low` : '…'}</span>
         </Link>
         <Link to="/posture" title={posture?.definitions.pass_rate_of_determinate_pct ?? 'PASS / (PASS + FAIL)'}>
           <span className="k">
-            determinate pass <span className="scope">RUN</span>
+            <span className="kt">determinate pass</span>
           </span>
-          <span className="v accent">{t ? pct(t.pass_rate_of_determinate_pct) : '…'}</span>
+          <span className="vrow">
+            <span className="v accent">{t ? pct(t.pass_rate_of_determinate_pct) : '…'}</span>
+            <span className="scope">RUN</span>
+          </span>
           <span className="d">{t ? `${t.pass} / ${t.determinate} determinate results` : '…'}</span>
         </Link>
         <Link to="/posture" title="UNKNOWN plus STALE results; never counted as a pass">
           <span className="k">
-            unverified <span className="scope">RUN</span>
+            <span className="kt">unverified</span>
           </span>
-          <span className={`v ${t && t.unknown + t.stale ? 'warn' : 'zero'}`}>{t ? t.unknown + t.stale : '…'}</span>
+          <span className="vrow">
+            <span className={`v ${t && t.unknown + t.stale ? 'warn' : 'zero'}`}>{t ? t.unknown + t.stale : '…'}</span>
+            <span className="scope">RUN</span>
+          </span>
           <span className="d">{t ? `${t.unknown} unknown · ${t.stale} stale` : '…'}</span>
         </Link>
       </nav>
 
       {/* 01 · signal field */}
       <div className="reveal" style={{ ['--i' as string]: 1 }}>
-        {inputs && domain ? <SignalConsole inputs={inputs} domain={domain} day={data.dataset.day} now={sw ? ms(sw.now) : null} traffic={data.traffic} /> : <div className="sig instrument sig-loading"><Loading rows={8} /></div>}
+        {inputs && domain ? <SignalConsole inputs={inputs} domain={domain} day={data.dataset.day} now={sw ? ms(sw.now) : null} recordedEnd={recordedEnd} traffic={data.traffic} /> : <div className="sig instrument sig-loading"><Loading rows={8} /></div>}
       </div>
 
       {/* 02 · telemetry */}
@@ -236,15 +265,15 @@ export function Overview() {
       <div className="vz-grid c21">
         <Panel title="Containment ledger" sub="actions since the last reset" right={<Link to="/incidents">incidents</Link>} bodyClass="none">
           <DataTable
+            cards="narrow"
             compact
             rows={data.containment_activity}
             rowKey={(a) => a.workflow_id}
             empty="No containment actions since the last reset"
             columns={[
               { key: 'time', header: 'applied', render: (a) => <Ts ts={a.applied_at ?? a.requested_at} ms={false} /> },
-              { key: 'inc', header: 'incident', render: (a: ContainmentAction) => (a.incident_id ? <Link className="id" to={`/incidents/${a.incident_id}`}>{a.incident_id}</Link> : <span className="faint">—</span>) },
-              { key: 'port', header: 'port', className: 'mono', render: (a) => a.interface ?? '—' },
-              { key: 'act', header: 'action', priority: 2, render: (a) => (a.action === 'quarantine_vlan' ? `VLAN ${a.from_vlan} → ${a.to_vlan}` : a.action === 'port_shutdown' ? 'shutdown' : a.action.replace(/_/g, ' ')) },
+              { key: 'inc', header: 'incident · port', render: (a: ContainmentAction) => <Cell2 primary={a.incident_id ? <Link className="id" to={`/incidents/${a.incident_id}`}>{a.incident_id}</Link> : <span className="faint">—</span>} secondary={<span className="mono">{a.interface ?? '—'}</span>} /> },
+              { key: 'act', header: 'action', hideBelow: 600, render: (a) => (a.action === 'quarantine_vlan' ? `VLAN ${a.from_vlan} → ${a.to_vlan}` : a.action === 'port_shutdown' ? 'shutdown' : a.action.replace(/_/g, ' ')) },
               { key: 'state', header: 'state', render: (a) => <ResponseChip state={responseStateOf(a.incident_id ? byIncident.get(a.incident_id) : null, a)} /> },
             ]}
           />
@@ -350,7 +379,7 @@ export function Overview() {
               { key: 'time', header: 'time', render: (e) => <Ts ts={e.timestamp} ms={false} /> },
               { key: 'result', header: 'result', render: (e) => <Chip kind={e.result === 'Access-Accept' ? 'ok' : e.result === 'Access-Reject' ? 'danger' : 'info'}>{e.result.replace('Access-', '')}</Chip> },
               { key: 'id', header: 'identity', className: 'mono', render: (e) => e.username },
-              { key: 'port', header: 'port', className: 'mono', priority: 2, render: (e) => e.nas_port_id.replace('GigabitEthernet', 'Gi') },
+              { key: 'port', header: 'port', className: 'mono', hideBelow: 400, render: (e) => e.nas_port_id.replace('GigabitEthernet', 'Gi') },
             ]}
           />
         </Panel>

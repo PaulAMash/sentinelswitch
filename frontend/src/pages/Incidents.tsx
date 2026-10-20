@@ -93,13 +93,33 @@ export function Incidents() {
           rowKey={(r) => r.detection_id}
           empty="No detections are waiting for a decision"
           columns={[
-            { key: 'opened', header: 'opened', render: (r) => <Ts ts={r.opened_at} date ms={false} /> },
+            { key: 'opened', header: 'opened', render: (r) => <Cell2 primary={<Ts ts={r.opened_at} ms={false} />} secondary={r.opened_at.slice(0, 10)} /> },
             { key: 'sev', header: 'severity', render: (r) => <SeverityChip value={r.severity} /> },
-            { key: 'det', header: 'detection', wrap: true, render: (r) => <Cell2 primary={r.title} secondary={<Id dim>{r.detection_id}</Id>} /> },
-            { key: 'rule', header: 'rule', className: 'mono', priority: 3, render: (r) => r.rule },
-            { key: 'conf', header: 'confidence', className: 'mono', priority: 3, render: (r) => r.confidence.toFixed(2) },
-            { key: 'disp', header: 'policy', render: (r) => <StatusChip value={r.decision?.disposition ?? r.status} /> },
-            { key: 'guards', header: 'guards', className: 'mono small', priority: 2, render: (r) => (r.decision?.guards_triggered.length ? r.decision.guards_triggered.join(', ') : <span className="dim">none</span>) },
+            {
+              key: 'det',
+              header: 'detection',
+              wrap: true,
+              render: (r) => (
+                <Cell2
+                  primary={r.title}
+                  secondary={
+                    <>
+                      <Id dim>{r.detection_id}</Id> · <span className="mono">{r.rule}</span> · conf <span className="mono">{r.confidence.toFixed(2)}</span>
+                    </>
+                  }
+                />
+              ),
+            },
+            {
+              key: 'disp',
+              header: 'policy',
+              render: (r) => (
+                <Cell2
+                  primary={<StatusChip value={r.decision?.disposition ?? r.status} />}
+                  secondary={r.decision?.guards_triggered.length ? <span className="mono">guards: {r.decision.guards_triggered.join(', ')}</span> : 'no guards'}
+                />
+              ),
+            },
             {
               key: 'auth',
               header: 'authorization',
@@ -132,13 +152,14 @@ export function Incidents() {
                   <span className="dim">—</span>
                 ),
             },
-            { key: 'note', header: 'note', wrap: true, priority: 2, render: (r) => <span className="small dim">{r.note ?? '—'}</span> },
+            { key: 'note', header: 'note', wrap: true, hideBelow: 1100, className: 'col-note', render: (r) => <span className="small dim clamp-2" title={r.note ?? undefined}>{r.note ?? '—'}</span> },
           ]}
         />
       </Panel>
 
       <Panel title="Incidents" sub={`${data.length} total`} bodyClass="none">
         <DataTable
+          cards="narrow"
           rows={data}
           rowKey={(i) => i.id}
           empty="No incidents yet"
@@ -150,7 +171,7 @@ export function Incidents() {
             {
               key: 'endpoint',
               header: 'endpoint',
-              priority: 2,
+              hideBelow: 1200,
               render: (i) => (
                 <>
                   {i.device ? <Link to={`/devices/${i.device}`}>{i.device}</Link> : <span className="dim">unknown</span>}
@@ -158,9 +179,9 @@ export function Incidents() {
                 </>
               ),
             },
-            { key: 'port', header: 'port', className: 'mono', priority: 2, render: (i) => `${i.switch} ${i.interface ?? ''}` },
-            { key: 'vlan', header: 'vlan', className: 'mono', priority: 3, render: (i) => (i.action === 'quarantine_vlan' ? `${i.original_vlan} → ${i.current_vlan}` : vlanName(i.original_vlan)) },
-            { key: 'conf', header: 'confidence', className: 'mono', priority: 3, render: (i) => i.confidence.toFixed(2) },
+            { key: 'port', header: 'port', className: 'mono', hideBelow: 1200, render: (i) => `${i.switch} ${i.interface ?? ''}` },
+            { key: 'vlan', header: 'vlan', className: 'mono', hideBelow: 900, render: (i) => (i.action === 'quarantine_vlan' ? `${i.original_vlan} → ${i.current_vlan}` : vlanName(i.original_vlan)) },
+            { key: 'conf', header: 'confidence', className: 'mono', hideBelow: 900, render: (i) => i.confidence.toFixed(2) },
             { key: 'state', header: 'response', render: (i) => <IncidentState incident={i} action={actionFor.get(i.id) ?? null} /> },
           ]}
         />

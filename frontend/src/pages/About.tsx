@@ -4,7 +4,7 @@ import { useApi } from '../lib/hooks'
 import { ErrorState, KV, Loading, Panel } from '../components/ui'
 import { PageHeader } from '../components/layout'
 import { Chip } from '../components/status'
-import { DataTable } from '../components/table'
+import { DataTable, Cell2 } from '../components/table'
 
 export function About() {
   const { data, error, reload } = useApi(endpoints.about)
@@ -23,12 +23,12 @@ export function About() {
       <div className="grid grid-2">
         <Panel title="Components and trust boundaries" bodyClass="none">
           <DataTable
+            cards="narrow"
             compact
             rows={components}
             rowKey={(c) => c.name}
             columns={[
-              { key: 'layer', header: 'layer', render: (c) => <Chip kind="neutral">{c.layer}</Chip> },
-              { key: 'name', header: 'component', className: 'strong', render: (c) => c.name },
+              { key: 'name', header: 'component · layer', wrap: true, render: (c) => <Cell2 primary={<span className="strong">{c.name}</span>} secondary={<Chip kind="neutral">{c.layer}</Chip>} /> },
               { key: 'role', header: 'role', wrap: true, render: (c) => c.role },
             ]}
           />
@@ -47,6 +47,7 @@ export function About() {
           </Panel>
           <Panel title="VLAN plan" bodyClass="none">
             <DataTable
+              cards="narrow"
               compact
               rows={data.vlans.filter((v) => v.id !== 999)}
               rowKey={(v) => String(v.id)}

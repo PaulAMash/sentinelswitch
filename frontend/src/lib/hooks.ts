@@ -7,48 +7,90 @@ const listeners = new Set<() => void>()
 let stream: EventSource | null = null
 
 /* ---------------------------------------------------------------- connection health
-   Derived only from facts the client can observe: the EventSource ready state and the time and
-   outcome of the last API fetch. Nothing here polls the switch or claims liveness of telemetry. */
-export type ConnectionStatus = 'connected' | 'stale' | 'unavailable'
+   Two separate facts the client can actually observe:
+   - API reachability: the outcome of the most recent API request (any view, plus a light GET
+     /api/meta every 60 s while the tab is visible). It is never inferred from data held in memory and
+     never marked stale because nothing needed fetching.
+   - Event stream: the EventSource ready state (live, connecting, reconnecting after an error).
+   Neither says anything about the simulated dataset clock, which is shown separately. */
+export type ApiStatus = 'checking' | 'reachable' | 'errors' | 'unreachable'
+export type StreamStatus = 'connecting' | 'live' | 'reconnecting' | 'unsupported'
 interface Health {
   streamOpen: boolean
+  streamEverOpen: boolean
   lastFetchAt: number | null
   lastFetchOk: boolean | null
+  lastOkAt: number | null
   lastEventAt: number | null
+  /** most recent HTTP error response (the server answered, but with an error) */
+  lastError: { at: number; message: string } | null
 }
-const health: Health = { streamOpen: false, lastFetchAt: null, lastFetchOk: null, lastEventAt: null }
+const health: Health = { streamOpen: false, streamEverOpen: false, lastFetchAt: null, lastFetchOk: null, lastOkAt: null, lastEventAt: null, lastError: null }
 const healthListeners = new Set<() => void>()
 function notifyHealth() {
   healthListeners.forEach((l) => l())
 }
-function recordFetch(ok: boolean) {
+/** ok: a response arrived. An HTTP error still proves the server is reachable; only a network failure does not. */
+function recordFetch(ok: boolean, error?: unknown) {
   health.lastFetchAt = Date.now()
-  health.lastFetchOk = ok
+  const message = error instanceof Error ? error.message : error ? String(error) : ''
+  const httpError = !ok && /^\d{3}\b/.test(message)
+  health.lastFetchOk = ok || httpError
+  if (ok || httpError) health.lastOkAt = health.lastFetchAt
+  if (httpError) health.lastError = { at: health.lastFetchAt, message }
   notifyHealth()
 }
-const STALE_AFTER_MS = 60_000
+const ERROR_WINDOW_MS = 60_000
+const PING_MS = 60_000
 
-export function connectionStatus(now = Date.now()): ConnectionStatus {
-  if (health.lastFetchOk === false) return 'unavailable'
-  if (health.lastFetchOk === null) return 'stale'
-  const fresh = health.lastFetchAt !== null && now - health.lastFetchAt < STALE_AFTER_MS
-  if (health.streamOpen && fresh) return 'connected'
-  return 'stale'
+function apiStatus(): ApiStatus {
+  if (health.lastFetchOk === null) return 'checking'
+  if (!health.lastFetchOk) return 'unreachable'
+  if (health.lastError && Date.now() - health.lastError.at < ERROR_WINDOW_MS) return 'errors'
+  return 'reachable'
+}
+function streamStatus(): StreamStatus {
+  if (typeof EventSource === 'undefined') return 'unsupported'
+  if (health.streamOpen) return 'live'
+  return health.streamEverOpen ? 'reconnecting' : 'connecting'
 }
 
-export function useConnection(): { status: ConnectionStatus; lastFetchAt: number | null; lastEventAt: number | null; sinceFetchS: number | null } {
-  const snapshot = () => {
-    const now = Date.now()
-    return { status: connectionStatus(now), lastFetchAt: health.lastFetchAt, lastEventAt: health.lastEventAt, sinceFetchS: health.lastFetchAt ? Math.round((now - health.lastFetchAt) / 1000) : null }
-  }
+let pinger: ReturnType<typeof setInterval> | null = null
+function ping() {
+  if (typeof document !== 'undefined' && document.hidden) return
+  fetch(`${BASE}/api/meta`, { cache: 'no-store' })
+    .then((r) => recordFetch(r.ok, r.ok ? undefined : `${r.status} ${r.statusText}`))
+    .catch((e) => recordFetch(false, e))
+}
+
+export interface Connection {
+  api: ApiStatus
+  stream: StreamStatus
+  /** seconds since the last API response (client clock), if any */
+  sinceOkS: number | null
+  /** the most recent HTTP error within the last minute */
+  lastError: string | null
+}
+
+export function useConnection(): Connection {
+  const snapshot = (): Connection => ({
+    api: apiStatus(),
+    stream: streamStatus(),
+    sinceOkS: health.lastOkAt ? Math.round((Date.now() - health.lastOkAt) / 1000) : null,
+    lastError: health.lastError && Date.now() - health.lastError.at < ERROR_WINDOW_MS ? health.lastError.message : null,
+  })
   const [state, setState] = useState(snapshot)
   useEffect(() => {
     const bump = () => setState(snapshot())
     healthListeners.add(bump)
-    const timer = setInterval(bump, 10_000)
+    const timer = setInterval(bump, 15_000)
+    if (!pinger) pinger = setInterval(ping, PING_MS)
+    const onVis = () => !document.hidden && ping()
+    document.addEventListener('visibilitychange', onVis)
     return () => {
       healthListeners.delete(bump)
       clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVis)
     }
   }, [])
   return state
@@ -64,13 +106,22 @@ export function ensureStream() {
     }
     for (const kind of ['state', 'incident', 'alert', 'validation', 'assessment', 'finding']) stream.addEventListener(kind, bump)
     stream.onopen = () => {
+      const reconnect = health.streamEverOpen
       health.streamOpen = true
+      health.streamEverOpen = true
       notifyHealth()
+      if (reconnect) {
+        /* events may have been missed during the gap: re-read mounted views (GETs only) and re-check the API */
+        ping()
+        listeners.forEach((l) => l())
+      }
     }
     stream.onerror = () => {
       /* the browser retries automatically; report the gap honestly meanwhile */
+      const wasOpen = health.streamOpen
       health.streamOpen = false
       notifyHealth()
+      if (wasOpen) ping()
     }
   } catch {
     stream = null
@@ -106,7 +157,7 @@ export function useApi<T>(loader: () => Promise<T>, deps: unknown[] = []) {
         setLoading(false)
       })
       .catch((e: Error) => {
-        recordFetch(false)
+        recordFetch(false, e)
         if (!alive.current || mine !== seq.current) return
         setError(e.message)
         setLoading(false)

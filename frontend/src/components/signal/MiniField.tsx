@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { SEVERITIES, SOURCES, type Window } from '../../lib/telemetry'
 import { SignalField, describeNode } from './SignalField'
-import { buildField, layoutField, type FieldInputs, type Preset } from './model'
+import { buildField, containmentAt, layoutField, type FieldInputs, type Preset } from './model'
 
 const ALL = { severities: new Set(SEVERITIES), sources: new Set<string>(SOURCES) }
 const NONE = new Set<string>()
@@ -24,8 +24,10 @@ export function MiniField({ inputs, window: w, focus, caption }: { inputs: Field
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
-  const geo = useMemo(() => layoutField(inputs.sw, preset, inputs.coverage), [inputs.sw, preset, inputs.coverage])
-  const model = useMemo(() => buildField(inputs, geo, preset, w, ALL), [inputs, geo, preset, w])
+  // the incident view shows the present state of the twin over the whole dataset day
+  const containment = useMemo(() => containmentAt(inputs, w.end, 0, -Infinity), [inputs, w.end])
+  const geo = useMemo(() => layoutField(inputs.sw, preset, inputs.coverage, containment.quarantined), [inputs.sw, preset, inputs.coverage, containment])
+  const model = useMemo(() => buildField(inputs, geo, preset, { t: w.end, start: w.start, recentMs: w.end - w.start, mode: 'window', filter: ALL, containment }), [inputs, geo, preset, w, containment])
   const byId = new Map(model.nodes.map((n) => [n.id, n]))
   const shown = hover ? byId.get(hover) : sel ? byId.get(sel) : null
   return (

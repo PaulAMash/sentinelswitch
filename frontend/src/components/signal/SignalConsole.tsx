@@ -1,27 +1,36 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Alert } from '../../lib/api'
-import { SEVERITIES, SOURCES, fmtClock, ms, sev3, type AlertFilter, type Sev3, type Window } from '../../lib/telemetry'
+import { SEVERITIES, SOURCES, fmtClock, fmtSpan, ms, sev3, type AlertFilter, type Sev3, type Window } from '../../lib/telemetry'
+import { playback, usePlayback } from '../../lib/playback'
 import { vlanName } from '../../lib/format'
-import { Icon } from '../Icons'
 import { Segmented } from '../ui'
+import { Icon } from '../Icons'
 import { Chip, ResponseChip, StatusChip } from '../status'
 import { DataTable, Cell2 } from '../table'
 import { SignalField, describeNode, type Pulse } from './SignalField'
 import { Scrubber } from './Scrubber'
+import { PlaybackBar } from './PlaybackBar'
 import { AlertInspector, FieldSummary, NodeInspector } from './Inspector'
-import { buildField, layoutField, streamAlerts, type ClusterId, type FieldInputs, type FieldNode, type Preset } from './model'
+import { buildField, containmentAt, containmentKey, layoutField, streamAlerts, type ClusterId, type FieldInputs, type FieldNode, type FillMode, type Preset } from './model'
 
 const BIN = 15 * 60_000
 const PULSE_MS = 1500
-const PLAY_MS_FULL_DAY = 16_000
+
+/** Span behind the playhead that counts as "recent" activity: a twelfth of the window, 15–60 minutes. */
+function recentSpan(w: Window | null): number {
+  if (!w) return 60 * 60_000
+  return Math.max(15 * 60_000, Math.min(60 * 60_000, (w.end - w.start) / 12))
+}
 
 export interface SignalConsoleProps {
   inputs: FieldInputs
   /** dataset day boundaries (UTC) */
   domain: Window
   day: string
-  /** simulated switch clock, used for the "last N hours" presets */
+  /** simulated switch clock */
   now: number | null
+  /** newest simulated time with recorded data (switch clock or latest record) */
+  recordedEnd: number
   traffic?: { ts: string; connections: number }[]
   initialNode?: string | null
 }
@@ -29,28 +38,35 @@ export interface SignalConsoleProps {
 type View = 'field' | 'list'
 
 /**
- * The Network Signal Field with its controls: time window (brushable timeline, presets, replay),
- * severity and source filters, colony focus, inspector and synchronized event stream. All state is
- * derived from the records passed in; replay walks the recorded alert timestamps, it does not
- * generate events.
+ * The Network Signal Field with the shared playback clock. The playhead walks the recorded alerts,
+ * incidents, reviews and containment actions in time order and the field shows what those records say
+ * at that moment. Playback only reads; it never generates events or calls the API.
  */
 export function SignalConsole(p: SignalConsoleProps) {
+  const pb = usePlayback()
   const stageRef = useRef<HTMLDivElement>(null)
   const [preset, setPreset] = useState<Preset>('wide')
   const [view, setView] = useState<View>('field')
-  const [rawWin, setWin] = useState<Window>(p.domain)
-  // a window outside a changed domain (e.g. after a reset re-seeds the day) falls back to the full day
-  const win = rawWin.start < p.domain.start || rawWin.end > p.domain.end ? p.domain : rawWin
+  const [fill, setFill] = useState<FillMode>('recent')
   const [sevs, setSevs] = useState<Set<Sev3>>(() => new Set(SEVERITIES))
   const [srcs, setSrcs] = useState<Set<string>>(() => new Set(SOURCES))
   const [focus, setFocus] = useState<ClusterId | null>(null)
   const [selNode, setSelNode] = useState<string | null>(p.initialNode ?? null)
   const [selAlert, setSelAlert] = useState<Alert | null>(null)
   const [hover, setHover] = useState<string | null>(null)
-  const [playhead, setPlayhead] = useState<number | null>(null)
   const [pulses, setPulses] = useState<(Pulse & { until: number })[]>([])
   const [arrive, setArrive] = useState(true)
   const [fresh, setFresh] = useState<Set<string>>(new Set())
+
+  const hasData = p.inputs.alerts.some((a) => {
+    const x = ms(a.ts)
+    return x >= p.domain.start && x < p.domain.end
+  })
+  // hand the dataset bounds to the shared clock; it starts playing the first time it is configured
+  useEffect(() => {
+    playback.configure(p.domain, p.recordedEnd, hasData)
+    if (!hasData) playback.pause()
+  }, [p.domain, p.recordedEnd, hasData])
 
   useEffect(() => {
     const t = setTimeout(() => setArrive(false), 1600)
@@ -66,82 +82,64 @@ export function SignalConsole(p: SignalConsoleProps) {
     return () => ro.disconnect()
   }, [view])
 
-  // alerts that arrive through a server-event refresh pulse once; the first load does not
+  const win = pb.window ?? p.domain
+  const t = pb.ready ? pb.t : win.end
+  const recentMs = recentSpan(win)
+  const filter: AlertFilter = useMemo(() => ({ severities: sevs, sources: srcs }), [sevs, srcs])
+
+  // records that arrived through a server-event refresh are marked new; the first load is not
   const seen = useRef<Set<string> | null>(null)
   useEffect(() => {
     const ids = new Set(p.inputs.alerts.map((a) => a.id))
     if (seen.current) {
       const added = p.inputs.alerts.filter((a) => !seen.current!.has(a.id))
       if (added.length) {
-        const until = performance.now() + PULSE_MS
-        setPulses((ps) => [...ps, ...added.filter((a) => a.interface).map((a) => ({ key: `new-${a.id}`, node: a.interface!, sev: sev3(a.severity), until }))])
         setFresh(new Set(added.map((a) => a.id)))
-        const t = setTimeout(() => setFresh(new Set()), 6000)
         seen.current = ids
-        return () => clearTimeout(t)
+        const tm = setTimeout(() => setFresh(new Set()), 8000)
+        return () => clearTimeout(tm)
       }
     }
     seen.current = ids
   }, [p.inputs.alerts])
 
+  // as the playhead advances naturally, every alert it passes pulses its port once
+  const prevT = useRef<number | null>(null)
+  useEffect(() => {
+    const prev = prevT.current
+    prevT.current = t
+    if (pb.change !== 'tick' || prev == null || t <= prev) return
+    const passed = p.inputs.alerts.filter((a) => {
+      const x = ms(a.ts)
+      return x > prev && x <= t && a.interface && sevs.has(sev3(a.severity)) && srcs.has(a.source)
+    })
+    if (!passed.length) return
+    const until = performance.now() + PULSE_MS
+    setPulses((ps) => [...ps.filter((x) => x.until > performance.now()), ...passed.map((a) => ({ key: `play-${a.id}-${pb.loops}`, node: a.interface!, sev: sev3(a.severity), until }))])
+  }, [t, pb.change, pb.loops, p.inputs.alerts, sevs, srcs])
+
   // prune finished pulses
   useEffect(() => {
     if (!pulses.length) return
-    const t = setTimeout(() => {
+    const tm = setTimeout(() => {
       const now = performance.now()
       setPulses((ps) => ps.filter((x) => x.until > now))
-    }, 250)
-    return () => clearTimeout(t)
+    }, 400)
+    return () => clearTimeout(tm)
   }, [pulses])
 
-  const filter: AlertFilter = useMemo(() => ({ severities: sevs, sources: srcs }), [sevs, srcs])
-  const effWin: Window = playhead != null ? { start: win.start, end: playhead } : win
-  const geo = useMemo(() => layoutField(p.inputs.sw, preset, p.inputs.coverage), [p.inputs.sw, preset, p.inputs.coverage])
-  const model = useMemo(() => buildField(p.inputs, geo, preset, effWin, filter), [p.inputs, geo, preset, effWin.start, effWin.end, filter]) // eslint-disable-line react-hooks/exhaustive-deps
+  const containment = useMemo(() => containmentAt(p.inputs, t, recentMs, p.recordedEnd), [p.inputs, t, recentMs, p.recordedEnd])
+  const ckey = containmentKey(containment)
+  // geometry only changes when a port enters or leaves quarantine
+  const geo = useMemo(() => layoutField(p.inputs.sw, preset, p.inputs.coverage, containment.quarantined), [p.inputs.sw, preset, p.inputs.coverage, ckey]) // eslint-disable-line react-hooks/exhaustive-deps
+  const model = useMemo(() => buildField(p.inputs, geo, preset, { t, start: win.start, recentMs, mode: fill, filter, containment }), [p.inputs, geo, preset, t, win.start, recentMs, fill, filter, containment])
   const byId = useMemo(() => new Map(model.nodes.map((n) => [n.id, n])), [model.nodes])
-  const stream = useMemo(() => streamAlerts(p.inputs, byId, effWin, filter, focus), [p.inputs, byId, effWin.start, effWin.end, filter, focus]) // eslint-disable-line react-hooks/exhaustive-deps
+  const stream = useMemo(() => streamAlerts(p.inputs, byId, win.start, t, filter, focus), [p.inputs, byId, win.start, t, filter, focus])
+  const totalInWindow = useMemo(() => p.inputs.alerts.filter((a) => ms(a.ts) >= win.start && ms(a.ts) <= win.end && sevs.has(sev3(a.severity)) && srcs.has(a.source)).length, [p.inputs.alerts, win.start, win.end, sevs, srcs])
   const filteredForTimeline = useMemo(() => p.inputs.alerts.filter((a) => sevs.has(sev3(a.severity)) && srcs.has(a.source)), [p.inputs.alerts, sevs, srcs])
   const selFlow = selAlert ? model.flows.find((f) => f.id === selAlert.id) ?? null : null
-  const travel = useMemo(() => new Set([...pulses.map((x) => x.key.replace(/^(new|play)-/, '')), ...fresh]), [pulses, fresh])
-
-  // replay: walk the playhead through the recorded timestamps of the selected window
-  const raf = useRef<number | null>(null)
-  const stop = useCallback(() => {
-    if (raf.current != null) cancelAnimationFrame(raf.current)
-    raf.current = null
-    setPlayhead(null)
-  }, [])
-  const play = () => {
-    stop()
-    const span = win.end - win.start
-    const dur = Math.max(4000, (PLAY_MS_FULL_DAY * span) / (p.domain.end - p.domain.start))
-    const t0 = performance.now()
-    let last = win.start
-    const fired = new Set<string>()
-    const tick = (now: number) => {
-      const k = Math.min(1, (now - t0) / dur)
-      const head = win.start + k * span
-      const step = Math.floor((head - win.start) / 60_000) * 60_000 + win.start
-      if (step !== last || k === 1) {
-        const newly = p.inputs.alerts.filter((a) => {
-          const t = ms(a.ts)
-          return t > last && t <= head && !fired.has(a.id) && a.interface && sevs.has(sev3(a.severity)) && srcs.has(a.source)
-        })
-        if (newly.length) {
-          const until = performance.now() + PULSE_MS
-          newly.forEach((a) => fired.add(a.id))
-          setPulses((ps) => [...ps, ...newly.map((a) => ({ key: `play-${a.id}`, node: a.interface!, sev: sev3(a.severity), until }))])
-        }
-        last = head
-        setPlayhead(k === 1 ? null : step)
-      }
-      if (k < 1) raf.current = requestAnimationFrame(tick)
-      else raf.current = null
-    }
-    setPlayhead(win.start)
-    raf.current = requestAnimationFrame(tick)
-  }
-  useEffect(() => () => stop(), [stop])
+  const travel = useMemo(() => new Set([...pulses.map((x) => x.key.replace(/^play-/, '').replace(/-\d+$/, '')), ...fresh]), [pulses, fresh])
+  const recentIds = useMemo(() => new Set(model.flows.map((f) => f.id).concat(model.nodes.flatMap((n) => n.alerts.map((a) => a.id)))), [model])
 
   const selectAlert = (a: Alert | null) => {
     setSelAlert(a)
@@ -159,22 +157,15 @@ export function SignalConsole(p: SignalConsoleProps) {
     } else n.add(v)
     apply(n)
   }
-  const setPresetWindow = (hours: number | null) => {
-    stop()
-    if (hours == null || p.now == null) return setWin(p.domain)
-    const end = Math.min(p.domain.end, Math.ceil(p.now / BIN) * BIN)
-    setWin({ start: Math.max(p.domain.start, end - hours * 3600_000), end })
-  }
   const inWinAll = p.inputs.alerts.filter((a) => {
-    const t = ms(a.ts)
-    return t >= effWin.start && t < effWin.end
+    const x = ms(a.ts)
+    return x >= win.start && x <= win.end
   })
   const sevCount = (s: Sev3) => inWinAll.filter((a) => sev3(a.severity) === s).length
   const srcCount = (s: string) => inWinAll.filter((a) => a.source === s).length
   const hovered = hover ? byId.get(hover) : null
   const selectedNode = selNode ? byId.get(selNode) ?? null : null
-  const isFull = win.start <= p.domain.start && win.end >= p.domain.end
-  const hoursPreset = isFull ? 'day' : p.now != null && win.end === Math.min(p.domain.end, Math.ceil(p.now / BIN) * BIN) ? (win.end - win.start === 4 * 3600_000 ? '4h' : win.end - win.start === 3600_000 ? '1h' : 'custom') : 'custom'
+  const modeLabel = !hasData ? 'NO RECORDED EVENTS' : pb.playing ? 'PLAYBACK' : 'PAUSED'
 
   return (
     <section className="sig instrument" aria-labelledby="sig-title">
@@ -184,26 +175,18 @@ export function SignalConsole(p: SignalConsoleProps) {
             <span className="idx">01</span> Network signal field
           </div>
           <h2 id="sig-title">SW01 access layer</h2>
-          <p className="sig-desc">Every hexagon is a switch interface, grouped by its operational VLAN. Fill shows alert activity in the selected window; outlines show port state; rings show response state. Layout is schematic.</p>
+          <p className="sig-desc">Each hexagon is a switch interface, grouped by operational VLAN. Playback walks the recorded day; the field shows what the records say at the playhead.</p>
         </div>
         <div className="sig-controls">
-          <div className="sig-filter" role="group" aria-label="Severity filter">
-            {SEVERITIES.map((s) => (
-              <button key={s} type="button" className={`fchip sev-${s} ${sevs.has(s) ? 'on' : ''}`} aria-pressed={sevs.has(s)} onClick={() => toggle(sevs, s, setSevs)}>
-                <span className={`sev-dot ${s}`} aria-hidden="true" />
-                {s}
-                <span className="n mono">{sevCount(s)}</span>
-              </button>
-            ))}
-          </div>
-          <div className="sig-filter" role="group" aria-label="Detection source filter">
-            {SOURCES.map((s) => (
-              <button key={s} type="button" className={`fchip src ${srcs.has(s) ? 'on' : ''}`} aria-pressed={srcs.has(s)} onClick={() => toggle(srcs, s, setSrcs)}>
-                {s}
-                <span className="n mono">{srcCount(s)}</span>
-              </button>
-            ))}
-          </div>
+          <Segmented
+            label="Activity shown as fill"
+            options={[
+              { id: 'recent', label: `fill: last ${fmtSpan(recentMs)}` },
+              { id: 'window', label: 'since window start' },
+            ]}
+            value={fill}
+            onChange={setFill}
+          />
           <Segmented
             label="Display"
             options={[
@@ -216,6 +199,28 @@ export function SignalConsole(p: SignalConsoleProps) {
         </div>
       </header>
 
+      <div className="sig-filters">
+        <div className="sig-filter" role="group" aria-label="Severity filter">
+          <span className="sig-filter-k">severity</span>
+          {SEVERITIES.map((s) => (
+            <button key={s} type="button" className={`fchip sev-${s} ${sevs.has(s) ? 'on' : ''}`} aria-pressed={sevs.has(s)} onClick={() => toggle(sevs, s, setSevs)}>
+              <span className={`sev-dot ${s}`} aria-hidden="true" />
+              {s}
+              <span className="n mono">{sevCount(s)}</span>
+            </button>
+          ))}
+        </div>
+        <div className="sig-filter" role="group" aria-label="Detection source filter">
+          <span className="sig-filter-k">source</span>
+          {SOURCES.map((s) => (
+            <button key={s} type="button" className={`fchip src ${srcs.has(s) ? 'on' : ''}`} aria-pressed={srcs.has(s)} onClick={() => toggle(srcs, s, setSrcs)}>
+              {s}
+              <span className="n mono">{srcCount(s)}</span>
+            </button>
+          ))}
+        </div>
+        <span className="sig-filter-note dim">counts: selected window</span>
+      </div>
       <div className="sig-body">
         <div className="sig-main">
           {view === 'field' ? (
@@ -223,7 +228,16 @@ export function SignalConsole(p: SignalConsoleProps) {
               <div className="sig-frame tl mono" aria-hidden="true">
                 {p.inputs.sw.hostname} · {p.inputs.sw.model} · {p.inputs.sw.interfaces.length} interfaces
               </div>
-              <div className={`sig-frame tr mono ${playhead != null ? 'live' : ''}`}>{playhead != null ? `REPLAY · ${fmtClock(playhead)} UTC` : `SNAPSHOT · ${p.day} · simulated clock`}</div>
+              <div className={`sig-frame tr mono ${pb.playing ? 'live' : ''}`}>
+                {hasData && (
+                  <button type="button" className="sig-mini-play" onClick={() => playback.toggle()} aria-label={pb.playing ? 'Pause playback' : 'Play'} title={pb.playing ? 'Pause' : 'Play'}>
+                    {pb.playing ? <Icon.pause /> : <Icon.play />}
+                  </button>
+                )}
+                <span>
+                  {modeLabel} · {fmtClock(t)} UTC · simulated
+                </span>
+              </div>
               <SignalField
                 model={model}
                 selectedNode={selNode}
@@ -233,104 +247,105 @@ export function SignalConsole(p: SignalConsoleProps) {
                 pulses={pulses}
                 travel={travel}
                 arrive={arrive}
+                playing={pb.playing}
                 onSelectNode={selectNode}
                 onHoverNode={setHover}
                 onFocusCluster={setFocus}
               />
-              <div className="sig-frame bl mono" aria-live="polite">
+              <div className="sig-frame bl" aria-live="polite">
                 {hovered ? describeNode(hovered) : focus ? `focus · ${model.clusters.find((c) => c.id === focus)?.title ?? ''} — select the label again to clear` : 'hover or tab to a port · arrows move · Enter selects · Esc clears'}
               </div>
             </div>
           ) : (
             <div className="sig-list">
               <DataTable
+                cards="narrow"
                 compact
                 rows={[...model.nodes].sort((a, b) => b.alerts.length - a.alerts.length || a.id.localeCompare(b.id, undefined, { numeric: true }))}
                 rowKey={(n) => n.id}
                 onRowActivate={(n) => selectNode(n.id)}
                 selectedKey={selNode}
-                label="Interfaces"
+                label="Interfaces at the playhead"
                 columns={[
                   { key: 'port', header: 'port', className: 'mono', render: (n: FieldNode) => n.id },
                   { key: 'ep', header: 'endpoint', render: (n) => <Cell2 primary={n.device?.hostname ?? (n.unknown ? 'unregistered' : '—')} secondary={n.ip ?? undefined} /> },
                   { key: 'vlan', header: 'vlan', className: 'mono', render: (n) => (n.vlan !== null ? vlanName(n.vlan) : 'trunk') },
-                  { key: 'state', header: 'port state', priority: 3, render: (n) => <StatusChip value={n.port.state} /> },
-                  { key: 'alerts', header: 'alerts', align: 'right', render: (n) => (n.alerts.length ? <span className="mono">{n.alerts.length}</span> : <span className="faint">0</span>) },
-                  { key: 'sev', header: 'max severity', priority: 2, render: (n) => (n.maxSev ? <Chip kind={n.maxSev}>{n.maxSev}</Chip> : <span className="faint">—</span>) },
-                  { key: 'resp', header: 'response', render: (n) => (n.incidentState && n.response === 'contained' ? <ResponseChip state={n.incidentState} /> : n.response === 'review' ? <Chip kind="pending">awaiting authorization</Chip> : n.response === 'held' ? <Chip kind="held">hold</Chip> : n.response === 'incident' && n.incidentState ? <ResponseChip state={n.incidentState} /> : <span className="faint">—</span>) },
+                  { key: 'state', header: 'port state', hideBelow: 700, render: (n) => <StatusChip value={n.state} /> },
+                  { key: 'alerts', header: fill === 'recent' ? `alerts · ${fmtSpan(recentMs)}` : 'alerts', align: 'right', render: (n) => (n.alerts.length ? <span className="mono">{n.alerts.length}</span> : <span className="faint">0</span>) },
+                  { key: 'sev', header: 'max severity', hideBelow: 900, render: (n) => (n.maxSev ? <Chip kind={n.maxSev}>{n.maxSev}</Chip> : <span className="faint">—</span>) },
+                  {
+                    key: 'resp',
+                    header: 'response',
+                    render: (n) =>
+                      n.response === 'contained' ? (
+                        <Chip kind="contained">contained</Chip>
+                      ) : n.response === 'review' ? (
+                        <Chip kind="pending">awaiting authorization</Chip>
+                      ) : n.response === 'held' ? (
+                        <Chip kind="held">hold</Chip>
+                      ) : n.response === 'restored' ? (
+                        <Chip kind="restored">restored</Chip>
+                      ) : n.response === 'incident' && n.incidentState ? (
+                        <ResponseChip state={n.incidentState} />
+                      ) : (
+                        <span className="faint">—</span>
+                      ),
+                  },
                 ]}
               />
             </div>
           )}
-          <div className="sig-time">
-            <div className="sig-time-ctl">
-              <Segmented
-                label="Time window"
-                options={[
-                  { id: 'day', label: 'Day' },
-                  { id: '4h', label: '4 h' },
-                  { id: '1h', label: '1 h' },
-                ]}
-                value={hoursPreset === 'custom' ? ('' as 'day') : (hoursPreset as 'day')}
-                onChange={(v) => setPresetWindow(v === 'day' ? null : v === '4h' ? 4 : 1)}
-              />
-              {playhead == null ? (
-                <button type="button" className="btn sm" onClick={play} title="Replay the recorded alerts of the selected window in time order">
-                  <Icon.play /> Replay window
-                </button>
-              ) : (
-                <button type="button" className="btn sm primary" onClick={stop}>
-                  <Icon.close /> Stop replay
-                </button>
-              )}
-            </div>
-            <Scrubber
-              alerts={filteredForTimeline}
-              domain={p.domain}
-              binMs={BIN}
-              window={win}
-              onWindow={(w) => {
-                stop()
-                setWin(w)
-              }}
-              traffic={p.traffic}
-              playhead={playhead}
-              now={p.now}
-              label="Alert timeline for the signal field"
-            />
+          <div className="sig-transport">
+        <PlaybackBar s={pb} disabled={!hasData} note={!hasData ? 'no recorded alerts in the dataset day' : undefined} />
+        <Scrubber
+          alerts={filteredForTimeline}
+          domain={p.domain}
+          binMs={BIN}
+          window={win}
+          onWindow={(w) => playback.setWindow(w)}
+          traffic={p.traffic}
+          now={p.now}
+          playback={hasData ? { t, onSeek: playback.seek, onToggle: playback.toggle } : undefined}
+          label="Alert timeline for the signal field"
+        />
           </div>
-          <FieldLegend />
+
+          <FieldLegend recent={fmtSpan(recentMs)} />
         </div>
 
         <aside className="sig-side" aria-label="Inspector and event stream">
           <div className="sig-insp" aria-live="polite">
-            {selectedNode ? <NodeInspector n={selectedNode} onSelectAlert={selectAlert} /> : selAlert ? <AlertInspector a={selAlert} flow={selFlow} model={model} /> : <FieldSummary model={model} visible={stream.length} window={effWin} day={p.day} />}
+            {selectedNode ? <NodeInspector n={selectedNode} t={t} onSelectAlert={selectAlert} /> : selAlert ? <AlertInspector a={selAlert} flow={selFlow} model={model} /> : <FieldSummary model={model} played={stream.length} total={totalInWindow} t={t} recent={fmtSpan(recentMs)} />}
             {(selectedNode || selAlert) && (
               <button type="button" className="btn sm ghost insp-clear" onClick={() => selectNode(null)} aria-label="Clear selection">
-                <Icon.close />
+                ×
               </button>
             )}
           </div>
           <div className="sig-stream">
             <div className="sig-stream-head">
               <span className="eyebrow">Event stream</span>
-              <span className="mono dim small">{stream.length} in window</span>
+              <span className="mono dim small">
+                {stream.length} of {totalInWindow} · to {fmtClock(t)}
+              </span>
             </div>
-            <ol className="stream" aria-label="Alerts in the selected window, newest first">
-              {stream.length === 0 && <li className="stream-empty">No alerts match the window and filters.</li>}
+            <ol className="stream" aria-label="Alerts from the window start to the playhead, newest first">
+              {stream.length === 0 && <li className="stream-empty">{hasData ? 'No alerts yet at this point of the window.' : 'No recorded alerts match the window and filters.'}</li>}
               {stream.map((a) => {
-                const on = selAlert?.id === a.id || (selNode && a.interface === selNode)
+                const on = selAlert?.id === a.id
+                const rel = !on && !!selNode && a.interface === selNode
+                const sv = sev3(a.severity)
                 return (
-                  <li key={a.id}>
-                    <button type="button" className={`ev ${on ? 'on' : ''} ${fresh.has(a.id) ? 'fresh' : ''}`} onClick={() => selectAlert(selAlert?.id === a.id ? null : a)} aria-pressed={selAlert?.id === a.id}>
-                      <span className={`ev-bar ${sev3(a.severity)}`} aria-hidden="true" />
+                  <li key={a.id} className="ev-li">
+                    <button type="button" className={`ev ${on ? 'on' : ''} ${rel ? 'rel' : ''} ${recentIds.has(a.id) ? 'recent' : ''} ${fresh.has(a.id) ? 'fresh' : ''}`} onClick={() => selectAlert(selAlert?.id === a.id ? null : a)} aria-pressed={selAlert?.id === a.id}>
+                      <span className={`ev-bar ${sv}`} aria-hidden="true" />
                       <span className="ev-t mono">{fmtClock(ms(a.ts), true)}</span>
-                      <span className="ev-s clip">{a.signature.replace(/^SENTINELSWITCH /, '')}</span>
+                      <span className="ev-s">{a.signature.replace(/^SENTINELSWITCH /, '')}</span>
                       <span className="ev-m">
-                        <span className={`sevtag ${sev3(a.severity)}`}>{sev3(a.severity)}</span>
-                        <span className="mono">{a.interface ?? '—'}</span>
-                        {a.device && <span>{a.device}</span>}
-                        <span className="dim">{a.source}</span>
+                        <span className={`sevtag ${sv}`}>{sv}</span>
+                        <span className="mono strong-2">{a.interface ?? '—'}</span>
+                        {a.device && <span className="strong-2">{a.device}</span>}
+                        <span>{a.source}</span>
                         <span className="ev-st">{a.status}</span>
                         {fresh.has(a.id) && <span className="newtag">new</span>}
                       </span>
@@ -346,7 +361,7 @@ export function SignalConsole(p: SignalConsoleProps) {
   )
 }
 
-function FieldLegend() {
+function FieldLegend({ recent }: { recent: string }) {
   return (
     <div className="sig-legend" aria-label="Legend">
       <span className="lg-group">
@@ -360,6 +375,7 @@ function FieldLegend() {
         <span className="lg">
           <i className="hxs act high" /> high
         </span>
+        <span className="lg dim">faint · earlier than {recent}</span>
       </span>
       <span className="lg-group">
         <span className="lg-k">outline · port</span>
@@ -390,12 +406,15 @@ function FieldLegend() {
         <span className="lg">
           <i className="hxs rs incident" /> open incident
         </span>
+        <span className="lg">
+          <i className="hxs rs restored" /> restored
+        </span>
       </span>
       <span className="lg-group">
         <span className="lg">
-          <i className="lnk" /> observed flow (alert source → destination)
+          <i className="lnk" /> recorded flow (alert source → destination)
         </span>
-        <span className="lg dim">background lattice is decorative</span>
+        <span className="lg dim">lattice and spoke motion are decorative</span>
       </span>
     </div>
   )

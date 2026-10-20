@@ -67,6 +67,7 @@ export type ResponseState =
   | 'contained-verified'
   | 'executed-unverified'
   | 'withheld'
+  | 'declined'
   | 'authorized'
   | 'awaiting'
   | 'suggested'
@@ -82,6 +83,8 @@ export function responseStateOf(incident: Pick<Incident, 'status' | 'disposition
     if (action.status === 'refused' || action.status === 'not_applicable') return 'withheld'
   }
   // a review that is still open is "awaiting" even when guards withheld automation: the decision is pending
+  // an analyst's rejection is a decision, not a policy guard: keep the two apart
+  if (auth?.status === 'rejected' && auth.mode === 'analyst' && !(auth.guards?.length ?? 0)) return 'declined'
   if (auth?.status === 'rejected' || review?.status === 'rejected') return 'withheld'
   if (review && review.status !== 'review' && review.status !== 'approved' && !review.incident_id && (auth?.guards.length ?? 0) > 0) return 'withheld'
   if (auth?.status === 'authorized') return 'authorized'
@@ -97,6 +100,7 @@ const RESPONSE_LABEL: Record<ResponseState, { text: string; kind: string }> = {
   'contained-verified': { text: 'contained · verified', kind: 'contained-verified' },
   'executed-unverified': { text: 'executed · unverified', kind: 'warn' },
   withheld: { text: 'withheld by policy', kind: 'withheld' },
+  declined: { text: 'declined by analyst', kind: 'withheld' },
   authorized: { text: 'authorized', kind: 'ok' },
   awaiting: { text: 'awaiting authorization', kind: 'pending' },
   suggested: { text: 'suggested', kind: 'neutral' },

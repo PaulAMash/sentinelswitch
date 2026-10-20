@@ -71,6 +71,7 @@ export function Coverage() {
       </Panel>
       <Panel title="Security validation" sub="open a row for its timeline" bodyClass="none">
         <DataTable
+          cards="narrow"
           rows={data.results}
           rowKey={(r) => r.scenario_id}
           onRowActivate={setSel}
@@ -81,13 +82,13 @@ export function Coverage() {
             { key: 'detect', header: 'detect', render: (r) => <PF ok={r.detect} /> },
             { key: 'attr', header: 'attribute', render: (r) => <PF ok={r.attribute} /> },
             { key: 'resp', header: 'response', render: (r) => <ResponseCell r={r} /> },
-            { key: 'sev', header: 'severity', priority: 2, render: (r) => (r.severity ? <SeverityChip value={r.severity} /> : <span className="faint">—</span>) },
-            { key: 'conf', header: 'confidence', className: 'mono', priority: 3, render: (r) => r.confidence?.toFixed(2) ?? '—' },
-            { key: 'ttd', header: 'ttd', align: 'right', className: 'mono', priority: 2, render: (r) => fmtSeconds(r.ttd) },
-            { key: 'tta', header: 'tta', align: 'right', className: 'mono', priority: 3, render: (r) => fmtSeconds(r.tta) },
-            { key: 'ttc', header: 'ttc', align: 'right', className: 'mono', priority: 2, render: (r) => fmtSeconds(r.ttc) },
-            { key: 'mech', header: 'mechanism', wrap: true, priority: 2, render: (r) => <span className="small">{r.mechanism ?? '—'}</span> },
-            { key: 'port', header: 'port', className: 'mono', priority: 3, render: (r) => `${r.interface ?? '—'}${r.to_vlan ? ` · ${r.from_vlan}→${r.to_vlan}` : ''}` },
+            { key: 'sev', header: 'severity', hideBelow: 1200, render: (r) => (r.severity ? <SeverityChip value={r.severity} /> : <span className="faint">—</span>) },
+            { key: 'conf', header: 'confidence', className: 'mono', hideBelow: 800, render: (r) => r.confidence?.toFixed(2) ?? '—' },
+            { key: 'ttd', header: 'ttd', align: 'right', className: 'mono', hideBelow: 1200, render: (r) => fmtSeconds(r.ttd) },
+            { key: 'tta', header: 'tta', align: 'right', className: 'mono', hideBelow: 800, render: (r) => fmtSeconds(r.tta) },
+            { key: 'ttc', header: 'ttc', align: 'right', className: 'mono', hideBelow: 1200, render: (r) => fmtSeconds(r.ttc) },
+            { key: 'mech', header: 'mechanism', wrap: true, hideBelow: 1200, render: (r) => <span className="small">{r.mechanism ?? '—'}</span> },
+            { key: 'port', header: 'port', className: 'mono', hideBelow: 800, render: (r) => `${r.interface ?? '—'}${r.to_vlan ? ` · ${r.from_vlan}→${r.to_vlan}` : ''}` },
           ]}
         />
       </Panel>
@@ -100,12 +101,12 @@ export function Coverage() {
             rowKey={(r) => r.id}
             columns={[
               { key: 'rule', header: 'rule', render: (r) => <Cell2 primary={<span className="strong">{r.name}</span>} secondary={<span className="mono">{r.id}</span>} /> },
-              { key: 'class', header: 'class', priority: 3, render: (r) => <span className="dim">{r.class}</span> },
-              { key: 'actor', header: 'actor', className: 'mono', priority: 2, render: (r) => r.actor_key },
+              { key: 'class', header: 'class', hideBelow: 600, render: (r) => <span className="dim">{r.class}</span> },
+              { key: 'actor', header: 'actor', className: 'mono', hideBelow: 800, render: (r) => r.actor_key },
               { key: 'win', header: 'window', className: 'mono', render: (r) => `${r.aggregate_window}s` },
               { key: 'base', header: 'base', className: 'mono', render: (r) => r.base_confidence.toFixed(2) },
-              { key: 'feat', header: 'features', className: 'mono', align: 'right', priority: 3, render: (r) => r.features.length },
-              { key: 'mitre', header: 'mitre', className: 'mono small', priority: 2, render: (r) => r.mitre.join(' ') },
+              { key: 'feat', header: 'features', className: 'mono', align: 'right', hideBelow: 600, render: (r) => r.features.length },
+              { key: 'mitre', header: 'mitre', className: 'mono small', hideBelow: 800, render: (r) => r.mitre.join(' ') },
             ]}
           />
         </Panel>
@@ -118,7 +119,7 @@ export function Coverage() {
             columns={[
               { key: 'sid', header: 'sid', className: 'mono', render: (r) => r.sid },
               { key: 'msg', header: 'message', wrap: true, render: (r) => r.msg.replace('SENTINELSWITCH ', '') },
-              { key: 'class', header: 'class', priority: 2, render: (r) => <span className="dim">{r.class}</span> },
+              { key: 'class', header: 'class', hideBelow: 400, render: (r) => <span className="dim">{r.class}</span> },
               { key: 'sev', header: 'severity', render: (r) => <SeverityChip value={r.severity} /> },
             ]}
           />
