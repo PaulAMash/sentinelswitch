@@ -401,12 +401,76 @@
 .pb-skip { border: 1px solid var(--line-2); border-radius: var(--r-ctl); background: var(--surface-2); }
 .pb-pace { color: var(--svc-dns); }
 .pb-pace.slow { color: var(--warn-ink); }
+.pb-pace.hold { color: var(--danger-ink); }
 .sig-frame.tr span { white-space: nowrap; }
 
 /* legend: motion */
 .lg-particle { display: inline-block; width: 16px; height: 3px; background: linear-gradient(90deg, transparent, var(--svc-tls)); box-shadow: 4px 0 6px -1px var(--svc-tls); }
 .hxs.lg-flash { background: var(--ok); }
 .lg-core { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--accent); border-right-color: transparent; border-bottom-color: transparent; }
+
+/* ---------------------------------------------------------------- containment: callout, isolation zone, timeline bands */
+.cstrip { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: 8px 18px; align-items: start; padding: 10px 12px; border: 1px solid var(--line-1); border-left: 3px solid var(--line-2); border-radius: var(--r-panel); background: rgba(7, 10, 15, 0.55); transition: border-color var(--t-slow) var(--ease), background var(--t-slow) var(--ease), box-shadow var(--t-slow) var(--ease); }
+.cstrip.quarantine:not(.restored) { border-color: var(--danger-line); border-left-color: var(--danger); background: linear-gradient(90deg, var(--danger-dim), rgba(7, 10, 15, 0.55) 60%); box-shadow: 0 0 24px -12px var(--danger); }
+.cstrip.shutdown:not(.restored), .cstrip.executing { border-color: var(--warn-line); border-left-color: var(--warn); background: linear-gradient(90deg, var(--warn-dim), rgba(7, 10, 15, 0.55) 60%); }
+.cstrip.restored { border-color: var(--ok-line); border-left-color: var(--ok); }
+.cs-track { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cs-k { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); }
+.cs-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.cs-chip { display: flex; width: 100%; align-items: center; gap: 7px; min-height: 28px; padding: 0 9px; border: 1px solid var(--line-2); border-radius: var(--r-ctl); background: var(--surface-2); color: var(--text-2); font-size: var(--fs-xs); cursor: pointer; transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+.cs-chip:hover { border-color: var(--accent-line); color: var(--text-1); }
+.cs-chip.up { color: var(--text-4); background: transparent; border-style: dashed; }
+.cs-chip.on.quarantine { color: var(--danger-ink); border-color: var(--danger-line); background: var(--danger-dim); }
+.cs-chip.on.shutdown { color: var(--warn-ink); border-color: var(--warn-line); background: var(--warn-dim); }
+.cs-chip.done { color: var(--text-3); }
+.cs-chip.focus { box-shadow: 0 0 0 1px currentColor; }
+.cs-kind { text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--font-mono); }
+.cs-ok { color: var(--ok-ink); margin-left: auto; }
+.cs-detail { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 18px; animation: cc-in 420ms var(--ease-out) both; }
+/* one fixed line per fact so the strip keeps its height while the playhead moves */
+.cs-line { display: flex; flex-wrap: nowrap; align-items: baseline; gap: 12px; min-width: 0; overflow: hidden; }
+.cs-line > * { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: none; }
+.cs-line > :last-child { flex: 0 1 auto; }
+.cs-main { font-size: var(--fs-md); color: var(--text-1); }
+.cs-sub { font-size: var(--fs-sm); color: var(--text-2); }
+.cs-dot { flex: none; align-self: center; width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); }
+.cstrip.quarantine:not(.restored) .cs-dot { background: var(--danger); animation: cc-pulse 1.8s var(--ease-in-out) infinite; }
+.cstrip.shutdown:not(.restored) .cs-dot, .cstrip.executing .cs-dot { background: var(--warn); animation: cc-pulse 1.8s var(--ease-in-out) infinite; }
+.cstrip.restored .cs-dot { background: var(--ok); }
+.cs-head { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); }
+.cstrip.quarantine:not(.restored) .cs-head, .cstrip.quarantine:not(.restored) .cs-move { color: var(--danger-ink); }
+.cstrip.shutdown:not(.restored) .cs-head, .cstrip.executing .cs-head { color: var(--warn-ink); }
+.cstrip.restored .cs-head { color: var(--ok-ink); }
+.cs-link { color: var(--accent-strong); font-family: var(--font-mono); font-size: var(--fs-sm); }
+.cs-facts, .cs-notes { font-size: var(--fs-xs); color: var(--text-2); }
+.cs-facts i { font-style: normal; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-4); margin-right: 4px; }
+.cs-notes { color: var(--text-3); }
+.cs-notes .cs-warn { color: var(--warn-ink); }
+/* a narrow strip (stage under ~860 px) stacks: one scrolling row of actions above full-width fact lines */
+.cs-wrap { container: cstrip / inline-size; }
+@container cstrip (max-width: 859px) {
+  .cstrip { grid-template-columns: minmax(0, 1fr); min-height: 214px; align-content: start; }
+  .cs-chips { flex-direction: row; overflow-x: auto; padding-bottom: 2px; }
+  .cs-chips li { flex: none; }
+  .cs-chip { width: auto; }
+  .cs-detail { padding-top: 0; }
+}
+@keyframes cc-in { from { opacity: 0; transform: translateY(4px); } }
+@keyframes cc-pulse { 0% { box-shadow: 0 0 0 0 var(--danger-line); } 70%, 100% { box-shadow: 0 0 0 6px transparent; } }
+/* the quarantine VLAN while a port sits in it: an isolation zone around the colony */
+.sf-fence { transform-box: fill-box; transform-origin: center; animation: fence-in 700ms var(--ease-out) both; }
+.sf-fence .zone { fill: var(--danger-dim); stroke: none; }
+.sf-fence .edge, .sf-fence .zone { vector-effect: non-scaling-stroke; }
+.sf-fence .edge { fill: none; stroke: var(--danger); stroke-opacity: 0.75; stroke-width: 1.6; stroke-dasharray: 6 4; }
+.sf.is-playing .sf-fence .edge { animation: fence-flow 3s linear infinite; }
+@keyframes fence-flow { to { stroke-dashoffset: -18; } }
+@keyframes fence-in { from { opacity: 0; transform: scale(1.35); } }
+/* timeline: recorded containment intervals */
+.scrub-contain { position: absolute; top: 0; bottom: 0; pointer-events: none; background: var(--danger-dim); border-left: 2px solid var(--danger); }
+.scrub-contain.shutdown { background: var(--warn-dim); border-left-color: var(--warn); }
+.scrub-contain::before { content: ""; position: absolute; top: -4px; left: -5px; width: 8px; height: 8px; background: var(--danger); transform: rotate(45deg); }
+.scrub-contain.shutdown::before { background: var(--warn); }
+.scrub-key .sw.contain { background: linear-gradient(90deg, var(--danger) 0 50%, var(--warn) 50%); }
 
 /* ---------------------------------------------------------------- responsive */
 @media (max-width: 1439px) { .sig-body { grid-template-columns: minmax(0, 1fr) 320px; } }
@@ -429,6 +493,9 @@
   .sig-frame.tr { max-width: 100%; left: 0; right: auto; }
 }
 @media (max-width: 599px) {
+  .cstrip { min-height: 352px; }
+  .cs-line { flex-wrap: wrap; gap: 2px 10px; }
+  .cs-line > * { white-space: normal; flex: 0 1 auto; }
   .sig-legend .lg { white-space: normal; }
   .sf { max-height: none; }
   .fchip { min-height: 36px; }

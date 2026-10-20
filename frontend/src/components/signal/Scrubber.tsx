@@ -26,6 +26,8 @@ export interface ScrubberProps {
   lanes?: WireBins | null
   /** latest time a window may reach (the recorded end); defaults to the end of the domain */
   limit?: number
+  /** recorded containment intervals (applied → restored, or still held), drawn as bands over the histogram */
+  contain?: { start: number; end: number; kind: 'quarantine' | 'shutdown'; label: string }[]
 }
 
 const LANE_CONN = 58
@@ -296,6 +298,9 @@ export function Scrubber(p: ScrubberProps) {
           })}
         </svg>
         {p.lanes && <Lanes lanes={p.lanes} domain={p.domain} />}
+        {p.contain?.map((c) => (
+          <div key={`${c.start}-${c.label}`} className={`scrub-contain ${c.kind}`} style={{ left: `${frac(c.start) * 100}%`, width: `${Math.max(0.3, (frac(c.end) - frac(c.start)) * 100)}%` }} title={c.label} />
+        ))}
         {windowEl}
         {p.playback ? (
           <>
@@ -363,6 +368,12 @@ export function Scrubber(p: ScrubberProps) {
             <i className="sw sys" />
             switch syslog
           </span>
+          {p.contain && p.contain.length > 0 && (
+            <span className="sk">
+              <i className="sw contain" />
+              containment band (red: quarantine, amber: port shut down)
+            </span>
+          )}
         </div>
       )}
     </div>

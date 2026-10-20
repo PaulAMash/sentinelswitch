@@ -406,3 +406,18 @@ export function streamAlerts(inp: FieldInputs, nodesById: Map<string, FieldNode>
     })
     .sort((a, b) => ms(b.ts) - ms(a.ts))
 }
+
+export interface ContainmentWindow {
+  action: ContainmentAction
+  applied: number
+  verified: number | null
+  restored: number | null
+}
+
+/** The recorded containment actions that were applied, in time order. */
+export function containmentWindows(actions: ContainmentAction[]): ContainmentWindow[] {
+  return actions
+    .filter((a) => a.applied_at)
+    .map((a) => ({ action: a, applied: ms(a.applied_at), verified: a.verified_at ? ms(a.verified_at) : null, restored: a.restored_at ? ms(a.restored_at) : null }))
+    .sort((x, y) => x.applied - y.applied)
+}

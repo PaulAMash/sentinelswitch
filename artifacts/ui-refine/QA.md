@@ -187,3 +187,25 @@ was not tested because the WebKit test browser is not installed.
 
 Results: 85 backend tests, ruff, tsc, oxlint (same 11 warnings), UI audit 76/76 in demo state,
 playback check 22/22.
+
+# Pass 4: containment made visible
+
+The quarantine is the most important outcome in the replay but sat in the last second of the loop.
+
+- **Containment strip** under the field (`components/signal/Containment.tsx`): every recorded
+  containment action of the window as a chip coloured by its state at the playhead (to come, holding,
+  restored); a chip replays from 20 s before its action. The detail lines give port, endpoint, VLAN
+  move, authorization, switch read-back, time held or restore, connections from the host in the minute
+  before, and for a quarantine into a VLAN whose sensor-coverage assessment is FAIL, that later traffic
+  is not recorded. Everything comes from the action record, the inventory, the coverage assessment and
+  the recorded connections, and every line says "recorded". The strip keeps one height per width in
+  every state (172 px two-column, 214 px narrow, 352 px phone), so nothing below it jumps.
+- **End-of-record hold:** auto pace holds the last moment for 6 s before looping ("end of record").
+- **Field:** a dashed isolation zone around the quarantine colony while it is occupied, and a lock-down
+  wave on the canvas when a containment is applied (red quarantine, amber shutdown, green restore).
+- **Timeline:** a band for each containment interval with a marker at its start.
+
+Results: playback check 24/24 (adds: end of record holds on the quarantine; a chip replays from just
+before its action), UI audit 76/76, 85 backend tests, ruff, tsc, oxlint (same 11 warnings). Strip
+measured at 390, 768, 1024, 1200, 1280, 1440, 1600 and 1920 px: constant height per width, no page
+overflow.

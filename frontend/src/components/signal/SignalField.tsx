@@ -158,6 +158,15 @@ export const SignalField = memo(function SignalField(p: SignalFieldProps) {
     const list = stubs.get(f.from)!
     if (!list.includes(f.toLabel)) list.push(f.toLabel)
   }
+  // the quarantine VLAN is drawn as an isolation zone while a port sits in it
+  const qn = model.nodes.filter((n) => n.cluster === 'v50')
+  const fence = qn.length
+    ? (() => {
+        const x = qn.reduce((acc, n) => acc + n.x, 0) / qn.length
+        const y = qn.reduce((acc, n) => acc + n.y, 0) / qn.length
+        return { x, y, r: Math.max(...qn.map((n) => Math.hypot(n.x - x, n.y - y))) + HEX * 1.75 }
+      })()
+    : null
   const [vx, vy, vw, vh] = model.viewBox
   const pulsesByNode = new Map<string, Pulse[]>()
   for (const pu of p.pulses) {
@@ -238,6 +247,12 @@ export const SignalField = memo(function SignalField(p: SignalFieldProps) {
           C2960X
         </text>
       </g>
+      {fence && (
+        <g className="sf-fence" aria-hidden="true">
+          <polygon className="zone" points={hexPoints(fence.r, fence.x, fence.y)} />
+          <polygon className="edge" points={hexPoints(fence.r, fence.x, fence.y)} />
+        </g>
+      )}
       <g className="sf-ghosts">
         {model.ghosts.map((g) => {
           const n = byId.get(g.id)

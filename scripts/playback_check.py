@@ -115,6 +115,23 @@ def run(base: str) -> None:
         )
         burst = page.evaluate("document.querySelector('.wire-lines').textContent")
         check("wire console shows the recorded burst", "ENG-LT-047" in burst, "ENG-LT-047 connections listed at 21:14")
+        page.wait_for_function("document.querySelector('.pb-sub').textContent.includes('end of record')", timeout=20000)
+        head = page.evaluate("document.querySelector('.cs-head').textContent")
+        held_at = clock()
+        page.wait_for_timeout(4000)
+        still = page.evaluate("document.querySelector('.pb-sub').textContent.includes('end of record')")
+        check(
+            "end of record holds on the quarantine",
+            "quarantine" in head.lower() and still and clock() == held_at,
+            f"{head} at {held_at}",
+        )
+        page.locator(".cs-chip").first.click()
+        page.wait_for_timeout(300)
+        check(
+            "containment chip replays from just before it",
+            clock().startswith("09:12") and state() == "playing",
+            f"{clock()} ({state()})",
+        )
         page.get_by_role("button", name="auto pace").click()
         check(
             "auto pace can be switched off",

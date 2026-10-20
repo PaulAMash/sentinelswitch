@@ -19,8 +19,9 @@ export function PlaybackBar({ s, disabled, note }: { s: PlaybackSnapshot; disabl
   const w = s.window
   const state = disabled ? 'idle' : s.playing ? 'playing' : 'paused'
   const perSecond = s.rate ? fmtSpan(s.rate * s.pace) : '—'
-  const fast = s.playing && s.pace > 1
-  const slow = s.playing && s.pace < 1
+  const hold = s.playing && s.holding
+  const fast = s.playing && !hold && s.pace > 1
+  const slow = s.playing && !hold && s.pace < 1
   return (
     <div className={`pb ${state}`} role="group" aria-label="Playback of the recorded dataset day">
       <button
@@ -49,6 +50,11 @@ export function PlaybackBar({ s, disabled, note }: { s: PlaybackSnapshot; disabl
           {fast && (
             <span className="pb-pace" title="Few records here: the clock runs faster until activity picks up. Times shown are still the recorded times.">
               ×{s.pace} quiet
+            </span>
+          )}
+          {hold && (
+            <span className="pb-pace hold" title="Auto pace holds the end of the record for a few seconds before the next loop">
+              end of record
             </span>
           )}
           {slow && (

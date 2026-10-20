@@ -14,8 +14,9 @@ import { Scrubber } from './Scrubber'
 import { PlaybackBar } from './PlaybackBar'
 import { AlertInspector, FieldSummary, NodeInspector } from './Inspector'
 import { FlowCanvas } from './FlowCanvas'
+import { ContainmentStrip } from './Containment'
 import { WireTap } from './WireTap'
-import { buildField, containmentAt, containmentKey, layoutField, streamAlerts, type ClusterId, type FieldInputs, type FieldNode, type FillMode, type Preset } from './model'
+import { buildField, containmentAt, containmentKey, containmentWindows, layoutField, streamAlerts, type ClusterId, type FieldInputs, type FieldNode, type FillMode, type Preset } from './model'
 
 const BIN = 15 * 60_000
 const PULSE_MS = 1500
@@ -195,6 +196,18 @@ export function SignalConsole(p: SignalConsoleProps) {
     if (p.inputs.sw.management_ip) m.set(p.inputs.sw.management_ip, p.inputs.sw.hostname)
     return m
   }, [p.inputs.devices, p.inputs.sw])
+  // recorded containment actions: the callout on the field and the bands on the timeline
+  const cwin = useMemo(() => containmentWindows(p.inputs.actions), [p.inputs.actions])
+  const contain = useMemo(
+    () =>
+      cwin.map((w) => ({
+        start: w.applied,
+        end: w.restored ?? limit,
+        kind: (w.action.action === 'quarantine_vlan' ? 'quarantine' : 'shutdown') as 'quarantine' | 'shutdown',
+        label: `${w.action.interface ?? 'port'} ${w.action.action === 'quarantine_vlan' ? `VLAN ${w.action.from_vlan} → ${w.action.to_vlan}` : 'shut down'} at ${fmtClock(w.applied, true)}${w.restored ? `, restored ${fmtClock(w.restored, true)}` : ''}${w.action.incident_id ? ` (${w.action.incident_id})` : ''}`,
+      })),
+    [cwin, limit],
+  )
   const famCounts = useMemo(() => {
     const c = Object.fromEntries(FAMILIES.map((f) => [f, 0])) as Record<Family, number>
     if (!wire) return c
@@ -230,7 +243,7 @@ export function SignalConsole(p: SignalConsoleProps) {
   const srcCount = (s: string) => inWinAll.filter((a) => a.source === s).length
   const hovered = hover ? byId.get(hover) : null
   const selectedNode = selNode ? byId.get(selNode) ?? null : null
-  const modeLabel = !hasData ? 'NO RECORDED EVENTS' : pb.playing ? (pb.pace > 1 ? `PLAYBACK ×${pb.pace} QUIET` : pb.pace < 1 ? 'PLAYBACK · SLOW-MOTION' : 'PLAYBACK') : 'PAUSED'
+  const modeLabel = !hasData ? 'NO RECORDED EVENTS' : pb.playing ? (pb.holding ? 'END OF RECORD' : pb.pace > 1 ? `PLAYBACK ×${pb.pace} QUIET` : pb.pace < 1 ? 'PLAYBACK · SLOW-MOTION' : 'PLAYBACK') : 'PAUSED'
 
   return (
     <section className="sig instrument" aria-labelledby="sig-title">
@@ -330,7 +343,7 @@ export function SignalConsole(p: SignalConsoleProps) {
                 onHoverNode={setHover}
                 onFocusCluster={setFocus}
               />
-              {wire && !reduce && <FlowCanvas model={model} wire={wire} alerts={alertsAsc} families={fams} />}
+              {wire && !reduce && <FlowCanvas model={model} wire={wire} alerts={alertsAsc} families={fams} actions={p.inputs.actions} />}
               </div>
               <div className="sig-frame bl" aria-live="polite">
                 {hovered ? describeNode(hovered) : focus ? `focus · ${model.clusters.find((c) => c.id === focus)?.title ?? ''} — select the label again to clear` : 'hover or tab to a port · arrows move · Enter selects · Esc clears'}
@@ -375,6 +388,7 @@ export function SignalConsole(p: SignalConsoleProps) {
               />
             </div>
           )}
+          <ContainmentStrip windows={cwin} t={t} byId={byId} incidents={p.inputs.incidents} coverage={p.inputs.coverage} wire={wire} />
           {wire && <WireTap wire={wire} alerts={alertsAsc} alertT={alertT} names={names} families={fams} />}
           <div className="sig-transport">
         <PlaybackBar s={pb} disabled={!hasData} note={!hasData ? 'no recorded alerts in the dataset day' : undefined} />
@@ -387,6 +401,7 @@ export function SignalConsole(p: SignalConsoleProps) {
           limit={limit}
           traffic={p.traffic}
           lanes={lanes}
+          contain={contain}
           now={p.now}
           playback={hasData ? { t, onSeek: playback.seek, onToggle: playback.toggle } : undefined}
           label="Alert timeline for the signal field"

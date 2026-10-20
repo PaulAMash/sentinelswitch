@@ -294,8 +294,18 @@ One pass through the selected window takes 120 s at 1× (`PLAYBACK.WINDOW_SECOND
 `frontend/src/lib/playback.ts`) before **auto pace**, which is on by default: stretches with few records
 fast-forward (up to 10×, labelled *quiet*), the clock slows around every recorded alert, and it drops to
 about four recorded seconds per real second around each containment action, so the 21:14 lateral
-movement burst, the quarantine move and the read-back can be followed. The clock always shows the
-recorded time. The playback bar has play/pause, return to start, the simulated time, 0.5×/1×/2×/4×,
+movement burst, the quarantine move and the read-back can be followed; at the end of the record it
+holds for six seconds before looping. The clock always shows the recorded time.
+
+Containment gets its own treatment because it is the outcome that matters. A strip under the field
+lists every recorded containment action of the day (three port shutdowns that were later restored and
+the 21:14 quarantine of Gi1/0/23), coloured by its state at the playhead; selecting one replays from
+20 s before it. While an action holds, the strip gives the port, endpoint, VLAN move, who authorized
+it, the switch read-back that verified it, how long it has held, how many connections the host made
+in the minute before, and, for the quarantine, that VLAN 50 is not mirrored to the sensor (the open
+sensor-coverage finding), so the host's traffic after the move is not recorded. On the field the
+quarantine colony becomes a fenced isolation zone and each containment sends a lock-down wave (green
+when restored); the timeline carries a band for every containment interval. The playback bar has play/pause, return to start, the simulated time, 0.5×/1×/2×/4×,
 the auto-pace toggle and Day / 4 h / 1 h windows; the timeline is the scrubber (click or drag to seek,
 which pauses; drag the lower rail to choose a custom window; ←/→ step 15 min, Shift for 1 h, Home/End,
 Space toggles). One clock drives the field, the particles, the console, the event stream, the inspector

@@ -26,6 +26,8 @@ export const PLAYBACK = {
   MIN_PACE: 0.002,
   /** Finest published step (simulated ms) while the clock is slowed. */
   MIN_STEP_MS: 250,
+  /** Auto pace holds the end of the record this long (real ms) before looping, so the outcome can be read. */
+  END_HOLD_MS: 6000,
 }
 
 export type WindowPreset = 'day' | '4h' | '1h' | 'custom'
@@ -49,12 +51,14 @@ export interface PlaybackSnapshot {
   autoPace: boolean
   /** current auto-pace multiplier on top of `rate` (>1 quiet stretch, <1 around an alert, 1 otherwise) */
   pace: number
+  /** auto pace is holding the end of the record before the next loop */
+  holding: boolean
 }
 
 type Listener = () => void
 type FrameListener = (pos: number) => void
 
-let snap: PlaybackSnapshot = { ready: false, domain: null, window: null, preset: 'day', t: 0, playing: false, speed: 1, loops: 0, change: 'init', rate: 0, autoPace: true, pace: 1 }
+let snap: PlaybackSnapshot = { ready: false, domain: null, window: null, preset: 'day', t: 0, playing: false, speed: 1, loops: 0, change: 'init', rate: 0, autoPace: true, pace: 1, holding: false }
 /** multiplier for the playhead position given the simulated ms per real second (supplied by a view that knows record density) */
 let pacing: ((t: number, rate: number) => number) | null = null
 let pos = 0
@@ -63,6 +67,8 @@ let raf: number | null = null
 let attached = 0
 let initialized = false
 let latestEnd: number | null = null
+/** real ms spent holding the end of the record in this pass */
+let held = 0
 const listeners = new Set<Listener>()
 const frameListeners = new Set<FrameListener>()
 
@@ -111,12 +117,23 @@ function frame(now: number) {
   const pace = snap.autoPace && pacing ? Math.max(PLAYBACK.MIN_PACE, Math.min(PLAYBACK.MAX_PACE, pacing(pos, snap.rate))) : 1
   pos += (dt / 1000) * snap.rate * pace
   if (pace !== snap.pace) publish({ pace })
+  if (snap.autoPace && pos >= w.end && held < PLAYBACK.END_HOLD_MS) {
+    // hold the last recorded moment (the outcome of the day) before looping; nothing advances
+    pos = w.end
+    held += dt
+    if (!snap.holding || snap.t !== w.end) publish({ holding: true, t: w.end, change: 'tick' })
+    emitFrame()
+    raf = requestAnimationFrame(frame)
+    return
+  }
   let change: ChangeKind = 'tick'
   let loops = snap.loops
   if (pos >= w.end) {
-    pos = w.start + ((pos - w.end) % span(w))
+    pos = w.start + (snap.holding ? 0 : (pos - w.end) % span(w))
     loops += 1
     change = 'loop'
+    held = 0
+    if (snap.holding) publish({ holding: false })
   }
   // while slowed, publish proportionally finer steps so the field follows each record one by one
   const q = Math.max(PLAYBACK.MIN_STEP_MS, quantum(w) * Math.min(1, pace))
@@ -145,6 +162,8 @@ function presetWindow(preset: WindowPreset, domain: Window, end: number): Window
 function setPos(p: number, change: ChangeKind) {
   const w = snap.window
   if (!w) return
+  held = 0
+  if (snap.holding) snap = { ...snap, holding: false }
   pos = Math.max(w.start, Math.min(w.end, p))
   const q = quantum(w)
   publish({ t: Math.min(w.end, w.start + Math.floor((pos - w.start) / q) * q), change })

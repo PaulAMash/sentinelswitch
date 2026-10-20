@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
-import type { Alert } from '../../lib/api'
+import type { Alert, ContainmentAction } from '../../lib/api'
 import { ms, sev3 } from '../../lib/telemetry'
 import { FAMILIES, upper, type Family, type Wire } from '../../lib/wire'
 import { HEX } from './hex'
@@ -64,6 +64,8 @@ export interface FlowCanvasProps {
   clock?: FlowClock
   /** only connections to or from these addresses (all when omitted) */
   hosts?: Set<string>
+  /** recorded containment actions: a lock-down wave when one is applied, a green wave when it is restored */
+  actions?: ContainmentAction[]
 }
 
 function cssColor(name: string, fallback: string): string {
@@ -161,6 +163,11 @@ export function FlowCanvas(p: FlowCanvasProps) {
       if (!pt || rings.length > 160) return
       rings.push({ x: pt.x, y: pt.y, born: clock, dur: big ? 1500 : 900, color, r0: HEX * (big ? 1.0 : 0.95), r1: HEX * (big ? 3.6 : 2.0), w: big ? 2.2 : 1.2 })
     }
+    /** containment: three slow concentric waves, staggered, much wider than an alert */
+    const wave = (pt: Pt | null, color: string) => {
+      if (!pt) return
+      for (let k = 0; k < 3; k++) rings.push({ x: pt.x, y: pt.y, born: clock + k * 380, dur: 2600, color, r0: HEX * 1.1, r1: HEX * (6 + k * 1.5), w: 3 - k * 0.6 })
+    }
 
     const spawn = (t0: number, t1: number) => {
       const { wire, alerts, families } = props.current
@@ -208,6 +215,12 @@ export function FlowCanvas(p: FlowCanvasProps) {
         const pt = at(al.interface)
         ring(pt, col[sv], true)
         ring(pt, col[sv], false)
+      }
+      for (const ac of props.current.actions ?? []) {
+        const ap = ac.applied_at ? ms(ac.applied_at) : null
+        const re = ac.restored_at ? ms(ac.restored_at) : null
+        if (ap != null && ap > t0 && ap <= t1) wave(at(ac.interface), ac.action === 'quarantine_vlan' ? col.bad : col.warn)
+        if (re != null && re > t0 && re <= t1) wave(at(ac.interface), col.ok)
       }
     }
 
@@ -257,6 +270,7 @@ export function FlowCanvas(p: FlowCanvasProps) {
       }
       // rings: RADIUS results, syslog, alerts
       for (const r of rings) {
+        if (clock < r.born) continue
         const u = Math.min(1, (clock - r.born) / r.dur)
         const e = 1 - (1 - u) ** 3
         hexPath(r.x, r.y, r.r0 + (r.r1 - r.r0) * e)
